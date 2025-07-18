@@ -21,6 +21,8 @@
 package orbiter
 
 import (
+	cctpkeeper "github.com/circlefin/noble-cctp/x/cctp/keeper"
+
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/core/store"
@@ -32,10 +34,10 @@ import (
 	modulev1 "orbiter.dev/api/module/v1"
 	actionsctrl "orbiter.dev/controllers/actions"
 	adaptersctrl "orbiter.dev/controllers/adapters"
+	orbitsctrl "orbiter.dev/controllers/orbits"
 	"orbiter.dev/keeper"
 	"orbiter.dev/types"
 	"orbiter.dev/types/controllers/actions"
-	"orbiter.dev/types/interfaces"
 )
 
 func init() {
@@ -96,6 +98,7 @@ type ComponentsInputs struct {
 	Orbiters *keeper.Keeper
 
 	BankKeeper ComponentsBankKeeper
+	CCTPKeeper *cctpkeeper.Keeper
 }
 
 func InjectComponents(in ComponentsInputs) {
@@ -105,9 +108,15 @@ func InjectComponents(in ComponentsInputs) {
 }
 
 func InjectOrbitControllers(in ComponentsInputs) {
-	var controllers []interfaces.ControllerOrbit
+	cctp, err := orbitsctrl.NewCCTPController(
+		in.Orbiters.OrbitComponent().Logger(),
+		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
+	)
+	if err != nil {
+		panic("error creating cctp controller")
+	}
 
-	in.Orbiters.SetOrbitControllers(controllers...)
+	in.Orbiters.SetOrbitControllers(cctp)
 }
 
 func InjectActionControllers(in ComponentsInputs) {
