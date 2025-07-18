@@ -21,6 +21,8 @@
 package orbiter
 
 import (
+	"fmt"
+
 	cctpkeeper "github.com/circlefin/noble-cctp/x/cctp/keeper"
 
 	"cosmossdk.io/core/address"
@@ -113,7 +115,7 @@ func InjectOrbitControllers(in ComponentsInputs) {
 		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
 	)
 	if err != nil {
-		panic("error creating cctp controller")
+		panic(fmt.Errorf("error creating cctp controller: %w", err))
 	}
 
 	in.Orbiters.SetOrbitControllers(cctp)
@@ -125,7 +127,7 @@ func InjectActionControllers(in ComponentsInputs) {
 		in.BankKeeper,
 	)
 	if err != nil {
-		panic("error creating fee controller")
+		panic(fmt.Errorf("error creating fee controller: %w", err))
 	}
 
 	in.Orbiters.SetActionControllers(fee)
@@ -137,7 +139,7 @@ func InjectAdapterControllers(in ComponentsInputs) {
 		in.Orbiters.AdapterComponent().Logger(),
 	)
 	if err != nil {
-		panic("error creating ibc adapter")
+		panic(fmt.Errorf("error creating ibc adapter: %w", err))
 	}
 
 	in.Orbiters.SetAdapterControllers(ibc)

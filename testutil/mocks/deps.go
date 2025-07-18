@@ -38,16 +38,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
+	"orbiter.dev"
 	"orbiter.dev/testutil"
 	"orbiter.dev/types"
 )
-
-type Dependencies struct {
-	SdkCtx       sdk.Context
-	EncCfg       moduletestutil.TestEncodingConfig
-	StoreService corestore.KVStoreService
-	Logger       log.Logger
-}
 
 func NewDependencies(t testing.TB) Dependencies {
 	key := storetypes.NewKVStoreKey(types.ModuleName)
@@ -70,4 +64,17 @@ func NewDependencies(t testing.TB) Dependencies {
 		StoreService: runtime.NewKVStoreService(key),
 		Logger:       log.NewNopLogger(),
 	}
+}
+
+type Dependencies struct {
+	SdkCtx       sdk.Context
+	EncCfg       moduletestutil.TestEncodingConfig
+	StoreService corestore.KVStoreService
+	Logger       log.Logger
+}
+
+// RegisterOrbiterInterfaces register the orbiter interfaces
+// into the dependencies codec.
+func (d *Dependencies) RegisterOrbiterInterfaces() {
+	orbiter.RegisterInterfaces(d.EncCfg.InterfaceRegistry)
 }
