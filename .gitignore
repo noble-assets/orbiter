@@ -2,6 +2,6 @@
 .idea
 .orbiter
 build
-coverage.out
+coverage**.out
 go.work.sum
 heighliner**

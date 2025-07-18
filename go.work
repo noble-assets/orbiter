@@ -3,5 +3,6 @@ go 1.24.3
 use (
 	.
 	./simapp
+	./e2e
 	./tools
 )
