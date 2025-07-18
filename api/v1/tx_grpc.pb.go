@@ -7,7 +7,10 @@
 package orbiterv1
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,12 +18,33 @@ import (
 // Requires gRPC-Go v1.64.0 or later.
 const _ = grpc.SupportPackageIsVersion9
 
+const (
+	Msg_PauseProtocol_FullMethodName         = "/noble.orbiter.v1.Msg/PauseProtocol"
+	Msg_PauseCounterparties_FullMethodName   = "/noble.orbiter.v1.Msg/PauseCounterparties"
+	Msg_UnpauseProtocol_FullMethodName       = "/noble.orbiter.v1.Msg/UnpauseProtocol"
+	Msg_UnpauseCounterparties_FullMethodName = "/noble.orbiter.v1.Msg/UnpauseCounterparties"
+	Msg_PauseAction_FullMethodName           = "/noble.orbiter.v1.Msg/PauseAction"
+	Msg_UnpauseAction_FullMethodName         = "/noble.orbiter.v1.Msg/UnpauseAction"
+)
+
 // MsgClient is the client API for Msg service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Msg defines the RPC methods for the Orbiter module.
 type MsgClient interface {
+	// PauseProtocol pauses an entire orbit protocol.
+	PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error)
+	// PauseCounterparties pauses specific counterparty pairs for a protocol.
+	PauseCounterparties(ctx context.Context, in *MsgPauseCounterparties, opts ...grpc.CallOption) (*MsgPauseCounterpartiesResponse, error)
+	// UnpauseProtocol resumes an entire orbit protocol.
+	UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error)
+	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
+	UnpauseCounterparties(ctx context.Context, in *MsgUnpauseCounterparties, opts ...grpc.CallOption) (*MsgUnpauseCounterpartiesResponse, error)
+	// PauseAction pauses a specific action controller.
+	PauseAction(ctx context.Context, in *MsgPauseAction, opts ...grpc.CallOption) (*MsgPauseActionResponse, error)
+	// UnpauseAction resumes a specific action controller.
+	UnpauseAction(ctx context.Context, in *MsgUnpauseAction, opts ...grpc.CallOption) (*MsgUnpauseActionResponse, error)
 }
 
 type msgClient struct {
@@ -31,12 +55,84 @@ func NewMsgClient(cc grpc.ClientConnInterface) MsgClient {
 	return &msgClient{cc}
 }
 
+func (c *msgClient) PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgPauseProtocolResponse)
+	err := c.cc.Invoke(ctx, Msg_PauseProtocol_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) PauseCounterparties(ctx context.Context, in *MsgPauseCounterparties, opts ...grpc.CallOption) (*MsgPauseCounterpartiesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgPauseCounterpartiesResponse)
+	err := c.cc.Invoke(ctx, Msg_PauseCounterparties_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgUnpauseProtocolResponse)
+	err := c.cc.Invoke(ctx, Msg_UnpauseProtocol_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnpauseCounterparties(ctx context.Context, in *MsgUnpauseCounterparties, opts ...grpc.CallOption) (*MsgUnpauseCounterpartiesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgUnpauseCounterpartiesResponse)
+	err := c.cc.Invoke(ctx, Msg_UnpauseCounterparties_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) PauseAction(ctx context.Context, in *MsgPauseAction, opts ...grpc.CallOption) (*MsgPauseActionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgPauseActionResponse)
+	err := c.cc.Invoke(ctx, Msg_PauseAction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnpauseAction(ctx context.Context, in *MsgUnpauseAction, opts ...grpc.CallOption) (*MsgUnpauseActionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgUnpauseActionResponse)
+	err := c.cc.Invoke(ctx, Msg_UnpauseAction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility.
 //
 // Msg defines the RPC methods for the Orbiter module.
 type MsgServer interface {
+	// PauseProtocol pauses an entire orbit protocol.
+	PauseProtocol(context.Context, *MsgPauseProtocol) (*MsgPauseProtocolResponse, error)
+	// PauseCounterparties pauses specific counterparty pairs for a protocol.
+	PauseCounterparties(context.Context, *MsgPauseCounterparties) (*MsgPauseCounterpartiesResponse, error)
+	// UnpauseProtocol resumes an entire orbit protocol.
+	UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error)
+	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
+	UnpauseCounterparties(context.Context, *MsgUnpauseCounterparties) (*MsgUnpauseCounterpartiesResponse, error)
+	// PauseAction pauses a specific action controller.
+	PauseAction(context.Context, *MsgPauseAction) (*MsgPauseActionResponse, error)
+	// UnpauseAction resumes a specific action controller.
+	UnpauseAction(context.Context, *MsgUnpauseAction) (*MsgUnpauseActionResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -47,6 +143,24 @@ type MsgServer interface {
 // pointer dereference when methods are called.
 type UnimplementedMsgServer struct{}
 
+func (UnimplementedMsgServer) PauseProtocol(context.Context, *MsgPauseProtocol) (*MsgPauseProtocolResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseProtocol not implemented")
+}
+func (UnimplementedMsgServer) PauseCounterparties(context.Context, *MsgPauseCounterparties) (*MsgPauseCounterpartiesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseCounterparties not implemented")
+}
+func (UnimplementedMsgServer) UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseProtocol not implemented")
+}
+func (UnimplementedMsgServer) UnpauseCounterparties(context.Context, *MsgUnpauseCounterparties) (*MsgUnpauseCounterpartiesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseCounterparties not implemented")
+}
+func (UnimplementedMsgServer) PauseAction(context.Context, *MsgPauseAction) (*MsgPauseActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseAction not implemented")
+}
+func (UnimplementedMsgServer) UnpauseAction(context.Context, *MsgUnpauseAction) (*MsgUnpauseActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseAction not implemented")
+}
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 func (UnimplementedMsgServer) testEmbeddedByValue()             {}
 
@@ -68,13 +182,146 @@ func RegisterMsgServer(s grpc.ServiceRegistrar, srv MsgServer) {
 	s.RegisterService(&Msg_ServiceDesc, srv)
 }
 
+func _Msg_PauseProtocol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseProtocol)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).PauseProtocol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_PauseProtocol_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).PauseProtocol(ctx, req.(*MsgPauseProtocol))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_PauseCounterparties_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseCounterparties)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).PauseCounterparties(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_PauseCounterparties_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).PauseCounterparties(ctx, req.(*MsgPauseCounterparties))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnpauseProtocol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseProtocol)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnpauseProtocol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_UnpauseProtocol_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnpauseProtocol(ctx, req.(*MsgUnpauseProtocol))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnpauseCounterparties_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseCounterparties)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnpauseCounterparties(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_UnpauseCounterparties_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnpauseCounterparties(ctx, req.(*MsgUnpauseCounterparties))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_PauseAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseAction)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).PauseAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_PauseAction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).PauseAction(ctx, req.(*MsgPauseAction))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnpauseAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseAction)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnpauseAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_UnpauseAction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnpauseAction(ctx, req.(*MsgUnpauseAction))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Msg_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "noble.orbiter.v1.Msg",
 	HandlerType: (*MsgServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "noble/orbiter/v1/tx.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "PauseProtocol",
+			Handler:    _Msg_PauseProtocol_Handler,
+		},
+		{
+			MethodName: "PauseCounterparties",
+			Handler:    _Msg_PauseCounterparties_Handler,
+		},
+		{
+			MethodName: "UnpauseProtocol",
+			Handler:    _Msg_UnpauseProtocol_Handler,
+		},
+		{
+			MethodName: "UnpauseCounterparties",
+			Handler:    _Msg_UnpauseCounterparties_Handler,
+		},
+		{
+			MethodName: "PauseAction",
+			Handler:    _Msg_PauseAction_Handler,
+		},
+		{
+			MethodName: "UnpauseAction",
+			Handler:    _Msg_UnpauseAction_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "noble/orbiter/v1/tx.proto",
 }

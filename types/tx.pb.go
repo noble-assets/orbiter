@@ -6,11 +6,18 @@ package types
 import (
 	context "context"
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
 	_ "github.com/cosmos/cosmos-sdk/types/msgservice"
+	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
+	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -24,19 +31,539 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// MsgPauseProtocol pauses an entire orbit protocol.
+type MsgPauseProtocol struct {
+	// Address of the signer who is requesting to pause the protocol.
+	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	// Bridge protocol to pause.
+	ProtocolId ProtocolID `protobuf:"varint,2,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.v1.ProtocolID" json:"protocol_id,omitempty"`
+}
+
+func (m *MsgPauseProtocol) Reset()         { *m = MsgPauseProtocol{} }
+func (m *MsgPauseProtocol) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseProtocol) ProtoMessage()    {}
+func (*MsgPauseProtocol) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{0}
+}
+func (m *MsgPauseProtocol) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseProtocol) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseProtocol.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseProtocol) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseProtocol.Merge(m, src)
+}
+func (m *MsgPauseProtocol) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseProtocol) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseProtocol.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseProtocol proto.InternalMessageInfo
+
+// MsgPauseProtocolResponse is the response type from a MsgPauseProtocol request.
+type MsgPauseProtocolResponse struct {
+}
+
+func (m *MsgPauseProtocolResponse) Reset()         { *m = MsgPauseProtocolResponse{} }
+func (m *MsgPauseProtocolResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseProtocolResponse) ProtoMessage()    {}
+func (*MsgPauseProtocolResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{1}
+}
+func (m *MsgPauseProtocolResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseProtocolResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseProtocolResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseProtocolResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseProtocolResponse.Merge(m, src)
+}
+func (m *MsgPauseProtocolResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseProtocolResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseProtocolResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseProtocolResponse proto.InternalMessageInfo
+
+// MsgPauseCounterparties pauses specific counterparty pairs for a protocol.
+type MsgPauseCounterparties struct {
+	// Address of the signer who is requesting to pause the counterparty pairs.
+	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	// Bridge protocol to pause.
+	ProtocolId ProtocolID `protobuf:"varint,2,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.v1.ProtocolID" json:"protocol_id,omitempty"`
+	// List of identifiers of destinations that must be paused.
+	CounterpartyIds []string `protobuf:"bytes,3,rep,name=counterparty_ids,json=counterpartyIds,proto3" json:"counterparty_ids,omitempty"`
+}
+
+func (m *MsgPauseCounterparties) Reset()         { *m = MsgPauseCounterparties{} }
+func (m *MsgPauseCounterparties) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseCounterparties) ProtoMessage()    {}
+func (*MsgPauseCounterparties) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{2}
+}
+func (m *MsgPauseCounterparties) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseCounterparties) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseCounterparties.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseCounterparties) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseCounterparties.Merge(m, src)
+}
+func (m *MsgPauseCounterparties) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseCounterparties) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseCounterparties.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseCounterparties proto.InternalMessageInfo
+
+// MsgPauseCounterpartiesResponse is the response type
+// from a MsgPauseCounterparties request.
+type MsgPauseCounterpartiesResponse struct {
+}
+
+func (m *MsgPauseCounterpartiesResponse) Reset()         { *m = MsgPauseCounterpartiesResponse{} }
+func (m *MsgPauseCounterpartiesResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseCounterpartiesResponse) ProtoMessage()    {}
+func (*MsgPauseCounterpartiesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{3}
+}
+func (m *MsgPauseCounterpartiesResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseCounterpartiesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseCounterpartiesResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseCounterpartiesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseCounterpartiesResponse.Merge(m, src)
+}
+func (m *MsgPauseCounterpartiesResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseCounterpartiesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseCounterpartiesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseCounterpartiesResponse proto.InternalMessageInfo
+
+// MsgUnpauseProtocol resumes an entire orbit protocol.
+type MsgUnpauseProtocol struct {
+	// Address of the signer who is requesting to unpause the protocol.
+	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	// Bridge protocol to unpause.
+	ProtocolId ProtocolID `protobuf:"varint,2,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.v1.ProtocolID" json:"protocol_id,omitempty"`
+}
+
+func (m *MsgUnpauseProtocol) Reset()         { *m = MsgUnpauseProtocol{} }
+func (m *MsgUnpauseProtocol) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseProtocol) ProtoMessage()    {}
+func (*MsgUnpauseProtocol) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{4}
+}
+func (m *MsgUnpauseProtocol) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseProtocol) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseProtocol.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseProtocol) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseProtocol.Merge(m, src)
+}
+func (m *MsgUnpauseProtocol) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseProtocol) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseProtocol.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseProtocol proto.InternalMessageInfo
+
+// MsgUnpauseProtocolResponse is the response type from a MsgUnpauseProtocol request.
+type MsgUnpauseProtocolResponse struct {
+}
+
+func (m *MsgUnpauseProtocolResponse) Reset()         { *m = MsgUnpauseProtocolResponse{} }
+func (m *MsgUnpauseProtocolResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseProtocolResponse) ProtoMessage()    {}
+func (*MsgUnpauseProtocolResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{5}
+}
+func (m *MsgUnpauseProtocolResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseProtocolResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseProtocolResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseProtocolResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseProtocolResponse.Merge(m, src)
+}
+func (m *MsgUnpauseProtocolResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseProtocolResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseProtocolResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseProtocolResponse proto.InternalMessageInfo
+
+// MsgUnpauseCounterparties resumes specific counterparty pairs for a protocol.
+type MsgUnpauseCounterparties struct {
+	// Address of the signer who is requesting to unpause the counterparty pairs.
+	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	// Bridge protocol to unpause.
+	ProtocolId ProtocolID `protobuf:"varint,2,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.v1.ProtocolID" json:"protocol_id,omitempty"`
+	// List of identifiers of destinations that must be unpaused.
+	CounterpartyIds []string `protobuf:"bytes,3,rep,name=counterparty_ids,json=counterpartyIds,proto3" json:"counterparty_ids,omitempty"`
+}
+
+func (m *MsgUnpauseCounterparties) Reset()         { *m = MsgUnpauseCounterparties{} }
+func (m *MsgUnpauseCounterparties) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseCounterparties) ProtoMessage()    {}
+func (*MsgUnpauseCounterparties) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{6}
+}
+func (m *MsgUnpauseCounterparties) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseCounterparties) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseCounterparties.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseCounterparties) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseCounterparties.Merge(m, src)
+}
+func (m *MsgUnpauseCounterparties) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseCounterparties) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseCounterparties.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseCounterparties proto.InternalMessageInfo
+
+// MsgUnpauseCounterpartiesResponse is the response type
+// from a MsgUnpauseCounterparties request.
+type MsgUnpauseCounterpartiesResponse struct {
+}
+
+func (m *MsgUnpauseCounterpartiesResponse) Reset()         { *m = MsgUnpauseCounterpartiesResponse{} }
+func (m *MsgUnpauseCounterpartiesResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseCounterpartiesResponse) ProtoMessage()    {}
+func (*MsgUnpauseCounterpartiesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{7}
+}
+func (m *MsgUnpauseCounterpartiesResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseCounterpartiesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseCounterpartiesResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseCounterpartiesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseCounterpartiesResponse.Merge(m, src)
+}
+func (m *MsgUnpauseCounterpartiesResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseCounterpartiesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseCounterpartiesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseCounterpartiesResponse proto.InternalMessageInfo
+
+// MsgPauseAction pauses a specific action controller.
+type MsgPauseAction struct {
+	// Address of the signer who is requesting to pause the action.
+	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	// Action to pause.
+	ActionId ActionID `protobuf:"varint,2,opt,name=action_id,json=actionId,proto3,enum=noble.orbiter.v1.ActionID" json:"action_id,omitempty"`
+}
+
+func (m *MsgPauseAction) Reset()         { *m = MsgPauseAction{} }
+func (m *MsgPauseAction) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseAction) ProtoMessage()    {}
+func (*MsgPauseAction) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{8}
+}
+func (m *MsgPauseAction) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseAction) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseAction.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseAction) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseAction.Merge(m, src)
+}
+func (m *MsgPauseAction) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseAction) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseAction.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseAction proto.InternalMessageInfo
+
+// MsgPauseActionResponse is the response type from a MsgPauseAction request.
+type MsgPauseActionResponse struct {
+}
+
+func (m *MsgPauseActionResponse) Reset()         { *m = MsgPauseActionResponse{} }
+func (m *MsgPauseActionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseActionResponse) ProtoMessage()    {}
+func (*MsgPauseActionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{9}
+}
+func (m *MsgPauseActionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgPauseActionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgPauseActionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgPauseActionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseActionResponse.Merge(m, src)
+}
+func (m *MsgPauseActionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgPauseActionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseActionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgPauseActionResponse proto.InternalMessageInfo
+
+// MsgUnpauseAction resumes a specific action controller.
+type MsgUnpauseAction struct {
+	// Address of the signer who is requesting to unpause the action.
+	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	// Action to unpause.
+	ActionId ActionID `protobuf:"varint,2,opt,name=action_id,json=actionId,proto3,enum=noble.orbiter.v1.ActionID" json:"action_id,omitempty"`
+}
+
+func (m *MsgUnpauseAction) Reset()         { *m = MsgUnpauseAction{} }
+func (m *MsgUnpauseAction) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseAction) ProtoMessage()    {}
+func (*MsgUnpauseAction) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{10}
+}
+func (m *MsgUnpauseAction) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseAction) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseAction.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseAction) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseAction.Merge(m, src)
+}
+func (m *MsgUnpauseAction) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseAction) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseAction.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseAction proto.InternalMessageInfo
+
+// MsgUnpauseActionResponse is the response type from a MsgUnpauseAction request.
+type MsgUnpauseActionResponse struct {
+}
+
+func (m *MsgUnpauseActionResponse) Reset()         { *m = MsgUnpauseActionResponse{} }
+func (m *MsgUnpauseActionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseActionResponse) ProtoMessage()    {}
+func (*MsgUnpauseActionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{11}
+}
+func (m *MsgUnpauseActionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnpauseActionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnpauseActionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnpauseActionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseActionResponse.Merge(m, src)
+}
+func (m *MsgUnpauseActionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnpauseActionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseActionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnpauseActionResponse proto.InternalMessageInfo
+
+func init() {
+	proto.RegisterType((*MsgPauseProtocol)(nil), "noble.orbiter.v1.MsgPauseProtocol")
+	proto.RegisterType((*MsgPauseProtocolResponse)(nil), "noble.orbiter.v1.MsgPauseProtocolResponse")
+	proto.RegisterType((*MsgPauseCounterparties)(nil), "noble.orbiter.v1.MsgPauseCounterparties")
+	proto.RegisterType((*MsgPauseCounterpartiesResponse)(nil), "noble.orbiter.v1.MsgPauseCounterpartiesResponse")
+	proto.RegisterType((*MsgUnpauseProtocol)(nil), "noble.orbiter.v1.MsgUnpauseProtocol")
+	proto.RegisterType((*MsgUnpauseProtocolResponse)(nil), "noble.orbiter.v1.MsgUnpauseProtocolResponse")
+	proto.RegisterType((*MsgUnpauseCounterparties)(nil), "noble.orbiter.v1.MsgUnpauseCounterparties")
+	proto.RegisterType((*MsgUnpauseCounterpartiesResponse)(nil), "noble.orbiter.v1.MsgUnpauseCounterpartiesResponse")
+	proto.RegisterType((*MsgPauseAction)(nil), "noble.orbiter.v1.MsgPauseAction")
+	proto.RegisterType((*MsgPauseActionResponse)(nil), "noble.orbiter.v1.MsgPauseActionResponse")
+	proto.RegisterType((*MsgUnpauseAction)(nil), "noble.orbiter.v1.MsgUnpauseAction")
+	proto.RegisterType((*MsgUnpauseActionResponse)(nil), "noble.orbiter.v1.MsgUnpauseActionResponse")
+}
+
 func init() { proto.RegisterFile("noble/orbiter/v1/tx.proto", fileDescriptor_4f89c0e5a76b9120) }
 
 var fileDescriptor_4f89c0e5a76b9120 = []byte{
-	// 140 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0xcc, 0xcb, 0x4f, 0xca,
-	0x49, 0xd5, 0xcf, 0x2f, 0x4a, 0xca, 0x2c, 0x49, 0x2d, 0xd2, 0x2f, 0x33, 0xd4, 0x2f, 0xa9, 0xd0,
-	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x00, 0x4b, 0xe9, 0x41, 0xa5, 0xf4, 0xca, 0x0c, 0xa5,
-	0xc4, 0x93, 0xf3, 0x8b, 0x73, 0xf3, 0x8b, 0xf5, 0x73, 0x8b, 0xd3, 0x41, 0x2a, 0x73, 0x8b, 0xd3,
-	0x21, 0x4a, 0x8d, 0x78, 0xb8, 0x98, 0x7d, 0x8b, 0xd3, 0xa5, 0x58, 0x1b, 0x9e, 0x6f, 0xd0, 0x62,
-	0x74, 0xd2, 0x3e, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x27,
-	0x3c, 0x96, 0x63, 0xb8, 0xf0, 0x58, 0x8e, 0xe1, 0xc6, 0x63, 0x39, 0x86, 0x28, 0x41, 0x98, 0x61,
-	0x29, 0xa9, 0x65, 0xfa, 0x25, 0x95, 0x05, 0xa9, 0xc5, 0x49, 0x6c, 0x60, 0x13, 0x8c, 0x01, 0x01,
-	0x00, 0x00, 0xff, 0xff, 0xb2, 0x2e, 0xa5, 0xc2, 0x89, 0x00, 0x00, 0x00,
+	// 626 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x54, 0x31, 0x6f, 0xd3, 0x40,
+	0x14, 0xce, 0x11, 0xa8, 0xc8, 0xab, 0xda, 0xa6, 0x6e, 0x4b, 0x5d, 0xd3, 0x3a, 0x96, 0xc5, 0x10,
+	0x5c, 0x1a, 0xb7, 0xa9, 0x10, 0x52, 0x24, 0x86, 0x96, 0x2e, 0x19, 0x22, 0x55, 0x41, 0x0c, 0xb0,
+	0x44, 0x49, 0x7c, 0xb2, 0x2c, 0x35, 0xbe, 0xe0, 0x73, 0x03, 0xdd, 0x10, 0x13, 0x62, 0xe2, 0x27,
+	0x74, 0x64, 0x60, 0x88, 0x10, 0xe2, 0x37, 0x30, 0x56, 0x4c, 0x8c, 0x28, 0x19, 0x02, 0x03, 0xff,
+	0x80, 0x01, 0xd5, 0x77, 0xe7, 0xd4, 0x4e, 0xdc, 0x44, 0x0c, 0x45, 0x2c, 0x51, 0xfc, 0xde, 0xe7,
+	0xf7, 0xbe, 0xef, 0xf3, 0xdd, 0x07, 0x6b, 0x2e, 0x69, 0x1c, 0x61, 0x93, 0x78, 0x0d, 0xc7, 0xc7,
+	0x9e, 0xd9, 0xd9, 0x31, 0xfd, 0x97, 0x85, 0xb6, 0x47, 0x7c, 0x22, 0x65, 0x83, 0x56, 0x81, 0xb7,
+	0x0a, 0x9d, 0x1d, 0x65, 0xb1, 0xde, 0x72, 0x5c, 0x62, 0x06, 0xbf, 0x0c, 0xa4, 0xac, 0x36, 0x09,
+	0x6d, 0x11, 0x6a, 0xb6, 0xa8, 0x7d, 0xfe, 0x72, 0x8b, 0xda, 0xbc, 0xb1, 0xc6, 0x1a, 0xb5, 0xe0,
+	0xc9, 0x64, 0x0f, 0xbc, 0xb5, 0x6c, 0x13, 0x9b, 0xb0, 0xfa, 0xf9, 0x3f, 0x5e, 0xdd, 0x18, 0x61,
+	0x52, 0x6f, 0xfa, 0x0e, 0x71, 0x79, 0x3b, 0x37, 0xd2, 0x0e, 0xea, 0x4d, 0x72, 0xc4, 0x00, 0xfa,
+	0x47, 0x04, 0xd9, 0x0a, 0xb5, 0x0f, 0xeb, 0xc7, 0x14, 0x1f, 0xf2, 0x96, 0xb4, 0x0d, 0x33, 0xd4,
+	0xb1, 0x5d, 0xec, 0xc9, 0x48, 0x43, 0xf9, 0xcc, 0xbe, 0xfc, 0xf5, 0xd3, 0xd6, 0x32, 0x27, 0xb3,
+	0x67, 0x59, 0x1e, 0xa6, 0xf4, 0xb1, 0xef, 0x39, 0xae, 0x5d, 0xe5, 0x38, 0xe9, 0x21, 0xcc, 0x8a,
+	0xc1, 0x35, 0xc7, 0x92, 0xaf, 0x69, 0x28, 0x3f, 0x5f, 0x5c, 0x2f, 0xc4, 0xbd, 0x28, 0x88, 0x15,
+	0xe5, 0x83, 0x2a, 0x88, 0x17, 0xca, 0x56, 0x69, 0xeb, 0xcd, 0x69, 0x2e, 0xf5, 0xe3, 0x34, 0x97,
+	0x7a, 0x3d, 0xe8, 0x1a, 0x7c, 0xe6, 0xdb, 0x41, 0xd7, 0x58, 0x11, 0xc4, 0x23, 0xfc, 0x74, 0x05,
+	0xe4, 0x38, 0xe7, 0x2a, 0xa6, 0x6d, 0xe2, 0x52, 0xac, 0xff, 0x44, 0x70, 0x4b, 0x34, 0x1f, 0x91,
+	0x63, 0xd7, 0xc7, 0x5e, 0xbb, 0xee, 0xf9, 0x0e, 0xa6, 0x57, 0x2e, 0x4b, 0xba, 0x0b, 0xd9, 0xe6,
+	0x90, 0xc2, 0x49, 0xcd, 0xb1, 0xa8, 0x9c, 0xd6, 0xd2, 0xf9, 0x4c, 0x75, 0xe1, 0x62, 0xbd, 0x6c,
+	0xd1, 0xd2, 0x6e, 0x82, 0x03, 0xb7, 0x23, 0x0e, 0x44, 0x05, 0xe9, 0x1a, 0xa8, 0xe3, 0xa5, 0x86,
+	0x6e, 0x7c, 0x46, 0x20, 0x55, 0xa8, 0xfd, 0xc4, 0x6d, 0xff, 0xdb, 0x0f, 0x6c, 0x26, 0xc8, 0x5b,
+	0x15, 0xf2, 0x62, 0x0c, 0xf5, 0x75, 0x50, 0x46, 0x79, 0x87, 0xb2, 0x7e, 0xa1, 0xe0, 0x04, 0xf0,
+	0xf6, 0x7f, 0xf4, 0x99, 0xef, 0x27, 0xf8, 0xb0, 0x11, 0xf3, 0x21, 0xf6, 0xa1, 0x75, 0xd0, 0x92,
+	0xe4, 0x86, 0x9e, 0xbc, 0x47, 0x30, 0x2f, 0x4e, 0xc3, 0x5e, 0x90, 0x01, 0x7f, 0xe1, 0xc4, 0x03,
+	0xc8, 0xb0, 0xfc, 0x18, 0xfa, 0xa0, 0x8c, 0xfa, 0xc0, 0xc6, 0x97, 0x0f, 0xaa, 0x37, 0x19, 0xb8,
+	0x6c, 0x95, 0x36, 0x13, 0x84, 0x2d, 0x45, 0xce, 0x2f, 0x7b, 0x51, 0x97, 0x87, 0x57, 0x94, 0x55,
+	0x42, 0x11, 0x1f, 0x58, 0x1c, 0x71, 0xa5, 0x57, 0x2f, 0x63, 0x62, 0x10, 0x45, 0x98, 0xf1, 0x20,
+	0x8a, 0xd4, 0x84, 0x94, 0xe2, 0xef, 0xeb, 0x90, 0xae, 0x50, 0x5b, 0xaa, 0xc1, 0x5c, 0x34, 0x5d,
+	0xf5, 0x51, 0x26, 0xf1, 0x34, 0x53, 0x8c, 0xc9, 0x18, 0xb1, 0x48, 0x7a, 0x0e, 0x4b, 0xe3, 0xd2,
+	0x2e, 0x9f, 0x3c, 0x22, 0x8a, 0x54, 0xb6, 0xa7, 0x45, 0x86, 0x2b, 0x31, 0x2c, 0xc4, 0x23, 0xe5,
+	0xce, 0xd8, 0x21, 0x31, 0x94, 0x72, 0x6f, 0x1a, 0x54, 0xb8, 0xe6, 0x05, 0xac, 0x8c, 0xbf, 0xe2,
+	0xc6, 0x65, 0x63, 0x62, 0xea, 0x8a, 0xd3, 0x63, 0xc3, 0xc5, 0x4f, 0x61, 0xf6, 0xe2, 0x3d, 0xd2,
+	0x92, 0x0d, 0x62, 0x08, 0x25, 0x3f, 0x09, 0x11, 0x8e, 0xae, 0xc1, 0x5c, 0xf4, 0x74, 0xeb, 0x97,
+	0xf1, 0xe3, 0xe3, 0x8d, 0xc9, 0x18, 0xb1, 0x40, 0xb9, 0xf1, 0x6a, 0xd0, 0x35, 0xd0, 0xfe, 0xe6,
+	0x97, 0x9e, 0x8a, 0xce, 0x7a, 0x2a, 0xfa, 0xde, 0x53, 0xd1, 0xbb, 0xbe, 0x9a, 0x3a, 0xeb, 0xab,
+	0xa9, 0x6f, 0x7d, 0x35, 0xf5, 0x6c, 0x51, 0x4c, 0xb1, 0x70, 0xc7, 0xf4, 0x4f, 0xda, 0x98, 0x36,
+	0x66, 0x82, 0x34, 0xdb, 0xfd, 0x13, 0x00, 0x00, 0xff, 0xff, 0x0d, 0x7d, 0x11, 0x0d, 0xd8, 0x08,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -51,6 +578,18 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	// PauseProtocol pauses an entire orbit protocol.
+	PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error)
+	// PauseCounterparties pauses specific counterparty pairs for a protocol.
+	PauseCounterparties(ctx context.Context, in *MsgPauseCounterparties, opts ...grpc.CallOption) (*MsgPauseCounterpartiesResponse, error)
+	// UnpauseProtocol resumes an entire orbit protocol.
+	UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error)
+	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
+	UnpauseCounterparties(ctx context.Context, in *MsgUnpauseCounterparties, opts ...grpc.CallOption) (*MsgUnpauseCounterpartiesResponse, error)
+	// PauseAction pauses a specific action controller.
+	PauseAction(ctx context.Context, in *MsgPauseAction, opts ...grpc.CallOption) (*MsgPauseActionResponse, error)
+	// UnpauseAction resumes a specific action controller.
+	UnpauseAction(ctx context.Context, in *MsgUnpauseAction, opts ...grpc.CallOption) (*MsgUnpauseActionResponse, error)
 }
 
 type msgClient struct {
@@ -61,23 +600,1841 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
+func (c *msgClient) PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error) {
+	out := new(MsgPauseProtocolResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.v1.Msg/PauseProtocol", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) PauseCounterparties(ctx context.Context, in *MsgPauseCounterparties, opts ...grpc.CallOption) (*MsgPauseCounterpartiesResponse, error) {
+	out := new(MsgPauseCounterpartiesResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.v1.Msg/PauseCounterparties", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error) {
+	out := new(MsgUnpauseProtocolResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.v1.Msg/UnpauseProtocol", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnpauseCounterparties(ctx context.Context, in *MsgUnpauseCounterparties, opts ...grpc.CallOption) (*MsgUnpauseCounterpartiesResponse, error) {
+	out := new(MsgUnpauseCounterpartiesResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.v1.Msg/UnpauseCounterparties", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) PauseAction(ctx context.Context, in *MsgPauseAction, opts ...grpc.CallOption) (*MsgPauseActionResponse, error) {
+	out := new(MsgPauseActionResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.v1.Msg/PauseAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnpauseAction(ctx context.Context, in *MsgUnpauseAction, opts ...grpc.CallOption) (*MsgUnpauseActionResponse, error) {
+	out := new(MsgUnpauseActionResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.v1.Msg/UnpauseAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	// PauseProtocol pauses an entire orbit protocol.
+	PauseProtocol(context.Context, *MsgPauseProtocol) (*MsgPauseProtocolResponse, error)
+	// PauseCounterparties pauses specific counterparty pairs for a protocol.
+	PauseCounterparties(context.Context, *MsgPauseCounterparties) (*MsgPauseCounterpartiesResponse, error)
+	// UnpauseProtocol resumes an entire orbit protocol.
+	UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error)
+	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
+	UnpauseCounterparties(context.Context, *MsgUnpauseCounterparties) (*MsgUnpauseCounterpartiesResponse, error)
+	// PauseAction pauses a specific action controller.
+	PauseAction(context.Context, *MsgPauseAction) (*MsgPauseActionResponse, error)
+	// UnpauseAction resumes a specific action controller.
+	UnpauseAction(context.Context, *MsgUnpauseAction) (*MsgUnpauseActionResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
+func (*UnimplementedMsgServer) PauseProtocol(ctx context.Context, req *MsgPauseProtocol) (*MsgPauseProtocolResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseProtocol not implemented")
+}
+func (*UnimplementedMsgServer) PauseCounterparties(ctx context.Context, req *MsgPauseCounterparties) (*MsgPauseCounterpartiesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseCounterparties not implemented")
+}
+func (*UnimplementedMsgServer) UnpauseProtocol(ctx context.Context, req *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseProtocol not implemented")
+}
+func (*UnimplementedMsgServer) UnpauseCounterparties(ctx context.Context, req *MsgUnpauseCounterparties) (*MsgUnpauseCounterpartiesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseCounterparties not implemented")
+}
+func (*UnimplementedMsgServer) PauseAction(ctx context.Context, req *MsgPauseAction) (*MsgPauseActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseAction not implemented")
+}
+func (*UnimplementedMsgServer) UnpauseAction(ctx context.Context, req *MsgUnpauseAction) (*MsgUnpauseActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseAction not implemented")
+}
+
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
+}
+
+func _Msg_PauseProtocol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseProtocol)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).PauseProtocol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/noble.orbiter.v1.Msg/PauseProtocol",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).PauseProtocol(ctx, req.(*MsgPauseProtocol))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_PauseCounterparties_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseCounterparties)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).PauseCounterparties(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/noble.orbiter.v1.Msg/PauseCounterparties",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).PauseCounterparties(ctx, req.(*MsgPauseCounterparties))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnpauseProtocol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseProtocol)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnpauseProtocol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/noble.orbiter.v1.Msg/UnpauseProtocol",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnpauseProtocol(ctx, req.(*MsgUnpauseProtocol))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnpauseCounterparties_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseCounterparties)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnpauseCounterparties(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/noble.orbiter.v1.Msg/UnpauseCounterparties",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnpauseCounterparties(ctx, req.(*MsgUnpauseCounterparties))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_PauseAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseAction)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).PauseAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/noble.orbiter.v1.Msg/PauseAction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).PauseAction(ctx, req.(*MsgPauseAction))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnpauseAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseAction)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnpauseAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/noble.orbiter.v1.Msg/UnpauseAction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnpauseAction(ctx, req.(*MsgUnpauseAction))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var Msg_serviceDesc = _Msg_serviceDesc
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "noble.orbiter.v1.Msg",
 	HandlerType: (*MsgServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "noble/orbiter/v1/tx.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "PauseProtocol",
+			Handler:    _Msg_PauseProtocol_Handler,
+		},
+		{
+			MethodName: "PauseCounterparties",
+			Handler:    _Msg_PauseCounterparties_Handler,
+		},
+		{
+			MethodName: "UnpauseProtocol",
+			Handler:    _Msg_UnpauseProtocol_Handler,
+		},
+		{
+			MethodName: "UnpauseCounterparties",
+			Handler:    _Msg_UnpauseCounterparties_Handler,
+		},
+		{
+			MethodName: "PauseAction",
+			Handler:    _Msg_PauseAction_Handler,
+		},
+		{
+			MethodName: "UnpauseAction",
+			Handler:    _Msg_UnpauseAction_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "noble/orbiter/v1/tx.proto",
 }
+
+func (m *MsgPauseProtocol) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseProtocol) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseProtocol) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ProtocolId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProtocolId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgPauseProtocolResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseProtocolResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseProtocolResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgPauseCounterparties) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseCounterparties) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseCounterparties) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CounterpartyIds) > 0 {
+		for iNdEx := len(m.CounterpartyIds) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.CounterpartyIds[iNdEx])
+			copy(dAtA[i:], m.CounterpartyIds[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.CounterpartyIds[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.ProtocolId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProtocolId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgPauseCounterpartiesResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseCounterpartiesResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseCounterpartiesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseProtocol) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseProtocol) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseProtocol) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ProtocolId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProtocolId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseProtocolResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseProtocolResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseProtocolResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseCounterparties) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseCounterparties) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseCounterparties) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CounterpartyIds) > 0 {
+		for iNdEx := len(m.CounterpartyIds) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.CounterpartyIds[iNdEx])
+			copy(dAtA[i:], m.CounterpartyIds[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.CounterpartyIds[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.ProtocolId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProtocolId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseCounterpartiesResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseCounterpartiesResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseCounterpartiesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgPauseAction) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseAction) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseAction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ActionId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ActionId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgPauseActionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgPauseActionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgPauseActionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseAction) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseAction) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseAction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ActionId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ActionId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnpauseActionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnpauseActionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnpauseActionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTx(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *MsgPauseProtocol) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProtocolId != 0 {
+		n += 1 + sovTx(uint64(m.ProtocolId))
+	}
+	return n
+}
+
+func (m *MsgPauseProtocolResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgPauseCounterparties) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProtocolId != 0 {
+		n += 1 + sovTx(uint64(m.ProtocolId))
+	}
+	if len(m.CounterpartyIds) > 0 {
+		for _, s := range m.CounterpartyIds {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *MsgPauseCounterpartiesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUnpauseProtocol) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProtocolId != 0 {
+		n += 1 + sovTx(uint64(m.ProtocolId))
+	}
+	return n
+}
+
+func (m *MsgUnpauseProtocolResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUnpauseCounterparties) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProtocolId != 0 {
+		n += 1 + sovTx(uint64(m.ProtocolId))
+	}
+	if len(m.CounterpartyIds) > 0 {
+		for _, s := range m.CounterpartyIds {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *MsgUnpauseCounterpartiesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgPauseAction) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ActionId != 0 {
+		n += 1 + sovTx(uint64(m.ActionId))
+	}
+	return n
+}
+
+func (m *MsgPauseActionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUnpauseAction) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ActionId != 0 {
+		n += 1 + sovTx(uint64(m.ActionId))
+	}
+	return n
+}
+
+func (m *MsgUnpauseActionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func sovTx(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozTx(x uint64) (n int) {
+	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *MsgPauseProtocol) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseProtocol: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseProtocol: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProtocolId", wireType)
+			}
+			m.ProtocolId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProtocolId |= ProtocolID(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgPauseProtocolResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseProtocolResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseProtocolResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgPauseCounterparties) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseCounterparties: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseCounterparties: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProtocolId", wireType)
+			}
+			m.ProtocolId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProtocolId |= ProtocolID(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CounterpartyIds", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CounterpartyIds = append(m.CounterpartyIds, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgPauseCounterpartiesResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseCounterpartiesResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseCounterpartiesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseProtocol) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseProtocol: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseProtocol: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProtocolId", wireType)
+			}
+			m.ProtocolId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProtocolId |= ProtocolID(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseProtocolResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseProtocolResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseProtocolResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseCounterparties) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseCounterparties: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseCounterparties: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProtocolId", wireType)
+			}
+			m.ProtocolId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProtocolId |= ProtocolID(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CounterpartyIds", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CounterpartyIds = append(m.CounterpartyIds, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseCounterpartiesResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseCounterpartiesResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseCounterpartiesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgPauseAction) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseAction: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseAction: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionId", wireType)
+			}
+			m.ActionId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActionId |= ActionID(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgPauseActionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgPauseActionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgPauseActionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseAction) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseAction: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseAction: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionId", wireType)
+			}
+			m.ActionId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActionId |= ActionID(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnpauseActionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnpauseActionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnpauseActionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipTx(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthTx
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTx
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTx
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthTx        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTx          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTx = fmt.Errorf("proto: unexpected end of group")
+)

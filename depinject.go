@@ -31,6 +31,7 @@ import (
 
 	modulev1 "orbiter.dev/api/module/v1"
 	"orbiter.dev/keeper"
+	"orbiter.dev/types"
 )
 
 func init() {
@@ -43,13 +44,14 @@ func init() {
 type ModuleInputs struct {
 	depinject.In
 
-	Config *modulev1.Module
-	Codec  codec.Codec
-	Logger log.Logger
+	Config       *modulev1.Module
+	Codec        codec.Codec
+	AddressCodec address.Codec
+	Logger       log.Logger
 
 	StoreService store.KVStoreService
 
-	AddressCodec address.Codec
+	BankKeeper types.BankKeeper
 }
 
 type ModuleOutputs struct {
@@ -72,6 +74,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.Logger,
 		in.StoreService,
 		authority.String(),
+		in.BankKeeper,
 	)
 	m := NewAppModule(k)
 

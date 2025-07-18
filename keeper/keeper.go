@@ -163,11 +163,54 @@ func (k *Keeper) Validate() error {
 	return nil
 }
 
-// Authority returns the keeper authority.
+func (k *Keeper) Codec() codec.Codec {
+	return k.cdc
+}
+
+func (k *Keeper) Logger() log.Logger {
+	return k.logger
+}
+
 func (k *Keeper) Authority() string {
 	return k.authority
 }
 
 func (k *Keeper) ActionSubKeeper() interfaces.ActionSubkeeper {
 	return k.actionSubKeeper
+}
+
+func (k *Keeper) OrbitSubKeeper() interfaces.OrbitSubkeeper {
+	return k.orbitSubKeeper
+}
+
+func (k *Keeper) Dispatcher() interfaces.PayloadDispatcher {
+	return k.dispatcherSubKeeper
+}
+
+func (k *Keeper) AdapterSubKeeper() interfaces.AdapterSubkeeper {
+	return k.adapterSubKeeper
+}
+
+func (k *Keeper) SetOrbitControllers(controllers ...interfaces.OrbitController) {
+	router := k.orbitSubKeeper.Router()
+	for _, c := range controllers {
+		router.AddRoute(c)
+	}
+	k.orbitSubKeeper.SetRouter(router)
+}
+
+func (k *Keeper) SetActionControllers(controllers ...interfaces.ActionController) {
+	router := k.actionSubKeeper.Router()
+	for _, c := range controllers {
+		router.AddRoute(c)
+	}
+	k.actionSubKeeper.SetRouter(router)
+}
+
+func (k *Keeper) SetAdapterControllers(controllers ...interfaces.AdapterController) {
+	router := k.adapterSubKeeper.Router()
+	for _, a := range controllers {
+		router.AddRoute(a)
+	}
+	k.adapterSubKeeper.SetRouter(router)
 }
