@@ -18,46 +18,19 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package mocks
+package orbits
 
 import (
 	"context"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"orbiter.dev/testutil"
+	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 )
 
-func init() {
-	testutil.Authority = testutil.NewNobleAddress()
-	testutil.SetSDKConfig()
-}
-
-type Mocks struct {
-	// Cosmos SDK
-	BankKeeper *BankKeeper
-	// Circle
-	CCTPMsgServer *CCTPMsgServer
-}
-
-func NewMocks() Mocks {
-	bk := BankKeeper{
-		Balances: make(map[string]sdk.Coins),
-	}
-
-	mocks := Mocks{
-		// Cosmos SDK
-		BankKeeper: &bk,
-		// Circle
-		CCTPMsgServer: &CCTPMsgServer{},
-	}
-
-	return mocks
-}
-
-func CheckIfFailing(ctx context.Context) bool {
-	if ctx.Value("failing") != nil && ctx.Value("failing") == true {
-		return true
-	}
-	return false
+// CCTPMsgServer defines the expected behavior for the CCTP server to
+// be used in the CCTP controller.
+type CCTPMsgServer interface {
+	DepositForBurnWithCaller(
+		context.Context,
+		*cctptypes.MsgDepositForBurnWithCaller,
+	) (*cctptypes.MsgDepositForBurnWithCallerResponse, error)
 }

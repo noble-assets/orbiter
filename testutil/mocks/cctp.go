@@ -22,42 +22,26 @@ package mocks
 
 import (
 	"context"
+	"errors"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 
-	"orbiter.dev/testutil"
+	"orbiter.dev/types/controllers/orbits"
 )
 
-func init() {
-	testutil.Authority = testutil.NewNobleAddress()
-	testutil.SetSDKConfig()
+var _ orbits.CCTPMsgServer = CCTPMsgServer{}
+
+type CCTPMsgServer struct {
+	MaxTransferAmount int64
 }
 
-type Mocks struct {
-	// Cosmos SDK
-	BankKeeper *BankKeeper
-	// Circle
-	CCTPMsgServer *CCTPMsgServer
-}
-
-func NewMocks() Mocks {
-	bk := BankKeeper{
-		Balances: make(map[string]sdk.Coins),
+func (c CCTPMsgServer) DepositForBurnWithCaller(
+	ctx context.Context,
+	msg *cctptypes.MsgDepositForBurnWithCaller,
+) (*cctptypes.MsgDepositForBurnWithCallerResponse, error) {
+	if CheckIfFailing(ctx) {
+		return nil, errors.New("error calling deposit for burn with caller api")
 	}
 
-	mocks := Mocks{
-		// Cosmos SDK
-		BankKeeper: &bk,
-		// Circle
-		CCTPMsgServer: &CCTPMsgServer{},
-	}
-
-	return mocks
-}
-
-func CheckIfFailing(ctx context.Context) bool {
-	if ctx.Value("failing") != nil && ctx.Value("failing") == true {
-		return true
-	}
-	return false
+	return nil, nil
 }
