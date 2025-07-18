@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document describe how to integrate with the Orbiter module to leverage Noble cross-chain
+This document describes how to integrate with the Orbiter module to leverage Noble cross-chain
 functionalities.
 
 ## Definitions
@@ -19,10 +19,10 @@ functionalities.
 ## Payload
 
 The Orbiter module is a payload-based module, which is capable of parsing cross-chain metadata from
-different sources, execute state transitions, and then forward funds to a destination counterparty.
+different sources, executing state transitions, and then forwarding funds to a destination counterparty.
 
 The Orbiter payload is defined as a [proto3](https://protobuf.dev/) message in the `./proto` folder.
-This type is composed by two parts:
+This type is composed of two parts:
 
 - A list of actions.
 - An orbit.
@@ -62,19 +62,19 @@ An example of a JSON structured payload is:
 
 ### Actions
 
-Actions are defined as state transition request which can be executed on Noble. An action to be
+Actions are defined as state transition requests which can be executed on Noble. An action to be
 valid must satisfy the `ActionAttributes` defined in the Orbiter `types` package. An action is
-defined by two field:
+defined by two fields:
 
 1. An identifier.
 2. An attributes field containing all the relevant information to satisfy the request.
 
 Actions are executed in the order in which they are passed into the field `pre_actions`, and each of
 them operates on the state resulting from the execution of the previous one. For example, if the pre
-actions field is composed by a **swap** and a **fee** payment actions, the fee payment will be
+actions field is composed of a **swap** and a **fee** payment actions, the fee payment will be
 applied based on the amount and denomination of the coin resulting from the swap.
 
-The field is called `pre_actions` because all the request specified are executed before performing
+The field is called `pre_actions` because all the requests specified are executed before performing
 the forwarding via the orbit specified. If any of them fails, the entire state transition defined by
 the execution of the Cosmos SDK transaction will be reverted.
 
@@ -89,7 +89,7 @@ Actions supported by the Orbiter module are:
 
 </div>
 
-They are identified by an unique ID:
+They are identified by a unique ID:
 
 ```go
 type ActionID int32
@@ -112,13 +112,13 @@ An orbit is a forwarding operation defined as a combination of:
 
 Based on the bridge protocol, the following conditions may result from the execution of an orbit:
 
-- Synchronous protocols: Protocols like CCTP and Hyperlane are of commit-and-forget style. In this
+- Synchronous protocols: Protocols like CCTP and Hyperlane follow a commit-and-forget style. In this
   case, once the associated server informs the Orbiter that the bridge request has been stored to
-  state, the Orbiter execution complete. Conversely, if the server returns an error, the entire tx
+  state, the Orbiter execution is complete. Conversely, if the server returns an error, the entire tx
   will be marked as unsuccessful.
 
-- Asynchronous protocol: Protocols like IBC are asynchronous in nature, and for this reasons
-  requires a book-keeping of in-flights packets in the module. (TODO how to handle them)
+- Asynchronous protocol: Protocols like IBC are asynchronous in nature, and for this reason require
+  book-keeping of in-flight packets in the module. (TODO how to handle them)
 
 Orbits supported by the Orbiter module are:
 
@@ -132,7 +132,7 @@ Orbits supported by the Orbiter module are:
 
 </div>
 
-They are identified by an unique protocol ID:
+They are identified by a unique protocol ID:
 
 ```go
 type ProtocolID int32
@@ -148,9 +148,9 @@ const (
 
 ### IBC
 
-This section describes how to crate a valid IBC payload in Golang for the Orbiter module:
+This section describes how to create a valid IBC payload in Golang for the Orbiter module:
 
-1. Import the required package from the Orbiter repo:
+1. Import the required packages from the Orbiter repo:
 
 ```go
  "orbiter.dev/types"
@@ -159,7 +159,7 @@ This section describes how to crate a valid IBC payload in Golang for the Orbite
  "orbiter.dev/testutil"
 ```
 
-2. Define the orbits attributes:
+2. Define the orbit attributes:
 
 ```go
  destinationDomain := uint32(0)
@@ -168,7 +168,7 @@ This section describes how to crate a valid IBC payload in Golang for the Orbite
  passthroughPayload := []byte("")
 ```
 
-3. Create an orbit via factory function:
+3. Create an orbit via a factory function:
 
 ```go
  orbit, err := orbits.NewCCTPOrbit(
