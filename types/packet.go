@@ -1,0 +1,198 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright (C) 2025, NASD Inc. All rights reserved.
+// Use of this software is governed by the Business Source License included
+// in the LICENSE file of this repository and at www.mariadb.com/bsl11.
+//
+// ANY USE OF THE LICENSED WORK IN VIOLATION OF THIS LICENSE WILL AUTOMATICALLY
+// TERMINATE YOUR RIGHTS UNDER THIS LICENSE FOR THE CURRENT AND ALL OTHER
+// VERSIONS OF THE LICENSED WORK.
+//
+// THIS LICENSE DOES NOT GRANT YOU ANY RIGHT IN ANY TRADEMARK OR LOGO OF
+// LICENSOR OR ITS AFFILIATES (PROVIDED THAT YOU MAY USE A TRADEMARK OR LOGO OF
+// LICENSOR AS EXPRESSLY REQUIRED BY THIS LICENSE).
+//
+// TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSED WORK IS PROVIDED ON
+// AN "AS IS" BASIS. LICENSOR HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS,
+// EXPRESS OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
+// TITLE.
+
+package types
+
+import (
+	"errors"
+
+	"cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
+
+// NewTransferAttributes returns a validated reference to a
+// transfer attributes type.
+func NewTransferAttributes(
+	sourceProtocolID ProtocolID,
+	sourceCounterpartyID string,
+	denom string,
+	amount math.Int,
+) (*TransferAttributes, error) {
+	sourceOrbitID, err := NewOrbitID(sourceProtocolID, sourceCounterpartyID)
+	if err != nil {
+		return nil, err
+	}
+	transferAttr := TransferAttributes{
+		sourceOrbitID: sourceOrbitID,
+		sourceCoin:    sdk.NewCoin(denom, amount),
+	}
+	// Initially, the destination coin is the same as of the
+	// incoming coin.
+	sourceCoin := transferAttr.sourceCoin
+	transferAttr.destinationCoin = sourceCoin
+
+	return &transferAttr, transferAttr.Validate()
+}
+
+// TransferAttributes defines the cross-chain transfer information
+// passed down the orbiter to handle actions and routing.
+type TransferAttributes struct {
+	// Source fields have only getter methods.
+	sourceOrbitID *OrbitID
+	sourceCoin    sdk.Coin
+	// Destination field have both setters and getters
+	// because they can be mutated by actions.
+	destinationCoin sdk.Coin
+}
+
+// Validate returns an error if any of the fields is not valid.
+func (a *TransferAttributes) Validate() error {
+	if a.sourceOrbitID == nil {
+		return ErrNilPointer.Wrap("source cross chain attributes")
+	}
+	if err := a.sourceOrbitID.Validate(); err != nil {
+		return err
+	}
+	if !a.sourceCoin.IsPositive() {
+		return errors.New("invalid source amount")
+	}
+	if !a.destinationCoin.IsPositive() {
+		return errors.New("invalid destination amount")
+	}
+	return nil
+}
+
+func (a *TransferAttributes) SourceProtocolID() ProtocolID {
+	return a.sourceOrbitID.ProtocolID
+}
+
+func (a *TransferAttributes) SourceCounterpartyID() string {
+	return a.sourceOrbitID.CounterpartyID
+}
+
+func (a *TransferAttributes) SourceAmount() math.Int {
+	if a.sourceCoin.Amount.IsNil() {
+		return math.ZeroInt()
+	}
+	return a.sourceCoin.Amount
+}
+
+func (a *TransferAttributes) SourceDenom() string {
+	return a.sourceCoin.Denom
+}
+
+func (a *TransferAttributes) DestinationAmount() math.Int {
+	if a.destinationCoin.Amount.IsNil() {
+		return math.ZeroInt()
+	}
+	return a.destinationCoin.Amount
+}
+
+func (a *TransferAttributes) DestinationDenom() string {
+	return a.destinationCoin.Denom
+}
+
+func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
+	if amount.IsNil() {
+		a.destinationCoin.Amount = math.ZeroInt()
+		return
+	}
+	a.destinationCoin.Amount = amount
+}
+
+func (a *TransferAttributes) SetDestinationDenom(denom string) {
+	a.destinationCoin.Denom = denom
+}
+
+// NewOrbitPacket returns a pointer to a validated instance of the
+// orbit packet.
+func NewOrbitPacket(transferAttr *TransferAttributes, orbit *Orbit) (*OrbitPacket, error) {
+	orbitPacket := OrbitPacket{
+		TransferAttributes: transferAttr,
+		Orbit:              orbit,
+	}
+
+	return &orbitPacket, orbitPacket.Validate()
+}
+
+// OrbitPacket defines the data structure used to handle a routing packet. The routing info
+// are extended with the cross chain transfer attributes.
+type OrbitPacket struct {
+	TransferAttributes *TransferAttributes
+	Orbit              *Orbit
+}
+
+// Validate returns an error if the instance is not valid.
+func (p *OrbitPacket) Validate() error {
+	if p == nil {
+		return ErrNilPointer.Wrap("packet is not set")
+	}
+
+	if p.Orbit == nil {
+		return ErrNilPointer.Wrap("orbit is not set")
+	}
+	err := p.Orbit.Validate()
+	if err != nil {
+		return err
+	}
+
+	if p.TransferAttributes == nil {
+		return ErrNilPointer.Wrap("transfer attributes are not set")
+	}
+	return p.TransferAttributes.Validate()
+}
+
+// NewActionPacket returns a pointer to a validated instance of the
+// action packet.
+func NewActionPacket(transferAttr *TransferAttributes, action *Action) (*ActionPacket, error) {
+	actionPacket := ActionPacket{
+		TransferAttributes: transferAttr,
+		Action:             action,
+	}
+
+	return &actionPacket, actionPacket.Validate()
+}
+
+// ActionPacket defines the data structure used to handle an action. The action
+// attributes are extended with the cross chain transfer ones.
+type ActionPacket struct {
+	TransferAttributes *TransferAttributes
+	Action             *Action
+}
+
+func (p *ActionPacket) Validate() error {
+	if p == nil {
+		return ErrNilPointer.Wrap("packet is not set")
+	}
+
+	if p.Action == nil {
+		return ErrNilPointer.Wrap("action is not set")
+	}
+
+	err := p.Action.Validate()
+	if err != nil {
+		return err
+	}
+
+	if p.TransferAttributes == nil {
+		return ErrNilPointer.Wrap("transfer attributes are not set")
+	}
+	return p.TransferAttributes.Validate()
+}
