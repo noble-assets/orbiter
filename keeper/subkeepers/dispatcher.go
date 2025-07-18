@@ -55,8 +55,8 @@ func NewDispatcherKeeper(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-	orbitHandler types.PacketHandler[*types.OrbitPacket],
-	actionHandler types.PacketHandler[*types.ActionPacket],
+	orbitHandler interfaces.PacketHandler[*types.OrbitPacket],
+	actionHandler interfaces.PacketHandler[*types.ActionPacket],
 ) (*DispatcherKeeper, error) {
 	if cdc == nil {
 		return nil, errors.New("codec cannot be nil")
