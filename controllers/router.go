@@ -1,4 +1,4 @@
-package router
+package controllers
 
 import "orbiter.dev/types/interfaces"
 
