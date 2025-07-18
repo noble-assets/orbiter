@@ -19,7 +19,8 @@ functionalities.
 ## Payload
 
 The Orbiter module is a payload-based module, which is capable of parsing cross-chain metadata from
-different sources, executing state transitions, and then forwarding funds to a destination counterparty.
+different sources, executing state transitions, and then forwarding funds to a destination
+counterparty.
 
 The Orbiter payload is defined as a [proto3](https://protobuf.dev/) message in the `./proto` folder.
 This type is composed of two parts:
@@ -114,8 +115,8 @@ Based on the bridge protocol, the following conditions may result from the execu
 
 - Synchronous protocols: Protocols like CCTP and Hyperlane follow a commit-and-forget style. In this
   case, once the associated server informs the Orbiter that the bridge request has been stored to
-  state, the Orbiter execution is complete. Conversely, if the server returns an error, the entire tx
-  will be marked as unsuccessful.
+  state, the Orbiter execution is complete. Conversely, if the server returns an error, the entire
+  tx will be marked as unsuccessful.
 
 - Asynchronous protocol: Protocols like IBC are asynchronous in nature, and for this reason require
   book-keeping of in-flight packets in the module. (TODO how to handle them)
@@ -213,7 +214,7 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
  encCfg := testutil.MakeTestEncodingConfig("noble")
  orbiter.RegisterInterfaces(encCfg.InterfaceRegistry)
  payloadBz, err := types.MarshalJSON(encCfg.Codec, payload)
- payloadStr := str(payloadBz)
+ payloadStr := string(payloadBz)
 ```
 
 8. The payload is now ready to be added in the ICS20 memo field.
