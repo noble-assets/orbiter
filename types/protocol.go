@@ -20,8 +20,28 @@
 
 package types
 
-const ModuleName = "orbiter"
+// NewProtocolID returns a validated protocol ID from an int32. If
+// the validation fails, the returned ID is the default ID.
+func NewProtocolID(id int32) (ProtocolID, error) {
+	protocolId := ProtocolID(id)
+	if err := protocolId.Validate(); err != nil {
+		return PROTOCOL_UNSUPPORTED, err
+	}
+	return protocolId, nil
+}
 
-const (
-	OrbitIDSeparator = ":"
-)
+// Validate returns an error if the ID is not valid.
+func (id ProtocolID) Validate() error {
+	if id == PROTOCOL_UNSUPPORTED {
+		return ErrIdNotSupported.Wrapf("protocol id %s", id.String())
+	}
+	// Check if the protocol ID exists in the proto generated enum map
+	if _, found := ProtocolID_name[int32(id)]; !found {
+		return ErrIdNotSupported.Wrapf("unknown protocol id %d", int32(id))
+	}
+	return nil
+}
+
+func (id ProtocolID) Uint32() uint32 {
+	return uint32(id) //nolint:gosec
+}
