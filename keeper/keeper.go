@@ -32,6 +32,7 @@ import (
 
 	"orbiter.dev/keeper/subkeepers"
 	"orbiter.dev/types"
+	"orbiter.dev/types/interfaces"
 )
 
 // Keeper is the main module keeper.
@@ -43,8 +44,10 @@ type Keeper struct {
 	authority string
 
 	// Subkeepers.
-
-	actionSubKeeper *subkeepers.ActionKeeper
+	actionSubKeeper     interfaces.ActionSubkeeper
+	orbitSubKeeper      interfaces.OrbitSubkeeper
+	dispatcherSubKeeper interfaces.PayloadDispatcher
+	adapterSubKeeper    interfaces.AdapterSubkeeper
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -55,6 +58,7 @@ func NewKeeper(
 	logger log.Logger,
 	storeService store.KVStoreService,
 	authority string,
+	bankKeeper types.BankKeeper,
 ) *Keeper {
 	if err := validateKeeperInputs(cdc, addressCdc, logger, storeService, authority); err != nil {
 		panic(err)
@@ -68,7 +72,7 @@ func NewKeeper(
 		authority: authority,
 	}
 
-	if err := k.setSubKeepers(k.cdc, k.logger, sb); err != nil {
+	if err := k.setSubKeepers(k.cdc, k.logger, sb, bankKeeper); err != nil {
 		panic(err)
 	}
 
@@ -117,13 +121,32 @@ func (k *Keeper) setSubKeepers(
 	cdc codec.Codec,
 	logger log.Logger,
 	sb *collections.SchemaBuilder,
+	bankKeeper types.BankKeeper,
 ) error {
 	actionSK, err := subkeepers.NewActionKeeper(cdc, sb, logger)
 	if err != nil {
-		return fmt.Errorf("error creating a new actions sub-keeper: %w", err)
+		return fmt.Errorf("error creating a new actions subkeeper: %w", err)
+	}
+
+	orbitSK, err := subkeepers.NewOrbitKeeper(cdc, sb, logger, bankKeeper)
+	if err != nil {
+		return fmt.Errorf("error creating a new orbits subkeeper: %w", err)
+	}
+
+	dispatcherSK, err := subkeepers.NewDispatcherKeeper(cdc, sb, logger, orbitSK, actionSK)
+	if err != nil {
+		return fmt.Errorf("error creating a new dispatcher subkeeper: %w", err)
+	}
+
+	adapterSK, err := subkeepers.NewAdapterKeeper(logger, bankKeeper, dispatcherSK)
+	if err != nil {
+		return fmt.Errorf("error creating a new adapters subkeeper: %w", err)
 	}
 
 	k.actionSubKeeper = actionSK
+	k.orbitSubKeeper = orbitSK
+	k.dispatcherSubKeeper = dispatcherSK
+	k.adapterSubKeeper = adapterSK
 
 	return nil
 }
@@ -143,4 +166,8 @@ func (k *Keeper) Validate() error {
 // Authority returns the keeper authority.
 func (k *Keeper) Authority() string {
 	return k.authority
+}
+
+func (k *Keeper) ActionSubKeeper() interfaces.ActionSubkeeper {
+	return k.actionSubKeeper
 }

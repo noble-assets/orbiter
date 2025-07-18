@@ -36,7 +36,7 @@ import (
 
 type ActionControllersRouter = interfaces.Router[types.ActionID, interfaces.ActionController]
 
-var _ interfaces.ActionsSubkeeper = &ActionKeeper{}
+var _ interfaces.ActionSubkeeper = &ActionKeeper{}
 
 type ActionKeeper struct {
 	logger log.Logger

@@ -1,0 +1,346 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright (C) 2025, NASD Inc. All rights reserved.
+// Use of this software is governed by the Business Source License included
+// in the LICENSE file of this repository and at www.mariadb.com/bsl11.
+//
+// ANY USE OF THE LICENSED WORK IN VIOLATION OF THIS LICENSE WILL AUTOMATICALLY
+// TERMINATE YOUR RIGHTS UNDER THIS LICENSE FOR THE CURRENT AND ALL OTHER
+// VERSIONS OF THE LICENSED WORK.
+//
+// THIS LICENSE DOES NOT GRANT YOU ANY RIGHT IN ANY TRADEMARK OR LOGO OF
+// LICENSOR OR ITS AFFILIATES (PROVIDED THAT YOU MAY USE A TRADEMARK OR LOGO OF
+// LICENSOR AS EXPRESSLY REQUIRED BY THIS LICENSE).
+//
+// TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSED WORK IS PROVIDED ON
+// AN "AS IS" BASIS. LICENSOR HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS,
+// EXPRESS OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
+// TITLE.
+
+package subkeepers
+
+import (
+	"context"
+
+	"cosmossdk.io/collections"
+	"cosmossdk.io/collections/indexes"
+	"cosmossdk.io/math"
+
+	"orbiter.dev/types"
+)
+
+type (
+	// DispatchedAmountsKey is defined as:
+	// (source protocol ID, source counterparty ID, destination cross-chain ID, denom).
+	DispatchedAmountsKey = collections.Quad[uint32, string, string, string]
+	// DispatchedCountsKey is defined as:
+	// (source protocol ID, source counterparty ID, destination cross-chain ID).
+	DispatchedCountsKey = collections.Triple[uint32, string, string]
+)
+
+type DispatchedAmountsIndexes struct {
+	// ByDestinationProtocolID keeps track of entries indexes associated
+	// with a single destination protocol ID.
+	ByDestinationProtocolID *indexes.Multi[uint32, DispatchedAmountsKey, types.AmountDispatched]
+	// ByDestinationOrbitID keeps track of entries indexes associated with a tuple:
+	// (destination protocol Id, destination chain Id, denom).
+	ByDestinationOrbitID *indexes.Multi[collections.Triple[uint32, string, string], DispatchedAmountsKey, types.AmountDispatched]
+}
+
+func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmountsIndexes {
+	primaryKeyCodec := collections.QuadKeyCodec(
+		collections.Uint32Key,
+		collections.StringKey,
+		collections.StringKey,
+		collections.StringKey,
+	)
+
+	return DispatchedAmountsIndexes{
+		ByDestinationProtocolID: indexes.NewMulti(
+			sb,
+			types.DispatchedAmountsPrefix_ByDestinationProtocolID,
+			types.DispatchedAmountsName+"_by_destination_protocol_id",
+			collections.Uint32Key,
+			primaryKeyCodec,
+			func(pk DispatchedAmountsKey, value types.AmountDispatched) (uint32, error) {
+				orbitID := types.OrbitID{}
+				if err := orbitID.FromString(pk.K3()); err != nil {
+					return 0, err
+				}
+
+				return orbitID.ProtocolID.Uint32(), nil
+			},
+		),
+		ByDestinationOrbitID: indexes.NewMulti(
+			sb,
+			types.DispatchedAmountsPrefix_ByDestinationOrbitID,
+			types.DispatchedAmountsName+"_by_destination_orbit_id",
+			collections.TripleKeyCodec(
+				collections.Uint32Key,
+				collections.StringKey,
+				collections.StringKey,
+			),
+			primaryKeyCodec,
+			func(pk DispatchedAmountsKey, value types.AmountDispatched) (collections.Triple[uint32, string, string], error) {
+				orbitID := types.OrbitID{}
+				if err := orbitID.FromString(pk.K3()); err != nil {
+					return collections.Triple[uint32, string, string]{}, err
+				}
+				return collections.Join3(
+					orbitID.ProtocolID.Uint32(),
+					orbitID.CounterpartyID,
+					pk.K4(),
+				), nil
+			},
+		),
+	}
+}
+
+type DispatchedCountsIndexes struct {
+	// ByDestinationProtocolID keeps track of entries indexes associated
+	// with a single destination protocol ID.
+	ByDestinationProtocolID *indexes.Multi[uint32, DispatchedCountsKey, uint32]
+}
+
+func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsIndexes {
+	primaryKeyCodec := collections.TripleKeyCodec(
+		collections.Uint32Key,
+		collections.StringKey,
+		collections.StringKey,
+	)
+
+	return DispatchedCountsIndexes{
+		ByDestinationProtocolID: indexes.NewMulti(
+			sb,
+			types.DispatchedCountsPrefix_ByDestinationProtocolID,
+			types.DispatchedCountsName+"_by_destination_protocol_id",
+			collections.Uint32Key,
+			primaryKeyCodec,
+			func(pk DispatchedCountsKey, _ uint32) (uint32, error) {
+				orbitID := types.OrbitID{}
+				if err := orbitID.FromString(pk.K3()); err != nil {
+					return 0, err
+				}
+				return orbitID.ProtocolID.Uint32(), nil
+			},
+		),
+	}
+}
+
+// ====================================================================================================
+// Dispatched
+// ====================================================================================================
+
+func (k *DispatcherKeeper) GetDispatchedAmount(
+	ctx context.Context,
+	sourceInfo types.OrbitID,
+	destinationInfo types.OrbitID,
+	denom string,
+) types.AmountDispatched {
+	destinationId := destinationInfo.ID()
+
+	key := collections.Join4(
+		sourceInfo.ProtocolID.Uint32(),
+		sourceInfo.CounterpartyID,
+		destinationId,
+		denom,
+	)
+
+	amountDispatched, err := k.DispatchedAmounts.Get(ctx, key)
+	if err != nil {
+		amountDispatched = types.AmountDispatched{
+			Incoming: math.ZeroInt(),
+			Outgoing: math.ZeroInt(),
+		}
+	}
+
+	return amountDispatched
+}
+
+func (k *DispatcherKeeper) HasDispatchedAmount(
+	ctx context.Context,
+	sourceInfo types.OrbitID,
+	destinationInfo types.OrbitID,
+	denom string,
+) bool {
+	amountDispatched := k.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	if amountDispatched.Incoming.IsZero() && amountDispatched.Outgoing.IsZero() {
+		return false
+	}
+
+	return true
+}
+
+func (k *DispatcherKeeper) SetDispatchedAmount(
+	ctx context.Context,
+	sourceInfo types.OrbitID,
+	destinationInfo types.OrbitID,
+	denom string,
+	amountDispatched types.AmountDispatched,
+) error {
+	destinationId := destinationInfo.ID()
+
+	key := collections.Join4(
+		sourceInfo.ProtocolID.Uint32(),
+		sourceInfo.CounterpartyID,
+		destinationId,
+		denom,
+	)
+
+	return k.DispatchedAmounts.Set(ctx, key, amountDispatched)
+}
+
+func (k *DispatcherKeeper) GetDispatchedAmountsByProtocolID(
+	ctx context.Context,
+	protocolId types.ProtocolID,
+) types.TotalDispatched {
+	totalDispatched := types.TotalDispatched{
+		ChainAmount: make(map[string]types.ChainAmountDispatched),
+	}
+
+	callback := func(sourceCounterpartyId string, dispatchedInfo types.ChainAmountDispatched) bool {
+		totalDispatched.ChainAmount[sourceCounterpartyId] = dispatchedInfo
+		return false
+	}
+
+	k.IterateDispatchedAmountsByProtocolID(
+		ctx,
+		protocolId,
+		callback,
+	)
+	return totalDispatched
+}
+
+func (k *DispatcherKeeper) IterateDispatchedAmountsByProtocolID(
+	ctx context.Context,
+	protocolId types.ProtocolID,
+	callback func(string, types.ChainAmountDispatched) bool,
+) {
+	prefix := collections.NewPrefixedQuadRange[uint32, string, string, string](
+		protocolId.Uint32(),
+	)
+
+	err := k.DispatchedAmounts.Walk(
+		ctx,
+		prefix,
+		func(key DispatchedAmountsKey, value types.AmountDispatched) (stop bool, err error) {
+			orbitID := types.OrbitID{}
+			if err := orbitID.FromString(key.K3()); err != nil {
+				return true, err
+			}
+			dispatchedInfo := types.NewChainAmountDispatched(orbitID, value)
+			return callback(key.K2(), *dispatchedInfo), nil
+		},
+	)
+	if err != nil {
+		k.logger.Error("error in IterateDispatchedByProtocolID walking Dispatched")
+	}
+}
+
+func (k *DispatcherKeeper) GetDispatchedAmountsByDestinationProtocolID(
+	ctx context.Context,
+	protocolId types.ProtocolID,
+) types.TotalDispatched {
+	totalDispatched := types.TotalDispatched{
+		ChainAmount: make(map[string]types.ChainAmountDispatched),
+	}
+
+	callback := func(sourceCounterpartyId string, dispatchedInfo types.ChainAmountDispatched) bool {
+		totalDispatched.ChainAmount[sourceCounterpartyId] = dispatchedInfo
+		return false
+	}
+
+	k.IterateDispatchedAmountsByDestinationProtocolID(
+		ctx,
+		protocolId,
+		callback,
+	)
+	return totalDispatched
+}
+
+func (k *DispatcherKeeper) IterateDispatchedAmountsByDestinationProtocolID(
+	ctx context.Context,
+	protocolId types.ProtocolID,
+	callback func(string, types.ChainAmountDispatched) bool,
+) {
+	rng := collections.NewPrefixedPairRange[uint32, DispatchedAmountsKey](protocolId.Uint32())
+
+	err := k.DispatchedAmounts.Indexes.ByDestinationProtocolID.Walk(
+		ctx,
+		rng,
+		func(
+			indexingKey uint32,
+			indexedKey DispatchedAmountsKey,
+		) (stop bool, err error) {
+			// Get the actual value from the main collection using the indexed key
+			value, err := k.DispatchedAmounts.Get(ctx, indexedKey)
+			if err != nil {
+				return true, err
+			}
+
+			orbitID := types.OrbitID{}
+			if err := orbitID.FromString(indexedKey.K3()); err != nil {
+				return true, err
+			}
+			dispatchedInfo := types.NewChainAmountDispatched(orbitID, value)
+			return callback(indexedKey.K2(), *dispatchedInfo), nil
+		},
+	)
+	if err != nil {
+		k.logger.Error(
+			"error in IterateDispatchedByDestinationProtocolID walking ByDestinationProtocolID index",
+		)
+	}
+}
+
+// ====================================================================================================
+// DispatchCounts
+// ====================================================================================================
+
+func (k *DispatcherKeeper) GetDispatchedCounts(
+	ctx context.Context,
+	sourceInfo types.OrbitID,
+	destinationInfo types.OrbitID,
+) uint32 {
+	destinationId := destinationInfo.ID()
+
+	key := collections.Join3(
+		sourceInfo.ProtocolID.Uint32(),
+		sourceInfo.CounterpartyID,
+		destinationId,
+	)
+
+	countDispatches, err := k.DispatchCounts.Get(ctx, key)
+	if err != nil {
+		countDispatches = 0
+	}
+
+	return countDispatches
+}
+
+func (k *DispatcherKeeper) HasDispatchedCounts(
+	ctx context.Context,
+	sourceInfo types.OrbitID,
+	destinationInfo types.OrbitID,
+) bool {
+	countDispatches := k.GetDispatchedCounts(ctx, sourceInfo, destinationInfo)
+	return countDispatches != 0
+}
+
+func (k *DispatcherKeeper) SetDispatchedCounts(
+	ctx context.Context,
+	sourceInfo types.OrbitID,
+	destinationInfo types.OrbitID,
+	countDispatches uint32,
+) error {
+	destinationId := destinationInfo.ID()
+
+	key := collections.Join3(
+		sourceInfo.ProtocolID.Uint32(),
+		sourceInfo.CounterpartyID,
+		destinationId,
+	)
+
+	return k.DispatchCounts.Set(ctx, key, countDispatches)
+}

@@ -20,13 +20,42 @@
 
 package types
 
-import "cosmossdk.io/collections"
+import (
+	"fmt"
+
+	"cosmossdk.io/collections"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+)
 
 const ModuleName = "orbiter"
 
 const (
 	SubKeeperPrefix  = "subkeeper"
 	OrbitIDSeparator = ":"
+)
+
+var (
+	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
+
+	DustCollectorName    = fmt.Sprintf("%s/%s", ModuleName, "dust_collector")
+	DustCollectorAddress = authtypes.NewModuleAddress(DustCollectorName)
+)
+
+// ====================================================================================================
+// Orbits
+// ====================================================================================================.
+const (
+	OrbitsKeeperName    = "orbits"
+	OrbitControllerName = "orbit_controller"
+
+	// Maps names.
+	PausedOrbitsName           = "paused_orbits"
+	PausedOrbitControllersName = "paused_orbit_controllers"
+)
+
+var (
+	PausedOrbitPrefix            = collections.NewPrefix(10)
+	PausedOrbitControllersPrefix = collections.NewPrefix(11)
 )
 
 // ====================================================================================================
@@ -47,3 +76,36 @@ const (
 )
 
 var PausedActionControllersPrefix = collections.NewPrefix(20)
+
+// ====================================================================================================
+// Dispatcher
+// ====================================================================================================.
+const (
+	DispatcherKeeperName = "dispatcher"
+
+	// Maps names.
+	DispatchedAmountsName = "dispatched_amounts"
+	DispatchedCountsName  = "dispatched_counts"
+)
+
+var (
+	DispatchedAmountsPrefix                         = collections.NewPrefix(30)
+	DispatchedAmountsPrefix_ByDestinationProtocolID = collections.NewPrefix(31)
+	DispatchedAmountsPrefix_ByDestinationOrbitID    = collections.NewPrefix(32)
+
+	DispatchedCountsPrefix                         = collections.NewPrefix(33)
+	DispatchedCountsPrefix_ByDestinationProtocolID = collections.NewPrefix(34)
+)
+
+// ====================================================================================================
+// Adapters
+// ====================================================================================================.
+const (
+	AdaptersKeeperName = "adapters"
+
+	// CCTPNobleDomain is the identifier of the Noble domain
+	// in the CCTP protocol.
+	CCTPNobleDomain = 4
+)
+
+var OrbiterPrefix = ModuleName
