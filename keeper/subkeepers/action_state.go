@@ -18,32 +18,46 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package subkeepers
 
-import "cosmossdk.io/collections"
+import (
+	"context"
+	"errors"
 
-const ModuleName = "orbiter"
+	"cosmossdk.io/collections"
 
-const (
-	SubKeeperPrefix  = "subkeeper"
-	OrbitIDSeparator = ":"
+	"orbiter.dev/types"
 )
 
-// ====================================================================================================
-// Actions
-// ====================================================================================================.
-const (
-	ActionsKeeperName     = "actions"
-	AdapterControllerName = "adapter_controller"
+func (k *ActionKeeper) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
+	paused, err := k.PausedControllers.Get(ctx, int32(id))
+	// default not paused.
+	if errors.Is(err, collections.ErrNotFound) {
+		return false, nil
+	}
+	return paused, err
+}
 
-	// Maps names.
-	PausedActionControllersName = "paused_action_controllers"
+func (k *ActionKeeper) SetPausedController(ctx context.Context, id types.ActionID) error {
+	paused, err := k.IsControllerPaused(ctx, id)
+	if err != nil {
+		return err
+	}
+	if paused {
+		return nil
+	}
 
-	// Controllers constants.
+	return k.PausedControllers.Set(ctx, int32(id), true)
+}
 
-	// BPSNormalizer is used to normalize the basis points
-	// defined in a fee action execution.
-	BPSNormalizer = 10_000
-)
+func (k *ActionKeeper) SetUnpausedController(ctx context.Context, id types.ActionID) error {
+	paused, err := k.IsControllerPaused(ctx, id)
+	if err != nil {
+		return err
+	}
+	if !paused {
+		return nil
+	}
 
-var PausedActionControllersPrefix = collections.NewPrefix(20)
+	return k.PausedControllers.Set(ctx, int32(id), false)
+}

@@ -30,6 +30,7 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	"orbiter.dev/keeper/subkeepers"
 	"orbiter.dev/types"
 )
 
@@ -40,6 +41,10 @@ type Keeper struct {
 
 	// authority represents the module manager.
 	authority string
+
+	// Subkeepers.
+
+	actionSubKeeper *subkeepers.ActionKeeper
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -61,6 +66,10 @@ func NewKeeper(
 		cdc:       cdc,
 		logger:    logger.With("module", fmt.Sprintf("x/%s", types.ModuleName)),
 		authority: authority,
+	}
+
+	if err := k.setSubKeepers(k.cdc, k.logger, sb); err != nil {
+		panic(err)
 	}
 
 	if _, err := sb.Build(); err != nil {
@@ -99,6 +108,23 @@ func validateKeeperInputs(
 	if err != nil {
 		return errors.New("authority for x/orbiter module is not valid")
 	}
+	return nil
+}
+
+// setSubKeepers registers all required sub-keepers in the
+// orbiter keeper.
+func (k *Keeper) setSubKeepers(
+	cdc codec.Codec,
+	logger log.Logger,
+	sb *collections.SchemaBuilder,
+) error {
+	actionSK, err := subkeepers.NewActionKeeper(cdc, sb, logger)
+	if err != nil {
+		return fmt.Errorf("error creating a new actions sub-keeper: %w", err)
+	}
+
+	k.actionSubKeeper = actionSK
+
 	return nil
 }
 

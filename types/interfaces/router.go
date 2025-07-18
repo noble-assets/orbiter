@@ -18,8 +18,8 @@ type Routable[ID IdentifierConstraint] interface {
 // RouterProvider defines the behavior required from a sub-keeper
 // to manage accesses to a router.
 type RouterProvider[ID IdentifierConstraint, T Routable[ID]] interface {
-	Router() *Router[ID, T]
-	SetRouter(*Router[ID, T])
+	Router() Router[ID, T]
+	SetRouter(Router[ID, T])
 }
 
 type Router[ID IdentifierConstraint, T Routable[ID]] interface {
