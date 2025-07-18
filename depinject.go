@@ -31,6 +31,7 @@ import (
 
 	modulev1 "orbiter.dev/api/module/v1"
 	actionsctrl "orbiter.dev/controllers/actions"
+	adaptersctrl "orbiter.dev/controllers/adapters"
 	"orbiter.dev/keeper"
 	"orbiter.dev/types"
 	"orbiter.dev/types/controllers/actions"
@@ -110,7 +111,7 @@ func InjectOrbitControllers(in ComponentsInputs) {
 }
 
 func InjectActionControllers(in ComponentsInputs) {
-	feeController, err := actionsctrl.NewFeeController(
+	fee, err := actionsctrl.NewFeeController(
 		in.Orbiters.ActionComponent().Logger(),
 		in.BankKeeper,
 	)
@@ -118,11 +119,17 @@ func InjectActionControllers(in ComponentsInputs) {
 		panic("error creating fee controller")
 	}
 
-	in.Orbiters.SetActionControllers(feeController)
+	in.Orbiters.SetActionControllers(fee)
 }
 
 func InjectAdapterControllers(in ComponentsInputs) {
-	var controllers []interfaces.ControllerAdapter
+	ibc, err := adaptersctrl.NewIBCAdapter(
+		in.Orbiters.Codec(),
+		in.Orbiters.AdapterComponent().Logger(),
+	)
+	if err != nil {
+		panic("error creating ibc adapter")
+	}
 
-	in.Orbiters.SetAdapterControllers(controllers...)
+	in.Orbiters.SetAdapterControllers(ibc)
 }
