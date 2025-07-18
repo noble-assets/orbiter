@@ -30,7 +30,9 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	"orbiter.dev/keeper/components"
 	"orbiter.dev/types"
+	"orbiter.dev/types/interfaces"
 )
 
 // Keeper is the main module keeper.
@@ -40,6 +42,12 @@ type Keeper struct {
 
 	// authority represents the module manager.
 	authority string
+
+	// Components.
+	actionComponent     interfaces.ActionComponent
+	orbitComponent      interfaces.OrbitComponent
+	dispatcherComponent interfaces.DispatcherComponent
+	adapterComponent    interfaces.AdapterComponent
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -50,6 +58,7 @@ func NewKeeper(
 	logger log.Logger,
 	storeService store.KVStoreService,
 	authority string,
+	bankKeeper types.BankKeeper,
 ) *Keeper {
 	if err := validateKeeperInputs(cdc, addressCdc, logger, storeService, authority); err != nil {
 		panic(err)
@@ -61,6 +70,10 @@ func NewKeeper(
 		cdc:       cdc,
 		logger:    logger.With("module", fmt.Sprintf("x/%s", types.ModuleName)),
 		authority: authority,
+	}
+
+	if err := k.setComponents(k.cdc, k.logger, sb, bankKeeper); err != nil {
+		panic(err)
 	}
 
 	if _, err := sb.Build(); err != nil {
@@ -83,8 +96,8 @@ func validateKeeperInputs(
 	storeService store.KVStoreService,
 	authority string,
 ) error {
-	if addressCdc == nil {
-		return errors.New("address codec cannot be nil")
+	if cdc == nil {
+		return errors.New("codec cannot be nil")
 	}
 	if logger == nil {
 		return errors.New("logger cannot be nil")
@@ -102,6 +115,42 @@ func validateKeeperInputs(
 	return nil
 }
 
+// setComponents registers all required components in the
+// orbiter keeper.
+func (k *Keeper) setComponents(
+	cdc codec.Codec,
+	logger log.Logger,
+	sb *collections.SchemaBuilder,
+	bankKeeper types.BankKeeper,
+) error {
+	actionComp, err := components.NewActionComponent(cdc, sb, logger)
+	if err != nil {
+		return fmt.Errorf("error creating a new actions component: %w", err)
+	}
+
+	orbitComp, err := components.NewOrbitComponent(cdc, sb, logger, bankKeeper)
+	if err != nil {
+		return fmt.Errorf("error creating a new orbits component: %w", err)
+	}
+
+	dispatcherComp, err := components.NewDispatcherComponent(cdc, sb, logger, orbitComp, actionComp)
+	if err != nil {
+		return fmt.Errorf("error creating a new dispatcher component: %w", err)
+	}
+
+	adapterComp, err := components.NewAdapterComponent(logger, bankKeeper, dispatcherComp)
+	if err != nil {
+		return fmt.Errorf("error creating a new adapters component: %w", err)
+	}
+
+	k.actionComponent = actionComp
+	k.orbitComponent = orbitComp
+	k.dispatcherComponent = dispatcherComp
+	k.adapterComponent = adapterComp
+
+	return nil
+}
+
 // Validate returns an error if any of the keeper fields is not valid.
 func (k *Keeper) Validate() error {
 	if k.logger == nil {
@@ -114,7 +163,66 @@ func (k *Keeper) Validate() error {
 	return nil
 }
 
-// Authority returns the keeper authority.
+func (k *Keeper) Codec() codec.Codec {
+	return k.cdc
+}
+
+func (k *Keeper) Logger() log.Logger {
+	return k.logger
+}
+
 func (k *Keeper) Authority() string {
 	return k.authority
+}
+
+func (k *Keeper) ActionComponent() interfaces.ActionComponent {
+	return k.actionComponent
+}
+
+func (k *Keeper) OrbitComponent() interfaces.OrbitComponent {
+	return k.orbitComponent
+}
+
+func (k *Keeper) DispatcherComponent() interfaces.PayloadDispatcher {
+	return k.dispatcherComponent
+}
+
+func (k *Keeper) AdapterComponent() interfaces.AdapterComponent {
+	return k.adapterComponent
+}
+
+func (k *Keeper) SetOrbitControllers(controllers ...interfaces.ControllerOrbit) {
+	router := k.orbitComponent.Router()
+	for _, c := range controllers {
+		if err := router.AddRoute(c); err != nil {
+			panic(err)
+		}
+	}
+	if err := k.orbitComponent.SetRouter(router); err != nil {
+		panic(err)
+	}
+}
+
+func (k *Keeper) SetActionControllers(controllers ...interfaces.ControllerAction) {
+	router := k.actionComponent.Router()
+	for _, c := range controllers {
+		if err := router.AddRoute(c); err != nil {
+			panic(err)
+		}
+	}
+	if err := k.actionComponent.SetRouter(router); err != nil {
+		panic(err)
+	}
+}
+
+func (k *Keeper) SetAdapterControllers(controllers ...interfaces.ControllerAdapter) {
+	router := k.adapterComponent.Router()
+	for _, c := range controllers {
+		if err := router.AddRoute(c); err != nil {
+			panic(err)
+		}
+	}
+	if err := k.adapterComponent.SetRouter(router); err != nil {
+		panic(err)
+	}
 }

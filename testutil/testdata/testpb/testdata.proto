@@ -1,0 +1,21 @@
+syntax = "proto3";
+package testpb;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "testutil/testdata";
+
+// TestOrbitAttr is a type created to test the proto marshaling/unmarshaling
+// for the orbit attributes.
+message TestOrbitAttr {
+  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.OrbitAttributes";
+  string planet = 1;
+}
+
+// TestActionAttr is a type created to test the proto marshaling/unmarshaling
+// for the action attributes.
+message TestActionAttr {
+  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ActionAttributes";
+  string whatever = 1;
+}

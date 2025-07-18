@@ -23,6 +23,8 @@ package orbiter
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+
+	"orbiter.dev/types"
 )
 
 var amino = codec.NewLegacyAmino()
@@ -37,4 +39,6 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
 // RegisterInterfaces is used to register in the chain codec
 // all interfaces and associated implementations defined in
 // the Orbiter module.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {}
+func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	types.RegisterInterfaces(registry)
+}

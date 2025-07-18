@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package noble.orbiter.v1;
+
+import "amino/amino.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "orbiter.dev/types";
+
+// AmountDispatched represents the incoming and outgoing
+// amount dispatched for a couple of cross-chain identifier
+// (protocol + chain) and for a single coin denomination.
+message AmountDispatched {
+  // incoming represented the total incoming amount dispatched.
+  string incoming = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+
+  // outgoing represents the total outgoing amount dispatched.
+  string outgoing = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}

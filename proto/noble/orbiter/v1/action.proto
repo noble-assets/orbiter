@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package noble.orbiter.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "orbiter.dev/types";
+
+// buf:lint:ignore ENUM_VALUE_PREFIX
+// ActionID identifies the type of action to be performed on a transfer.
+enum ActionID {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // ACTION_UNSUPPORTED represents an unknown or unsupported action type.
+  // This is the default zero value and should not be used in production.
+  ACTION_UNSUPPORTED = 0;
+
+  // ACTION_FEE represents a fee collection action.
+  ACTION_FEE = 1;
+
+  // ACTION_SWAP represents a token swap action.
+  ACTION_SWAP = 2;
+}
+
+// Action represents a pre-processing step to be executed on a transfer
+// before routing to the destination counterparty.
+//
+// Actions contain an ID that specifies the type of action and attributes
+// that provide action-specific configuration. The attributes field uses
+// the Any type to allow for different action implementations while
+// maintaining type safety through interface constraints.
+message Action {
+  // This option is set to avoid the getters generation. This is a security
+  // decision since GetAttributes must be called after unpacking the
+  // interface.
+  option (gogoproto.goproto_getters) = false;
+
+  // id specifies the type of action to be performed.
+  // This determines how the attributes field should be interpreted.
+  ActionID id = 1;
+
+  // attributes contains the action-specific configuration data.
+  // The actual type depends on the action ID and must implement
+  // the `ActionAttributes` interface.
+  google.protobuf.Any attributes = 2 [(cosmos_proto.accepts_interface) = "noble.orbiter.v1.ActionAttributes"];
+}

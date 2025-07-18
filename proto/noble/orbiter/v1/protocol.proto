@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package noble.orbiter.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "orbiter.dev/types";
+
+// buf:lint:ignore ENUM_VALUE_PREFIX
+// ProtocolID represents the cross-chain communication protocols supported by the orbiter.
+enum ProtocolID {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // PROTOCOL_UNSUPPORTED represents an unknown or unsupported protocol type.
+  // This is the default zero value and should not be used in production.
+  PROTOCOL_UNSUPPORTED = 0;
+
+  // PROTOCOL_IBC represents the Inter-Blockchain Communication protocol identifier.
+  PROTOCOL_IBC = 1;
+
+  // PROTOCOL_CCTP represents the Cross-Chain Transmission Protocol identifier.
+  PROTOCOL_CCTP = 2;
+
+  // PROTOCOL_HYPERLANE represents the Hyperlane protocol identifier.
+  PROTOCOL_HYPERLANE = 3;
+}

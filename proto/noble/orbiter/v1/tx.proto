@@ -2,11 +2,142 @@ syntax = "proto3";
 
 package noble.orbiter.v1;
 
+import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "noble/orbiter/v1/action.proto";
+import "noble/orbiter/v1/protocol.proto";
 
 option go_package = "orbiter.dev/types";
 
 // Msg defines the RPC methods for the Orbiter module.
 service Msg {
   option (cosmos.msg.v1.service) = true;
+
+  // Orbits
+
+  // PauseProtocol pauses an entire orbit protocol.
+  rpc PauseProtocol(MsgPauseProtocol) returns (MsgPauseProtocolResponse);
+  // PauseCounterparties pauses specific counterparty pairs for a protocol.
+  rpc PauseCounterparties(MsgPauseCounterparties) returns (MsgPauseCounterpartiesResponse);
+  // UnpauseProtocol resumes an entire orbit protocol.
+  rpc UnpauseProtocol(MsgUnpauseProtocol) returns (MsgUnpauseProtocolResponse);
+  // UnpauseCounterparties resumes specific counterparty pairs for a protocol.
+  rpc UnpauseCounterparties(MsgUnpauseCounterparties) returns (MsgUnpauseCounterpartiesResponse);
+
+  // Actions
+
+  // PauseAction pauses a specific action controller.
+  rpc PauseAction(MsgPauseAction) returns (MsgPauseActionResponse);
+  // UnpauseAction resumes a specific action controller.
+  rpc UnpauseAction(MsgUnpauseAction) returns (MsgUnpauseActionResponse);
 }
+
+// MsgPauseProtocol pauses an entire orbit protocol.
+message MsgPauseProtocol {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "orbiter/PauseProtocol";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address of the signer who is requesting to pause the protocol.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // Bridge protocol to pause.
+  ProtocolID protocol_id = 2;
+}
+
+// MsgPauseProtocolResponse is the response type from a MsgPauseProtocol request.
+message MsgPauseProtocolResponse {}
+
+// MsgPauseCounterparties pauses specific counterparty pairs for a protocol.
+message MsgPauseCounterparties {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "orbiter/PauseCounterparties";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address of the signer who is requesting to pause the counterparty pairs.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // Bridge protocol to pause.
+  ProtocolID protocol_id = 2;
+  // List of identifiers of destinations that must be paused.
+  repeated string counterparty_ids = 3;
+}
+
+// MsgPauseCounterpartiesResponse is the response type
+// from a MsgPauseCounterparties request.
+message MsgPauseCounterpartiesResponse {}
+
+// MsgUnpauseProtocol resumes an entire orbit protocol.
+message MsgUnpauseProtocol {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "orbiter/UnpauseProtocol";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address of the signer who is requesting to unpause the protocol.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // Bridge protocol to unpause.
+  ProtocolID protocol_id = 2;
+}
+
+// MsgUnpauseProtocolResponse is the response type from a MsgUnpauseProtocol request.
+message MsgUnpauseProtocolResponse {}
+
+// MsgUnpauseCounterparties resumes specific counterparty pairs for a protocol.
+message MsgUnpauseCounterparties {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "orbiter/UnpauseCounterparties";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address of the signer who is requesting to unpause the counterparty pairs.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // Bridge protocol to unpause.
+  ProtocolID protocol_id = 2;
+  // List of identifiers of destinations that must be unpaused.
+  repeated string counterparty_ids = 3;
+}
+
+// MsgUnpauseCounterpartiesResponse is the response type
+// from a MsgUnpauseCounterparties request.
+message MsgUnpauseCounterpartiesResponse {}
+
+// MsgPauseAction pauses a specific action controller.
+message MsgPauseAction {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "orbiter/PauseAction";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address of the signer who is requesting to pause the action.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // Action to pause.
+  ActionID action_id = 2;
+}
+
+// MsgPauseActionResponse is the response type from a MsgPauseAction request.
+message MsgPauseActionResponse {}
+
+// MsgUnpauseAction resumes a specific action controller.
+message MsgUnpauseAction {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "orbiter/UnpauseAction";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address of the signer who is requesting to unpause the action.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // Action to unpause.
+  ActionID action_id = 2;
+}
+
+// MsgUnpauseActionResponse is the response type from a MsgUnpauseAction request.
+message MsgUnpauseActionResponse {}

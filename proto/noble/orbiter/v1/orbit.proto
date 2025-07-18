@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package noble.orbiter.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "noble/orbiter/v1/protocol.proto";
+
+option go_package = "orbiter.dev/types";
+
+// Orbit contains the information for a cross-chain routing.
+message Orbit {
+  // This option is set to avoid the risk to call GetAttributes
+  // in the code since it has to be called after unpacking the
+  // interface.
+  option (gogoproto.goproto_getters) = false;
+
+  // protocol_id specifies the bridging protocol type to use
+  // to route incoming funds to a destination chain.
+  ProtocolID protocol_id = 1;
+
+  // attributes contains protocol-specific configuration data.
+  // The actual type depends on the protocol ID and must implement
+  // the `OrbitAttributes` interface.
+  google.protobuf.Any attributes = 2 [(cosmos_proto.accepts_interface) = "noble.orbiter.v1.OrbitAttributes"];
+
+  // passthrough_payload allows to pass additional metadata
+  // to the destination chain. This field is not interpreted by
+  // the orbiter module.
+  bytes passthrough_payload = 3;
+}

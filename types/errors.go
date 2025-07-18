@@ -22,4 +22,11 @@ package types
 
 import "cosmossdk.io/errors"
 
-var ErrUnauthorized = errors.Register(ModuleName, 1, "signer must be the authority")
+var (
+	ErrUnauthorized    = errors.Register(ModuleName, 1, "signer must be the authority")
+	ErrIDNotSupported  = errors.Register(ModuleName, 2, "id is not supported")
+	ErrNilPointer      = errors.Register(ModuleName, 3, "invalid nil pointer")
+	ErrValidation      = errors.Register(ModuleName, 6, "validation failed")
+	ErrUnableToPause   = errors.Register(ModuleName, 8, "unable to pause")
+	ErrUnableToUnpause = errors.Register(ModuleName, 9, "unable to unpause")
+)

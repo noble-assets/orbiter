@@ -6,7 +6,9 @@ package types
 import (
 	fmt "fmt"
 	proto "github.com/cosmos/gogoproto/proto"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,15 +22,558 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// PayloadWrapper defines the expected JSON structure the module expect when receiving
+// the payload from protocols encoding metadata as string. This wrapper is used to
+// easily identify if the metadata containing the payload is correctly defined.
+type PayloadWrapper struct {
+	// orbiter represents the orbiter payload containing cross-chain
+	// routing info and possibly pre routing actions.
+	Orbiter *Payload `protobuf:"bytes,1,opt,name=orbiter,proto3" json:"orbiter,omitempty"`
+}
+
+func (m *PayloadWrapper) Reset()         { *m = PayloadWrapper{} }
+func (m *PayloadWrapper) String() string { return proto.CompactTextString(m) }
+func (*PayloadWrapper) ProtoMessage()    {}
+func (*PayloadWrapper) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a44a39500988b763, []int{0}
+}
+func (m *PayloadWrapper) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PayloadWrapper) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PayloadWrapper.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PayloadWrapper) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PayloadWrapper.Merge(m, src)
+}
+func (m *PayloadWrapper) XXX_Size() int {
+	return m.Size()
+}
+func (m *PayloadWrapper) XXX_DiscardUnknown() {
+	xxx_messageInfo_PayloadWrapper.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PayloadWrapper proto.InternalMessageInfo
+
+func (m *PayloadWrapper) GetOrbiter() *Payload {
+	if m != nil {
+		return m.Orbiter
+	}
+	return nil
+}
+
+// Payload represents the data the x/orbiter module
+// requires to handle cross-chain packets.
+type Payload struct {
+	// pre_actions are a list of actions the orbiter module can interpret
+	// and executes before completing the cross-chain routing.
+	PreActions []*Action `protobuf:"bytes,1,rep,name=pre_actions,json=preActions,proto3" json:"pre_actions,omitempty"`
+	// orbit contains the required information to complete a cross-chain
+	// routing through an orbiter-supported protocol.
+	Orbit *Orbit `protobuf:"bytes,2,opt,name=orbit,proto3" json:"orbit,omitempty"`
+}
+
+func (m *Payload) Reset()         { *m = Payload{} }
+func (m *Payload) String() string { return proto.CompactTextString(m) }
+func (*Payload) ProtoMessage()    {}
+func (*Payload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a44a39500988b763, []int{1}
+}
+func (m *Payload) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Payload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Payload.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Payload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Payload.Merge(m, src)
+}
+func (m *Payload) XXX_Size() int {
+	return m.Size()
+}
+func (m *Payload) XXX_DiscardUnknown() {
+	xxx_messageInfo_Payload.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Payload proto.InternalMessageInfo
+
+func (m *Payload) GetPreActions() []*Action {
+	if m != nil {
+		return m.PreActions
+	}
+	return nil
+}
+
+func (m *Payload) GetOrbit() *Orbit {
+	if m != nil {
+		return m.Orbit
+	}
+	return nil
+}
+
+func init() {
+	proto.RegisterType((*PayloadWrapper)(nil), "noble.orbiter.v1.PayloadWrapper")
+	proto.RegisterType((*Payload)(nil), "noble.orbiter.v1.Payload")
+}
+
 func init() { proto.RegisterFile("noble/orbiter/v1/orbiter.proto", fileDescriptor_a44a39500988b763) }
 
 var fileDescriptor_a44a39500988b763 = []byte{
-	// 104 bytes of a gzipped FileDescriptorProto
+	// 221 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0xcb, 0xcb, 0x4f, 0xca,
 	0x49, 0xd5, 0xcf, 0x2f, 0x4a, 0xca, 0x2c, 0x49, 0x2d, 0xd2, 0x2f, 0x33, 0x84, 0x31, 0xf5, 0x0a,
-	0x8a, 0xf2, 0x4b, 0xf2, 0x85, 0x04, 0xc0, 0xf2, 0x7a, 0x30, 0xc1, 0x32, 0x43, 0x27, 0xed, 0x13,
-	0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc2, 0x63, 0x39, 0x86,
-	0x0b, 0x8f, 0xe5, 0x18, 0x6e, 0x3c, 0x96, 0x63, 0x88, 0x12, 0x84, 0xa9, 0x4a, 0x49, 0x2d, 0xd3,
-	0x2f, 0xa9, 0x2c, 0x48, 0x2d, 0x4e, 0x62, 0x03, 0x9b, 0x62, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff,
-	0xb8, 0x2e, 0x2e, 0xb6, 0x67, 0x00, 0x00, 0x00,
+	0x8a, 0xf2, 0x4b, 0xf2, 0x85, 0x04, 0xc0, 0xf2, 0x7a, 0x30, 0xc1, 0x32, 0x43, 0x29, 0x59, 0x0c,
+	0x1d, 0x89, 0xc9, 0x25, 0x99, 0xf9, 0x79, 0x10, 0x0d, 0x52, 0x32, 0xd8, 0x0d, 0x84, 0xc8, 0x2a,
+	0xb9, 0x72, 0xf1, 0x05, 0x24, 0x56, 0xe6, 0xe4, 0x27, 0xa6, 0x84, 0x17, 0x25, 0x16, 0x14, 0xa4,
+	0x16, 0x09, 0x19, 0x73, 0xb1, 0x43, 0xd5, 0x4a, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x1b, 0x49, 0xea,
+	0xa1, 0x5b, 0xa9, 0x07, 0xd5, 0x12, 0x04, 0x53, 0xa9, 0x54, 0xcc, 0xc5, 0x0e, 0x15, 0x13, 0xb2,
+	0xe4, 0xe2, 0x2e, 0x28, 0x4a, 0x8d, 0x87, 0xb8, 0xa1, 0x58, 0x82, 0x51, 0x81, 0x59, 0x83, 0xdb,
+	0x48, 0x02, 0xd3, 0x0c, 0x47, 0xb0, 0x82, 0x20, 0xae, 0x82, 0xa2, 0x54, 0x08, 0xb3, 0x58, 0x48,
+	0x97, 0x8b, 0x15, 0xac, 0x40, 0x82, 0x09, 0x6c, 0xb1, 0x38, 0xa6, 0x26, 0x7f, 0x10, 0x33, 0x08,
+	0xa2, 0xca, 0x49, 0xfb, 0xc4, 0x23, 0x39, 0xc6, 0x0b, 0x8f, 0xe4, 0x18, 0x1f, 0x3c, 0x92, 0x63,
+	0x9c, 0xf0, 0x58, 0x8e, 0xe1, 0xc2, 0x63, 0x39, 0x86, 0x1b, 0x8f, 0xe5, 0x18, 0xa2, 0x04, 0x61,
+	0x5a, 0x52, 0x52, 0xcb, 0xf4, 0x4b, 0x2a, 0x0b, 0x52, 0x8b, 0x93, 0xd8, 0xc0, 0xfe, 0x35, 0x06,
+	0x04, 0x00, 0x00, 0xff, 0xff, 0xa6, 0x88, 0xf4, 0x4f, 0x60, 0x01, 0x00, 0x00,
 }
+
+func (m *PayloadWrapper) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PayloadWrapper) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PayloadWrapper) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Orbiter != nil {
+		{
+			size, err := m.Orbiter.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOrbiter(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Payload) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Payload) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Payload) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Orbit != nil {
+		{
+			size, err := m.Orbit.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOrbiter(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.PreActions) > 0 {
+		for iNdEx := len(m.PreActions) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PreActions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOrbiter(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintOrbiter(dAtA []byte, offset int, v uint64) int {
+	offset -= sovOrbiter(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *PayloadWrapper) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Orbiter != nil {
+		l = m.Orbiter.Size()
+		n += 1 + l + sovOrbiter(uint64(l))
+	}
+	return n
+}
+
+func (m *Payload) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.PreActions) > 0 {
+		for _, e := range m.PreActions {
+			l = e.Size()
+			n += 1 + l + sovOrbiter(uint64(l))
+		}
+	}
+	if m.Orbit != nil {
+		l = m.Orbit.Size()
+		n += 1 + l + sovOrbiter(uint64(l))
+	}
+	return n
+}
+
+func sovOrbiter(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozOrbiter(x uint64) (n int) {
+	return sovOrbiter(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *PayloadWrapper) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOrbiter
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PayloadWrapper: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PayloadWrapper: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Orbiter", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOrbiter
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOrbiter
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOrbiter
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Orbiter == nil {
+				m.Orbiter = &Payload{}
+			}
+			if err := m.Orbiter.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOrbiter(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthOrbiter
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Payload) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOrbiter
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Payload: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Payload: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PreActions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOrbiter
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOrbiter
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOrbiter
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PreActions = append(m.PreActions, &Action{})
+			if err := m.PreActions[len(m.PreActions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Orbit", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOrbiter
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOrbiter
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOrbiter
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Orbit == nil {
+				m.Orbit = &Orbit{}
+			}
+			if err := m.Orbit.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOrbiter(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthOrbiter
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipOrbiter(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowOrbiter
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowOrbiter
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowOrbiter
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthOrbiter
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupOrbiter
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthOrbiter
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthOrbiter        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowOrbiter          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupOrbiter = fmt.Errorf("proto: unexpected end of group")
+)
