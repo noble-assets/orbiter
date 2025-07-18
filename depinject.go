@@ -30,8 +30,10 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	modulev1 "orbiter.dev/api/module/v1"
+	actionsctrl "orbiter.dev/controllers/actions"
 	"orbiter.dev/keeper"
 	"orbiter.dev/types"
+	"orbiter.dev/types/controllers/actions"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -85,8 +87,14 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	}
 }
 
+type ComponentsBankKeeper interface {
+	actions.BankKeeper
+}
+
 type ComponentsInputs struct {
 	Orbiters *keeper.Keeper
+
+	BankKeeper ComponentsBankKeeper
 }
 
 func InjectComponents(in ComponentsInputs) {
@@ -102,9 +110,15 @@ func InjectOrbitControllers(in ComponentsInputs) {
 }
 
 func InjectActionControllers(in ComponentsInputs) {
-	var controllers []interfaces.ControllerAction
+	feeController, err := actionsctrl.NewFeeController(
+		in.Orbiters.ActionComponent().Logger(),
+		in.BankKeeper,
+	)
+	if err != nil {
+		panic("error creating fee controller")
+	}
 
-	in.Orbiters.SetActionControllers(controllers...)
+	in.Orbiters.SetActionControllers(feeController)
 }
 
 func InjectAdapterControllers(in ComponentsInputs) {
