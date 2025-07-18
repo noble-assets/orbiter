@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package noble.orbiter.v1;
+
+option go_package = "orbiter.dev/types";
+
+// GenesisState represents the genesis state for the Orbiter module.
+message GenesisState {}

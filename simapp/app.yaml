@@ -1,0 +1,79 @@
+modules:
+  - name: runtime
+    config:
+      '@type': cosmos.app.runtime.v1alpha1.Module
+      app_name: SimApp
+      pre_blockers: [upgrade]
+      begin_blockers: [capability, staking, ibc]
+      end_blockers: [staking]
+      init_genesis:
+        [
+          capability,
+          transfer,
+          auth,
+          bank,
+          staking,
+          fiat-tokenfactory,
+          genutil,
+          ibc,
+          params,
+          upgrade,
+          cctp,
+          orbiter,
+        ]
+      override_store_keys:
+        - module_name: auth
+          kv_store_key: acc
+        - module_name: fiat-tokenfactory
+          kv_store_key: fiattokenfactory
+  - name: auth
+    config:
+      '@type': cosmos.auth.module.v1.Module
+      bech32_prefix: noble
+      module_account_permissions:
+        - account: fee_collector
+        - account: bonded_tokens_pool
+          permissions: [burner, staking]
+        - account: not_bonded_tokens_pool
+          permissions: [burner, staking]
+        - account: transfer
+          permissions: [burner, minter]
+        - account: fiat-tokenfactory
+          permissions: [burner, minter]
+        - account: cctp
+        - account: orbiter
+  - name: bank
+    config:
+      '@type': cosmos.bank.module.v1.Module
+      blocked_module_accounts_override:
+        [auth, bonded_tokens_pool, not_bonded_tokens_pool]
+  - name: consensus
+    config:
+      '@type': cosmos.consensus.module.v1.Module
+  - name: genutil
+    config:
+      '@type': cosmos.genutil.module.v1.Module
+  - name: params
+    config:
+      '@type': cosmos.params.module.v1.Module
+  - name: staking
+    config:
+      '@type': cosmos.staking.module.v1.Module
+  - name: tx
+    config:
+      '@type': cosmos.tx.config.v1.Config
+  - name: upgrade
+    config:
+      '@type': cosmos.upgrade.module.v1.Module
+  - name: fiat-tokenfactory
+    config:
+      '@type': circle.fiattokenfactory.module.v1.Module
+  - name: cctp
+    config:
+      '@type': circle.cctp.module.v1.Module
+  - name: orbiter
+    config:
+      '@type': noble.orbiter.module.v1.Module
+      # NOTE: This is a dummy account used for local testing.
+      # occur subway woman achieve deputy rapid museum point usual appear oil blue rate title claw debate flag gallery level object baby winner erase carbon
+      authority: noble1zw7vatnx0vla7gzxucgypz0kfr6965akpvzw69

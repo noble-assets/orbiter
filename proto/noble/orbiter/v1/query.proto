@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package noble.orbiter.v1;
+
+option go_package = "orbiter.dev/types";
+
+// Query defines the gRPC query service for the Orbiter module.
+service Query {}
