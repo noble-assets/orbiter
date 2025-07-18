@@ -9,7 +9,6 @@ import "noble/orbiter/v1/protocol.proto";
 
 option go_package = "orbiter.dev/types";
 
-
 // Orbit contains the information for a cross-chain routing.
 message Orbit {
   // This option is set to avoid the risk to call GetAttributes

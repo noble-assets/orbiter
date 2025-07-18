@@ -32,6 +32,7 @@ import (
 	modulev1 "orbiter.dev/api/module/v1"
 	"orbiter.dev/keeper"
 	"orbiter.dev/types"
+	"orbiter.dev/types/interfaces"
 )
 
 func init() {
@@ -82,4 +83,32 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		Keeper: k,
 		Module: m,
 	}
+}
+
+type ComponentsInputs struct {
+	Orbiters *keeper.Keeper
+}
+
+func InjectComponents(in ComponentsInputs) {
+	InjectActionControllers(in)
+	InjectOrbitControllers(in)
+	InjectAdapterControllers(in)
+}
+
+func InjectOrbitControllers(in ComponentsInputs) {
+	var controllers []interfaces.OrbitController
+
+	in.Orbiters.SetOrbitControllers(controllers...)
+}
+
+func InjectActionControllers(in ComponentsInputs) {
+	var controllers []interfaces.ActionController
+
+	in.Orbiters.SetActionControllers(controllers...)
+}
+
+func InjectAdapterControllers(in ComponentsInputs) {
+	var controllers []interfaces.AdapterController
+
+	in.Orbiters.SetAdapterControllers(controllers...)
 }

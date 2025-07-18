@@ -11,4 +11,3 @@ message Module {
   // authority defines the orbiter module authority.
   string authority = 1;
 }
-

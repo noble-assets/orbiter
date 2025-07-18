@@ -23,6 +23,9 @@ package orbiter
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"orbiter.dev/types"
 )
 
 var amino = codec.NewLegacyAmino()
@@ -37,4 +40,23 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
 // RegisterInterfaces is used to register in the chain codec
 // all interfaces and associated implementations defined in
 // the Orbiter module.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {}
+func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&types.MsgPauseProtocol{},
+		&types.MsgPauseCounterparties{},
+		&types.MsgUnpauseProtocol{},
+		&types.MsgUnpauseCounterparties{},
+		&types.MsgPauseAction{},
+		&types.MsgUnpauseAction{},
+	)
+
+	registry.RegisterInterface(
+		"noble.orbiter.v1.OrbitAttributes",
+		(*types.OrbitAttributes)(nil),
+	)
+
+	registry.RegisterInterface(
+		"noble.orbiter.v1.ActionAttributes",
+		(*types.ActionAttributes)(nil),
+	)
+}
