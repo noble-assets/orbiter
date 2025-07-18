@@ -2,4 +2,28 @@ syntax = "proto3";
 
 package noble.orbiter.v1;
 
+import "noble/orbiter/v1/action.proto";
+import "noble/orbiter/v1/orbit.proto";
+
 option go_package = "orbiter.dev/types";
+
+// PayloadWrapper defines the expected JSON structure the module expect when receiving
+// the payload from protocols encoding metadata as string. This wrapper is used to
+// easily identify if the metadata containing the payload is correctly defined.
+message PayloadWrapper {
+  // orbiter represents the orbiter payload containing cross-chain
+  // routing info and possibly pre routing actions.
+  Payload orbiter = 1;
+}
+
+// Payload represents the data the x/orbiter module
+// requires to handle cross-chain packets.
+message Payload {
+  // pre_actions are a list of actions the orbiter module can interpret
+  // and executes before completing the cross-chain routing.
+  repeated Action pre_actions = 1;
+
+  // orbit contains the required information to complete a cross-chain
+  // routing through an orbiter-supported protocol.
+  Orbit orbit = 2;
+}
