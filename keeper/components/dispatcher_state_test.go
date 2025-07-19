@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers_test
+package components_test
 
 import (
 	"testing"
@@ -28,16 +28,16 @@ import (
 	"cosmossdk.io/collections"
 	"cosmossdk.io/math"
 
-	"orbiter.dev/keeper/subkeepers"
+	"orbiter.dev/keeper/components"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/types"
 )
 
-func newDispatcherKeeper(t testing.TB) (*subkeepers.DispatcherKeeper, *mocks.Dependencies) {
+func newDispatcherKeeper(t testing.TB) (*components.DispatcherComponent, *mocks.Dependencies) {
 	deps := mocks.NewDependencies(t)
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
-	dispatcher, err := subkeepers.NewDispatcherKeeper(
+	dispatcher, err := components.NewDispatcherComponent(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,

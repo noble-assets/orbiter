@@ -30,7 +30,7 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/keeper/subkeepers"
+	"orbiter.dev/keeper/components"
 	"orbiter.dev/types"
 	"orbiter.dev/types/interfaces"
 )
@@ -43,11 +43,11 @@ type Keeper struct {
 	// authority represents the module manager.
 	authority string
 
-	// Subkeepers.
-	actionSubKeeper     interfaces.ActionSubkeeper
-	orbitSubKeeper      interfaces.OrbitSubkeeper
-	dispatcherSubKeeper interfaces.PayloadDispatcher
-	adapterSubKeeper    interfaces.AdapterSubkeeper
+	// Components.
+	actionComponent     interfaces.ActionComponent
+	orbitComponent      interfaces.OrbitComponent
+	dispatcherComponent interfaces.DispatcherComponent
+	adapterComponent    interfaces.AdapterComponent
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -72,7 +72,7 @@ func NewKeeper(
 		authority: authority,
 	}
 
-	if err := k.setSubKeepers(k.cdc, k.logger, sb, bankKeeper); err != nil {
+	if err := k.setComponents(k.cdc, k.logger, sb, bankKeeper); err != nil {
 		panic(err)
 	}
 
@@ -115,38 +115,38 @@ func validateKeeperInputs(
 	return nil
 }
 
-// setSubKeepers registers all required sub-keepers in the
+// setComponents registers all required components in the
 // orbiter keeper.
-func (k *Keeper) setSubKeepers(
+func (k *Keeper) setComponents(
 	cdc codec.Codec,
 	logger log.Logger,
 	sb *collections.SchemaBuilder,
 	bankKeeper types.BankKeeper,
 ) error {
-	actionSK, err := subkeepers.NewActionKeeper(cdc, sb, logger)
+	actionComp, err := components.NewActionComponent(cdc, sb, logger)
 	if err != nil {
-		return fmt.Errorf("error creating a new actions subkeeper: %w", err)
+		return fmt.Errorf("error creating a new actions component: %w", err)
 	}
 
-	orbitSK, err := subkeepers.NewOrbitKeeper(cdc, sb, logger, bankKeeper)
+	orbitComp, err := components.NewOrbitComponent(cdc, sb, logger, bankKeeper)
 	if err != nil {
-		return fmt.Errorf("error creating a new orbits subkeeper: %w", err)
+		return fmt.Errorf("error creating a new orbits component: %w", err)
 	}
 
-	dispatcherSK, err := subkeepers.NewDispatcherKeeper(cdc, sb, logger, orbitSK, actionSK)
+	dispatcherComp, err := components.NewDispatcherComponent(cdc, sb, logger, orbitComp, actionComp)
 	if err != nil {
-		return fmt.Errorf("error creating a new dispatcher subkeeper: %w", err)
+		return fmt.Errorf("error creating a new dispatcher component: %w", err)
 	}
 
-	adapterSK, err := subkeepers.NewAdapterKeeper(logger, bankKeeper, dispatcherSK)
+	adapterComp, err := components.NewAdapterComponent(logger, bankKeeper, dispatcherComp)
 	if err != nil {
-		return fmt.Errorf("error creating a new adapters subkeeper: %w", err)
+		return fmt.Errorf("error creating a new adapters component: %w", err)
 	}
 
-	k.actionSubKeeper = actionSK
-	k.orbitSubKeeper = orbitSK
-	k.dispatcherSubKeeper = dispatcherSK
-	k.adapterSubKeeper = adapterSK
+	k.actionComponent = actionComp
+	k.orbitComponent = orbitComp
+	k.dispatcherComponent = dispatcherComp
+	k.adapterComponent = adapterComp
 
 	return nil
 }
@@ -175,42 +175,42 @@ func (k *Keeper) Authority() string {
 	return k.authority
 }
 
-func (k *Keeper) ActionSubKeeper() interfaces.ActionSubkeeper {
-	return k.actionSubKeeper
+func (k *Keeper) ActionComponent() interfaces.ActionComponent {
+	return k.actionComponent
 }
 
-func (k *Keeper) OrbitSubKeeper() interfaces.OrbitSubkeeper {
-	return k.orbitSubKeeper
+func (k *Keeper) OrbitComponent() interfaces.OrbitComponent {
+	return k.orbitComponent
 }
 
-func (k *Keeper) Dispatcher() interfaces.PayloadDispatcher {
-	return k.dispatcherSubKeeper
+func (k *Keeper) DispatcherComponent() interfaces.PayloadDispatcher {
+	return k.dispatcherComponent
 }
 
-func (k *Keeper) AdapterSubKeeper() interfaces.AdapterSubkeeper {
-	return k.adapterSubKeeper
+func (k *Keeper) AdapterComponent() interfaces.AdapterComponent {
+	return k.adapterComponent
 }
 
 func (k *Keeper) SetOrbitControllers(controllers ...interfaces.OrbitController) {
-	router := k.orbitSubKeeper.Router()
+	router := k.orbitComponent.Router()
 	for _, c := range controllers {
 		router.AddRoute(c)
 	}
-	k.orbitSubKeeper.SetRouter(router)
+	k.orbitComponent.SetRouter(router)
 }
 
 func (k *Keeper) SetActionControllers(controllers ...interfaces.ActionController) {
-	router := k.actionSubKeeper.Router()
+	router := k.actionComponent.Router()
 	for _, c := range controllers {
 		router.AddRoute(c)
 	}
-	k.actionSubKeeper.SetRouter(router)
+	k.actionComponent.SetRouter(router)
 }
 
 func (k *Keeper) SetAdapterControllers(controllers ...interfaces.AdapterController) {
-	router := k.adapterSubKeeper.Router()
+	router := k.adapterComponent.Router()
 	for _, a := range controllers {
 		router.AddRoute(a)
 	}
-	k.adapterSubKeeper.SetRouter(router)
+	k.adapterComponent.SetRouter(router)
 }

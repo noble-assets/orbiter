@@ -28,9 +28,9 @@ import (
 	"orbiter.dev/types"
 )
 
-// OrbitSubkeeper defines the behavior the Orbiter module
-// expected from a type to act as an orbits subkeeper.
-type OrbitSubkeeper interface {
+// OrbitComponent defines the behavior the Orbiter module
+// expected from a type to act as an orbits component.
+type OrbitComponent interface {
 	Logger() log.Logger
 	PacketHandler[*types.OrbitPacket]
 	RouterProvider[types.ProtocolID, OrbitController]
@@ -38,9 +38,9 @@ type OrbitSubkeeper interface {
 	Unpause(context.Context, types.ProtocolID, []string) error
 }
 
-// ActionSubkeeper defines the behavior the Orbiter module
-// expected from a type to act as an actions subkeeper.
-type ActionSubkeeper interface {
+// ActionComponent defines the behavior the Orbiter module
+// expected from a type to act as an actions component.
+type ActionComponent interface {
 	Logger() log.Logger
 	PacketHandler[*types.ActionPacket]
 	RouterProvider[types.ActionID, ActionController]
@@ -48,9 +48,16 @@ type ActionSubkeeper interface {
 	Unpause(context.Context, types.ActionID) error
 }
 
-// AdapterSubkeeper defines the behavior the Orbiter module
-// expected from a type to act as a cross-chain adapter subkeeper.
-type AdapterSubkeeper interface {
+// DispatcherComponent defines the behavior the Orbiter module
+// expected from a type to act as a dispatcher.
+type DispatcherComponent interface {
+	Logger() log.Logger
+	PayloadDispatcher
+}
+
+// AdapterComponent defines the behavior the Orbiter module
+// expected from a type to act as a cross-chain adapter.
+type AdapterComponent interface {
 	Logger() log.Logger
 	PayloadAdapter
 	RouterProvider[types.ProtocolID, AdapterController]

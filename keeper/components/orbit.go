@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers
+package components
 
 import (
 	"context"
@@ -29,21 +29,21 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/controllers"
 	"orbiter.dev/types"
 	"orbiter.dev/types/interfaces"
+	router "orbiter.dev/types/router"
 )
 
-type OrbitControllersRouter = interfaces.Router[types.ProtocolID, interfaces.OrbitController]
+type OrbitRouter = interfaces.Router[types.ProtocolID, interfaces.OrbitController]
 
-var _ interfaces.OrbitSubkeeper = &OrbitKeeper{}
+var _ interfaces.OrbitComponent = &OrbitComponent{}
 
-type OrbitKeeper struct {
+type OrbitComponent struct {
 	logger log.Logger
 
-	bankKeeper types.BankKeeperOrbits
+	bankKeeper types.BankKeeperOrbit
 
-	controllersRouter OrbitControllersRouter
+	router OrbitRouter
 
 	// PausedOrbits maps a protocol id and counterparty id to a boolean indicating
 	// whether the orbit is paused or not.
@@ -53,21 +53,21 @@ type OrbitKeeper struct {
 	PausedControllers collections.Map[int32, bool]
 }
 
-func NewOrbitKeeper(
+func NewOrbitComponent(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-	bankKeeper types.BankKeeperOrbits,
-) (*OrbitKeeper, error) {
+	bankKeeper types.BankKeeperOrbit,
+) (*OrbitComponent, error) {
 	if logger == nil {
 		return nil, errors.New("logger cannot be nil")
 	}
 
-	orbitsKeeper := OrbitKeeper{
-		logger:     logger.With(types.SubKeeperPrefix, types.OrbitsKeeperName),
+	orbitsKeeper := OrbitComponent{
+		logger:     logger.With(types.ComponentPrefix, types.OrbitsKeeperName),
 		bankKeeper: bankKeeper,
 
-		controllersRouter: controllers.NewRouter[types.ProtocolID, interfaces.OrbitController](),
+		router: router.New[types.ProtocolID, interfaces.OrbitController](),
 
 		PausedOrbits: collections.NewMap(
 			sb,
@@ -88,42 +88,42 @@ func NewOrbitKeeper(
 	return &orbitsKeeper, orbitsKeeper.Validate()
 }
 
-func (k *OrbitKeeper) Validate() error {
+func (k *OrbitComponent) Validate() error {
 	if k.logger == nil {
 		return errors.New("logger cannot be nil")
 	}
 	if k.bankKeeper == nil {
 		return errors.New("bank keeper cannot be nil")
 	}
-	if k.controllersRouter == nil {
+	if k.router == nil {
 		return errors.New("controllers router cannot be nil")
 	}
 	return nil
 }
 
-func (k *OrbitKeeper) Logger() log.Logger {
+func (k *OrbitComponent) Logger() log.Logger {
 	return k.logger
 }
 
-func (k *OrbitKeeper) Router() OrbitControllersRouter {
-	return k.controllersRouter
+func (k *OrbitComponent) Router() OrbitRouter {
+	return k.router
 }
 
-func (k *OrbitKeeper) SetRouter(ocr OrbitControllersRouter) {
-	if k.controllersRouter != nil && k.controllersRouter.Sealed() {
+func (k *OrbitComponent) SetRouter(ocr OrbitRouter) {
+	if k.router != nil && k.router.Sealed() {
 		panic(errors.New("cannot reset a sealed controller router"))
 	}
 
-	k.controllersRouter = ocr
-	k.controllersRouter.Seal()
+	k.router = ocr
+	k.router.Seal()
 }
 
-func (k *OrbitKeeper) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
+func (k *OrbitComponent) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
 	if err := k.ValidatePacket(ctx, packet); err != nil {
 		return err
 	}
 
-	c, found := k.controllersRouter.Route(packet.Orbit.ProtocolID())
+	c, found := k.router.Route(packet.Orbit.ProtocolID())
 	if !found {
 		return errors.New("controller is not registered")
 	}
@@ -131,7 +131,7 @@ func (k *OrbitKeeper) HandlePacket(ctx context.Context, packet *types.OrbitPacke
 	return c.HandlePacket(ctx, packet)
 }
 
-func (k *OrbitKeeper) ValidatePacket(ctx context.Context, packet *types.OrbitPacket) error {
+func (k *OrbitComponent) ValidatePacket(ctx context.Context, packet *types.OrbitPacket) error {
 	err := packet.Validate()
 	if err != nil {
 		return err
@@ -150,7 +150,7 @@ func (k *OrbitKeeper) ValidatePacket(ctx context.Context, packet *types.OrbitPac
 	return k.validateInitialConditions(ctx, packet)
 }
 
-func (k *OrbitKeeper) ValidateOrbit(
+func (k *OrbitComponent) ValidateOrbit(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
@@ -161,7 +161,7 @@ func (k *OrbitKeeper) ValidateOrbit(
 	return k.validateOrbit(ctx, protocolID, counterpartyID)
 }
 
-func (k *OrbitKeeper) validateController(
+func (k *OrbitComponent) validateController(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -176,23 +176,15 @@ func (k *OrbitKeeper) validateController(
 	return nil
 }
 
-func (k *OrbitKeeper) validateOrbit(
+func (k *OrbitComponent) validateOrbit(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) error {
-	isPaused, err := k.IsOrbitPaused(ctx, protocolID, counterpartyID)
-	if err != nil {
-		return err
-	}
-	if isPaused {
-		return errors.New("orbit is paused")
-	}
-
 	return nil
 }
 
-func (k *OrbitKeeper) validateInitialConditions(
+func (k *OrbitComponent) validateInitialConditions(
 	ctx context.Context,
 	packet *types.OrbitPacket,
 ) error {
@@ -212,7 +204,7 @@ func (k *OrbitKeeper) validateInitialConditions(
 	return nil
 }
 
-func (k *OrbitKeeper) Pause(
+func (k *OrbitComponent) Pause(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
@@ -224,7 +216,7 @@ func (k *OrbitKeeper) Pause(
 	}
 }
 
-func (k *OrbitKeeper) Unpause(
+func (k *OrbitComponent) Unpause(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
@@ -236,7 +228,7 @@ func (k *OrbitKeeper) Unpause(
 	}
 }
 
-func (k *OrbitKeeper) pauseProtocol(
+func (k *OrbitComponent) pauseProtocol(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -250,7 +242,7 @@ func (k *OrbitKeeper) pauseProtocol(
 	return nil
 }
 
-func (k *OrbitKeeper) pauseProtocolDestinations(
+func (k *OrbitComponent) pauseProtocolDestinations(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
@@ -268,7 +260,7 @@ func (k *OrbitKeeper) pauseProtocolDestinations(
 	return nil
 }
 
-func (k *OrbitKeeper) unpauseProtocol(
+func (k *OrbitComponent) unpauseProtocol(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -282,7 +274,7 @@ func (k *OrbitKeeper) unpauseProtocol(
 	return nil
 }
 
-func (k *OrbitKeeper) unpauseProtocolDestinations(
+func (k *OrbitComponent) unpauseProtocolDestinations(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,

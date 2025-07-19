@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers_test
+package components_test
 
 import (
 	"testing"
@@ -29,7 +29,7 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/keeper/subkeepers"
+	"orbiter.dev/keeper/components"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/types"
 	"orbiter.dev/types/interfaces"
@@ -59,7 +59,7 @@ func TestNewDispatcherKeeper(t *testing.T) {
 
 	for _, tc := range testCases {
 		sb := collections.NewSchemaBuilder(deps.StoreService)
-		_, err := subkeepers.NewDispatcherKeeper(
+		_, err := components.NewDispatcherComponent(
 			tc.codec,
 			sb,
 			tc.logger,
@@ -109,9 +109,9 @@ func TestDispatcherKeeper_Validate(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		dispatcher := subkeepers.DispatcherKeeper{
-			OrbitsHandler:  tc.OrbitsHandler,
-			ActionsHandler: tc.ActionsHandler,
+		dispatcher := components.DispatcherComponent{
+			OrbitHandler:  tc.OrbitsHandler,
+			ActionHandler: tc.ActionsHandler,
 		}
 		err := dispatcher.Validate()
 

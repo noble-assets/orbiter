@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers
+package components
 
 import (
 	"context"
@@ -31,7 +31,7 @@ import (
 
 // updateStats updates all the statistics the module keep track of.
 // CONTRACT: transferAttr and orbit are not nil pointers.
-func (d *DispatcherKeeper) updateStats(
+func (d *DispatcherComponent) updateStats(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	orbit *types.Orbit,
@@ -84,7 +84,7 @@ func (d *DispatcherKeeper) updateStats(
 // It is important to keep track of incoming and outgoing
 // information because fees, swaps, or other actions can change
 // the coins delivered to the destination chain.
-func (d *DispatcherKeeper) updateDispatchedAmountStats(
+func (d *DispatcherComponent) updateDispatchedAmountStats(
 	ctx context.Context,
 	sourceInfo *types.OrbitID,
 	destinationInfo *types.OrbitID,
@@ -116,7 +116,7 @@ func (d *DispatcherKeeper) updateDispatchedAmountStats(
 
 // updateDispatchedCountsStats updates the counter of the
 // number of dispatches executed.
-func (d *DispatcherKeeper) updateDispatchedCountsStats(
+func (d *DispatcherComponent) updateDispatchedCountsStats(
 	ctx context.Context,
 	sourceInfo *types.OrbitID,
 	destinationInfo *types.OrbitID,
@@ -150,7 +150,7 @@ type denomDispatchedAmount struct {
 
 // buildDenomDispatchedAmounts is an helper method used to
 // extract the amounts dispatched that have to be dumped to state.
-func (d *DispatcherKeeper) buildDenomDispatchedAmounts(
+func (d *DispatcherComponent) buildDenomDispatchedAmounts(
 	transferAttributes *types.TransferAttributes,
 ) []denomDispatchedAmount {
 	sourceDenom := transferAttributes.SourceDenom()

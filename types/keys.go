@@ -30,7 +30,7 @@ import (
 const ModuleName = "orbiter"
 
 const (
-	SubKeeperPrefix  = "subkeeper"
+	ComponentPrefix  = "component"
 	OrbitIDSeparator = ":"
 )
 
@@ -81,7 +81,7 @@ var PausedActionControllersPrefix = collections.NewPrefix(20)
 // Dispatcher
 // ====================================================================================================.
 const (
-	DispatcherKeeperName = "dispatcher"
+	DispatcherComponentName = "dispatcher"
 
 	// Maps names.
 	DispatchedAmountsName = "dispatched_amounts"

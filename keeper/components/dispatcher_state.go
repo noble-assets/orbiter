@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers
+package components
 
 import (
 	"context"
@@ -132,7 +132,7 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 // Dispatched
 // ====================================================================================================
 
-func (k *DispatcherKeeper) GetDispatchedAmount(
+func (k *DispatcherComponent) GetDispatchedAmount(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
@@ -158,7 +158,7 @@ func (k *DispatcherKeeper) GetDispatchedAmount(
 	return amountDispatched
 }
 
-func (k *DispatcherKeeper) HasDispatchedAmount(
+func (k *DispatcherComponent) HasDispatchedAmount(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
@@ -172,7 +172,7 @@ func (k *DispatcherKeeper) HasDispatchedAmount(
 	return true
 }
 
-func (k *DispatcherKeeper) SetDispatchedAmount(
+func (k *DispatcherComponent) SetDispatchedAmount(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
@@ -191,7 +191,7 @@ func (k *DispatcherKeeper) SetDispatchedAmount(
 	return k.DispatchedAmounts.Set(ctx, key, amountDispatched)
 }
 
-func (k *DispatcherKeeper) GetDispatchedAmountsByProtocolID(
+func (k *DispatcherComponent) GetDispatchedAmountsByProtocolID(
 	ctx context.Context,
 	protocolId types.ProtocolID,
 ) types.TotalDispatched {
@@ -212,7 +212,7 @@ func (k *DispatcherKeeper) GetDispatchedAmountsByProtocolID(
 	return totalDispatched
 }
 
-func (k *DispatcherKeeper) IterateDispatchedAmountsByProtocolID(
+func (k *DispatcherComponent) IterateDispatchedAmountsByProtocolID(
 	ctx context.Context,
 	protocolId types.ProtocolID,
 	callback func(string, types.ChainAmountDispatched) bool,
@@ -238,7 +238,7 @@ func (k *DispatcherKeeper) IterateDispatchedAmountsByProtocolID(
 	}
 }
 
-func (k *DispatcherKeeper) GetDispatchedAmountsByDestinationProtocolID(
+func (k *DispatcherComponent) GetDispatchedAmountsByDestinationProtocolID(
 	ctx context.Context,
 	protocolId types.ProtocolID,
 ) types.TotalDispatched {
@@ -259,7 +259,7 @@ func (k *DispatcherKeeper) GetDispatchedAmountsByDestinationProtocolID(
 	return totalDispatched
 }
 
-func (k *DispatcherKeeper) IterateDispatchedAmountsByDestinationProtocolID(
+func (k *DispatcherComponent) IterateDispatchedAmountsByDestinationProtocolID(
 	ctx context.Context,
 	protocolId types.ProtocolID,
 	callback func(string, types.ChainAmountDispatched) bool,
@@ -298,7 +298,7 @@ func (k *DispatcherKeeper) IterateDispatchedAmountsByDestinationProtocolID(
 // DispatchCounts
 // ====================================================================================================
 
-func (k *DispatcherKeeper) GetDispatchedCounts(
+func (k *DispatcherComponent) GetDispatchedCounts(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
@@ -319,7 +319,7 @@ func (k *DispatcherKeeper) GetDispatchedCounts(
 	return countDispatches
 }
 
-func (k *DispatcherKeeper) HasDispatchedCounts(
+func (k *DispatcherComponent) HasDispatchedCounts(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
@@ -328,7 +328,7 @@ func (k *DispatcherKeeper) HasDispatchedCounts(
 	return countDispatches != 0
 }
 
-func (k *DispatcherKeeper) SetDispatchedCounts(
+func (k *DispatcherComponent) SetDispatchedCounts(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,

@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers
+package components
 
 import (
 	"context"
@@ -29,34 +29,34 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/controllers"
 	"orbiter.dev/types"
 	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/router"
 )
 
-type ActionControllersRouter = interfaces.Router[types.ActionID, interfaces.ActionController]
+type ActionRouter = interfaces.Router[types.ActionID, interfaces.ActionController]
 
-var _ interfaces.ActionSubkeeper = &ActionKeeper{}
+var _ interfaces.ActionComponent = &ActionComponent{}
 
-type ActionKeeper struct {
+type ActionComponent struct {
 	logger log.Logger
 
-	controllersRouter ActionControllersRouter
+	router ActionRouter
 
 	// PausedControllers maps an action id to a boolean indicating
 	// whether the action controller is paused or not.
 	PausedControllers collections.Map[int32, bool]
 }
 
-func NewActionKeeper(
+func NewActionComponent(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-) (*ActionKeeper, error) {
-	actionsKeeper := ActionKeeper{
-		logger: logger.With(types.SubKeeperPrefix, types.ActionsKeeperName),
+) (*ActionComponent, error) {
+	actionsKeeper := ActionComponent{
+		logger: logger.With(types.ComponentPrefix, types.ActionsKeeperName),
 
-		controllersRouter: controllers.NewRouter[types.ActionID, interfaces.ActionController](),
+		router: router.New[types.ActionID, interfaces.ActionController](),
 
 		PausedControllers: collections.NewMap(
 			sb,
@@ -70,34 +70,34 @@ func NewActionKeeper(
 	return &actionsKeeper, actionsKeeper.Validate()
 }
 
-func (k *ActionKeeper) Validate() error {
+func (k *ActionComponent) Validate() error {
 	if k.logger == nil {
 		return errors.New("logger cannot be nil")
 	}
-	if k.controllersRouter == nil {
+	if k.router == nil {
 		return errors.New("controllers router cannot be nil")
 	}
 	return nil
 }
 
-func (k *ActionKeeper) Logger() log.Logger {
+func (k *ActionComponent) Logger() log.Logger {
 	return k.logger
 }
 
-func (k *ActionKeeper) Router() ActionControllersRouter {
-	return k.controllersRouter
+func (k *ActionComponent) Router() ActionRouter {
+	return k.router
 }
 
-func (k *ActionKeeper) SetRouter(acr ActionControllersRouter) {
-	if k.controllersRouter != nil && k.controllersRouter.Sealed() {
+func (k *ActionComponent) SetRouter(acr ActionRouter) {
+	if k.router != nil && k.router.Sealed() {
 		panic(errors.New("cannot reset a sealed controller router"))
 	}
 
-	k.controllersRouter = acr
-	k.controllersRouter.Seal()
+	k.router = acr
+	k.router.Seal()
 }
 
-func (k *ActionKeeper) HandlePacket(
+func (k *ActionComponent) HandlePacket(
 	ctx context.Context,
 	packet *types.ActionPacket,
 ) error {
@@ -105,7 +105,7 @@ func (k *ActionKeeper) HandlePacket(
 		return err
 	}
 
-	c, found := k.controllersRouter.Route(packet.Action.ID())
+	c, found := k.router.Route(packet.Action.ID())
 	if !found {
 		return errors.New("controller is not registered")
 	}
@@ -113,7 +113,7 @@ func (k *ActionKeeper) HandlePacket(
 	return c.HandlePacket(ctx, packet)
 }
 
-func (k *ActionKeeper) ValidatePacket(ctx context.Context, packet *types.ActionPacket) error {
+func (k *ActionComponent) ValidatePacket(ctx context.Context, packet *types.ActionPacket) error {
 	err := packet.Validate()
 	if err != nil {
 		return err
@@ -126,7 +126,7 @@ func (k *ActionKeeper) ValidatePacket(ctx context.Context, packet *types.ActionP
 	return nil
 }
 
-func (k *ActionKeeper) validateController(
+func (k *ActionComponent) validateController(
 	ctx context.Context,
 	id types.ActionID,
 ) error {
@@ -141,8 +141,7 @@ func (k *ActionKeeper) validateController(
 	return nil
 }
 
-// Pause implements types.ActionsSubkeeper.
-func (k *ActionKeeper) Pause(ctx context.Context, actionID types.ActionID) error {
+func (k *ActionComponent) Pause(ctx context.Context, actionID types.ActionID) error {
 	if err := k.SetPausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error pausing action %s: %w",
@@ -153,8 +152,7 @@ func (k *ActionKeeper) Pause(ctx context.Context, actionID types.ActionID) error
 	return nil
 }
 
-// Unpause implements types.ActionsSubkeeper.
-func (k *ActionKeeper) Unpause(ctx context.Context, actionID types.ActionID) error {
+func (k *ActionComponent) Unpause(ctx context.Context, actionID types.ActionID) error {
 	if err := k.SetUnpausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error unpausing action %s: %w",

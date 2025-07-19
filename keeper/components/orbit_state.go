@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers
+package components
 
 import (
 	"context"
@@ -33,11 +33,11 @@ import (
 // PausedControllers
 // ====================================================================================================
 
-func (k *OrbitKeeper) IsControllerPaused(
+func (k *OrbitComponent) IsControllerPaused(
 	ctx context.Context,
-	protocolId types.ProtocolID,
+	protocolID types.ProtocolID,
 ) (bool, error) {
-	paused, err := k.PausedControllers.Get(ctx, int32(protocolId))
+	paused, err := k.PausedControllers.Get(ctx, int32(protocolID))
 	// Default not paused.
 	if errors.Is(err, collections.ErrNotFound) {
 		return false, nil
@@ -45,10 +45,10 @@ func (k *OrbitKeeper) IsControllerPaused(
 	return paused, err
 }
 
-func (k *OrbitKeeper) SetPausedController(ctx context.Context,
-	protocolId types.ProtocolID,
+func (k *OrbitComponent) SetPausedController(ctx context.Context,
+	protocolID types.ProtocolID,
 ) error {
-	paused, err := k.IsControllerPaused(ctx, protocolId)
+	paused, err := k.IsControllerPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -56,10 +56,10 @@ func (k *OrbitKeeper) SetPausedController(ctx context.Context,
 		return nil
 	}
 
-	return k.PausedControllers.Set(ctx, int32(protocolId), true)
+	return k.PausedControllers.Set(ctx, int32(protocolID), true)
 }
 
-func (k *OrbitKeeper) SetUnpausedController(
+func (k *OrbitComponent) SetUnpausedController(
 	ctx context.Context,
 	protocolId types.ProtocolID,
 ) error {
@@ -78,12 +78,12 @@ func (k *OrbitKeeper) SetUnpausedController(
 // PausedOrbits
 // ====================================================================================================
 
-func (k *OrbitKeeper) IsOrbitPaused(
+func (k *OrbitComponent) IsOrbitPaused(
 	ctx context.Context,
-	protocolId types.ProtocolID,
-	counterpartyId string,
+	protocolID types.ProtocolID,
+	counterpartyID string,
 ) (bool, error) {
-	paused, err := k.PausedOrbits.Get(ctx, collections.Join(int32(protocolId), counterpartyId))
+	paused, err := k.PausedOrbits.Get(ctx, collections.Join(int32(protocolID), counterpartyID))
 	// default not paused.
 	if errors.Is(err, collections.ErrNotFound) {
 		return false, nil
@@ -91,11 +91,11 @@ func (k *OrbitKeeper) IsOrbitPaused(
 	return paused, err
 }
 
-func (k *OrbitKeeper) SetPausedOrbit(ctx context.Context,
-	protocolId types.ProtocolID,
-	counterpartyId string,
+func (k *OrbitComponent) SetPausedOrbit(ctx context.Context,
+	protocolID types.ProtocolID,
+	counterpartyID string,
 ) error {
-	paused, err := k.IsOrbitPaused(ctx, protocolId, counterpartyId)
+	paused, err := k.IsOrbitPaused(ctx, protocolID, counterpartyID)
 	if err != nil {
 		return err
 	}
@@ -103,15 +103,15 @@ func (k *OrbitKeeper) SetPausedOrbit(ctx context.Context,
 		return nil
 	}
 
-	return k.PausedOrbits.Set(ctx, collections.Join(int32(protocolId), counterpartyId), true)
+	return k.PausedOrbits.Set(ctx, collections.Join(int32(protocolID), counterpartyID), true)
 }
 
-func (k *OrbitKeeper) SetUnpausedOrbit(
+func (k *OrbitComponent) SetUnpausedOrbit(
 	ctx context.Context,
-	protocolId types.ProtocolID,
-	counterpartyId string,
+	protocolID types.ProtocolID,
+	counterpartyID string,
 ) error {
-	paused, err := k.IsOrbitPaused(ctx, protocolId, counterpartyId)
+	paused, err := k.IsOrbitPaused(ctx, protocolID, counterpartyID)
 	if err != nil {
 		return err
 	}
@@ -119,5 +119,5 @@ func (k *OrbitKeeper) SetUnpausedOrbit(
 		return nil
 	}
 
-	return k.PausedOrbits.Set(ctx, collections.Join(int32(protocolId), counterpartyId), false)
+	return k.PausedOrbits.Set(ctx, collections.Join(int32(protocolID), counterpartyID), false)
 }

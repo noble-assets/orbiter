@@ -37,9 +37,9 @@ func (m msgServer) PauseProtocol(
 		return nil, err
 	}
 
-	orbitSK := m.OrbitSubKeeper()
+	orbitComp := m.OrbitComponent()
 
-	if err := orbitSK.Pause(ctx, msg.ProtocolId, nil); err != nil {
+	if err := orbitComp.Pause(ctx, msg.ProtocolId, nil); err != nil {
 		return nil, sdkerrors.Wrap(err, "unable to pause protocol")
 	}
 
@@ -55,7 +55,7 @@ func (m msgServer) PauseCounterparties(
 		return nil, err
 	}
 
-	orbitsSK := m.OrbitSubKeeper()
+	orbitsSK := m.OrbitComponent()
 
 	if err := orbitsSK.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
 		return nil, sdkerrors.Wrap(err, "unable to pause protocol-destination pairs")
@@ -72,9 +72,9 @@ func (m msgServer) UnpauseProtocol(
 		return nil, err
 	}
 
-	orbitsSK := m.OrbitSubKeeper()
+	orbitsComp := m.OrbitComponent()
 
-	if err := orbitsSK.Unpause(ctx, msg.ProtocolId, nil); err != nil {
+	if err := orbitsComp.Unpause(ctx, msg.ProtocolId, nil); err != nil {
 		return nil, sdkerrors.Wrap(err, "unable to unpause protocol")
 	}
 
@@ -90,9 +90,9 @@ func (m msgServer) UnpauseCounterparties(
 		return nil, err
 	}
 
-	orbitsSK := m.OrbitSubKeeper()
+	orbitsComp := m.OrbitComponent()
 
-	if err := orbitsSK.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
+	if err := orbitsComp.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
 		return nil, sdkerrors.Wrap(err, "unable to unpause counterparties")
 	}
 

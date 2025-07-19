@@ -37,9 +37,9 @@ func (m msgServer) PauseAction(
 		return nil, err
 	}
 
-	actionSK := m.ActionSubKeeper()
+	actionComp := m.ActionComponent()
 
-	if err := actionSK.Pause(ctx, msg.ActionId); err != nil {
+	if err := actionComp.Pause(ctx, msg.ActionId); err != nil {
 		return nil, sdkerrors.Wrap(err, "unable to pause action")
 	}
 
@@ -55,9 +55,9 @@ func (m msgServer) UnpauseAction(
 		return nil, err
 	}
 
-	actionSK := m.ActionSubKeeper()
+	actionComp := m.ActionComponent()
 
-	if err := actionSK.Unpause(ctx, msg.ActionId); err != nil {
+	if err := actionComp.Unpause(ctx, msg.ActionId); err != nil {
 		return nil, sdkerrors.Wrap(err, "unable to unpause action")
 	}
 

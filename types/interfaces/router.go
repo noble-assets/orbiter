@@ -35,7 +35,7 @@ type Routable[ID IdentifierConstraint] interface {
 	ID() ID
 }
 
-// RouterProvider defines the behavior required from a sub-keeper
+// RouterProvider defines the behavior required from a component
 // to manage accesses to a router.
 type RouterProvider[ID IdentifierConstraint, T Routable[ID]] interface {
 	Router() Router[ID, T]

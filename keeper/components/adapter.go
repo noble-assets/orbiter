@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers
+package components
 
 import (
 	"context"
@@ -27,37 +27,37 @@ import (
 	"cosmossdk.io/log"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"orbiter.dev/controllers"
 	"orbiter.dev/types"
 	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/router"
 )
 
-type AdapterControllersRouter = interfaces.Router[types.ProtocolID, interfaces.AdapterController]
+type AdapterRouter = interfaces.Router[types.ProtocolID, interfaces.AdapterController]
 
-var _ interfaces.AdapterSubkeeper = &AdapterKeeper{}
+var _ interfaces.AdapterComponent = &AdapterComponent{}
 
-type AdapterKeeper struct {
+type AdapterComponent struct {
 	logger log.Logger
 
-	controllersRouter AdapterControllersRouter
+	router AdapterRouter
 
-	bankKeeper types.BankKeeperAdapters
+	bankKeeper types.BankKeeperAdapter
 	dispatcher interfaces.PayloadDispatcher
 }
 
-func NewAdapterKeeper(
+func NewAdapterComponent(
 	logger log.Logger,
-	bankKeeper types.BankKeeperAdapters,
+	bankKeeper types.BankKeeperAdapter,
 	dispatcher interfaces.PayloadDispatcher,
-) (*AdapterKeeper, error) {
+) (*AdapterComponent, error) {
 	if logger == nil {
 		return nil, errors.New("logger cannot be nil")
 	}
 
-	adaptersKeeper := AdapterKeeper{
-		logger: logger.With(types.SubKeeperPrefix, types.AdaptersKeeperName),
+	adaptersKeeper := AdapterComponent{
+		logger: logger.With(types.ComponentPrefix, types.AdaptersKeeperName),
 
-		controllersRouter: controllers.NewRouter[types.ProtocolID, interfaces.AdapterController](),
+		router: router.New[types.ProtocolID, interfaces.AdapterController](),
 
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
@@ -66,7 +66,7 @@ func NewAdapterKeeper(
 	return &adaptersKeeper, adaptersKeeper.Validate()
 }
 
-func (k *AdapterKeeper) Validate() error {
+func (k *AdapterComponent) Validate() error {
 	if k.logger == nil {
 		return errors.New("logger cannot be nil")
 	}
@@ -76,35 +76,35 @@ func (k *AdapterKeeper) Validate() error {
 	if k.dispatcher == nil {
 		return errors.New("dispatcher cannot be nil")
 	}
-	if k.controllersRouter == nil {
+	if k.router == nil {
 		return errors.New("adapters router cannot be nil")
 	}
 	return nil
 }
 
-func (k *AdapterKeeper) Logger() log.Logger {
+func (k *AdapterComponent) Logger() log.Logger {
 	return k.logger
 }
 
-func (k *AdapterKeeper) Router() AdapterControllersRouter {
-	return k.controllersRouter
+func (k *AdapterComponent) Router() AdapterRouter {
+	return k.router
 }
 
-func (k *AdapterKeeper) SetRouter(ar AdapterControllersRouter) {
-	if k.controllersRouter != nil && k.controllersRouter.Sealed() {
+func (k *AdapterComponent) SetRouter(ar AdapterRouter) {
+	if k.router != nil && k.router.Sealed() {
 		panic(errors.New("cannot reset a sealed controller router"))
 	}
 
-	k.controllersRouter = ar
-	k.controllersRouter.Seal()
+	k.router = ar
+	k.router.Seal()
 }
 
 // ParsePayload implements types.PayloadAdapter.
-func (k *AdapterKeeper) ParsePayload(
+func (k *AdapterComponent) ParsePayload(
 	id types.ProtocolID,
 	payloadBz []byte,
 ) (bool, *types.Payload, error) {
-	adapter, found := k.controllersRouter.Route(id)
+	adapter, found := k.router.Route(id)
 	if !found {
 		return false, &types.Payload{}, errors.New("adapter not found")
 	}
@@ -113,12 +113,12 @@ func (k *AdapterKeeper) ParsePayload(
 }
 
 // BeforeTransferHook implements types.PayloadAdapter.
-func (k *AdapterKeeper) BeforeTransferHook(
+func (k *AdapterComponent) BeforeTransferHook(
 	ctx context.Context,
 	id types.ProtocolID,
 	payload *types.Payload,
 ) error {
-	adapter, found := k.controllersRouter.Route(id)
+	adapter, found := k.router.Route(id)
 	if !found {
 		return errors.New("adapter not found")
 	}
@@ -131,13 +131,13 @@ func (k *AdapterKeeper) BeforeTransferHook(
 }
 
 // AfterTransferHook implements types.PayloadAdapter.
-func (k *AdapterKeeper) AfterTransferHook(
+func (k *AdapterComponent) AfterTransferHook(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 	payload *types.Payload,
 ) error {
-	adapter, found := k.controllersRouter.Route(protocolID)
+	adapter, found := k.router.Route(protocolID)
 	if !found {
 		return errors.New("adapter not found")
 	}
@@ -164,7 +164,7 @@ func (k *AdapterKeeper) AfterTransferHook(
 	return k.dispatcher.DispatchPayload(ctx, transferAttr, payload)
 }
 
-func (k *AdapterKeeper) clearOrbiterBalances(ctx context.Context) error {
+func (k *AdapterComponent) clearOrbiterBalances(ctx context.Context) error {
 	coins := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
 	if coins.IsZero() {
 		return nil
@@ -172,7 +172,7 @@ func (k *AdapterKeeper) clearOrbiterBalances(ctx context.Context) error {
 	return k.bankKeeper.SendCoins(ctx, types.ModuleAddress, types.DustCollectorAddress, coins)
 }
 
-func (k *AdapterKeeper) validateOrbiterInitialBalance(coins sdk.Coins) error {
+func (k *AdapterComponent) validateOrbiterInitialBalance(coins sdk.Coins) error {
 	if coins.IsZero() {
 		return errors.New("expected orbiter module to hold coins after transfer")
 	}

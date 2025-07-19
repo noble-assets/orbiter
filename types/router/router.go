@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package controllers
+package router
 
 import "orbiter.dev/types/interfaces"
 
@@ -28,7 +28,7 @@ type Router[ID interfaces.IdentifierConstraint, T interfaces.Routable[ID]] struc
 	sealed bool
 }
 
-func NewRouter[ID interfaces.IdentifierConstraint, T interfaces.Routable[ID]]() interfaces.Router[ID, T] {
+func New[ID interfaces.IdentifierConstraint, T interfaces.Routable[ID]]() interfaces.Router[ID, T] {
 	return &Router[ID, T]{
 		routes: make(map[ID]T),
 	}

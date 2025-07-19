@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers
+package components
 
 import (
 	"testing"
@@ -91,7 +91,7 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 		ctx := deps.SdkCtx
 
 		sb := collections.NewSchemaBuilder(deps.StoreService)
-		dispatcher, err := NewDispatcherKeeper(
+		dispatcher, err := NewDispatcherComponent(
 			deps.EncCfg.Codec,
 			sb,
 			deps.Logger,
@@ -258,7 +258,7 @@ func TestDispatcherKeeper_updateStats(t *testing.T) {
 			ctx := deps.SdkCtx
 
 			sb := collections.NewSchemaBuilder(deps.StoreService)
-			dispatcher, err := NewDispatcherKeeper(
+			dispatcher, err := NewDispatcherComponent(
 				deps.EncCfg.Codec,
 				sb,
 				deps.Logger,
@@ -357,7 +357,7 @@ func TestDispatcherKeeper_updateDispatchedCountsStats(t *testing.T) {
 		ctx := deps.SdkCtx
 
 		sb := collections.NewSchemaBuilder(deps.StoreService)
-		dispatcher, err := NewDispatcherKeeper(
+		dispatcher, err := NewDispatcherComponent(
 			deps.EncCfg.Codec,
 			sb,
 			deps.Logger,
@@ -450,7 +450,7 @@ func TestDispatcherKeeper_buildDenomDispatchedAmounts(t *testing.T) {
 			deps := mocks.NewDependencies(t)
 
 			sb := collections.NewSchemaBuilder(deps.StoreService)
-			dispatcher, err := NewDispatcherKeeper(
+			dispatcher, err := NewDispatcherComponent(
 				deps.EncCfg.Codec,
 				sb,
 				deps.Logger,

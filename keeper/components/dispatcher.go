@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers
+package components
 
 import (
 	"context"
@@ -33,31 +33,31 @@ import (
 	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.PayloadDispatcher = &DispatcherKeeper{}
+var _ interfaces.PayloadDispatcher = &DispatcherComponent{}
 
-// DispatcherKeeper is a sub-keeper used to orchestrate the
-// components dispatch of an incoming orbiter packet. The DispatcherKeeper
+// DispatcherComponent is a component used to orchestrate the
+// dispatch of an incoming orbiter packet. The dispatcher
 // keeps track of the statistics associated with the handled dispatches.
-type DispatcherKeeper struct {
+type DispatcherComponent struct {
 	logger log.Logger
 
-	// Packet component handlers
-	OrbitsHandler  interfaces.PacketHandler[*types.OrbitPacket]
-	ActionsHandler interfaces.PacketHandler[*types.ActionPacket]
+	// Packet elements handlers
+	OrbitHandler  interfaces.PacketHandler[*types.OrbitPacket]
+	ActionHandler interfaces.PacketHandler[*types.ActionPacket]
 
 	// Stats
 	DispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, types.AmountDispatched, DispatchedAmountsIndexes]
 	DispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
 }
 
-// NewDispatcherKeeper creates a new instance of a DispatcherKeeper.
-func NewDispatcherKeeper(
+// NewDispatcherComponent creates a new instance of a DispatcherKeeper.
+func NewDispatcherComponent(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
 	orbitHandler interfaces.PacketHandler[*types.OrbitPacket],
 	actionHandler interfaces.PacketHandler[*types.ActionPacket],
-) (*DispatcherKeeper, error) {
+) (*DispatcherComponent, error) {
 	if cdc == nil {
 		return nil, errors.New("codec cannot be nil")
 	}
@@ -68,10 +68,10 @@ func NewDispatcherKeeper(
 		return nil, errors.New("logger cannot be nil")
 	}
 
-	dispatcherKeeper := &DispatcherKeeper{
-		logger:         logger.With(types.SubKeeperPrefix, types.DispatcherKeeperName),
-		OrbitsHandler:  orbitHandler,
-		ActionsHandler: actionHandler,
+	dispatcherKeeper := DispatcherComponent{
+		logger:        logger.With(types.ComponentPrefix, types.DispatcherComponentName),
+		OrbitHandler:  orbitHandler,
+		ActionHandler: actionHandler,
 		DispatchedAmounts: collections.NewIndexedMap(
 			sb,
 			types.DispatchedAmountsPrefix,
@@ -99,16 +99,16 @@ func NewDispatcherKeeper(
 		),
 	}
 
-	return dispatcherKeeper, dispatcherKeeper.Validate()
+	return &dispatcherKeeper, dispatcherKeeper.Validate()
 }
 
-// Validate checks that the field of the DispatcherKeeper
+// Validate checks that the field of the dispatcher component
 // are valid.
-func (d *DispatcherKeeper) Validate() error {
-	if d.OrbitsHandler == nil {
+func (d *DispatcherComponent) Validate() error {
+	if d.OrbitHandler == nil {
 		return errors.New("orbits handler cannot be nil")
 	}
-	if d.ActionsHandler == nil {
+	if d.ActionHandler == nil {
 		return errors.New("actions handler cannot be nil")
 	}
 	return nil
@@ -116,7 +116,7 @@ func (d *DispatcherKeeper) Validate() error {
 
 // DispatchPayload is the entry point to initiate the dispatching
 // of an orbiter payload.
-func (d *DispatcherKeeper) DispatchPayload(
+func (d *DispatcherComponent) DispatchPayload(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	payload *types.Payload,
@@ -142,16 +142,20 @@ func (d *DispatcherKeeper) DispatchPayload(
 
 // validatePayload checks if the payload is not nil, and calls
 // its validation method.
-func (d *DispatcherKeeper) validatePayload(payload *types.Payload) error {
+func (d *DispatcherComponent) validatePayload(payload *types.Payload) error {
 	if payload == nil {
 		return errors.New("payload cannot be nil")
 	}
 	return payload.Validate()
 }
 
+func (k *DispatcherComponent) Logger() log.Logger {
+	return k.logger
+}
+
 // dispatchActions iterates through all the actions, creates
 // the action packets and dispatch them for execution.
-func (d *DispatcherKeeper) dispatchActions(
+func (d *DispatcherComponent) dispatchActions(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	actions []*types.Action,
@@ -173,7 +177,7 @@ func (d *DispatcherKeeper) dispatchActions(
 
 // dispatchOrbit creates the orbit packet and dispatch
 // it for execution.
-func (d *DispatcherKeeper) dispatchOrbit(
+func (d *DispatcherComponent) dispatchOrbit(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	orbit *types.Orbit,
@@ -188,18 +192,18 @@ func (d *DispatcherKeeper) dispatchOrbit(
 
 // dispatchActionPacket dispatch the action packet to the
 // actions handler.
-func (d *DispatcherKeeper) dispatchActionPacket(
+func (d *DispatcherComponent) dispatchActionPacket(
 	ctx context.Context,
 	packet *types.ActionPacket,
 ) error {
-	return d.ActionsHandler.HandlePacket(ctx, packet)
+	return d.ActionHandler.HandlePacket(ctx, packet)
 }
 
 // dispatchOrbitPacket dispatch the orbit packet to the
 // orbits handler.
-func (d *DispatcherKeeper) dispatchOrbitPacket(
+func (d *DispatcherComponent) dispatchOrbitPacket(
 	ctx context.Context,
 	packet *types.OrbitPacket,
 ) error {
-	return d.OrbitsHandler.HandlePacket(ctx, packet)
+	return d.OrbitHandler.HandlePacket(ctx, packet)
 }

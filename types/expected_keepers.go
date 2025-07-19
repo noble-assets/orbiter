@@ -27,22 +27,22 @@ import (
 )
 
 // BankKeeper wraps the bank behaviors expected by the orbiter
-// keeper and its sub-keepers.
+// keeper and its components.
 type BankKeeper interface {
-	BankKeeperOrbits
-	BankKeeperAdapters
+	BankKeeperOrbit
+	BankKeeperAdapter
 }
 
-// BankKeeperOrbits represents the bank behavior expected
-// by the orbits sub-keeper.
-type BankKeeperOrbits interface {
+// BankKeeperOrbit represents the bank behavior expected
+// by the orbit component.
+type BankKeeperOrbit interface {
 	// Queries
 	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
 }
 
-// BankKeeperAdapters represents the bank behavior expected
-// by the adapters sub-keeper.
-type BankKeeperAdapters interface {
+// BankKeeperAdapter represents the bank behavior expected
+// by the adapter component.
+type BankKeeperAdapter interface {
 	// Queries
 	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
 	// Txs

@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package subkeepers
+package components
 
 import (
 	"context"
@@ -29,7 +29,7 @@ import (
 	"orbiter.dev/types"
 )
 
-func (k *ActionKeeper) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
+func (k *ActionComponent) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
 	paused, err := k.PausedControllers.Get(ctx, int32(id))
 	// default not paused.
 	if errors.Is(err, collections.ErrNotFound) {
@@ -38,7 +38,7 @@ func (k *ActionKeeper) IsControllerPaused(ctx context.Context, id types.ActionID
 	return paused, err
 }
 
-func (k *ActionKeeper) SetPausedController(ctx context.Context, id types.ActionID) error {
+func (k *ActionComponent) SetPausedController(ctx context.Context, id types.ActionID) error {
 	paused, err := k.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func (k *ActionKeeper) SetPausedController(ctx context.Context, id types.ActionI
 	return k.PausedControllers.Set(ctx, int32(id), true)
 }
 
-func (k *ActionKeeper) SetUnpausedController(ctx context.Context, id types.ActionID) error {
+func (k *ActionComponent) SetUnpausedController(ctx context.Context, id types.ActionID) error {
 	paused, err := k.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err
