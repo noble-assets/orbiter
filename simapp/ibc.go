@@ -94,7 +94,7 @@ func (app *SimApp) RegisterIBCModules() error {
 	transferStack = entrypoint.NewIBCMiddleware(
 		transferStack,
 		app.IBCKeeper.ChannelKeeper,
-		app.OrbiterKeeper.AdapterSubKeeper(),
+		app.OrbiterKeeper.AdapterComponent(),
 	)
 	transferStack = blockibc.NewIBCMiddleware(transferStack, app.FTFKeeper)
 
