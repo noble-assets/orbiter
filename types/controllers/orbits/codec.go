@@ -18,32 +18,16 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package orbiter
+package orbits
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/controllers/actions"
-	"orbiter.dev/types/controllers/orbits"
 )
 
-var amino = codec.NewLegacyAmino()
-
-func init() {
-	RegisterLegacyAminoCodec(amino)
-	amino.Seal()
-}
-
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
-
-// RegisterInterfaces is used to register in the chain codec
-// all interfaces and associated implementations defined in
-// the Orbiter module.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	types.RegisterInterfaces(registry)
-
-	orbits.RegisterImplementations(registry)
-	actions.RegisterImplementations(registry)
+// RegisterImplementations registers the orbits attributes
+// satisfying the OrbitAttributes interface in the module codec.
+func RegisterImplementations(registry codectypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*types.OrbitAttributes)(nil), &CCTPAttributes{})
 }
