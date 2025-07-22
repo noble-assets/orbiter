@@ -194,7 +194,9 @@ func (k *Keeper) AdapterComponent() interfaces.AdapterComponent {
 func (k *Keeper) SetOrbitControllers(controllers ...interfaces.OrbitController) {
 	router := k.orbitComponent.Router()
 	for _, c := range controllers {
-		router.AddRoute(c)
+		if err := router.AddRoute(c); err != nil {
+			panic(err)
+		}
 	}
 	k.orbitComponent.SetRouter(router)
 }
@@ -202,7 +204,9 @@ func (k *Keeper) SetOrbitControllers(controllers ...interfaces.OrbitController) 
 func (k *Keeper) SetActionControllers(controllers ...interfaces.ActionController) {
 	router := k.actionComponent.Router()
 	for _, c := range controllers {
-		router.AddRoute(c)
+		if err := router.AddRoute(c); err != nil {
+			panic(err)
+		}
 	}
 	k.actionComponent.SetRouter(router)
 }
@@ -210,7 +214,9 @@ func (k *Keeper) SetActionControllers(controllers ...interfaces.ActionController
 func (k *Keeper) SetAdapterControllers(controllers ...interfaces.AdapterController) {
 	router := k.adapterComponent.Router()
 	for _, a := range controllers {
-		router.AddRoute(a)
+		if err := router.AddRoute(a); err != nil {
+			panic(err)
+		}
 	}
 	k.adapterComponent.SetRouter(router)
 }

@@ -108,14 +108,14 @@ func (AppModuleBasic) ValidateGenesis(
 	return genesis.Validate()
 }
 
-func (m AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, bz json.RawMessage) {
+func (a AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, bz json.RawMessage) {
 	var genesis types.GenesisState
 	cdc.MustUnmarshalJSON(bz, &genesis)
 
-	m.keeper.InitGenesis(ctx, genesis)
+	a.keeper.InitGenesis(ctx, genesis)
 }
 
-func (m AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-	genesis := m.keeper.ExportGenesis(ctx)
+func (a AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
+	genesis := a.keeper.ExportGenesis(ctx)
 	return cdc.MustMarshalJSON(genesis)
 }

@@ -20,7 +20,11 @@
 
 package router
 
-import "orbiter.dev/types/interfaces"
+import (
+	"errors"
+
+	"orbiter.dev/types/interfaces"
+)
 
 // Router defines a generic router implementing the Router interface.
 type Router[ID interfaces.IdentifierConstraint, T interfaces.Routable[ID]] struct {
@@ -45,19 +49,21 @@ func (r *Router[ID, T]) Sealed() bool {
 }
 
 // AddRoute adds a route to the router if it's not sealed.
-func (r *Router[ID, T]) AddRoute(route T) {
+func (r *Router[ID, T]) AddRoute(route T) error {
 	if r.sealed {
-		panic("cannot add route to sealed router")
+		return errors.New("cannot add route to sealed router")
 	}
-	routeId := route.ID()
-	if err := routeId.Validate(); err != nil {
-		panic("route id is not valid")
+	routeID := route.ID()
+	if err := routeID.Validate(); err != nil {
+		return errors.New("route id is not valid")
 	}
 
-	if r.HasRoute(routeId) {
-		panic("route is already set")
+	if r.HasRoute(routeID) {
+		return errors.New("route is already set")
 	}
 	r.routes[route.ID()] = route
+
+	return nil
 }
 
 // HasRoute checks if a route with the given ID exists.

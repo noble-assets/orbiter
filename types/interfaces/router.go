@@ -45,7 +45,7 @@ type RouterProvider[ID IdentifierConstraint, T Routable[ID]] interface {
 type Router[ID IdentifierConstraint, T Routable[ID]] interface {
 	Seal()
 	Sealed() bool
-	AddRoute(T)
+	AddRoute(T) error
 	HasRoute(ID) bool
 	Route(ID) (T, bool)
 }

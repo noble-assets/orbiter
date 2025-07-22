@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package orbtier
+package orbiter
 
 import (
 	"testing"
@@ -41,7 +41,7 @@ func OrbiterKeeper(t testing.TB) (sdk.Context, *mocks.Mocks, *keeper.Keeper) {
 }
 
 func orbiterKeeperWithMocks(
-	t testing.TB,
+	_ testing.TB,
 	deps *mocks.Dependencies,
 	m *mocks.Mocks,
 ) (*keeper.Keeper, sdk.Context) {
