@@ -61,9 +61,9 @@ func (k *OrbitComponent) SetPausedController(ctx context.Context,
 
 func (k *OrbitComponent) SetUnpausedController(
 	ctx context.Context,
-	protocolId types.ProtocolID,
+	protocolID types.ProtocolID,
 ) error {
-	paused, err := k.IsControllerPaused(ctx, protocolId)
+	paused, err := k.IsControllerPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func (k *OrbitComponent) SetUnpausedController(
 		return nil
 	}
 
-	return k.PausedControllers.Set(ctx, int32(protocolId), false)
+	return k.PausedControllers.Set(ctx, int32(protocolID), false)
 }
 
 // ====================================================================================================

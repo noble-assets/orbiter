@@ -86,13 +86,14 @@ func NewPayloadWrapper(
 	orbit *Orbit,
 	preActions []*Action,
 ) (*PayloadWrapper, error) {
-	payloadWrapper := PayloadWrapper{
-		Orbiter: &Payload{
-			PreActions: preActions,
-			Orbit:      orbit,
-		},
+	payload, err := NewPayload(orbit, preActions)
+	if err != nil {
+		return nil, err
 	}
-	return &payloadWrapper, payloadWrapper.Validate()
+	payloadWrapper := PayloadWrapper{
+		Orbiter: payload,
+	}
+	return &payloadWrapper, nil
 }
 
 // Validate returns an error if the orbiter payload wrapper

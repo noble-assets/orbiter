@@ -23,6 +23,7 @@ package components
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"cosmossdk.io/log"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -106,7 +107,7 @@ func (k *AdapterComponent) ParsePayload(
 ) (bool, *types.Payload, error) {
 	adapter, found := k.router.Route(id)
 	if !found {
-		return false, &types.Payload{}, errors.New("adapter not found")
+		return false, &types.Payload{}, fmt.Errorf("adapter not found for protocol ID: %v", id)
 	}
 
 	return adapter.ParsePayload(payloadBz)
@@ -120,11 +121,11 @@ func (k *AdapterComponent) BeforeTransferHook(
 ) error {
 	adapter, found := k.router.Route(id)
 	if !found {
-		return errors.New("adapter not found")
+		return fmt.Errorf("adapter not found for protocol ID: %v", id)
 	}
 
 	if err := adapter.BeforeTransferHook(ctx, payload); err != nil {
-		return errors.New("adapter error")
+		return fmt.Errorf("adapter before transfer hook failed: %w", err)
 	}
 
 	return k.clearOrbiterBalances(ctx)
@@ -139,11 +140,11 @@ func (k *AdapterComponent) AfterTransferHook(
 ) error {
 	adapter, found := k.router.Route(protocolID)
 	if !found {
-		return errors.New("adapter not found")
+		return fmt.Errorf("adapter not found for protocol ID: %v", protocolID)
 	}
 
 	if err := adapter.AfterTransferHook(ctx, payload); err != nil {
-		return err
+		return fmt.Errorf("adapter after transfer hook failed: %w", err)
 	}
 
 	balances := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)

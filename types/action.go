@@ -39,11 +39,11 @@ type ActionAttributes interface {
 // NewActionID returns a validated action ID from an int32. If
 // the validation fails, the returned ActionID is the default ID.
 func NewActionID(id int32) (ActionID, error) {
-	actionId := ActionID(id)
-	if err := actionId.Validate(); err != nil {
+	actionID := ActionID(id)
+	if err := actionID.Validate(); err != nil {
 		return ACTION_UNSUPPORTED, err
 	}
-	return actionId, nil
+	return actionID, nil
 }
 
 // Validate returns an error if the ID is not valid.
@@ -127,7 +127,7 @@ func (a *Action) SetAttributes(attr ActionAttributes) error {
 
 	any, err := cdctypes.NewAnyWithValue(m)
 	if err != nil {
-		return nil
+		return err
 	}
 	a.Attributes = any
 	return nil

@@ -107,7 +107,7 @@ func (k *ActionComponent) HandlePacket(
 
 	c, found := k.router.Route(packet.Action.ID())
 	if !found {
-		return errors.New("controller is not registered")
+		return fmt.Errorf("controller not found for action ID: %v", packet.Action.ID())
 	}
 
 	return c.HandlePacket(ctx, packet)
@@ -135,7 +135,7 @@ func (k *ActionComponent) validateController(
 		return err
 	}
 	if isPaused {
-		return errors.New("action is paused")
+		return fmt.Errorf("action id %sis paused", id)
 	}
 
 	return nil

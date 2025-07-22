@@ -170,7 +170,10 @@ func (k *OrbitComponent) validateController(
 		return err
 	}
 	if isPaused {
-		return errors.New("controller is paused")
+		return fmt.Errorf(
+			"controller is paused for protocol %v",
+			protocolID,
+		)
 	}
 
 	return nil
@@ -181,6 +184,17 @@ func (k *OrbitComponent) validateOrbit(
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) error {
+	isPaused, err := k.IsOrbitPaused(ctx, protocolID, counterpartyID)
+	if err != nil {
+		return err
+	}
+	if isPaused {
+		return fmt.Errorf(
+			"orbit is paused for protocol %v and counterparty %s",
+			protocolID,
+			counterpartyID,
+		)
+	}
 	return nil
 }
 
@@ -191,14 +205,16 @@ func (k *OrbitComponent) validateInitialConditions(
 	balances := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
 
 	if balances.Len() != 1 {
-		return errors.New("wrong balance")
+		return fmt.Errorf("expected exactly 1 balance, got %d", balances.Len())
 	}
 
 	if balances[0].Denom != packet.TransferAttributes.DestinationDenom() {
-		return errors.New("wrong denom")
+		return fmt.Errorf("denom mismatch: expected %s, got %s",
+			packet.TransferAttributes.DestinationDenom(), balances[0].Denom)
 	}
 	if !balances[0].Amount.Equal(packet.TransferAttributes.DestinationAmount()) {
-		return errors.New("wrong amount")
+		return fmt.Errorf("amount mismatch: expected %s, got %s",
+			packet.TransferAttributes.DestinationAmount(), balances[0].Amount)
 	}
 
 	return nil

@@ -44,7 +44,7 @@ func (o *OrbitController) Name() string {
 	return o.Id.String()
 }
 
-// HandleOrbitPacket implements types.OrbitController.
+// HandlePacket implements types.OrbitController.
 func (o *OrbitController) HandlePacket(ctx context.Context, _ *types.OrbitPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the orbit packet")
@@ -68,10 +68,10 @@ func (a *ActionController) Name() string {
 	return a.Id.String()
 }
 
-// HandleActionPacket implements types.ActionController.
+// HandlePacket implements types.ActionController.
 func (a *ActionController) HandlePacket(ctx context.Context, _ *types.ActionPacket) error {
 	if CheckIfFailing(ctx) {
-		return errors.New("error dispatching the orbit packet")
+		return errors.New("error dispatching the action packet")
 	}
 	return nil
 }
@@ -82,12 +82,12 @@ type AdapterController struct {
 	Id types.ProtocolID
 }
 
-func (o *AdapterController) ID() types.ProtocolID {
-	return o.Id
+func (a *AdapterController) ID() types.ProtocolID {
+	return a.Id
 }
 
-func (o *AdapterController) Name() string {
-	return o.Id.String()
+func (a *AdapterController) Name() string {
+	return a.Id.String()
 }
 
 // AfterTransferHook implements types.AdapterProtocol.
@@ -109,7 +109,7 @@ func (a *AdapterController) BeforeTransferHook(ctx context.Context, _ *types.Pay
 // ParsePayload implements types.AdapterProtocol.
 func (a *AdapterController) ParsePayload(bz []byte) (bool, *types.Payload, error) {
 	if string(bz) == "failing" {
-		return false, nil, errors.New("error in before transfer hook")
+		return false, nil, errors.New("error parsing payload")
 	}
 
 	return true, &types.Payload{}, nil

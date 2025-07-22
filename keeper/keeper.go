@@ -96,8 +96,8 @@ func validateKeeperInputs(
 	storeService store.KVStoreService,
 	authority string,
 ) error {
-	if addressCdc == nil {
-		return errors.New("address codec cannot be nil")
+	if cdc == nil {
+		return errors.New("codec cannot be nil")
 	}
 	if logger == nil {
 		return errors.New("logger cannot be nil")
