@@ -49,10 +49,10 @@ func NewActionID(id int32) (ActionID, error) {
 // Validate returns an error if the ID is not valid.
 func (id ActionID) Validate() error {
 	if id == ACTION_UNSUPPORTED {
-		return ErrIdNotSupported.Wrapf("action id %s", id.String())
+		return ErrIDNotSupported.Wrapf("action id %s", id.String())
 	}
 	if _, found := ActionID_name[int32(id)]; !found {
-		return ErrIdNotSupported.Wrapf("unknown action id %d", int32(id))
+		return ErrIDNotSupported.Wrapf("unknown action id %d", int32(id))
 	}
 	return nil
 }

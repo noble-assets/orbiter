@@ -24,6 +24,7 @@ import "cosmossdk.io/errors"
 
 var (
 	ErrUnauthorized   = errors.Register(ModuleName, 1, "signer must be the authority")
-	ErrIdNotSupported = errors.Register(ModuleName, 2, "id is not supported")
+	ErrIDNotSupported = errors.Register(ModuleName, 2, "id is not supported")
 	ErrNilPointer     = errors.Register(ModuleName, 3, "invalid nil pointer")
+	ErrValidation     = errors.Register(ModuleName, 6, "validation failed")
 )

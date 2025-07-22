@@ -59,7 +59,7 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 	return DispatchedAmountsIndexes{
 		ByDestinationProtocolID: indexes.NewMulti(
 			sb,
-			types.DispatchedAmountsPrefix_ByDestinationProtocolID,
+			types.DispatchedAmountsPrefixByDestinationProtocolID,
 			types.DispatchedAmountsName+"_by_destination_protocol_id",
 			collections.Uint32Key,
 			primaryKeyCodec,
@@ -74,7 +74,7 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 		),
 		ByDestinationOrbitID: indexes.NewMulti(
 			sb,
-			types.DispatchedAmountsPrefix_ByDestinationOrbitID,
+			types.DispatchedAmountsPrefixByDestinationOrbitID,
 			types.DispatchedAmountsName+"_by_destination_orbit_id",
 			collections.TripleKeyCodec(
 				collections.Uint32Key,
@@ -113,7 +113,7 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 	return DispatchedCountsIndexes{
 		ByDestinationProtocolID: indexes.NewMulti(
 			sb,
-			types.DispatchedCountsPrefix_ByDestinationProtocolID,
+			types.DispatchedCountsPrefixByDestinationProtocolID,
 			types.DispatchedCountsName+"_by_destination_protocol_id",
 			collections.Uint32Key,
 			primaryKeyCodec,
@@ -132,7 +132,7 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 // Dispatched
 // ====================================================================================================
 
-func (k *DispatcherComponent) GetDispatchedAmount(
+func (d *DispatcherComponent) GetDispatchedAmount(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
@@ -147,7 +147,7 @@ func (k *DispatcherComponent) GetDispatchedAmount(
 		denom,
 	)
 
-	amountDispatched, err := k.DispatchedAmounts.Get(ctx, key)
+	amountDispatched, err := d.DispatchedAmounts.Get(ctx, key)
 	if err != nil {
 		amountDispatched = types.AmountDispatched{
 			Incoming: math.ZeroInt(),
@@ -158,13 +158,13 @@ func (k *DispatcherComponent) GetDispatchedAmount(
 	return amountDispatched
 }
 
-func (k *DispatcherComponent) HasDispatchedAmount(
+func (d *DispatcherComponent) HasDispatchedAmount(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
 	denom string,
 ) bool {
-	amountDispatched := k.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	amountDispatched := d.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
 	if amountDispatched.Incoming.IsZero() && amountDispatched.Outgoing.IsZero() {
 		return false
 	}
@@ -172,7 +172,7 @@ func (k *DispatcherComponent) HasDispatchedAmount(
 	return true
 }
 
-func (k *DispatcherComponent) SetDispatchedAmount(
+func (d *DispatcherComponent) SetDispatchedAmount(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
@@ -188,10 +188,10 @@ func (k *DispatcherComponent) SetDispatchedAmount(
 		denom,
 	)
 
-	return k.DispatchedAmounts.Set(ctx, key, amountDispatched)
+	return d.DispatchedAmounts.Set(ctx, key, amountDispatched)
 }
 
-func (k *DispatcherComponent) GetDispatchedAmountsByProtocolID(
+func (d *DispatcherComponent) GetDispatchedAmountsByProtocolID(
 	ctx context.Context,
 	protocolId types.ProtocolID,
 ) types.TotalDispatched {
@@ -204,7 +204,7 @@ func (k *DispatcherComponent) GetDispatchedAmountsByProtocolID(
 		return false
 	}
 
-	k.IterateDispatchedAmountsByProtocolID(
+	d.IterateDispatchedAmountsByProtocolID(
 		ctx,
 		protocolId,
 		callback,
@@ -212,7 +212,7 @@ func (k *DispatcherComponent) GetDispatchedAmountsByProtocolID(
 	return totalDispatched
 }
 
-func (k *DispatcherComponent) IterateDispatchedAmountsByProtocolID(
+func (d *DispatcherComponent) IterateDispatchedAmountsByProtocolID(
 	ctx context.Context,
 	protocolId types.ProtocolID,
 	callback func(string, types.ChainAmountDispatched) bool,
@@ -221,7 +221,7 @@ func (k *DispatcherComponent) IterateDispatchedAmountsByProtocolID(
 		protocolId.Uint32(),
 	)
 
-	err := k.DispatchedAmounts.Walk(
+	err := d.DispatchedAmounts.Walk(
 		ctx,
 		prefix,
 		func(key DispatchedAmountsKey, value types.AmountDispatched) (stop bool, err error) {
@@ -234,11 +234,11 @@ func (k *DispatcherComponent) IterateDispatchedAmountsByProtocolID(
 		},
 	)
 	if err != nil {
-		k.logger.Error("error in IterateDispatchedByProtocolID walking Dispatched")
+		d.logger.Error("error in IterateDispatchedByProtocolID walking Dispatched")
 	}
 }
 
-func (k *DispatcherComponent) GetDispatchedAmountsByDestinationProtocolID(
+func (d *DispatcherComponent) GetDispatchedAmountsByDestinationProtocolID(
 	ctx context.Context,
 	protocolId types.ProtocolID,
 ) types.TotalDispatched {
@@ -251,7 +251,7 @@ func (k *DispatcherComponent) GetDispatchedAmountsByDestinationProtocolID(
 		return false
 	}
 
-	k.IterateDispatchedAmountsByDestinationProtocolID(
+	d.IterateDispatchedAmountsByDestinationProtocolID(
 		ctx,
 		protocolId,
 		callback,
@@ -259,14 +259,14 @@ func (k *DispatcherComponent) GetDispatchedAmountsByDestinationProtocolID(
 	return totalDispatched
 }
 
-func (k *DispatcherComponent) IterateDispatchedAmountsByDestinationProtocolID(
+func (d *DispatcherComponent) IterateDispatchedAmountsByDestinationProtocolID(
 	ctx context.Context,
 	protocolId types.ProtocolID,
 	callback func(string, types.ChainAmountDispatched) bool,
 ) {
 	rng := collections.NewPrefixedPairRange[uint32, DispatchedAmountsKey](protocolId.Uint32())
 
-	err := k.DispatchedAmounts.Indexes.ByDestinationProtocolID.Walk(
+	err := d.DispatchedAmounts.Indexes.ByDestinationProtocolID.Walk(
 		ctx,
 		rng,
 		func(
@@ -274,7 +274,7 @@ func (k *DispatcherComponent) IterateDispatchedAmountsByDestinationProtocolID(
 			indexedKey DispatchedAmountsKey,
 		) (stop bool, err error) {
 			// Get the actual value from the main collection using the indexed key
-			value, err := k.DispatchedAmounts.Get(ctx, indexedKey)
+			value, err := d.DispatchedAmounts.Get(ctx, indexedKey)
 			if err != nil {
 				return true, err
 			}
@@ -288,7 +288,7 @@ func (k *DispatcherComponent) IterateDispatchedAmountsByDestinationProtocolID(
 		},
 	)
 	if err != nil {
-		k.logger.Error(
+		d.logger.Error(
 			"error in IterateDispatchedByDestinationProtocolID walking ByDestinationProtocolID index",
 		)
 	}
@@ -298,7 +298,7 @@ func (k *DispatcherComponent) IterateDispatchedAmountsByDestinationProtocolID(
 // DispatchCounts
 // ====================================================================================================
 
-func (k *DispatcherComponent) GetDispatchedCounts(
+func (d *DispatcherComponent) GetDispatchedCounts(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
@@ -311,7 +311,7 @@ func (k *DispatcherComponent) GetDispatchedCounts(
 		destinationId,
 	)
 
-	countDispatches, err := k.DispatchCounts.Get(ctx, key)
+	countDispatches, err := d.DispatchCounts.Get(ctx, key)
 	if err != nil {
 		countDispatches = 0
 	}
@@ -319,16 +319,16 @@ func (k *DispatcherComponent) GetDispatchedCounts(
 	return countDispatches
 }
 
-func (k *DispatcherComponent) HasDispatchedCounts(
+func (d *DispatcherComponent) HasDispatchedCounts(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
 ) bool {
-	countDispatches := k.GetDispatchedCounts(ctx, sourceInfo, destinationInfo)
+	countDispatches := d.GetDispatchedCounts(ctx, sourceInfo, destinationInfo)
 	return countDispatches != 0
 }
 
-func (k *DispatcherComponent) SetDispatchedCounts(
+func (d *DispatcherComponent) SetDispatchedCounts(
 	ctx context.Context,
 	sourceInfo types.OrbitID,
 	destinationInfo types.OrbitID,
@@ -342,5 +342,5 @@ func (k *DispatcherComponent) SetDispatchedCounts(
 		destinationId,
 	)
 
-	return k.DispatchCounts.Set(ctx, key, countDispatches)
+	return d.DispatchCounts.Set(ctx, key, countDispatches)
 }

@@ -45,7 +45,7 @@ var (
 // Orbits
 // ====================================================================================================.
 const (
-	OrbitsKeeperName    = "orbits"
+	OrbitComponentName  = "orbit"
 	OrbitControllerName = "orbit_controller"
 
 	// Maps names.
@@ -62,7 +62,7 @@ var (
 // Actions
 // ====================================================================================================.
 const (
-	ActionsKeeperName     = "actions"
+	ActionComponentName   = "action"
 	AdapterControllerName = "adapter_controller"
 
 	// Maps names.
@@ -89,19 +89,19 @@ const (
 )
 
 var (
-	DispatchedAmountsPrefix                         = collections.NewPrefix(30)
-	DispatchedAmountsPrefix_ByDestinationProtocolID = collections.NewPrefix(31)
-	DispatchedAmountsPrefix_ByDestinationOrbitID    = collections.NewPrefix(32)
+	DispatchedAmountsPrefix                        = collections.NewPrefix(30)
+	DispatchedAmountsPrefixByDestinationProtocolID = collections.NewPrefix(31)
+	DispatchedAmountsPrefixByDestinationOrbitID    = collections.NewPrefix(32)
 
-	DispatchedCountsPrefix                         = collections.NewPrefix(33)
-	DispatchedCountsPrefix_ByDestinationProtocolID = collections.NewPrefix(34)
+	DispatchedCountsPrefix                        = collections.NewPrefix(33)
+	DispatchedCountsPrefixByDestinationProtocolID = collections.NewPrefix(34)
 )
 
 // ====================================================================================================
 // Adapters
 // ====================================================================================================.
 const (
-	AdaptersKeeperName = "adapters"
+	AdaptersComponentName = "adapter"
 
 	// CCTPNobleDomain is the identifier of the Noble domain
 	// in the CCTP protocol.

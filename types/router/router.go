@@ -61,7 +61,7 @@ func (r *Router[ID, T]) AddRoute(route T) error {
 	if r.HasRoute(routeID) {
 		return errors.New("route is already set")
 	}
-	r.routes[route.ID()] = route
+	r.routes[routeID] = route
 
 	return nil
 }

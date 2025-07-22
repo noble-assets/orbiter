@@ -65,7 +65,7 @@ func TestNewOrbit(t *testing.T) {
 			id:                 types.PROTOCOL_UNSUPPORTED,
 			attributes:         &testdata.TestOrbitAttr{Planet: "earth"},
 			passthroughPayload: []byte("test"),
-			expectedError:      types.ErrIdNotSupported.Error(),
+			expectedError:      types.ErrIDNotSupported.Error(),
 		},
 	}
 
@@ -101,7 +101,7 @@ func TestOrbit_Validate(t *testing.T) {
 			orbit: types.Orbit{
 				ProtocolId: types.PROTOCOL_UNSUPPORTED,
 			},
-			expectedError: types.ErrIdNotSupported.Error(),
+			expectedError: types.ErrIDNotSupported.Error(),
 		},
 		{
 			name: "fail when attributes are nil",

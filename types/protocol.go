@@ -33,11 +33,11 @@ func NewProtocolID(id int32) (ProtocolID, error) {
 // Validate returns an error if the ID is not valid.
 func (id ProtocolID) Validate() error {
 	if id == PROTOCOL_UNSUPPORTED {
-		return ErrIdNotSupported.Wrapf("protocol id %s", id.String())
+		return ErrIDNotSupported.Wrapf("protocol id %s", id.String())
 	}
 	// Check if the protocol ID exists in the proto generated enum map
 	if _, found := ProtocolID_name[int32(id)]; !found {
-		return ErrIdNotSupported.Wrapf("unknown protocol id %d", int32(id))
+		return ErrIDNotSupported.Wrapf("unknown protocol id %d", int32(id))
 	}
 	return nil
 }

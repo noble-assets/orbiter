@@ -39,9 +39,8 @@ var _ interfaces.AdapterComponent = &AdapterComponent{}
 
 type AdapterComponent struct {
 	logger log.Logger
-
-	router AdapterRouter
-
+	// router is an adapter controllers router.
+	router     AdapterRouter
 	bankKeeper types.BankKeeperAdapter
 	dispatcher interfaces.PayloadDispatcher
 }
@@ -52,14 +51,12 @@ func NewAdapterComponent(
 	dispatcher interfaces.PayloadDispatcher,
 ) (*AdapterComponent, error) {
 	if logger == nil {
-		return nil, errors.New("logger cannot be nil")
+		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	adaptersKeeper := AdapterComponent{
-		logger: logger.With(types.ComponentPrefix, types.AdaptersKeeperName),
-
-		router: router.New[types.ProtocolID, interfaces.AdapterController](),
-
+		logger:     logger.With(types.ComponentPrefix, types.AdaptersComponentName),
+		router:     router.New[types.ProtocolID, interfaces.AdapterController](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
 	}
@@ -67,18 +64,19 @@ func NewAdapterComponent(
 	return &adaptersKeeper, adaptersKeeper.Validate()
 }
 
+// Validate returns an error if the component instance is not valid.
 func (k *AdapterComponent) Validate() error {
 	if k.logger == nil {
-		return errors.New("logger cannot be nil")
+		return types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if k.bankKeeper == nil {
-		return errors.New("bank keeper cannot be nil")
+		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
 	if k.dispatcher == nil {
-		return errors.New("dispatcher cannot be nil")
+		return types.ErrNilPointer.Wrap("dispatcher cannot be nil")
 	}
 	if k.router == nil {
-		return errors.New("adapters router cannot be nil")
+		return types.ErrNilPointer.Wrap("router cannot be nil")
 	}
 	return nil
 }
@@ -91,13 +89,14 @@ func (k *AdapterComponent) Router() AdapterRouter {
 	return k.router
 }
 
-func (k *AdapterComponent) SetRouter(ar AdapterRouter) {
+func (k *AdapterComponent) SetRouter(ar AdapterRouter) error {
 	if k.router != nil && k.router.Sealed() {
-		panic(errors.New("cannot reset a sealed controller router"))
+		return errors.New("cannot reset a sealed router")
 	}
 
 	k.router = ar
 	k.router.Seal()
+	return nil
 }
 
 // ParsePayload implements types.PayloadAdapter.
@@ -107,7 +106,7 @@ func (k *AdapterComponent) ParsePayload(
 ) (bool, *types.Payload, error) {
 	adapter, found := k.router.Route(id)
 	if !found {
-		return false, &types.Payload{}, fmt.Errorf("adapter not found for protocol ID: %v", id)
+		return false, &types.Payload{}, fmt.Errorf("adapter not found for protocol ID: %s", id)
 	}
 
 	return adapter.ParsePayload(payloadBz)
@@ -125,7 +124,7 @@ func (k *AdapterComponent) BeforeTransferHook(
 	}
 
 	if err := adapter.BeforeTransferHook(ctx, payload); err != nil {
-		return fmt.Errorf("adapter before transfer hook failed: %w", err)
+		return fmt.Errorf("before transfer hook failed: %w", err)
 	}
 
 	return k.clearOrbiterBalances(ctx)
@@ -140,16 +139,16 @@ func (k *AdapterComponent) AfterTransferHook(
 ) error {
 	adapter, found := k.router.Route(protocolID)
 	if !found {
-		return fmt.Errorf("adapter not found for protocol ID: %v", protocolID)
+		return fmt.Errorf("adapter not found for protocol ID: %s", protocolID)
 	}
 
 	if err := adapter.AfterTransferHook(ctx, payload); err != nil {
-		return fmt.Errorf("adapter after transfer hook failed: %w", err)
+		return fmt.Errorf("after transfer hook failed: %w", err)
 	}
 
 	balances := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
 	if err := k.validateOrbiterInitialBalance(balances); err != nil {
-		return err
+		return types.ErrValidation.Wrap(err.Error())
 	}
 
 	transferAttr, err := types.NewTransferAttributes(
@@ -159,7 +158,7 @@ func (k *AdapterComponent) AfterTransferHook(
 		balances[0].Amount,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error creating transfer attributes: %s", protocolID)
 	}
 
 	return k.dispatcher.DispatchPayload(ctx, transferAttr, payload)

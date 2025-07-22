@@ -198,7 +198,9 @@ func (k *Keeper) SetOrbitControllers(controllers ...interfaces.OrbitController) 
 			panic(err)
 		}
 	}
-	k.orbitComponent.SetRouter(router)
+	if err := k.orbitComponent.SetRouter(router); err != nil {
+		panic(err)
+	}
 }
 
 func (k *Keeper) SetActionControllers(controllers ...interfaces.ActionController) {
@@ -208,7 +210,9 @@ func (k *Keeper) SetActionControllers(controllers ...interfaces.ActionController
 			panic(err)
 		}
 	}
-	k.actionComponent.SetRouter(router)
+	if err := k.actionComponent.SetRouter(router); err != nil {
+		panic(err)
+	}
 }
 
 func (k *Keeper) SetAdapterControllers(controllers ...interfaces.AdapterController) {
@@ -218,5 +222,7 @@ func (k *Keeper) SetAdapterControllers(controllers ...interfaces.AdapterControll
 			panic(err)
 		}
 	}
-	k.adapterComponent.SetRouter(router)
+	if err := k.adapterComponent.SetRouter(router); err != nil {
+		panic(err)
+	}
 }

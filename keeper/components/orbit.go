@@ -39,12 +39,10 @@ type OrbitRouter = interfaces.Router[types.ProtocolID, interfaces.OrbitControlle
 var _ interfaces.OrbitComponent = &OrbitComponent{}
 
 type OrbitComponent struct {
-	logger log.Logger
-
+	logger     log.Logger
 	bankKeeper types.BankKeeperOrbit
-
+	// router is an orbit controllers router.
 	router OrbitRouter
-
 	// PausedOrbits maps a protocol id and counterparty id to a boolean indicating
 	// whether the orbit is paused or not.
 	PausedOrbits collections.Map[collections.Pair[int32, string], bool]
@@ -53,6 +51,7 @@ type OrbitComponent struct {
 	PausedControllers collections.Map[int32, bool]
 }
 
+// NewOrbitComponent returns a validated instance of an orbit component.
 func NewOrbitComponent(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
@@ -60,15 +59,13 @@ func NewOrbitComponent(
 	bankKeeper types.BankKeeperOrbit,
 ) (*OrbitComponent, error) {
 	if logger == nil {
-		return nil, errors.New("logger cannot be nil")
+		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	orbitsKeeper := OrbitComponent{
-		logger:     logger.With(types.ComponentPrefix, types.OrbitsKeeperName),
+		logger:     logger.With(types.ComponentPrefix, types.OrbitComponentName),
 		bankKeeper: bankKeeper,
-
-		router: router.New[types.ProtocolID, interfaces.OrbitController](),
-
+		router:     router.New[types.ProtocolID, interfaces.OrbitController](),
 		PausedOrbits: collections.NewMap(
 			sb,
 			types.PausedOrbitPrefix,
@@ -90,13 +87,13 @@ func NewOrbitComponent(
 
 func (k *OrbitComponent) Validate() error {
 	if k.logger == nil {
-		return errors.New("logger cannot be nil")
+		return types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if k.bankKeeper == nil {
-		return errors.New("bank keeper cannot be nil")
+		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
 	if k.router == nil {
-		return errors.New("controllers router cannot be nil")
+		return types.ErrNilPointer.Wrap("controllers router cannot be nil")
 	}
 	return nil
 }
@@ -109,23 +106,27 @@ func (k *OrbitComponent) Router() OrbitRouter {
 	return k.router
 }
 
-func (k *OrbitComponent) SetRouter(ocr OrbitRouter) {
+func (k *OrbitComponent) SetRouter(ocr OrbitRouter) error {
 	if k.router != nil && k.router.Sealed() {
-		panic(errors.New("cannot reset a sealed controller router"))
+		return errors.New("cannot reset a sealed router")
 	}
 
 	k.router = ocr
 	k.router.Seal()
+	return nil
 }
 
 func (k *OrbitComponent) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
 	if err := k.ValidatePacket(ctx, packet); err != nil {
-		return err
+		return types.ErrValidation.Wrap(err.Error())
 	}
 
 	c, found := k.router.Route(packet.Orbit.ProtocolID())
 	if !found {
-		return errors.New("controller is not registered")
+		return fmt.Errorf(
+			"controller not found for orbit with protocol ID: %s",
+			packet.Orbit.ProtocolID(),
+		)
 	}
 
 	return c.HandlePacket(ctx, packet)
@@ -134,17 +135,20 @@ func (k *OrbitComponent) HandlePacket(ctx context.Context, packet *types.OrbitPa
 func (k *OrbitComponent) ValidatePacket(ctx context.Context, packet *types.OrbitPacket) error {
 	err := packet.Validate()
 	if err != nil {
-		return err
+		return fmt.Errorf("error validating orbit packet: %w", err)
 	}
 
 	attr, err := packet.Orbit.CachedAttributes()
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting attributes from orbit packet: %w", err)
 	}
 
 	err = k.ValidateOrbit(ctx, packet.Orbit.ProtocolID(), attr.CounterpartyID())
 	if err != nil {
-		return err
+		return fmt.Errorf(
+			"error validating orbit controller for protocol ID and counterparty ID: %w",
+			packet.Orbit.ProtocolID(), attr.CounterpartyID(), err,
+		)
 	}
 
 	return k.validateInitialConditions(ctx, packet)

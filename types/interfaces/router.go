@@ -39,7 +39,7 @@ type Routable[ID IdentifierConstraint] interface {
 // to manage accesses to a router.
 type RouterProvider[ID IdentifierConstraint, T Routable[ID]] interface {
 	Router() Router[ID, T]
-	SetRouter(Router[ID, T])
+	SetRouter(Router[ID, T]) error
 }
 
 type Router[ID IdentifierConstraint, T Routable[ID]] interface {

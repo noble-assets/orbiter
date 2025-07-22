@@ -177,6 +177,8 @@ type ActionPacket struct {
 	Action             *Action
 }
 
+// Validate returns an error if any of the action packet field is
+// not valid.
 func (p *ActionPacket) Validate() error {
 	if p == nil {
 		return ErrNilPointer.Wrap("packet is not set")

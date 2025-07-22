@@ -22,7 +22,6 @@ package components
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"cosmossdk.io/collections"
@@ -40,17 +39,16 @@ var _ interfaces.PayloadDispatcher = &DispatcherComponent{}
 // keeps track of the statistics associated with the handled dispatches.
 type DispatcherComponent struct {
 	logger log.Logger
-
 	// Packet elements handlers
 	OrbitHandler  interfaces.PacketHandler[*types.OrbitPacket]
 	ActionHandler interfaces.PacketHandler[*types.ActionPacket]
-
 	// Stats
 	DispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, types.AmountDispatched, DispatchedAmountsIndexes]
 	DispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
 }
 
-// NewDispatcherComponent creates a new instance of a DispatcherKeeper.
+// NewDispatcherComponent creates a new validated instance of a the dispatcher
+// component.
 func NewDispatcherComponent(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
@@ -59,13 +57,13 @@ func NewDispatcherComponent(
 	actionHandler interfaces.PacketHandler[*types.ActionPacket],
 ) (*DispatcherComponent, error) {
 	if cdc == nil {
-		return nil, errors.New("codec cannot be nil")
+		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 	if sb == nil {
-		return nil, errors.New("schema builder cannot be nil")
+		return nil, types.ErrNilPointer.Wrap("schema builder cannot be nil")
 	}
 	if logger == nil {
-		return nil, errors.New("logger cannot be nil")
+		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	dispatcherKeeper := DispatcherComponent{
@@ -102,16 +100,19 @@ func NewDispatcherComponent(
 	return &dispatcherKeeper, dispatcherKeeper.Validate()
 }
 
-// Validate checks that the field of the dispatcher component
-// are valid.
+// Validate checks that the fields of the dispatcher component are valid.
 func (d *DispatcherComponent) Validate() error {
 	if d.OrbitHandler == nil {
-		return errors.New("orbits handler cannot be nil")
+		return types.ErrNilPointer.Wrap("orbits handler cannot be nil")
 	}
 	if d.ActionHandler == nil {
-		return errors.New("actions handler cannot be nil")
+		return types.ErrNilPointer.Wrap("actions handler cannot be nil")
 	}
 	return nil
+}
+
+func (d *DispatcherComponent) Logger() log.Logger {
+	return d.logger
 }
 
 // DispatchPayload is the entry point to initiate the dispatching
@@ -122,19 +123,19 @@ func (d *DispatcherComponent) DispatchPayload(
 	payload *types.Payload,
 ) error {
 	if err := d.validatePayload(payload); err != nil {
-		return fmt.Errorf("payload validation failed: %w", err)
+		return types.ErrValidation.Wrap(err.Error())
 	}
 
 	if err := d.dispatchActions(ctx, transferAttr, payload.PreActions); err != nil {
-		return fmt.Errorf("actions processing failed: %w", err)
+		return fmt.Errorf("actions dispatch failed: %w", err)
 	}
 
 	if err := d.dispatchOrbit(ctx, transferAttr, payload.Orbit); err != nil {
-		return fmt.Errorf("orbit processing failed: %w", err)
+		return fmt.Errorf("orbit dispatch failed: %w", err)
 	}
 
 	if err := d.updateStats(ctx, transferAttr, payload.Orbit); err != nil {
-		d.logger.Error("Error Updating Orbiter Statistics", "error", err.Error())
+		d.logger.Error("Error ypdating Orbiter statistics", "error", err.Error())
 	}
 
 	return nil
@@ -144,13 +145,9 @@ func (d *DispatcherComponent) DispatchPayload(
 // its validation method.
 func (d *DispatcherComponent) validatePayload(payload *types.Payload) error {
 	if payload == nil {
-		return errors.New("payload cannot be nil")
+		return types.ErrNilPointer.Wrap("payload cannot be nil")
 	}
 	return payload.Validate()
-}
-
-func (k *DispatcherComponent) Logger() log.Logger {
-	return k.logger
 }
 
 // dispatchActions iterates through all the actions, creates
@@ -164,12 +161,12 @@ func (d *DispatcherComponent) dispatchActions(
 
 		packet, err := types.NewActionPacket(transferAttr, action)
 		if err != nil {
-			return err
+			return fmt.Errorf("error creating action %s packet: %w", action.ID(), err)
 		}
 
 		err = d.dispatchActionPacket(ctx, packet)
 		if err != nil {
-			return err
+			return fmt.Errorf("error dispatching action %s packet: %w", action.ID(), err)
 		}
 	}
 	return nil
@@ -184,14 +181,26 @@ func (d *DispatcherComponent) dispatchOrbit(
 ) error {
 	packet, err := types.NewOrbitPacket(transferAttr, orbit)
 	if err != nil {
-		return err
+		return fmt.Errorf(
+			"error creating orbit packet for protocol ID %s: %w",
+			packet.Orbit.ProtocolID(),
+			err,
+		)
 	}
 
-	return d.dispatchOrbitPacket(ctx, packet)
+	err = d.dispatchOrbitPacket(ctx, packet)
+	if err != nil {
+		return fmt.Errorf(
+			"error dispatching orbit packet for protocol %s: %w",
+			packet.Orbit.ProtocolID(),
+			err,
+		)
+	}
+	return nil
 }
 
 // dispatchActionPacket dispatch the action packet to the
-// actions handler.
+// action handler.
 func (d *DispatcherComponent) dispatchActionPacket(
 	ctx context.Context,
 	packet *types.ActionPacket,
@@ -200,7 +209,7 @@ func (d *DispatcherComponent) dispatchActionPacket(
 }
 
 // dispatchOrbitPacket dispatch the orbit packet to the
-// orbits handler.
+// orbit handler.
 func (d *DispatcherComponent) dispatchOrbitPacket(
 	ctx context.Context,
 	packet *types.OrbitPacket,
