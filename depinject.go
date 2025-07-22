@@ -96,19 +96,19 @@ func InjectComponents(in ComponentsInputs) {
 }
 
 func InjectOrbitControllers(in ComponentsInputs) {
-	var controllers []interfaces.OrbitController
+	var controllers []interfaces.ControllerOrbit
 
 	in.Orbiters.SetOrbitControllers(controllers...)
 }
 
 func InjectActionControllers(in ComponentsInputs) {
-	var controllers []interfaces.ActionController
+	var controllers []interfaces.ControllerAction
 
 	in.Orbiters.SetActionControllers(controllers...)
 }
 
 func InjectAdapterControllers(in ComponentsInputs) {
-	var controllers []interfaces.AdapterController
+	var controllers []interfaces.ControllerAdapter
 
 	in.Orbiters.SetAdapterControllers(controllers...)
 }

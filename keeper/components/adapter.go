@@ -33,7 +33,7 @@ import (
 	"orbiter.dev/types/router"
 )
 
-type AdapterRouter = interfaces.Router[types.ProtocolID, interfaces.AdapterController]
+type AdapterRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerAdapter]
 
 var _ interfaces.AdapterComponent = &AdapterComponent{}
 
@@ -56,7 +56,7 @@ func NewAdapterComponent(
 
 	adaptersKeeper := AdapterComponent{
 		logger:     logger.With(types.ComponentPrefix, types.AdaptersComponentName),
-		router:     router.New[types.ProtocolID, interfaces.AdapterController](),
+		router:     router.New[types.ProtocolID, interfaces.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
 	}

@@ -26,24 +26,24 @@ import (
 	"orbiter.dev/types"
 )
 
-// OrbitController defines the behavior an orbit packet
+// ControllerOrbit defines the behavior an orbit packet
 // controller has to implement.
-type OrbitController interface {
-	BaseController[types.ProtocolID]
+type ControllerOrbit interface {
+	Controller[types.ProtocolID]
 	PacketHandler[*types.OrbitPacket]
 }
 
-// ActionController defines the behavior an action packet
+// ControllerAction defines the behavior an action packet
 // controller has to implement.
-type ActionController interface {
-	BaseController[types.ActionID]
+type ControllerAction interface {
+	Controller[types.ActionID]
 	PacketHandler[*types.ActionPacket]
 }
 
-// AdapterController defines the behavior expected from a specific
+// ControllerAdapter defines the behavior expected from a specific
 // protocol adapter.
-type AdapterController interface {
-	BaseController[types.ProtocolID]
+type ControllerAdapter interface {
+	Controller[types.ProtocolID]
 	PayloadParser
 	// BeforeTransferHook allows to execute logic BEFORE completing
 	// the cross-chain transfer.
@@ -53,9 +53,9 @@ type AdapterController interface {
 	AfterTransferHook(context.Context, *types.Payload) error
 }
 
-// BaseController defines the behavior common to
+// Controller defines the behavior common to
 // all controllers.
-type BaseController[ID IdentifierConstraint] interface {
+type Controller[ID IdentifierConstraint] interface {
 	Routable[ID]
 	Name() string
 }

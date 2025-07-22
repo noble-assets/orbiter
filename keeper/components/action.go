@@ -34,7 +34,7 @@ import (
 	"orbiter.dev/types/router"
 )
 
-type ActionRouter = interfaces.Router[types.ActionID, interfaces.ActionController]
+type ActionRouter = interfaces.Router[types.ActionID, interfaces.ControllerAction]
 
 var _ interfaces.ActionComponent = &ActionComponent{}
 
@@ -55,7 +55,7 @@ func NewActionComponent(
 ) (*ActionComponent, error) {
 	actionsKeeper := ActionComponent{
 		logger: logger.With(types.ComponentPrefix, types.ActionComponentName),
-		router: router.New[types.ActionID, interfaces.ActionController](),
+		router: router.New[types.ActionID, interfaces.ControllerAction](),
 		PausedControllers: collections.NewMap(
 			sb,
 			types.PausedActionControllersPrefix,

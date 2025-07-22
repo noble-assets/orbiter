@@ -34,7 +34,7 @@ import (
 	router "orbiter.dev/types/router"
 )
 
-type OrbitRouter = interfaces.Router[types.ProtocolID, interfaces.OrbitController]
+type OrbitRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerOrbit]
 
 var _ interfaces.OrbitComponent = &OrbitComponent{}
 
@@ -65,7 +65,8 @@ func NewOrbitComponent(
 	orbitsKeeper := OrbitComponent{
 		logger:     logger.With(types.ComponentPrefix, types.OrbitComponentName),
 		bankKeeper: bankKeeper,
-		router:     router.New[types.ProtocolID, interfaces.OrbitController](),
+
+		router: router.New[types.ProtocolID, interfaces.ControllerOrbit](),
 		PausedOrbits: collections.NewMap(
 			sb,
 			types.PausedOrbitPrefix,

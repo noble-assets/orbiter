@@ -191,7 +191,7 @@ func (k *Keeper) AdapterComponent() interfaces.AdapterComponent {
 	return k.adapterComponent
 }
 
-func (k *Keeper) SetOrbitControllers(controllers ...interfaces.OrbitController) {
+func (k *Keeper) SetOrbitControllers(controllers ...interfaces.ControllerOrbit) {
 	router := k.orbitComponent.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -203,7 +203,7 @@ func (k *Keeper) SetOrbitControllers(controllers ...interfaces.OrbitController) 
 	}
 }
 
-func (k *Keeper) SetActionControllers(controllers ...interfaces.ActionController) {
+func (k *Keeper) SetActionControllers(controllers ...interfaces.ControllerAction) {
 	router := k.actionComponent.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -215,7 +215,7 @@ func (k *Keeper) SetActionControllers(controllers ...interfaces.ActionController
 	}
 }
 
-func (k *Keeper) SetAdapterControllers(controllers ...interfaces.AdapterController) {
+func (k *Keeper) SetAdapterControllers(controllers ...interfaces.ControllerAdapter) {
 	router := k.adapterComponent.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {

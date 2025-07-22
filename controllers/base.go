@@ -26,8 +26,8 @@ import (
 )
 
 var (
-	_ interfaces.BaseController[types.ActionID]   = &BaseController[types.ActionID]{}
-	_ interfaces.BaseController[types.ProtocolID] = &BaseController[types.ProtocolID]{}
+	_ interfaces.Controller[types.ActionID]   = &BaseController[types.ActionID]{}
+	_ interfaces.Controller[types.ProtocolID] = &BaseController[types.ProtocolID]{}
 )
 
 // NewBaseController returns a new instance of a validated BaseController.

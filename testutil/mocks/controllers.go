@@ -28,7 +28,7 @@ import (
 	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.OrbitController = &OrbitController{}
+var _ interfaces.ControllerOrbit = &OrbitController{}
 
 type OrbitController struct {
 	Id types.ProtocolID
@@ -52,7 +52,7 @@ func (o *OrbitController) HandlePacket(ctx context.Context, _ *types.OrbitPacket
 	return nil
 }
 
-var _ interfaces.ActionController = &NoOpActionController{}
+var _ interfaces.ControllerAction = &NoOpActionController{}
 
 type NoOpActionController struct {
 	Id types.ActionID
@@ -76,7 +76,7 @@ func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.Action
 	return nil
 }
 
-var _ interfaces.AdapterController = &NoOpAdapterController{}
+var _ interfaces.ControllerAdapter = &NoOpAdapterController{}
 
 type NoOpAdapterController struct {
 	Id types.ProtocolID

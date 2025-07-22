@@ -28,12 +28,16 @@ import (
 	"orbiter.dev/types"
 )
 
+type Loggable interface {
+	Logger() log.Logger
+}
+
 // OrbitComponent defines the behavior the Orbiter module
 // expected from a type to act as an orbits component.
 type OrbitComponent interface {
-	Logger() log.Logger
+	Loggable
 	PacketHandler[*types.OrbitPacket]
-	RouterProvider[types.ProtocolID, OrbitController]
+	RouterProvider[types.ProtocolID, ControllerOrbit]
 	Pause(context.Context, types.ProtocolID, []string) error
 	Unpause(context.Context, types.ProtocolID, []string) error
 }
@@ -41,9 +45,9 @@ type OrbitComponent interface {
 // ActionComponent defines the behavior the Orbiter module
 // expected from a type to act as an actions component.
 type ActionComponent interface {
-	Logger() log.Logger
+	Loggable
 	PacketHandler[*types.ActionPacket]
-	RouterProvider[types.ActionID, ActionController]
+	RouterProvider[types.ActionID, ControllerAction]
 	Pause(context.Context, types.ActionID) error
 	Unpause(context.Context, types.ActionID) error
 }
@@ -51,14 +55,14 @@ type ActionComponent interface {
 // DispatcherComponent defines the behavior the Orbiter module
 // expected from a type to act as a dispatcher.
 type DispatcherComponent interface {
-	Logger() log.Logger
+	Loggable
 	PayloadDispatcher
 }
 
 // AdapterComponent defines the behavior the Orbiter module
 // expected from a type to act as a cross-chain adapter.
 type AdapterComponent interface {
-	Logger() log.Logger
+	Loggable
 	PayloadAdapter
-	RouterProvider[types.ProtocolID, AdapterController]
+	RouterProvider[types.ProtocolID, ControllerAdapter]
 }
