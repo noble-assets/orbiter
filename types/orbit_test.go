@@ -21,6 +21,7 @@
 package types_test
 
 import (
+	fmt "fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -37,103 +38,106 @@ func TestNewOrbit(t *testing.T) {
 		id                 types.ProtocolID
 		attributes         types.OrbitAttributes
 		passthroughPayload []byte
-		expectedError      string
+		expErr             string
 	}{
 		{
 			name:               "success - with valid attributes",
 			id:                 types.PROTOCOL_IBC,
 			attributes:         &testdata.TestOrbitAttr{Planet: "earth"},
 			passthroughPayload: []byte("test payload"),
-			expectedError:      "",
+			expErr:             "",
 		},
 		{
 			name:               "success - with nil passthrough payload",
 			id:                 types.PROTOCOL_CCTP,
 			attributes:         &testdata.TestOrbitAttr{Planet: "earth"},
 			passthroughPayload: nil,
-			expectedError:      "",
+			expErr:             "",
 		},
 		{
 			name:               "success - with default attributes",
 			id:                 types.PROTOCOL_HYPERLANE,
 			attributes:         &testdata.TestOrbitAttr{},
 			passthroughPayload: []byte("test"),
-			expectedError:      "",
+			expErr:             "",
 		},
 		{
 			name:               "fail - with nil attributes",
 			id:                 types.PROTOCOL_HYPERLANE,
 			attributes:         nil,
 			passthroughPayload: []byte("test"),
-			expectedError:      "can't proto marshal",
+			expErr:             "can't proto marshal",
 		},
 		{
 			name:               "fail - with unsupported id",
 			id:                 types.PROTOCOL_UNSUPPORTED,
 			attributes:         &testdata.TestOrbitAttr{Planet: "earth"},
 			passthroughPayload: []byte("test"),
-			expectedError:      types.ErrIDNotSupported.Error(),
+			expErr:             types.ErrIDNotSupported.Error(),
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			orbit, err := types.NewOrbit(tc.id, tc.attributes, tc.passthroughPayload)
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			orbit, err := types.NewOrbit(tC.id, tC.attributes, tC.passthroughPayload)
 
-			if tc.expectedError != "" {
-				require.Error(t, err)
-				require.Contains(t, err.Error(), tc.expectedError)
+			if tC.expErr != "" {
+				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tc.id, orbit.ProtocolId)
-				require.Equal(t, tc.passthroughPayload, orbit.PassthroughPayload)
+				require.Equal(t, tC.id, orbit.ProtocolId)
+				require.Equal(t, tC.passthroughPayload, orbit.PassthroughPayload)
 
 				// Verify attributes can be retrieved
 				attrs, err := orbit.CachedAttributes()
 				require.NoError(t, err)
-				require.Equal(t, tc.attributes, attrs)
+				require.Equal(t, tC.attributes, attrs)
 			}
 		})
 	}
 }
 
-func TestOrbit_Validate(t *testing.T) {
+func TestValidateOrbit(t *testing.T) {
 	testCases := []struct {
-		name          string
-		orbit         types.Orbit
-		expectedError string
+		name   string
+		orbit  *types.Orbit
+		expErr string
 	}{
 		{
 			name: "fail with unsupported orbit",
-			orbit: types.Orbit{
+			orbit: &types.Orbit{
 				ProtocolId: types.PROTOCOL_UNSUPPORTED,
 			},
-			expectedError: types.ErrIDNotSupported.Error(),
+			expErr: types.ErrIDNotSupported.Error(),
+		},
+		{
+			name:   "fail with nil orbit",
+			orbit:  nil,
+			expErr: "orbit is a nil pointer",
 		},
 		{
 			name: "fail when attributes are nil",
-			orbit: types.Orbit{
+			orbit: &types.Orbit{
 				ProtocolId: types.PROTOCOL_IBC,
 			},
-			expectedError: "not set",
+			expErr: "not set",
 		},
 		{
 			name: "success with supported orbit an non nil attributes",
-			orbit: types.Orbit{
+			orbit: &types.Orbit{
 				ProtocolId: types.PROTOCOL_IBC,
 				Attributes: &codectypes.Any{},
 			},
-			expectedError: "",
+			expErr: "",
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			err := tc.orbit.Validate()
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			err := tC.orbit.Validate()
 
-			if tc.expectedError != "" {
-				require.Error(t, err)
-				require.Contains(t, err.Error(), tc.expectedError)
+			if tC.expErr != "" {
+				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
 			}
@@ -141,30 +145,30 @@ func TestOrbit_Validate(t *testing.T) {
 	}
 }
 
-func TestOrbit_ProtocolID(t *testing.T) {
+func TestProtocolIDOrbit(t *testing.T) {
 	testCases := []struct {
 		name       string
 		orbit      *types.Orbit
-		expectedId types.ProtocolID
+		expectedID types.ProtocolID
 	}{
 		{
 			name: "return orbit id when orbit is not nil",
 			orbit: &types.Orbit{
 				ProtocolId: types.PROTOCOL_IBC,
 			},
-			expectedId: types.PROTOCOL_IBC,
+			expectedID: types.PROTOCOL_IBC,
 		},
 		{
 			name:       "return PROTOCOL_UNSUPPORTED when orbit is nil",
 			orbit:      nil,
-			expectedId: types.PROTOCOL_UNSUPPORTED,
+			expectedID: types.PROTOCOL_UNSUPPORTED,
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			id := tc.orbit.ProtocolID()
-			require.Equal(t, tc.expectedId, id)
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			id := tC.orbit.ProtocolID()
+			require.Equal(t, tC.expectedID, id)
 		})
 	}
 }
@@ -173,7 +177,7 @@ func TestOrbitID(t *testing.T) {
 	testCases := []struct {
 		name       string
 		orbitID    types.OrbitID
-		expectedId string
+		expectedID string
 	}{
 		{
 			name: "IBC orbit ID",
@@ -181,7 +185,7 @@ func TestOrbitID(t *testing.T) {
 				ProtocolID:     types.PROTOCOL_IBC,
 				CounterpartyID: "channel-1",
 			},
-			expectedId: "1:channel-1",
+			expectedID: fmt.Sprintf("%d:channel-1", types.PROTOCOL_IBC),
 		},
 		{
 			name: "CCTP orbit ID",
@@ -189,7 +193,7 @@ func TestOrbitID(t *testing.T) {
 				ProtocolID:     types.PROTOCOL_CCTP,
 				CounterpartyID: "0",
 			},
-			expectedId: "2:0",
+			expectedID: fmt.Sprintf("%d:0", types.PROTOCOL_CCTP),
 		},
 		{
 			name: "Hyperlane orbit ID",
@@ -197,14 +201,14 @@ func TestOrbitID(t *testing.T) {
 				ProtocolID:     types.PROTOCOL_HYPERLANE,
 				CounterpartyID: "ethereum",
 			},
-			expectedId: "3:ethereum",
+			expectedID: fmt.Sprintf("%d:ethereum", types.PROTOCOL_HYPERLANE),
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			id := tc.orbitID.ID()
-			require.Equal(t, tc.expectedId, id)
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			id := tC.orbitID.ID()
+			require.Equal(t, tC.expectedID, id)
 		})
 	}
 }
@@ -256,7 +260,7 @@ func TestParseOrbitID(t *testing.T) {
 			orbitID, err := types.ParseOrbitID(tC.id)
 
 			if tC.expErr != "" {
-				require.Error(t, err)
+				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
 				require.Equal(t, tC.expectedProtocolID, orbitID.ProtocolID)

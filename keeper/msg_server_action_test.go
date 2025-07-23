@@ -71,7 +71,6 @@ func TestMsgServerPauseAction(t *testing.T) {
 			resp, err := msgServer.PauseAction(ctx, tc.msg)
 
 			if tc.expErr != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expErr)
 				require.Nil(t, resp)
 			} else {
@@ -122,7 +121,6 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			resp, err := msgServer.UnpauseAction(ctx, tc.msg)
 
 			if tc.expErr != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expErr)
 				require.Nil(t, resp)
 			} else {

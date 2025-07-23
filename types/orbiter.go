@@ -108,5 +108,8 @@ func (pw *PayloadWrapper) Validate() error {
 var _ cdctypes.UnpackInterfacesMessage = &PayloadWrapper{}
 
 func (pw *PayloadWrapper) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
+	if pw == nil {
+		return ErrNilPointer.Wrap("payload wrapper is a nil pointer")
+	}
 	return pw.Orbiter.UnpackInterfaces(unpacker)
 }

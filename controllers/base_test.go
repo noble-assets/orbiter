@@ -52,7 +52,6 @@ func TestNewBaseController(t *testing.T) {
 			controller, err := controllers.NewBaseController(tC.protocolId)
 
 			if tC.expErr != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)

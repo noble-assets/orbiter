@@ -112,7 +112,6 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.expError != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expError)
 				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceInfo, tc.destinationInfo, denom)
 				require.Equal(t, math.ZeroInt(), da.Incoming)
@@ -135,7 +134,6 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 			)
 
 			if tc.expError != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expError)
 				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceInfo, tc.destinationInfo, denom)
 				require.Equal(t, math.ZeroInt(), da.Incoming)
@@ -274,7 +272,6 @@ func TestDispatcherKeeper_updateStats(t *testing.T) {
 			err = dispatcher.updateStats(ctx, transferAttr, orbit)
 
 			if tc.expectedError != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expectedError)
 			} else {
 				require.NoError(t, err)
@@ -372,7 +369,6 @@ func TestDispatcherKeeper_updateDispatchedCountsStats(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.expError != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expError)
 				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceInfo, tc.destinationInfo)
 				require.Equal(t, uint32(0), dc)
@@ -387,7 +383,6 @@ func TestDispatcherKeeper_updateDispatchedCountsStats(t *testing.T) {
 			err = dispatcher.updateDispatchedCountsStats(ctx, &tc.sourceInfo, &tc.destinationInfo)
 
 			if tc.expError != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expError)
 				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceInfo, tc.destinationInfo)
 				require.Equal(t, uint32(0), dc)

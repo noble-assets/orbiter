@@ -69,7 +69,6 @@ func TestNewDispatcherKeeper(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.expError != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expError)
 			} else {
 				require.NoError(t, err)
@@ -117,7 +116,6 @@ func TestDispatcherKeeper_Validate(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.expError != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expError)
 			} else {
 				require.NoError(t, err)

@@ -142,7 +142,6 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 		t.Run("Marshal/"+tC.name, func(t *testing.T) {
 			payloadBz, err := types.MarshalJSON(encCfg.Codec, tC.payload())
 			if tC.expErr != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
@@ -164,7 +163,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 			}
 			payloadWrapperBz, err := types.MarshalJSON(encCfg.Codec, &wrapper)
 			if tC.expErr != "" {
-				require.Error(t, err)
+				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
 
