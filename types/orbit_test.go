@@ -54,14 +54,21 @@ func TestNewOrbit(t *testing.T) {
 			expectedError:      "",
 		},
 		{
-			name:               "error - with empty attributes",
+			name:               "success - with default attributes",
 			id:                 types.PROTOCOL_HYPERLANE,
 			attributes:         &testdata.TestOrbitAttr{},
 			passthroughPayload: []byte("test"),
 			expectedError:      "",
 		},
 		{
-			name:               "error - with unsupported id",
+			name:               "fail - with nil attributes",
+			id:                 types.PROTOCOL_HYPERLANE,
+			attributes:         nil,
+			passthroughPayload: []byte("test"),
+			expectedError:      "can't proto marshal",
+		},
+		{
+			name:               "fail - with unsupported id",
 			id:                 types.PROTOCOL_UNSUPPORTED,
 			attributes:         &testdata.TestOrbitAttr{Planet: "earth"},
 			passthroughPayload: []byte("test"),
@@ -202,12 +209,12 @@ func TestOrbitID(t *testing.T) {
 	}
 }
 
-func TestOrbitIDFromString(t *testing.T) {
+func TestParseOrbitID(t *testing.T) {
 	testCases := []struct {
 		name                   string
 		id                     string
 		expectedProtocolID     types.ProtocolID
-		expectedCounterpartyId string
+		expectedCounterpartyID string
 		expErr                 string
 	}{
 		{
@@ -234,13 +241,13 @@ func TestOrbitIDFromString(t *testing.T) {
 			name:                   "valid IBC Id",
 			id:                     "1:channel-1",
 			expectedProtocolID:     types.PROTOCOL_IBC,
-			expectedCounterpartyId: "channel-1",
+			expectedCounterpartyID: "channel-1",
 		},
 		{
 			name:                   "valid CCTP Id",
 			id:                     "2:0",
 			expectedProtocolID:     types.PROTOCOL_CCTP,
-			expectedCounterpartyId: "0",
+			expectedCounterpartyID: "0",
 		},
 	}
 
@@ -253,7 +260,7 @@ func TestOrbitIDFromString(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				require.Equal(t, tC.expectedProtocolID, orbitID.ProtocolID)
-				require.Equal(t, tC.expectedCounterpartyId, orbitID.CounterpartyID)
+				require.Equal(t, tC.expectedCounterpartyID, orbitID.CounterpartyID)
 			}
 		})
 	}

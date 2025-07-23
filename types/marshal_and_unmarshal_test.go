@@ -143,6 +143,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 			payloadBz, err := types.MarshalJSON(encCfg.Codec, tC.payload())
 			if tC.expErr != "" {
 				require.Error(t, err)
+				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
 
