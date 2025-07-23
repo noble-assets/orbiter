@@ -81,6 +81,9 @@ func NewAction(id ActionID, attr ActionAttributes) (*Action, error) {
 
 // Validate returns an error if the action is not valid.
 func (a *Action) Validate() error {
+	if a == nil {
+		return ErrNilPointer.Wrap("action is a nil pointer")
+	}
 	if err := a.Id.Validate(); err != nil {
 		return err
 	}
@@ -104,6 +107,10 @@ func (a *Action) ID() ActionID {
 // codec Any type. Returns nil if the action does not have
 // attributes set.
 func (a *Action) CachedAttributes() (ActionAttributes, error) {
+	if a == nil {
+		return nil, ErrNilPointer.Wrap("action is a nil pointer")
+	}
+
 	if a.Attributes == nil {
 		return nil, ErrNilPointer.Wrap("action attributes are not set")
 	}
@@ -121,6 +128,10 @@ func (a *Action) CachedAttributes() (ActionAttributes, error) {
 
 // SetAttributes sets the action attributes into the action as codec Any type.
 func (a *Action) SetAttributes(attr ActionAttributes) error {
+	if a == nil {
+		return ErrNilPointer.Wrap("action is a nil pointer")
+	}
+
 	m, ok := attr.(proto.Message)
 	if !ok {
 		return sdkerrors.ErrPackAny.Wrapf("can't proto marshal %T", m)
@@ -137,6 +148,9 @@ func (a *Action) SetAttributes(attr ActionAttributes) error {
 // UnpackInterfaces is the method required to correctly unpack
 // an Any type into an interface registered in the codec.
 func (a *Action) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
+	if a == nil {
+		return ErrNilPointer.Wrap("action is a nil pointer")
+	}
 	var attributes ActionAttributes
 	return unpacker.UnpackAny(a.Attributes, &attributes)
 }

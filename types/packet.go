@@ -22,6 +22,7 @@ package types
 
 import (
 	"errors"
+	fmt "fmt"
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -40,7 +41,7 @@ func NewTransferAttributes(
 		return nil, err
 	}
 	transferAttr := TransferAttributes{
-		sourceOrbitID: &sourceOrbitID,
+		sourceOrbitID: sourceOrbitID,
 		sourceCoin:    sdk.NewCoin(denom, amount),
 	}
 	// Initially, the destination coin is the same as of the
@@ -55,7 +56,7 @@ func NewTransferAttributes(
 // passed down the orbiter to handle actions and routing.
 type TransferAttributes struct {
 	// Source fields have only getter methods.
-	sourceOrbitID *OrbitID
+	sourceOrbitID OrbitID
 	sourceCoin    sdk.Coin
 	// Destination field have both setters and getters
 	// because they can be mutated by actions.
@@ -64,8 +65,8 @@ type TransferAttributes struct {
 
 // Validate returns an error if any of the fields is not valid.
 func (a *TransferAttributes) Validate() error {
-	if a.sourceOrbitID == nil {
-		return ErrNilPointer.Wrap("source cross chain attributes")
+	if a == nil {
+		return ErrNilPointer.Wrap("transfer attributes is a nil pointer")
 	}
 	if err := a.sourceOrbitID.Validate(); err != nil {
 		return err
@@ -80,36 +81,57 @@ func (a *TransferAttributes) Validate() error {
 }
 
 func (a *TransferAttributes) SourceProtocolID() ProtocolID {
-	return a.sourceOrbitID.ProtocolID
+	if a != nil {
+		return a.sourceOrbitID.ProtocolID
+	}
+	return PROTOCOL_UNSUPPORTED
 }
 
 func (a *TransferAttributes) SourceCounterpartyID() string {
+	if a == nil {
+		return ""
+	}
 	return a.sourceOrbitID.CounterpartyID
 }
 
 func (a *TransferAttributes) SourceAmount() math.Int {
-	if a.sourceCoin.Amount.IsNil() {
+	if a == nil || a.sourceCoin.Amount.IsNil() {
 		return math.ZeroInt()
 	}
 	return a.sourceCoin.Amount
 }
 
 func (a *TransferAttributes) SourceDenom() string {
+	if a == nil {
+		return ""
+	}
 	return a.sourceCoin.Denom
 }
 
 func (a *TransferAttributes) DestinationAmount() math.Int {
-	if a.destinationCoin.Amount.IsNil() {
+	if a == nil || a.destinationCoin.Amount.IsNil() {
 		return math.ZeroInt()
 	}
 	return a.destinationCoin.Amount
 }
 
 func (a *TransferAttributes) DestinationDenom() string {
+	if a == nil {
+		return ""
+	}
 	return a.destinationCoin.Denom
 }
 
+// SetDestinationAmount set the input amount for the destination
+// amount of the transfer attributes.
+//
+// CONTRACT: receiver should not be nil but we handle
+// nil defensively for robustness.
 func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
+	if a == nil {
+		fmt.Println("Warning: SetDestinaitonAmount() called on nil TransferAttributes")
+		return
+	}
 	if amount.IsNil() {
 		a.destinationCoin.Amount = math.ZeroInt()
 		return
@@ -117,7 +139,16 @@ func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 	a.destinationCoin.Amount = amount
 }
 
+// SetDestinationDenom set the denom for the destination
+// denom of the transfer attributes.
+//
+// CONTRACT: receiver should not be nil but we handle
+// nil defensively for robustness.
 func (a *TransferAttributes) SetDestinationDenom(denom string) {
+	if a == nil {
+		fmt.Println("Warning: SetDestinaitonDenom() called on nil TransferAttributes")
+		return
+	}
 	a.destinationCoin.Denom = denom
 }
 
@@ -142,20 +173,14 @@ type OrbitPacket struct {
 // Validate returns an error if the instance is not valid.
 func (p *OrbitPacket) Validate() error {
 	if p == nil {
-		return ErrNilPointer.Wrap("packet is not set")
+		return ErrNilPointer.Wrap("orbit packet is not set")
 	}
 
-	if p.Orbit == nil {
-		return ErrNilPointer.Wrap("orbit is not set")
-	}
 	err := p.Orbit.Validate()
 	if err != nil {
 		return err
 	}
 
-	if p.TransferAttributes == nil {
-		return ErrNilPointer.Wrap("transfer attributes are not set")
-	}
 	return p.TransferAttributes.Validate()
 }
 
@@ -184,17 +209,10 @@ func (p *ActionPacket) Validate() error {
 		return ErrNilPointer.Wrap("packet is not set")
 	}
 
-	if p.Action == nil {
-		return ErrNilPointer.Wrap("action is not set")
-	}
-
 	err := p.Action.Validate()
 	if err != nil {
 		return err
 	}
 
-	if p.TransferAttributes == nil {
-		return ErrNilPointer.Wrap("transfer attributes are not set")
-	}
 	return p.TransferAttributes.Validate()
 }

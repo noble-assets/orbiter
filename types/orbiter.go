@@ -45,17 +45,14 @@ func NewPayload(
 // Validate returns an error if the payload fields are
 // not valid.
 func (p *Payload) Validate() error {
+	if p == nil {
+		return ErrNilPointer.Wrap("payload is a nil pointer")
+	}
+
 	for _, action := range p.PreActions {
-		if action == nil {
-			return ErrNilPointer.Wrap("action is not set")
-		}
 		if err := action.Validate(); err != nil {
 			return err
 		}
-	}
-
-	if p.Orbit == nil {
-		return ErrNilPointer.Wrap("orbit is not set")
 	}
 
 	return p.Orbit.Validate()
@@ -64,6 +61,10 @@ func (p *Payload) Validate() error {
 var _ cdctypes.UnpackInterfacesMessage = &Payload{}
 
 func (p *Payload) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
+	if p == nil {
+		return ErrNilPointer.Wrap("payload is a nil pointer")
+	}
+
 	if p.PreActions != nil {
 		for _, a := range p.PreActions {
 			if err := a.UnpackInterfaces(unpacker); err != nil {
@@ -72,11 +73,10 @@ func (p *Payload) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 		}
 	}
 
-	if p.Orbit != nil {
-		if err := p.Orbit.UnpackInterfaces(unpacker); err != nil {
-			return err
-		}
+	if err := p.Orbit.UnpackInterfaces(unpacker); err != nil {
+		return err
 	}
+
 	return nil
 }
 
@@ -99,6 +99,9 @@ func NewPayloadWrapper(
 // Validate returns an error if the orbiter payload wrapper
 // contains non valid fields.
 func (pw *PayloadWrapper) Validate() error {
+	if pw == nil {
+		return ErrNilPointer.Wrap("payload wrapper is a nil pointer")
+	}
 	return pw.Orbiter.Validate()
 }
 
