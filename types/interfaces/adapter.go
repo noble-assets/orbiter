@@ -33,11 +33,15 @@ type PayloadAdapter interface {
 	// input bytes represent an orbiter payload.
 	ParsePayload(types.ProtocolID, []byte) (bool, *types.Payload, error)
 	// BeforeTransferHook allows to execute logic BEFORE completing
-	// the cross-chain transfer with the specific adapter defined by
-	// the protocol ID.
-	BeforeTransferHook(context.Context, types.ProtocolID, *types.Payload) error
+	// the cross-chain transfer.
+	BeforeTransferHook(context.Context, types.OrbitID, *types.Payload) error
 	// AfterTransferHook allows to execute logic AFTER completing
-	// the cross-chain transfer received from the defined protocol ID and
-	// counterparty chain ID. The counterparty chain ID is expressed as a string.
-	AfterTransferHook(context.Context, types.ProtocolID, string, *types.Payload) error
+	// the cross-chain transfer.
+	AfterTransferHook(
+		context.Context,
+		types.OrbitID,
+		*types.Payload,
+	) (*types.TransferAttributes, error)
+	// ProcessPayload processed the parsed payload.
+	ProcessPayload(context.Context, *types.TransferAttributes, *types.Payload) error
 }

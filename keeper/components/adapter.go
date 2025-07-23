@@ -115,12 +115,12 @@ func (k *AdapterComponent) ParsePayload(
 // BeforeTransferHook implements types.PayloadAdapter.
 func (k *AdapterComponent) BeforeTransferHook(
 	ctx context.Context,
-	id types.ProtocolID,
+	sourceOrbitID types.OrbitID,
 	payload *types.Payload,
 ) error {
-	adapter, found := k.router.Route(id)
+	adapter, found := k.router.Route(sourceOrbitID.ProtocolID)
 	if !found {
-		return fmt.Errorf("adapter not found for protocol ID: %v", id)
+		return fmt.Errorf("adapter not found for protocol ID: %s", sourceOrbitID.ProtocolID)
 	}
 
 	if err := adapter.BeforeTransferHook(ctx, payload); err != nil {
@@ -133,34 +133,42 @@ func (k *AdapterComponent) BeforeTransferHook(
 // AfterTransferHook implements types.PayloadAdapter.
 func (k *AdapterComponent) AfterTransferHook(
 	ctx context.Context,
-	protocolID types.ProtocolID,
-	counterpartyID string,
+	sourceOrbitID types.OrbitID,
 	payload *types.Payload,
-) error {
-	adapter, found := k.router.Route(protocolID)
+) (*types.TransferAttributes, error) {
+	adapter, found := k.router.Route(sourceOrbitID.ProtocolID)
 	if !found {
-		return fmt.Errorf("adapter not found for protocol ID: %s", protocolID)
+		return nil, fmt.Errorf("adapter not found for protocol ID: %s", sourceOrbitID.ProtocolID)
 	}
 
 	if err := adapter.AfterTransferHook(ctx, payload); err != nil {
-		return fmt.Errorf("after transfer hook failed: %w", err)
+		return nil, fmt.Errorf("after transfer hook failed: %w", err)
 	}
 
 	balances := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
 	if err := k.validateOrbiterInitialBalance(balances); err != nil {
-		return types.ErrValidation.Wrap(err.Error())
+		return nil, types.ErrValidation.Wrap(err.Error())
 	}
 
 	transferAttr, err := types.NewTransferAttributes(
-		protocolID,
-		counterpartyID,
+		sourceOrbitID.ProtocolID,
+		sourceOrbitID.CounterpartyID,
 		balances[0].GetDenom(),
 		balances[0].Amount,
 	)
 	if err != nil {
-		return fmt.Errorf("error creating transfer attributes: %s", protocolID)
+		return nil, fmt.Errorf("error creating transfer attributes: %w", err)
 	}
 
+	return transferAttr, nil
+}
+
+// ProcessPayload implements types.PayloadAdapter.
+func (k *AdapterComponent) ProcessPayload(
+	ctx context.Context,
+	transferAttr *types.TransferAttributes,
+	payload *types.Payload,
+) error {
 	return k.dispatcher.DispatchPayload(ctx, transferAttr, payload)
 }
 
