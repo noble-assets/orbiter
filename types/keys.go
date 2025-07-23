@@ -62,8 +62,8 @@ var (
 // Actions
 // ====================================================================================================.
 const (
-	ActionComponentName   = "action"
-	AdapterControllerName = "adapter_controller"
+	ActionComponentName  = "action"
+	ActionControllerName = "action_controller"
 
 	// Maps names.
 	PausedActionControllersName = "paused_action_controllers"
@@ -102,6 +102,7 @@ var (
 // ====================================================================================================.
 const (
 	AdaptersComponentName = "adapter"
+	AdapterControllerName = "adapter_controller"
 
 	// CCTPNobleDomain is the identifier of the Noble domain
 	// in the CCTP protocol.
