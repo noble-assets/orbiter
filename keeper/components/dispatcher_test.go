@@ -93,13 +93,13 @@ func TestDispatcherKeeper_Validate(t *testing.T) {
 			expError:       "",
 		},
 		{
-			name:           "fail - nil orbits handler",
+			name:           "error - nil orbits handler",
 			OrbitsHandler:  nil,
 			ActionsHandler: &mocks.ActionsHandler{},
 			expError:       "cannot be nil",
 		},
 		{
-			name:           "fail - nil actions handler",
+			name:           "error - nil actions handler",
 			OrbitsHandler:  &mocks.OrbitsHandler{},
 			ActionsHandler: nil,
 			expError:       "cannot be nil",

@@ -32,34 +32,34 @@ import (
 func TestNewBaseController(t *testing.T) {
 	testCases := []struct {
 		name       string
-		protocolId types.ProtocolID
+		protocolID types.ProtocolID
 		expErr     string
 	}{
 		{
-			name:       "error when the id is not valid",
-			protocolId: types.PROTOCOL_UNSUPPORTED,
+			name:       "error - when the ID is not valid",
+			protocolID: types.PROTOCOL_UNSUPPORTED,
 			expErr:     "id is not supported",
 		},
 		{
-			name:       "success with valid id",
-			protocolId: types.PROTOCOL_IBC,
+			name:       "success - with valid ID",
+			protocolID: types.PROTOCOL_IBC,
 			expErr:     "",
 		},
 	}
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			controller, err := controllers.NewBaseController(tC.protocolId)
+			controller, err := controllers.NewBaseController(tC.protocolID)
 
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
 				id := controller.ID()
-				require.Equal(t, tC.protocolId, id)
+				require.Equal(t, tC.protocolID, id)
 
 				name := controller.Name()
-				require.Equal(t, tC.protocolId.String(), name)
+				require.Equal(t, tC.protocolID.String(), name)
 			}
 		})
 	}

@@ -40,14 +40,14 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 		expErr  string
 	}{
 		{
-			name: "payload with default values",
+			name: "success - payload with default values (resulting types are nil)",
 			payload: func() *types.Payload {
 				return &types.Payload{}
 			},
 			expErr: "",
 		},
 		{
-			name: "payload with one orbit and no actions",
+			name: "success - payload with one orbit and no actions",
 			setup: func(reg codectypes.InterfaceRegistry) {
 				reg.RegisterImplementations(
 					(*types.OrbitAttributes)(nil),
@@ -67,7 +67,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 			expErr: "",
 		},
 		{
-			name:  "payload with action not registered",
+			name:  "error - payload with action not registered",
 			setup: func(reg codectypes.InterfaceRegistry) {},
 			payload: func() *types.Payload {
 				attr := testdata.TestActionAttr{
@@ -83,26 +83,28 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 			expErr: "unable to resolve",
 		},
 		{
-			name: "payload with actions and no orbit",
+			name: "error - payload with orbit not registered",
 			setup: func(reg codectypes.InterfaceRegistry) {
 				reg.RegisterImplementations(
 					(*types.ActionAttributes)(nil),
 					&testdata.TestActionAttr{},
 				)
 			}, payload: func() *types.Payload {
-				attr := testdata.TestActionAttr{
-					Whatever: "doesn't kill you makes you stronger",
+				attrOrbit := testdata.TestOrbitAttr{
+					Planet: "saturn",
 				}
-				action, err := types.NewAction(types.ACTION_FEE, &attr)
+				orbit, err := types.NewOrbit(types.PROTOCOL_IBC, &attrOrbit, []byte{})
+				require.NoError(t, err)
 				require.NoError(t, err)
 
 				return &types.Payload{
-					PreActions: []*types.Action{action},
+					Orbit: orbit,
 				}
-			}, expErr: "",
+			},
+			expErr: "unable to resolve",
 		},
 		{
-			name: "payload with orbit and actions",
+			name: "success - payload with orbit and actions",
 			setup: func(reg codectypes.InterfaceRegistry) {
 				reg.RegisterImplementations(
 					(*types.OrbitAttributes)(nil),

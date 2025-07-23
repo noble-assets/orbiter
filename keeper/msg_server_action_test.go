@@ -38,7 +38,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 		expErr string
 	}{
 		{
-			name: "fail - unauthorized signer",
+			name: "error - unauthorized signer",
 			msg: &types.MsgPauseAction{
 				Signer:   "noble1invalid",
 				ActionId: types.ACTION_FEE,
@@ -46,7 +46,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 			expErr: types.ErrUnauthorized.Error(),
 		},
 		{
-			name: "success - does not update an already paused action",
+			name: "success - already paused action",
 			msg: &types.MsgPauseAction{
 				Signer:   testutil.Authority,
 				ActionId: types.ActionID(99),
@@ -88,7 +88,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 		expErr string
 	}{
 		{
-			name: "fail - unauthorized signer",
+			name: "error - unauthorized signer",
 			msg: &types.MsgUnpauseAction{
 				Signer:   "noble1invalid",
 				ActionId: types.ACTION_FEE,
@@ -96,7 +96,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			expErr: types.ErrUnauthorized.Error(),
 		},
 		{
-			name: "success - does not update an already unpaused action",
+			name: "success - already unpaused action",
 			msg: &types.MsgUnpauseAction{
 				Signer:   testutil.Authority,
 				ActionId: types.ActionID(99),

@@ -62,14 +62,14 @@ func TestNewOrbit(t *testing.T) {
 			expErr:             "",
 		},
 		{
-			name:               "fail - with nil attributes",
+			name:               "error - with nil attributes",
 			id:                 types.PROTOCOL_HYPERLANE,
 			attributes:         nil,
 			passthroughPayload: []byte("test"),
 			expErr:             "can't proto marshal",
 		},
 		{
-			name:               "fail - with unsupported id",
+			name:               "error - with unsupported id",
 			id:                 types.PROTOCOL_UNSUPPORTED,
 			attributes:         &testdata.TestOrbitAttr{Planet: "earth"},
 			passthroughPayload: []byte("test"),
@@ -104,26 +104,26 @@ func TestValidateOrbit(t *testing.T) {
 		expErr string
 	}{
 		{
-			name: "fail with unsupported orbit",
+			name: "error - with unsupported orbit",
 			orbit: &types.Orbit{
 				ProtocolId: types.PROTOCOL_UNSUPPORTED,
 			},
 			expErr: types.ErrIDNotSupported.Error(),
 		},
 		{
-			name:   "fail with nil orbit",
+			name:   "error - with nil orbit",
 			orbit:  nil,
 			expErr: "orbit is a nil pointer",
 		},
 		{
-			name: "fail when attributes are nil",
+			name: "error - when attributes are nil",
 			orbit: &types.Orbit{
 				ProtocolId: types.PROTOCOL_IBC,
 			},
 			expErr: "not set",
 		},
 		{
-			name: "success with supported orbit an non nil attributes",
+			name: "success - with supported orbit an non nil attributes",
 			orbit: &types.Orbit{
 				ProtocolId: types.PROTOCOL_IBC,
 				Attributes: &codectypes.Any{},
@@ -152,7 +152,7 @@ func TestProtocolIDOrbit(t *testing.T) {
 		expectedID types.ProtocolID
 	}{
 		{
-			name: "return orbit id when orbit is not nil",
+			name: "return orbit ID when orbit is valid",
 			orbit: &types.Orbit{
 				ProtocolId: types.PROTOCOL_IBC,
 			},
@@ -222,34 +222,34 @@ func TestParseOrbitID(t *testing.T) {
 		expErr                 string
 	}{
 		{
-			name:   "invalid format - no colon",
+			name:   "error - when invalid format (no colon)",
 			id:     "1channel-1",
 			expErr: "invalid orbit",
 		},
 		{
-			name:   "non numeric protocol Id",
+			name:   "error - when non numeric protocol ID",
 			id:     "invalid:channel-1",
 			expErr: "invalid protocol",
 		},
 		{
-			name:   "empty string",
+			name:   "error - when empty string",
 			id:     "",
 			expErr: "invalid orbit",
 		},
 		{
-			name:                   "invalid format - multiple colons",
+			name:                   "error - when the format is not valid (multiple colons)",
 			id:                     "1:channel:1",
 			expectedProtocolID:     types.PROTOCOL_IBC,
 			expectedCounterpartyID: "channel:1",
 		},
 		{
-			name:                   "valid IBC Id",
+			name:                   "success - with valid IBC ID",
 			id:                     "1:channel-1",
 			expectedProtocolID:     types.PROTOCOL_IBC,
 			expectedCounterpartyID: "channel-1",
 		},
 		{
-			name:                   "valid CCTP Id",
+			name:                   "success - with valid CCTP ID",
 			id:                     "2:0",
 			expectedProtocolID:     types.PROTOCOL_CCTP,
 			expectedCounterpartyID: "0",

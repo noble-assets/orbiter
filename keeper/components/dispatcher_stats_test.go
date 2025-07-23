@@ -44,7 +44,7 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 		expError           string
 	}{
 		{
-			name:               "fail - default values (default protocol ID is not valid)",
+			name:               "error - default values (default protocol ID is not valid)",
 			sourceOrbitID:      types.OrbitID{},
 			destinationOrbitID: types.OrbitID{},
 			amountDispatched:   *types.NewAmountDispatched(math.ZeroInt(), math.ZeroInt()),
@@ -321,7 +321,7 @@ func TestDispatcherKeeper_updateDispatchedCountsStats(t *testing.T) {
 		expError        string
 	}{
 		{
-			name:            "fail - default values (invalid protocol ID)",
+			name:            "error - default values (invalid protocol ID)",
 			sourceInfo:      types.OrbitID{},
 			destinationInfo: types.OrbitID{},
 			expError:        "id is not supported",
@@ -413,7 +413,7 @@ func TestDispatcherKeeper_buildDenomDispatchedAmounts(t *testing.T) {
 		expectedAmounts    map[string]types.AmountDispatched // key: denom
 	}{
 		{
-			name: "same denom - single entry",
+			name: "single entry wirh same denoms",
 			transferAttributes: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
@@ -428,7 +428,7 @@ func TestDispatcherKeeper_buildDenomDispatchedAmounts(t *testing.T) {
 			},
 		},
 		{
-			name: "different denom - two entries",
+			name: "two entries with different denoms",
 			transferAttributes: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
