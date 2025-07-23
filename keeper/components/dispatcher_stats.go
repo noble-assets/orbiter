@@ -86,15 +86,15 @@ func (d *DispatcherComponent) updateStats(
 // the coins delivered to the destination chain.
 func (d *DispatcherComponent) updateDispatchedAmountStats(
 	ctx context.Context,
-	sourceInfo *types.OrbitID,
-	destinationInfo *types.OrbitID,
+	sourceOrbitID *types.OrbitID,
+	destinationOrbitID *types.OrbitID,
 	denom string,
 	newAmountDispatched types.AmountDispatched,
 ) error {
 	amountDispatched := d.GetDispatchedAmount(
 		ctx,
-		*sourceInfo,
-		*destinationInfo,
+		*sourceOrbitID,
+		*destinationOrbitID,
 		denom,
 	)
 
@@ -107,8 +107,8 @@ func (d *DispatcherComponent) updateDispatchedAmountStats(
 
 	return d.SetDispatchedAmount(
 		ctx,
-		*sourceInfo,
-		*destinationInfo,
+		*sourceOrbitID,
+		*destinationOrbitID,
 		denom,
 		amountDispatched,
 	)

@@ -80,7 +80,7 @@ func (i OrbitID) Validate() error {
 // ID generates an internal identifier for a tuple (bridge protocol, chain).
 // The identifier allows to recover the protocol Id and the chain Id from its value.
 func (i OrbitID) ID() string {
-	return fmt.Sprintf("%d%s%s", i.ProtocolID.Uint32(), OrbitIDSeparator, i.CounterpartyID)
+	return fmt.Sprintf("%d%s%s", i.ProtocolID.Uint32(), orbitIDSeparator, i.CounterpartyID)
 }
 
 // String returns the string representation of the id.
@@ -92,7 +92,7 @@ func (i OrbitID) String() string {
 // Returns an error if the string is not a valid orbit
 // id string.
 func ParseOrbitID(str string) (OrbitID, error) {
-	sepIndex := strings.Index(str, OrbitIDSeparator)
+	sepIndex := strings.Index(str, orbitIDSeparator)
 	if sepIndex == -1 {
 		return OrbitID{}, fmt.Errorf("invalid orbit ID format: missing separator in %s", str)
 	}

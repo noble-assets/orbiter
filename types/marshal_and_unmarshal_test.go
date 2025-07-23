@@ -80,7 +80,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 					PreActions: []*types.Action{action},
 				}
 			},
-			expErr: "not registered",
+			expErr: "unable to resolve",
 		},
 		{
 			name: "payload with actions and no orbit",

@@ -146,7 +146,7 @@ func (k *OrbitComponent) ValidatePacket(ctx context.Context, packet *types.Orbit
 	err = k.ValidateOrbit(ctx, packet.Orbit.ProtocolID(), attr.CounterpartyID())
 	if err != nil {
 		return fmt.Errorf(
-			"error validating orbit controller for protocol ID and counterparty ID: %w",
+			"error validating orbit controller for protocol ID %s and counterparty ID %s: %w",
 			packet.Orbit.ProtocolID(), attr.CounterpartyID(), err,
 		)
 	}

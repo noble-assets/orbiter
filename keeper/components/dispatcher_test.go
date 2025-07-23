@@ -86,7 +86,6 @@ func TestDispatcherKeeper_Validate(t *testing.T) {
 		ActionsHandler interfaces.PacketHandler[*types.ActionPacket]
 		expError       string
 	}{
-		// TODO: add all failing cases
 		{
 			name:           "success - all mandatory fields are set",
 			OrbitsHandler:  &mocks.OrbitsHandler{},

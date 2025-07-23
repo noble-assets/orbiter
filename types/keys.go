@@ -31,14 +31,14 @@ const ModuleName = "orbiter"
 
 const (
 	ComponentPrefix  = "component"
-	OrbitIDSeparator = ":"
+	orbitIDSeparator = ":"
 )
 
 var (
 	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
-	DustCollectorName    = fmt.Sprintf("%s/%s", ModuleName, "dust_collector")
-	DustCollectorAddress = authtypes.NewModuleAddress(DustCollectorName)
+	dustCollectorName    = fmt.Sprintf("%s/%s", ModuleName, "dust_collector")
+	DustCollectorAddress = authtypes.NewModuleAddress(dustCollectorName)
 )
 
 // ====================================================================================================

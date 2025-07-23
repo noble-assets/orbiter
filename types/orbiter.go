@@ -67,14 +67,18 @@ func (p *Payload) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 
 	if p.PreActions != nil {
 		for _, a := range p.PreActions {
-			if err := a.UnpackInterfaces(unpacker); err != nil {
-				return err
+			if a != nil {
+				if err := a.UnpackInterfaces(unpacker); err != nil {
+					return err
+				}
 			}
 		}
 	}
 
-	if err := p.Orbit.UnpackInterfaces(unpacker); err != nil {
-		return err
+	if p.Orbit != nil {
+		if err := p.Orbit.UnpackInterfaces(unpacker); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -108,8 +112,5 @@ func (pw *PayloadWrapper) Validate() error {
 var _ cdctypes.UnpackInterfacesMessage = &PayloadWrapper{}
 
 func (pw *PayloadWrapper) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
-	if pw == nil {
-		return ErrNilPointer.Wrap("payload wrapper is a nil pointer")
-	}
 	return pw.Orbiter.UnpackInterfaces(unpacker)
 }

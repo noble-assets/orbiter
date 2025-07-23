@@ -176,22 +176,22 @@ func TestGetDispatchedByProtocolID(t *testing.T) {
 	dispatcher, deps := newDispatcherKeeper(t)
 	ctx := deps.SdkCtx
 
-	protocolId := types.PROTOCOL_IBC
+	protocolID := types.PROTOCOL_IBC
 
 	// ACT: Test empty protocol (no dispatch records)
-	result := dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolId)
+	result := dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolID)
 
 	// ASSERT
-	require.NotNil(t, result.ChainAmount)
-	require.Empty(t, result.ChainAmount)
+	require.NotNil(t, result.ChainsAmount())
+	require.Empty(t, result.ChainsAmount())
 
 	// ARRANGE: Set up test data
 	sourceInfo1 := types.OrbitID{
-		ProtocolID:     protocolId,
+		ProtocolID:     protocolID,
 		CounterpartyID: "channel-1",
 	}
 	sourceInfo2 := types.OrbitID{
-		ProtocolID:     protocolId,
+		ProtocolID:     protocolID,
 		CounterpartyID: "channel-2",
 	}
 	destinationInfo := types.OrbitID{
@@ -216,19 +216,22 @@ func TestGetDispatchedByProtocolID(t *testing.T) {
 	require.NoError(t, err)
 
 	// ACT: Test getting protocol total dispatched
-	result = dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolId)
+	result = dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolID)
 
 	// ASSERT
-	require.NotNil(t, result.ChainAmount)
-	require.Len(t, result.ChainAmount, 2)
+	require.NotNil(t, result.ChainsAmount())
+	require.Len(t, result.ChainsAmount(), 2)
 
 	// Verify the results contain the expected data
-	require.Contains(t, result.ChainAmount, "channel-1")
-	require.Contains(t, result.ChainAmount, "channel-2")
-	require.Equal(t, result.ChainAmount["channel-1"].OrbitID, destinationInfo)
-	require.Equal(t, result.ChainAmount["channel-2"].OrbitID, destinationInfo)
-	require.Equal(t, result.ChainAmount["channel-1"].AmountDispatched, amount1)
-	require.Equal(t, result.ChainAmount["channel-2"].AmountDispatched, amount2)
+	require.Contains(t, result.ChainsAmount(), "channel-1")
+	require.Contains(t, result.ChainsAmount(), "channel-2")
+	chainsAmount := result.ChainsAmount()
+	channelOne := chainsAmount["channel-1"]
+	channelTwo := chainsAmount["channel-2"]
+	require.Equal(t, channelOne.OrbitID(), destinationInfo)
+	require.Equal(t, channelTwo.OrbitID(), destinationInfo)
+	require.Equal(t, channelOne.AmountDispatched(), amount1)
+	require.Equal(t, channelTwo.AmountDispatched(), amount2)
 }
 
 func TestDispatched_EmptyStates(t *testing.T) {
@@ -256,8 +259,8 @@ func TestDispatched_EmptyStates(t *testing.T) {
 	require.False(t, hasDispatched)
 
 	totalDispatched := dispatcher.GetDispatchedAmountsByProtocolID(ctx, types.PROTOCOL_IBC)
-	require.NotNil(t, totalDispatched.ChainAmount)
-	require.Empty(t, totalDispatched.ChainAmount)
+	require.NotNil(t, totalDispatched.ChainsAmount())
+	require.Empty(t, totalDispatched.ChainsAmount())
 
 	// Test iteration with empty state
 	called := false
@@ -358,10 +361,10 @@ func TestDispatched_MultipleProtocolsAndChains(t *testing.T) {
 
 	// Test protocol-specific queries
 	ibcTotal := dispatcher.GetDispatchedAmountsByProtocolID(ctx, types.PROTOCOL_IBC)
-	require.Len(t, ibcTotal.ChainAmount, 2) // channel-1 and channel-2
+	require.Len(t, ibcTotal.ChainsAmount(), 2) // channel-1 and channel-2
 
 	cctpTotal := dispatcher.GetDispatchedAmountsByProtocolID(ctx, types.PROTOCOL_CCTP)
-	require.Len(t, cctpTotal.ChainAmount, 1) // only counterparty "0"
+	require.Len(t, cctpTotal.ChainsAmount(), 1) // only counterparty "0"
 }
 
 // ====================================================================================================
@@ -381,8 +384,8 @@ func TestGetDispatchedByDestinationProtocolID(t *testing.T) {
 	result := dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolSource1)
 
 	// ASSERT
-	require.NotNil(t, result.ChainAmount)
-	require.Empty(t, result.ChainAmount)
+	require.NotNil(t, result.ChainsAmount())
+	require.Empty(t, result.ChainsAmount())
 
 	// ARRANGE: Set up test data
 	sourceInfo1 := types.OrbitID{
@@ -425,16 +428,21 @@ func TestGetDispatchedByDestinationProtocolID(t *testing.T) {
 
 	// ASSERT
 	require.NotNil(t, result.ChainAmount)
-	require.Len(t, result.ChainAmount, 3)
+	require.Len(t, result.ChainsAmount(), 3)
 
 	// Verify the results contain the expected data
-	require.Contains(t, result.ChainAmount, "channel-1")
-	require.Contains(t, result.ChainAmount, "channel-2")
-	require.Contains(t, result.ChainAmount, "ethereum")
-	require.Equal(t, result.ChainAmount["channel-1"].OrbitID, destinationInfo)
-	require.Equal(t, result.ChainAmount["channel-2"].OrbitID, destinationInfo)
-	require.Equal(t, result.ChainAmount["ethereum"].OrbitID, destinationInfo)
-	require.Equal(t, result.ChainAmount["channel-1"].AmountDispatched, amount1)
-	require.Equal(t, result.ChainAmount["channel-2"].AmountDispatched, amount2)
-	require.Equal(t, result.ChainAmount["ethereum"].AmountDispatched, amount2)
+	chainsAmount := result.ChainsAmount()
+	require.Contains(t, chainsAmount, "channel-1")
+	require.Contains(t, chainsAmount, "channel-2")
+	require.Contains(t, chainsAmount, "ethereum")
+
+	channelOne := result.ChainAmount("channel-1")
+	channelTwo := result.ChainAmount("channel-2")
+	ethereum := result.ChainAmount("ethereum")
+	require.Equal(t, channelOne.OrbitID(), destinationInfo)
+	require.Equal(t, channelTwo.OrbitID(), destinationInfo)
+	require.Equal(t, ethereum.OrbitID(), destinationInfo)
+	require.Equal(t, channelOne.AmountDispatched(), amount1)
+	require.Equal(t, channelTwo.AmountDispatched(), amount2)
+	require.Equal(t, ethereum.AmountDispatched(), amount2)
 }

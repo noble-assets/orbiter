@@ -40,14 +40,16 @@ func NewTransferAttributes(
 	if err != nil {
 		return nil, err
 	}
-	transferAttr := TransferAttributes{
-		sourceOrbitID: sourceOrbitID,
-		sourceCoin:    sdk.NewCoin(denom, amount),
-	}
+	sourceCoin := sdk.Coin{Denom: denom, Amount: amount}
 	// Initially, the destination coin is the same as of the
 	// incoming coin.
-	sourceCoin := transferAttr.sourceCoin
-	transferAttr.destinationCoin = sourceCoin
+	destinationCoin := sdk.Coin{Denom: denom, Amount: amount}
+
+	transferAttr := TransferAttributes{
+		sourceOrbitID:   sourceOrbitID,
+		sourceCoin:      sourceCoin,
+		destinationCoin: destinationCoin,
+	}
 
 	return &transferAttr, transferAttr.Validate()
 }
@@ -71,11 +73,17 @@ func (a *TransferAttributes) Validate() error {
 	if err := a.sourceOrbitID.Validate(); err != nil {
 		return err
 	}
+	if err := a.sourceCoin.Validate(); err != nil {
+		return fmt.Errorf("source coin validation error: %w", err)
+	}
 	if !a.sourceCoin.IsPositive() {
-		return errors.New("invalid source amount")
+		return errors.New("source amount must be positive")
+	}
+	if err := a.destinationCoin.Validate(); err != nil {
+		return fmt.Errorf("destination coin validation error: %w", err)
 	}
 	if !a.destinationCoin.IsPositive() {
-		return errors.New("invalid destination amount")
+		return errors.New("destination amount must be positive")
 	}
 	return nil
 }
@@ -132,7 +140,7 @@ func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 		fmt.Println("Warning: SetDestinaitonAmount() called on nil TransferAttributes")
 		return
 	}
-	if amount.IsNil() {
+	if amount.IsNil() || amount.IsNegative() {
 		a.destinationCoin.Amount = math.ZeroInt()
 		return
 	}

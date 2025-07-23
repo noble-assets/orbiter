@@ -227,11 +227,6 @@ func TestParseOrbitID(t *testing.T) {
 			expErr: "invalid orbit",
 		},
 		{
-			name:   "invalid format - multiple colons",
-			id:     "1:channel:1",
-			expErr: "invalid orbit",
-		},
-		{
 			name:   "non numeric protocol Id",
 			id:     "invalid:channel-1",
 			expErr: "invalid protocol",
@@ -240,6 +235,12 @@ func TestParseOrbitID(t *testing.T) {
 			name:   "empty string",
 			id:     "",
 			expErr: "invalid orbit",
+		},
+		{
+			name:                   "invalid format - multiple colons",
+			id:                     "1:channel:1",
+			expectedProtocolID:     types.PROTOCOL_IBC,
+			expectedCounterpartyID: "channel:1",
 		},
 		{
 			name:                   "valid IBC Id",

@@ -36,27 +36,27 @@ import (
 func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 	denom := "uusdc"
 	testCases := []struct {
-		name             string
-		sourceInfo       types.OrbitID
-		destinationInfo  types.OrbitID
-		amountDispatched types.AmountDispatched
-		twoUpdates       bool
-		expError         string
+		name               string
+		sourceOrbitID      types.OrbitID
+		destinationOrbitID types.OrbitID
+		amountDispatched   types.AmountDispatched
+		twoUpdates         bool
+		expError           string
 	}{
 		{
-			name:             "success - default values",
-			sourceInfo:       types.OrbitID{},
-			destinationInfo:  types.OrbitID{},
-			amountDispatched: *types.NewAmountDispatched(math.ZeroInt(), math.ZeroInt()),
-			expError:         "",
+			name:               "fail - default values (default protocol ID is not valid)",
+			sourceOrbitID:      types.OrbitID{},
+			destinationOrbitID: types.OrbitID{},
+			amountDispatched:   *types.NewAmountDispatched(math.ZeroInt(), math.ZeroInt()),
+			expError:           "id is not supported",
 		},
 		{
 			name: "success - non default values and zero incoming dispatched amount",
-			sourceInfo: types.OrbitID{
+			sourceOrbitID: types.OrbitID{
 				ProtocolID:     1,
 				CounterpartyID: "noble",
 			},
-			destinationInfo: types.OrbitID{
+			destinationOrbitID: types.OrbitID{
 				ProtocolID:     2,
 				CounterpartyID: "ethereum",
 			},
@@ -65,11 +65,11 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 		},
 		{
 			name: "success - non default values and zero outgoing dispatched amount",
-			sourceInfo: types.OrbitID{
+			sourceOrbitID: types.OrbitID{
 				ProtocolID:     1,
 				CounterpartyID: "noble",
 			},
-			destinationInfo: types.OrbitID{
+			destinationOrbitID: types.OrbitID{
 				ProtocolID:     2,
 				CounterpartyID: "ethereum",
 			},
@@ -77,12 +77,12 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 			expError:         "",
 		},
 		{
-			name:             "success - second dispatched amount update",
-			sourceInfo:       types.OrbitID{ProtocolID: 1, CounterpartyID: "noble"},
-			destinationInfo:  types.OrbitID{ProtocolID: 2, CounterpartyID: "ethereum"},
-			amountDispatched: *types.NewAmountDispatched(math.NewInt(1), math.ZeroInt()),
-			twoUpdates:       true,
-			expError:         "",
+			name:               "success - second dispatched amount update",
+			sourceOrbitID:      types.OrbitID{ProtocolID: 1, CounterpartyID: "noble"},
+			destinationOrbitID: types.OrbitID{ProtocolID: 2, CounterpartyID: "ethereum"},
+			amountDispatched:   *types.NewAmountDispatched(math.NewInt(1), math.ZeroInt()),
+			twoUpdates:         true,
+			expError:           "",
 		},
 	}
 
@@ -104,8 +104,8 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 
 		err = dispatcher.updateDispatchedAmountStats(
 			ctx,
-			&tc.sourceInfo,
-			&tc.destinationInfo,
+			&tc.sourceOrbitID,
+			&tc.destinationOrbitID,
 			denom,
 			tc.amountDispatched,
 		)
@@ -113,12 +113,17 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.expError != "" {
 				require.ErrorContains(t, err, tc.expError)
-				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceInfo, tc.destinationInfo, denom)
+				da := dispatcher.GetDispatchedAmount(
+					ctx,
+					tc.sourceOrbitID,
+					tc.destinationOrbitID,
+					denom,
+				)
 				require.Equal(t, math.ZeroInt(), da.Incoming)
 				require.Equal(t, math.ZeroInt(), da.Outgoing)
 			} else {
 				require.NoError(t, err)
-				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceInfo, tc.destinationInfo, denom)
+				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceOrbitID, tc.destinationOrbitID, denom)
 				require.Equal(t, tc.amountDispatched.Incoming, da.Incoming)
 				require.Equal(t, tc.amountDispatched.Outgoing, da.Outgoing)
 			}
@@ -127,20 +132,25 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 		t.Run("SecondUpdate/"+tc.name, func(t *testing.T) {
 			err = dispatcher.updateDispatchedAmountStats(
 				ctx,
-				&tc.sourceInfo,
-				&tc.destinationInfo,
+				&tc.sourceOrbitID,
+				&tc.destinationOrbitID,
 				denom,
 				tc.amountDispatched,
 			)
 
 			if tc.expError != "" {
 				require.ErrorContains(t, err, tc.expError)
-				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceInfo, tc.destinationInfo, denom)
+				da := dispatcher.GetDispatchedAmount(
+					ctx,
+					tc.sourceOrbitID,
+					tc.destinationOrbitID,
+					denom,
+				)
 				require.Equal(t, math.ZeroInt(), da.Incoming)
 				require.Equal(t, math.ZeroInt(), da.Outgoing)
 			} else {
 				require.NoError(t, err)
-				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceInfo, tc.destinationInfo, denom)
+				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceOrbitID, tc.destinationOrbitID, denom)
 				require.Equal(t, tc.amountDispatched.Incoming.MulRaw(2), da.Incoming)
 				require.Equal(t, tc.amountDispatched.Outgoing.MulRaw(2), da.Outgoing)
 			}
@@ -311,10 +321,10 @@ func TestDispatcherKeeper_updateDispatchedCountsStats(t *testing.T) {
 		expError        string
 	}{
 		{
-			name:            "success - default values",
+			name:            "fail - default values (invalid protocol ID)",
 			sourceInfo:      types.OrbitID{},
 			destinationInfo: types.OrbitID{},
-			expError:        "",
+			expError:        "id is not supported",
 		},
 		{
 			name: "success - non default values and zero incoming dispatched amount",

@@ -23,11 +23,11 @@ package types
 // NewProtocolID returns a validated protocol ID from an int32. If
 // the validation fails, the returned ID is the default ID.
 func NewProtocolID(id int32) (ProtocolID, error) {
-	protocolId := ProtocolID(id)
-	if err := protocolId.Validate(); err != nil {
+	protocolID := ProtocolID(id)
+	if err := protocolID.Validate(); err != nil {
 		return PROTOCOL_UNSUPPORTED, err
 	}
-	return protocolId, nil
+	return protocolID, nil
 }
 
 // Validate returns an error if the ID is not valid.
