@@ -217,8 +217,8 @@ func (k *Keeper) SetActionControllers(controllers ...interfaces.ActionController
 
 func (k *Keeper) SetAdapterControllers(controllers ...interfaces.AdapterController) {
 	router := k.adapterComponent.Router()
-	for _, a := range controllers {
-		if err := router.AddRoute(a); err != nil {
+	for _, c := range controllers {
+		if err := router.AddRoute(c); err != nil {
 			panic(err)
 		}
 	}

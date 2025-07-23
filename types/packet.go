@@ -40,7 +40,7 @@ func NewTransferAttributes(
 		return nil, err
 	}
 	transferAttr := TransferAttributes{
-		sourceOrbitID: sourceOrbitID,
+		sourceOrbitID: &sourceOrbitID,
 		sourceCoin:    sdk.NewCoin(denom, amount),
 	}
 	// Initially, the destination coin is the same as of the

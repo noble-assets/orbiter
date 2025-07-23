@@ -37,7 +37,8 @@ type ActionAttributes interface {
 // ====================================================================================================
 
 // NewActionID returns a validated action ID from an int32. If
-// the validation fails, the returned ActionID is the default ID.
+// the validation fails, the returned value signals an unsupported
+// action and an error is returned along with it.
 func NewActionID(id int32) (ActionID, error) {
 	actionID := ActionID(id)
 	if err := actionID.Validate(); err != nil {

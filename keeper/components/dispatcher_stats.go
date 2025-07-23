@@ -41,7 +41,7 @@ func (d *DispatcherComponent) updateStats(
 		return err
 	}
 
-	var sourceAttr *types.OrbitID
+	var sourceAttr types.OrbitID
 	if sourceAttr, err = types.NewOrbitID(
 		transferAttr.SourceProtocolID(),
 		transferAttr.SourceCounterpartyID(),
@@ -49,7 +49,7 @@ func (d *DispatcherComponent) updateStats(
 		return err
 	}
 
-	var destinationAttr *types.OrbitID
+	var destinationAttr types.OrbitID
 	if destinationAttr, err = types.NewOrbitID(
 		orbit.ProtocolID(),
 		attr.CounterpartyID(),
@@ -66,12 +66,12 @@ func (d *DispatcherComponent) updateStats(
 	denomDispatchedAmounts := d.buildDenomDispatchedAmounts(transferAttr)
 
 	for _, dda := range denomDispatchedAmounts {
-		if err := d.updateDispatchedAmountStats(ctx, sourceAttr, destinationAttr, dda.Denom, dda.AmountDispatched); err != nil {
+		if err := d.updateDispatchedAmountStats(ctx, &sourceAttr, &destinationAttr, dda.Denom, dda.AmountDispatched); err != nil {
 			return fmt.Errorf("update incoming stats failure: %w", err)
 		}
 	}
 
-	if err := d.updateDispatchedCountsStats(ctx, sourceAttr, destinationAttr); err != nil {
+	if err := d.updateDispatchedCountsStats(ctx, &sourceAttr, &destinationAttr); err != nil {
 		return fmt.Errorf("update dispatch counts stats failure: %w", err)
 	}
 

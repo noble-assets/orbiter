@@ -31,6 +31,8 @@ import (
 	"github.com/cosmos/gogoproto/proto"
 )
 
+// OrbitAttributes is the interface every protocol attribute type
+// has to implement to be a valid orbit attribute.
 type OrbitAttributes interface {
 	proto.Message
 	// Returns the destination chain identifier.
@@ -43,62 +45,73 @@ type OrbitAttributes interface {
 
 // NewOrbitID returns a validated orbit identifier instance.
 func NewOrbitID(
-	protocolId ProtocolID,
-	counterpartyId string,
-) (*OrbitID, error) {
+	protocolID ProtocolID,
+	counterpartyID string,
+) (OrbitID, error) {
 	attr := OrbitID{
-		ProtocolID:     protocolId,
-		CounterpartyID: counterpartyId,
+		ProtocolID:     protocolID,
+		CounterpartyID: counterpartyID,
 	}
 
-	return &attr, attr.Validate()
+	return attr, attr.Validate()
 }
 
-// OrbitID is an internal type used to represent
-// uniquely a source or a destination of a cross-chain
-// transfer and the protocol used.
+// OrbitID is an internal type used to uniquely
+// represent a source or a destination of a cross-chain
+// transfer and the bridge protocol used.
 type OrbitID struct {
-	ProtocolID     ProtocolID
+	ProtocolID ProtocolID
+	// Protocol specific identifier of a counterparty.
 	CounterpartyID string
 }
 
-func (a *OrbitID) Validate() error {
-	if err := a.ProtocolID.Validate(); err != nil {
+// Validate returns an error if any of the orbit id field
+// is not valid.
+func (i OrbitID) Validate() error {
+	if err := i.ProtocolID.Validate(); err != nil {
 		return err
 	}
-	if a.CounterpartyID == "" {
-		return errors.New("counterparty identifier cannot be empty string")
+	if i.CounterpartyID == "" {
+		return errors.New("counterparty id cannot be empty string")
 	}
 	return nil
 }
 
 // ID generates an internal identifier for a tuple (bridge protocol, chain).
 // The identifier allows to recover the protocol Id and the chain Id from its value.
-func (a *OrbitID) ID() string {
-	return fmt.Sprintf("%d%s%s", a.ProtocolID.Uint32(), OrbitIDSeparator, a.CounterpartyID)
+func (i OrbitID) ID() string {
+	return fmt.Sprintf("%d%s%s", i.ProtocolID.Uint32(), OrbitIDSeparator, i.CounterpartyID)
 }
 
-func (a *OrbitID) String() string {
-	return a.ID()
+// String returns the string representation of the id.
+func (i OrbitID) String() string {
+	return i.ID()
 }
 
-func (a *OrbitID) FromString(str string) error {
-	parts := strings.Split(str, OrbitIDSeparator)
-	if len(parts) != 2 {
-		return fmt.Errorf("invalid orbit ID format: %s", str)
+// ParseOrbitID returns a new orbit id instance from the string.
+// Returns an error if the string is not a valid orbit
+// id string.
+func ParseOrbitID(str string) (OrbitID, error) {
+	sepIndex := strings.Index(str, OrbitIDSeparator)
+	if sepIndex == -1 {
+		return OrbitID{}, fmt.Errorf("invalid orbit ID format: missing separator in %s", str)
 	}
 
-	id, err := strconv.ParseInt(parts[0], 10, 32)
+	protocolIDStr := str[:sepIndex]
+	counterpartyID := str[sepIndex+1:]
+
+	id, err := strconv.ParseInt(protocolIDStr, 10, 32)
 	if err != nil {
-		return fmt.Errorf("invalid protocol ID: %w", err)
+		return OrbitID{}, fmt.Errorf("invalid protocol ID: %w", err)
 	}
 
 	protocolID := ProtocolID(int32(id))
+	orbitID, err := NewOrbitID(protocolID, counterpartyID)
+	if err != nil {
+		return OrbitID{}, fmt.Errorf("invalid orbit ID string %s: %w", str, err)
+	}
 
-	a.ProtocolID = protocolID
-	a.CounterpartyID = parts[1]
-
-	return nil
+	return orbitID, nil
 }
 
 // ====================================================================================================
@@ -128,6 +141,9 @@ func NewOrbit(id ProtocolID, a OrbitAttributes, passthroughPayload []byte) (*Orb
 
 // Validate returns an error if the orbit is not valid.
 func (o *Orbit) Validate() error {
+	if o == nil {
+		return ErrNilPointer.Wrap("orbit is a nil pointer")
+	}
 	if err := o.ProtocolId.Validate(); err != nil {
 		return err
 	}
@@ -137,8 +153,8 @@ func (o *Orbit) Validate() error {
 	return nil
 }
 
-// ProtocolID returns the ProtocolID. If the ProtocolID is not set,
-// the default value is returned.
+// ProtocolID returns the protocol ID associated with the orbit. If
+// the id is not set, the default value is returned.
 func (o *Orbit) ProtocolID() ProtocolID {
 	if o != nil {
 		return o.ProtocolId
@@ -150,6 +166,9 @@ func (o *Orbit) ProtocolID() ProtocolID {
 // codec Any type. Returns nil if the orbit does not have
 // attributes set.
 func (o *Orbit) CachedAttributes() (OrbitAttributes, error) {
+	if o == nil {
+		return nil, ErrNilPointer.Wrap("orbit is a nil pointer")
+	}
 	if o.Attributes == nil {
 		return nil, ErrNilPointer.Wrap("orbit attributes are not set")
 	}
@@ -167,6 +186,9 @@ func (o *Orbit) CachedAttributes() (OrbitAttributes, error) {
 
 // SetAttributes sets the orbit attributes into the orbit as codec Any type.
 func (o *Orbit) SetAttributes(a OrbitAttributes) error {
+	if o == nil {
+		return ErrNilPointer.Wrap("orbit is a nil pointer")
+	}
 	// The interface we want to pack as any must
 	// implement the proto Message interface.
 	m, ok := a.(proto.Message)
@@ -187,6 +209,9 @@ func (o *Orbit) SetAttributes(a OrbitAttributes) error {
 // UnpackInterfaces is the method required to correctly unpack
 // an Any type into an interface registered in the codec.
 func (o *Orbit) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
+	if o == nil {
+		return ErrNilPointer.Wrap("orbit is a nil pointer")
+	}
 	var attributes OrbitAttributes
 	return unpacker.UnpackAny(o.Attributes, &attributes)
 }

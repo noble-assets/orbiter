@@ -64,8 +64,8 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			collections.Uint32Key,
 			primaryKeyCodec,
 			func(pk DispatchedAmountsKey, value types.AmountDispatched) (uint32, error) {
-				orbitID := types.OrbitID{}
-				if err := orbitID.FromString(pk.K3()); err != nil {
+				orbitID, err := types.ParseOrbitID(pk.K3())
+				if err != nil {
 					return 0, err
 				}
 
@@ -83,8 +83,8 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			),
 			primaryKeyCodec,
 			func(pk DispatchedAmountsKey, value types.AmountDispatched) (collections.Triple[uint32, string, string], error) {
-				orbitID := types.OrbitID{}
-				if err := orbitID.FromString(pk.K3()); err != nil {
+				orbitID, err := types.ParseOrbitID(pk.K3())
+				if err != nil {
 					return collections.Triple[uint32, string, string]{}, err
 				}
 				return collections.Join3(
@@ -118,8 +118,8 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 			collections.Uint32Key,
 			primaryKeyCodec,
 			func(pk DispatchedCountsKey, _ uint32) (uint32, error) {
-				orbitID := types.OrbitID{}
-				if err := orbitID.FromString(pk.K3()); err != nil {
+				orbitID, err := types.ParseOrbitID(pk.K3())
+				if err != nil {
 					return 0, err
 				}
 				return orbitID.ProtocolID.Uint32(), nil
@@ -225,8 +225,8 @@ func (d *DispatcherComponent) IterateDispatchedAmountsByProtocolID(
 		ctx,
 		prefix,
 		func(key DispatchedAmountsKey, value types.AmountDispatched) (stop bool, err error) {
-			orbitID := types.OrbitID{}
-			if err := orbitID.FromString(key.K3()); err != nil {
+			orbitID, err := types.ParseOrbitID(key.K3())
+			if err != nil {
 				return true, err
 			}
 			dispatchedInfo := types.NewChainAmountDispatched(orbitID, value)
@@ -279,8 +279,8 @@ func (d *DispatcherComponent) IterateDispatchedAmountsByDestinationProtocolID(
 				return true, err
 			}
 
-			orbitID := types.OrbitID{}
-			if err := orbitID.FromString(indexedKey.K3()); err != nil {
+			orbitID, err := types.ParseOrbitID(indexedKey.K3())
+			if err != nil {
 				return true, err
 			}
 			dispatchedInfo := types.NewChainAmountDispatched(orbitID, value)

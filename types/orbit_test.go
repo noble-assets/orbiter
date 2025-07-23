@@ -246,8 +246,7 @@ func TestOrbitIDFromString(t *testing.T) {
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			orbitID := types.OrbitID{}
-			err := orbitID.FromString(tC.id)
+			orbitID, err := types.ParseOrbitID(tC.id)
 
 			if tC.expErr != "" {
 				require.Error(t, err)
