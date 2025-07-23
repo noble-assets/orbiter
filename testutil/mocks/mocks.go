@@ -29,7 +29,7 @@ import (
 )
 
 func init() {
-	testutil.Authority = testutil.NobleAddress()
+	testutil.Authority = testutil.NewNobleAddress()
 	testutil.SetSDKConfig()
 }
 

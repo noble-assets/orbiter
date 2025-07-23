@@ -52,46 +52,46 @@ func (o *OrbitController) HandlePacket(ctx context.Context, _ *types.OrbitPacket
 	return nil
 }
 
-var _ interfaces.ActionController = &ActionController{}
+var _ interfaces.ActionController = &NoOpActionController{}
 
-type ActionController struct {
+type NoOpActionController struct {
 	Id types.ActionID
 }
 
 // ID implements types.ActionController.
-func (a *ActionController) ID() types.ActionID {
+func (a *NoOpActionController) ID() types.ActionID {
 	return a.Id
 }
 
 // Name implements types.ActionController.
-func (a *ActionController) Name() string {
+func (a *NoOpActionController) Name() string {
 	return a.Id.String()
 }
 
 // HandlePacket implements types.ActionController.
-func (a *ActionController) HandlePacket(ctx context.Context, _ *types.ActionPacket) error {
+func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.ActionPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the action packet")
 	}
 	return nil
 }
 
-var _ interfaces.AdapterController = &AdapterController{}
+var _ interfaces.AdapterController = &NoOpAdapterController{}
 
-type AdapterController struct {
+type NoOpAdapterController struct {
 	Id types.ProtocolID
 }
 
-func (a *AdapterController) ID() types.ProtocolID {
+func (a *NoOpAdapterController) ID() types.ProtocolID {
 	return a.Id
 }
 
-func (a *AdapterController) Name() string {
+func (a *NoOpAdapterController) Name() string {
 	return a.Id.String()
 }
 
 // AfterTransferHook implements types.AdapterProtocol.
-func (a *AdapterController) AfterTransferHook(ctx context.Context, _ *types.Payload) error {
+func (a *NoOpAdapterController) AfterTransferHook(ctx context.Context, _ *types.Payload) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error in after transfer hook")
 	}
@@ -99,7 +99,7 @@ func (a *AdapterController) AfterTransferHook(ctx context.Context, _ *types.Payl
 }
 
 // BeforeTransferHook implements types.AdapterProtocol.
-func (a *AdapterController) BeforeTransferHook(ctx context.Context, _ *types.Payload) error {
+func (a *NoOpAdapterController) BeforeTransferHook(ctx context.Context, _ *types.Payload) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error in before transfer hook")
 	}
@@ -107,7 +107,7 @@ func (a *AdapterController) BeforeTransferHook(ctx context.Context, _ *types.Pay
 }
 
 // ParsePayload implements types.AdapterProtocol.
-func (a *AdapterController) ParsePayload(bz []byte) (bool, *types.Payload, error) {
+func (a *NoOpAdapterController) ParsePayload(bz []byte) (bool, *types.Payload, error) {
 	if string(bz) == "failing" {
 		return false, nil, errors.New("error parsing payload")
 	}

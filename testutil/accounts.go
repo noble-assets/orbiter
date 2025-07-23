@@ -39,7 +39,7 @@ func generateAddress(bytes []byte) string {
 	return address
 }
 
-// NobleAddress is a test util to generate a bech32 address with "noble" prefix.
-func NobleAddress() string {
+// NewNobleAddress is a test util to generate a bech32 address with "noble" prefix.
+func NewNobleAddress() string {
 	return generateAddress(AddressBytes())
 }
