@@ -18,7 +18,7 @@ build:
 BUF_VERSION=1.50
 BUILDER_VERSION=0.15.3
 
-proto-all: proto-format proto-lint proto-gen
+proto-all: proto-format proto-lint proto-gen proto-testutil-gen
 
 proto-format:
 	@echo "==================================================================="
@@ -40,6 +40,12 @@ proto-lint:
 	@docker run --rm --volume "$(PWD)":/workspace --workdir /workspace \
 		bufbuild/buf:$(BUF_VERSION) lint
 	@echo "Completed protobuf linting!"
+
+proto-testutil-gen:
+	@echo "==================================================================="
+	@echo "Generating code from testutil protobuf..."
+	@cd testutil/testdata && buf generate --template buf.gen.yaml
+	@echo "Completed code generation!"
 
 
 #=============================================================================#
