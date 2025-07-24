@@ -146,7 +146,7 @@ func (k *AdapterComponent) AfterTransferHook(
 	}
 
 	balances := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
-	if err := k.validateOrbiterInitialBalance(balances); err != nil {
+	if err := k.validateModuleBalance(balances); err != nil {
 		return nil, types.ErrValidation.Wrap(err.Error())
 	}
 
@@ -172,6 +172,9 @@ func (k *AdapterComponent) ProcessPayload(
 	return k.dispatcher.DispatchPayload(ctx, transferAttr, payload)
 }
 
+// clearOrbiterBalances sends all balances of the orbiter module account to
+// a sub-account. This method allows to start a forwarding with the module holding
+// only the coins the received transaction is transferring.
 func (k *AdapterComponent) clearOrbiterBalances(ctx context.Context) error {
 	coins := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
 	if coins.IsZero() {
@@ -180,7 +183,7 @@ func (k *AdapterComponent) clearOrbiterBalances(ctx context.Context) error {
 	return k.bankKeeper.SendCoins(ctx, types.ModuleAddress, types.DustCollectorAddress, coins)
 }
 
-func (k *AdapterComponent) validateOrbiterInitialBalance(coins sdk.Coins) error {
+func (k *AdapterComponent) validateModuleBalance(coins sdk.Coins) error {
 	if coins.IsZero() {
 		return errors.New("expected orbiter module to hold coins after transfer")
 	}

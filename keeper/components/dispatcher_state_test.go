@@ -130,11 +130,11 @@ func TestSetDispatched(t *testing.T) {
 	dispatcher, deps := newDispatcherKeeper(t)
 	ctx := deps.SdkCtx
 
-	sourceInfo := types.OrbitID{
+	sourceOrbitID := types.OrbitID{
 		ProtocolID:     types.PROTOCOL_IBC,
 		CounterpartyID: "channel-1",
 	}
-	destinationInfo := types.OrbitID{
+	destinationOrbitID := types.OrbitID{
 		ProtocolID:     types.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
@@ -146,12 +146,12 @@ func TestSetDispatched(t *testing.T) {
 	}
 
 	// ACT: Test setting dispatch record
-	err := dispatcher.SetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom, amount)
+	err := dispatcher.SetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, denom, amount)
 
 	// ASSERT
 	require.NoError(t, err)
 
-	result := dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	result := dispatcher.GetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, denom)
 	require.Equal(t, amount, result)
 
 	// ARRANGE: Test updating existing dispatch record
@@ -161,13 +161,19 @@ func TestSetDispatched(t *testing.T) {
 	}
 
 	// ACT
-	err = dispatcher.SetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom, updatedAmount)
+	err = dispatcher.SetDispatchedAmount(
+		ctx,
+		sourceOrbitID,
+		destinationOrbitID,
+		denom,
+		updatedAmount,
+	)
 
 	// ASSERT
 	require.NoError(t, err)
 
 	// Verify the record was updated
-	result = dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	result = dispatcher.GetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, denom)
 	require.Equal(t, updatedAmount, result)
 }
 

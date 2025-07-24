@@ -23,8 +23,6 @@ package keeper
 import (
 	"context"
 
-	sdkerrors "cosmossdk.io/errors"
-
 	"orbiter.dev/types"
 )
 
@@ -40,7 +38,9 @@ func (m msgServer) PauseAction(
 	actionComp := m.ActionComponent()
 
 	if err := actionComp.Pause(ctx, msg.ActionId); err != nil {
-		return nil, sdkerrors.Wrap(err, "unable to pause action")
+		return nil, types.ErrUnableToPause.Wrapf(
+			"action: %s", err.Error(),
+		)
 	}
 
 	return &types.MsgPauseActionResponse{}, nil
@@ -58,7 +58,9 @@ func (m msgServer) UnpauseAction(
 	actionComp := m.ActionComponent()
 
 	if err := actionComp.Unpause(ctx, msg.ActionId); err != nil {
-		return nil, sdkerrors.Wrap(err, "unable to unpause action")
+		return nil, types.ErrUnableToUnpause.Wrapf(
+			"action: %s", err.Error(),
+		)
 	}
 
 	return &types.MsgUnpauseActionResponse{}, nil

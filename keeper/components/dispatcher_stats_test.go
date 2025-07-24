@@ -314,48 +314,36 @@ func TestDispatcherKeeper_updateStats(t *testing.T) {
 
 func TestDispatcherKeeper_updateDispatchedCountsStats(t *testing.T) {
 	testCases := []struct {
-		name            string
-		sourceInfo      types.OrbitID
-		destinationInfo types.OrbitID
-		twoUpdates      bool
-		expError        string
+		name               string
+		sourceOrbitID      types.OrbitID
+		destinationOrbitID types.OrbitID
+		twoUpdates         bool
+		expError           string
 	}{
 		{
-			name:            "error - default values (invalid protocol ID)",
-			sourceInfo:      types.OrbitID{},
-			destinationInfo: types.OrbitID{},
-			expError:        "id is not supported",
+			name:               "error - default values (invalid protocol ID)",
+			sourceOrbitID:      types.OrbitID{},
+			destinationOrbitID: types.OrbitID{},
+			expError:           "id is not supported",
 		},
 		{
 			name: "success - non default values and zero incoming dispatched amount",
-			sourceInfo: types.OrbitID{
+			sourceOrbitID: types.OrbitID{
 				ProtocolID:     1,
 				CounterpartyID: "noble",
 			},
-			destinationInfo: types.OrbitID{
+			destinationOrbitID: types.OrbitID{
 				ProtocolID:     2,
 				CounterpartyID: "ethereum",
 			},
 			expError: "",
 		},
 		{
-			name: "success - non default values and zero outgoing dispatched amount",
-			sourceInfo: types.OrbitID{
-				ProtocolID:     1,
-				CounterpartyID: "noble",
-			},
-			destinationInfo: types.OrbitID{
-				ProtocolID:     2,
-				CounterpartyID: "ethereum",
-			},
-			expError: "",
-		},
-		{
-			name:            "success - second dispatched amount update",
-			sourceInfo:      types.OrbitID{ProtocolID: 1, CounterpartyID: "noble"},
-			destinationInfo: types.OrbitID{ProtocolID: 2, CounterpartyID: "ethereum"},
-			twoUpdates:      true,
-			expError:        "",
+			name:               "success - second dispatched amount update",
+			sourceOrbitID:      types.OrbitID{ProtocolID: 1, CounterpartyID: "noble"},
+			destinationOrbitID: types.OrbitID{ProtocolID: 2, CounterpartyID: "ethereum"},
+			twoUpdates:         true,
+			expError:           "",
 		},
 	}
 
@@ -375,30 +363,34 @@ func TestDispatcherKeeper_updateDispatchedCountsStats(t *testing.T) {
 		_, err = sb.Build()
 		require.NoError(t, err)
 
-		err = dispatcher.updateDispatchedCountsStats(ctx, &tc.sourceInfo, &tc.destinationInfo)
+		err = dispatcher.updateDispatchedCountsStats(ctx, &tc.sourceOrbitID, &tc.destinationOrbitID)
 
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.expError != "" {
 				require.ErrorContains(t, err, tc.expError)
-				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceInfo, tc.destinationInfo)
+				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceOrbitID, tc.destinationOrbitID)
 				require.Equal(t, uint32(0), dc)
 			} else {
 				require.NoError(t, err)
-				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceInfo, tc.destinationInfo)
+				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceOrbitID, tc.destinationOrbitID)
 				require.Equal(t, uint32(1), dc)
 			}
 		})
 
 		t.Run("SecondUpdate/"+tc.name, func(t *testing.T) {
-			err = dispatcher.updateDispatchedCountsStats(ctx, &tc.sourceInfo, &tc.destinationInfo)
+			err = dispatcher.updateDispatchedCountsStats(
+				ctx,
+				&tc.sourceOrbitID,
+				&tc.destinationOrbitID,
+			)
 
 			if tc.expError != "" {
 				require.ErrorContains(t, err, tc.expError)
-				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceInfo, tc.destinationInfo)
+				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceOrbitID, tc.destinationOrbitID)
 				require.Equal(t, uint32(0), dc)
 			} else {
 				require.NoError(t, err)
-				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceInfo, tc.destinationInfo)
+				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceOrbitID, tc.destinationOrbitID)
 				require.Equal(t, uint32(2), dc)
 			}
 		})
@@ -479,7 +471,7 @@ func TestDispatcherKeeper_buildDenomDispatchedAmounts(t *testing.T) {
 			)
 
 			// Convert result to map for easier verification
-			resultMap := make(map[string]types.AmountDispatched)
+			resultMap := make(map[string]types.AmountDispatched, len(result))
 			for _, entry := range result {
 				resultMap[entry.Denom] = entry.AmountDispatched
 			}

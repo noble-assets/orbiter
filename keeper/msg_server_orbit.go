@@ -23,8 +23,6 @@ package keeper
 import (
 	"context"
 
-	sdkerrors "cosmossdk.io/errors"
-
 	"orbiter.dev/types"
 )
 
@@ -40,7 +38,9 @@ func (m msgServer) PauseProtocol(
 	orbitComp := m.OrbitComponent()
 
 	if err := orbitComp.Pause(ctx, msg.ProtocolId, nil); err != nil {
-		return nil, sdkerrors.Wrap(err, "unable to pause protocol")
+		return nil, types.ErrUnableToPause.Wrapf(
+			"protocol: %s", err.Error(),
+		)
 	}
 
 	return &types.MsgPauseProtocolResponse{}, nil
@@ -55,10 +55,12 @@ func (m msgServer) PauseCounterparties(
 		return nil, err
 	}
 
-	orbitsSK := m.OrbitComponent()
+	orbitComp := m.OrbitComponent()
 
-	if err := orbitsSK.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
-		return nil, sdkerrors.Wrap(err, "unable to pause protocol-destination pairs")
+	if err := orbitComp.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
+		return nil, types.ErrUnableToPause.Wrapf(
+			"counterparties: %s", err.Error(),
+		)
 	}
 	return &types.MsgPauseCounterpartiesResponse{}, nil
 }
@@ -72,10 +74,12 @@ func (m msgServer) UnpauseProtocol(
 		return nil, err
 	}
 
-	orbitsComp := m.OrbitComponent()
+	orbitComp := m.OrbitComponent()
 
-	if err := orbitsComp.Unpause(ctx, msg.ProtocolId, nil); err != nil {
-		return nil, sdkerrors.Wrap(err, "unable to unpause protocol")
+	if err := orbitComp.Unpause(ctx, msg.ProtocolId, nil); err != nil {
+		return nil, types.ErrUnableToUnpause.Wrapf(
+			"protocol: %s", err.Error(),
+		)
 	}
 
 	return &types.MsgUnpauseProtocolResponse{}, nil
@@ -90,10 +94,12 @@ func (m msgServer) UnpauseCounterparties(
 		return nil, err
 	}
 
-	orbitsComp := m.OrbitComponent()
+	orbitComp := m.OrbitComponent()
 
-	if err := orbitsComp.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
-		return nil, sdkerrors.Wrap(err, "unable to unpause counterparties")
+	if err := orbitComp.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
+		return nil, types.ErrUnableToUnpause.Wrapf(
+			"counterparties: %s", err.Error(),
+		)
 	}
 
 	return &types.MsgUnpauseCounterpartiesResponse{}, nil
