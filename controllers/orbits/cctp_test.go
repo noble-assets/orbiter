@@ -204,7 +204,7 @@ func TestExtractAttributes(t *testing.T) {
 	}
 
 	id := types.PROTOCOL_CCTP
-	baseController, err := controllers.NewBaseController[types.ProtocolID](id)
+	baseController, err := controllers.NewBaseController(id)
 	require.NoError(t, err)
 
 	handler, err := newCCTPHandler(&mocks.CCTPMsgServer{})

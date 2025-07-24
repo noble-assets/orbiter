@@ -34,20 +34,20 @@ import (
 	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.OrbitController = &CCTPController{}
+var _ interfaces.ControllerOrbit = &CCTPController{}
 
 // NewCCTPController returns a validated instance of the
 // Cross-Chain Transfer Protocol controller.
 func NewCCTPController(
 	logger log.Logger,
 	msgServer orbits.CCTPMsgServer,
-) (interfaces.OrbitController, error) {
+) (interfaces.ControllerOrbit, error) {
 	if logger == nil {
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	id := types.PROTOCOL_CCTP
-	baseController, err := controllers.NewBaseController[types.ProtocolID](id)
+	baseController, err := controllers.NewBaseController(id)
 	if err != nil {
 		return nil, err
 	}

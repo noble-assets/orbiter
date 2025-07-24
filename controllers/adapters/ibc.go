@@ -33,7 +33,7 @@ import (
 	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.AdapterController = &IBCAdapter{}
+var _ interfaces.ControllerAdapter = &IBCAdapter{}
 
 // NewIBCAdapter returns a reference to a new IBCAdapter instance.
 func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
@@ -42,7 +42,7 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	}
 
 	id := types.PROTOCOL_IBC
-	baseController, err := controllers.NewBaseController[types.ProtocolID](id)
+	baseController, err := controllers.NewBaseController(id)
 	if err != nil {
 		return nil, err
 	}

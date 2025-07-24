@@ -99,7 +99,7 @@ func TestIbc(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	feeRecipientAddr := testutil.NobleAddress()
+	feeRecipientAddr := testutil.NewNobleAddress()
 	feeAttr := actions.FeeAttributes{
 		FeesInfo: []*actions.FeeInfo{
 			{

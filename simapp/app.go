@@ -160,6 +160,7 @@ func NewSimApp(
 
 	app.App = appBuilder.Build(db, traceStore, baseAppOptions...)
 
+	// TODO: add more context.
 	app.RegisterOrbiterControllers()
 
 	if err := app.RegisterIBCModules(); err != nil {

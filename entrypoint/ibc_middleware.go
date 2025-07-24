@@ -86,7 +86,12 @@ func (i IBCMiddleware) OnRecvPacket(
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
 
-	err = i.payloadAdapter.BeforeTransferHook(ctx, types.PROTOCOL_IBC, orbiterPayload)
+	orbitID, err := types.NewOrbitID(types.PROTOCOL_IBC, packet.SourceChannel)
+	if err != nil {
+		return channeltypes.NewErrorAcknowledgement(err)
+	}
+
+	err = i.payloadAdapter.BeforeTransferHook(ctx, orbitID, orbiterPayload)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
 	}
@@ -96,12 +101,12 @@ func (i IBCMiddleware) OnRecvPacket(
 		return ack
 	}
 
-	err = i.payloadAdapter.AfterTransferHook(
-		ctx,
-		types.PROTOCOL_IBC,
-		packet.SourceChannel,
-		orbiterPayload,
-	)
+	transferAttr, err := i.payloadAdapter.AfterTransferHook(ctx, orbitID, orbiterPayload)
+	if err != nil {
+		return channeltypes.NewErrorAcknowledgement(err)
+	}
+
+	err = i.payloadAdapter.ProcessPayload(ctx, transferAttr, orbiterPayload)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
 	}

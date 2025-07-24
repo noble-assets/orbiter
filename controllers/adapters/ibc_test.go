@@ -55,7 +55,7 @@ func TestNewIBCParser(t *testing.T) {
 }
 
 func TestParsePayload(t *testing.T) {
-	sender := testutil.NobleAddress()
+	sender := testutil.NewNobleAddress()
 
 	testCases := []struct {
 		name            string
@@ -77,7 +77,7 @@ func TestParsePayload(t *testing.T) {
 			name: "skip - receiver is not orbiter module",
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
-				testutil.NobleAddress(),
+				testutil.NewNobleAddress(),
 				testutil.CreateValidOrbiterPayload(),
 			),
 			expectIsOrbiter: false,
