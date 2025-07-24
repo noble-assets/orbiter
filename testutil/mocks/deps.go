@@ -42,13 +42,6 @@ import (
 	"orbiter.dev/types"
 )
 
-type Dependencies struct {
-	SdkCtx       sdk.Context
-	EncCfg       moduletestutil.TestEncodingConfig
-	StoreService corestore.KVStoreService
-	Logger       log.Logger
-}
-
 func NewDependencies(t testing.TB) Dependencies {
 	key := storetypes.NewKVStoreKey(types.ModuleName)
 	tkey := storetypes.NewTransientStoreKey(fmt.Sprintf("transient_%s", types.ModuleName))
@@ -70,4 +63,11 @@ func NewDependencies(t testing.TB) Dependencies {
 		StoreService: runtime.NewKVStoreService(key),
 		Logger:       log.NewNopLogger(),
 	}
+}
+
+type Dependencies struct {
+	SdkCtx       sdk.Context
+	EncCfg       moduletestutil.TestEncodingConfig
+	StoreService corestore.KVStoreService
+	Logger       log.Logger
 }

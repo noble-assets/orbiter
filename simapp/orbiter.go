@@ -6,7 +6,9 @@ import (
 
 func (app *SimApp) RegisterOrbiterControllers() {
 	in := orbiter.ComponentsInputs{
-		Orbiters: app.OrbiterKeeper,
+		Orbiters:   app.OrbiterKeeper,
+		BankKeeper: app.BankKeeper,
+		CCTPKeeper: app.CCTPKeeper,
 	}
 
 	orbiter.InjectComponents(in)

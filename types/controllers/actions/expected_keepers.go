@@ -18,32 +18,22 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package orbiter
+package actions
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"context"
 
-	"orbiter.dev/types"
-	"orbiter.dev/types/controllers/actions"
-	"orbiter.dev/types/controllers/orbits"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-var amino = codec.NewLegacyAmino()
-
-func init() {
-	RegisterLegacyAminoCodec(amino)
-	amino.Seal()
+// BankKeeper defines the union of the behaviors the actions
+// expect from the bank module.
+type BankKeeper interface {
+	BankKeeperFee
 }
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
-
-// RegisterInterfaces is used to register in the chain codec
-// all interfaces and associated implementations defined in
-// the Orbiter module.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	types.RegisterInterfaces(registry)
-
-	orbits.RegisterImplementations(registry)
-	actions.RegisterImplementations(registry)
+// BankKeeperFee defines the behaviors the Fee action
+// expects from the bank module.
+type BankKeeperFee interface {
+	SendCoins(ctx context.Context, fromAddr, toAddr sdk.AccAddress, amt sdk.Coins) error
 }

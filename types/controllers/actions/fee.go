@@ -18,32 +18,19 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package orbiter
+package actions
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-
-	"orbiter.dev/types"
-	"orbiter.dev/types/controllers/actions"
-	"orbiter.dev/types/controllers/orbits"
+	"cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-var amino = codec.NewLegacyAmino()
-
-func init() {
-	RegisterLegacyAminoCodec(amino)
-	amino.Seal()
+type RecipientAmount struct {
+	Recipient sdk.AccAddress
+	Amount    sdk.Coins
 }
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
-
-// RegisterInterfaces is used to register in the chain codec
-// all interfaces and associated implementations defined in
-// the Orbiter module.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	types.RegisterInterfaces(registry)
-
-	orbits.RegisterImplementations(registry)
-	actions.RegisterImplementations(registry)
+type FeesToDistribute struct {
+	Total  math.Int
+	Values []RecipientAmount
 }

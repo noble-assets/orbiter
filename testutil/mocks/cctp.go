@@ -18,32 +18,30 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package orbiter
+package mocks
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"context"
+	"errors"
 
-	"orbiter.dev/types"
-	"orbiter.dev/types/controllers/actions"
+	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
+
 	"orbiter.dev/types/controllers/orbits"
 )
 
-var amino = codec.NewLegacyAmino()
+var _ orbits.CCTPMsgServer = CCTPMsgServer{}
 
-func init() {
-	RegisterLegacyAminoCodec(amino)
-	amino.Seal()
+type CCTPMsgServer struct {
+	MaxTransferAmount int64
 }
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
+func (c CCTPMsgServer) DepositForBurnWithCaller(
+	ctx context.Context,
+	msg *cctptypes.MsgDepositForBurnWithCaller,
+) (*cctptypes.MsgDepositForBurnWithCallerResponse, error) {
+	if CheckIfFailing(ctx) {
+		return nil, errors.New("error calling deposit for burn with caller api")
+	}
 
-// RegisterInterfaces is used to register in the chain codec
-// all interfaces and associated implementations defined in
-// the Orbiter module.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	types.RegisterInterfaces(registry)
-
-	orbits.RegisterImplementations(registry)
-	actions.RegisterImplementations(registry)
+	return nil, nil
 }

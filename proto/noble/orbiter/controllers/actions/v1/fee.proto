@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package noble.orbiter.controllers.actions.v1;
+
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "orbiter.dev/types/controllers/actions";
+
+// FeeAttributes defines the concrete implementation of the
+// ActionAttributes interface to execute a fee payment.
+message FeeAttributes {
+  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ActionAttributes";
+
+  // fees_info defines the fees to be applied.
+  repeated FeeInfo fees_info = 1;
+}
+
+// FeeInfo allows to specify a fee, in terms of basis points, and
+// a recipient address.
+message FeeInfo {
+  // recipient is the Noble address which is going to receive the fee.
+  string recipient = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // basis_points represents the fee to apply to the tokens sent with
+  // a cross-chain packet. One basis point equals 1/100th of a part.
+  uint32 basis_points = 2;
+}
