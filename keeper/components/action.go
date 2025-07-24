@@ -42,9 +42,8 @@ type ActionComponent struct {
 	logger log.Logger
 	// router is an action controllers router.
 	router ActionRouter
-	// PausedControllers maps an action id to a boolean indicating
-	// whether the action controller is paused or not.
-	PausedControllers collections.Map[int32, bool]
+	// PausedControllers keeps track of the ids of paused actions.
+	PausedControllers collections.KeySet[int32]
 }
 
 // NewActionComponent returns a validated instance of an action component.
@@ -56,12 +55,11 @@ func NewActionComponent(
 	actionsKeeper := ActionComponent{
 		logger: logger.With(types.ComponentPrefix, types.ActionComponentName),
 		router: router.New[types.ActionID, interfaces.ControllerAction](),
-		PausedControllers: collections.NewMap(
+		PausedControllers: collections.NewKeySet(
 			sb,
 			types.PausedActionControllersPrefix,
 			types.PausedActionControllersName,
 			collections.Int32Key,
-			collections.BoolValue,
 		),
 	}
 
@@ -101,7 +99,7 @@ func (k *ActionComponent) HandlePacket(
 	ctx context.Context,
 	packet *types.ActionPacket,
 ) error {
-	if err := k.ValidatePacket(ctx, packet); err != nil {
+	if err := k.validatePacket(ctx, packet); err != nil {
 		return types.ErrValidation.Wrap(err.Error())
 	}
 
@@ -113,7 +111,7 @@ func (k *ActionComponent) HandlePacket(
 	return c.HandlePacket(ctx, packet)
 }
 
-func (k *ActionComponent) ValidatePacket(ctx context.Context, packet *types.ActionPacket) error {
+func (k *ActionComponent) validatePacket(ctx context.Context, packet *types.ActionPacket) error {
 	err := packet.Validate()
 	if err != nil {
 		return fmt.Errorf("error validating action packet: %w", err)

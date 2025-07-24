@@ -22,7 +22,6 @@ package components
 
 import (
 	"context"
-	"errors"
 
 	"cosmossdk.io/collections"
 
@@ -37,11 +36,7 @@ func (k *OrbitComponent) IsControllerPaused(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) (bool, error) {
-	paused, err := k.PausedControllers.Get(ctx, int32(protocolID))
-	// Default not paused.
-	if errors.Is(err, collections.ErrNotFound) {
-		return false, nil
-	}
+	paused, err := k.PausedControllers.Has(ctx, int32(protocolID))
 	return paused, err
 }
 
@@ -56,7 +51,7 @@ func (k *OrbitComponent) SetPausedController(ctx context.Context,
 		return nil
 	}
 
-	return k.PausedControllers.Set(ctx, int32(protocolID), true)
+	return k.PausedControllers.Set(ctx, int32(protocolID))
 }
 
 func (k *OrbitComponent) SetUnpausedController(
@@ -71,7 +66,7 @@ func (k *OrbitComponent) SetUnpausedController(
 		return nil
 	}
 
-	return k.PausedControllers.Set(ctx, int32(protocolID), false)
+	return k.PausedControllers.Remove(ctx, int32(protocolID))
 }
 
 // ====================================================================================================
@@ -83,11 +78,7 @@ func (k *OrbitComponent) IsOrbitPaused(
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) (bool, error) {
-	paused, err := k.PausedOrbits.Get(ctx, collections.Join(int32(protocolID), counterpartyID))
-	// default not paused.
-	if errors.Is(err, collections.ErrNotFound) {
-		return false, nil
-	}
+	paused, err := k.PausedOrbits.Has(ctx, collections.Join(int32(protocolID), counterpartyID))
 	return paused, err
 }
 
@@ -103,7 +94,7 @@ func (k *OrbitComponent) SetPausedOrbit(ctx context.Context,
 		return nil
 	}
 
-	return k.PausedOrbits.Set(ctx, collections.Join(int32(protocolID), counterpartyID), true)
+	return k.PausedOrbits.Set(ctx, collections.Join(int32(protocolID), counterpartyID))
 }
 
 func (k *OrbitComponent) SetUnpausedOrbit(
@@ -119,5 +110,5 @@ func (k *OrbitComponent) SetUnpausedOrbit(
 		return nil
 	}
 
-	return k.PausedOrbits.Set(ctx, collections.Join(int32(protocolID), counterpartyID), false)
+	return k.PausedOrbits.Remove(ctx, collections.Join(int32(protocolID), counterpartyID))
 }

@@ -43,12 +43,10 @@ type OrbitComponent struct {
 	bankKeeper types.BankKeeperOrbit
 	// router is an orbit controllers router.
 	router OrbitRouter
-	// PausedOrbits maps a protocol id and counterparty id to a boolean indicating
-	// whether the orbit is paused or not.
-	PausedOrbits collections.Map[collections.Pair[int32, string], bool]
-	// PausedController maps a protocol id to a boolean indicating
-	// whether the protocol controller is paused or not.
-	PausedControllers collections.Map[int32, bool]
+	// PausedOrbits keeps track of the paused protocol id and counterparty id combinations.
+	PausedOrbits collections.KeySet[collections.Pair[int32, string]]
+	// PausedController keeps track of the paused protocol ids.
+	PausedControllers collections.KeySet[int32]
 }
 
 // NewOrbitComponent returns a validated instance of an orbit component.
@@ -67,19 +65,17 @@ func NewOrbitComponent(
 		bankKeeper: bankKeeper,
 
 		router: router.New[types.ProtocolID, interfaces.ControllerOrbit](),
-		PausedOrbits: collections.NewMap(
+		PausedOrbits: collections.NewKeySet(
 			sb,
 			types.PausedOrbitPrefix,
 			types.PausedOrbitsName,
 			collections.PairKeyCodec(collections.Int32Key, collections.StringKey),
-			collections.BoolValue,
 		),
-		PausedControllers: collections.NewMap(
+		PausedControllers: collections.NewKeySet(
 			sb,
 			types.PausedOrbitControllersPrefix,
 			types.PausedOrbitControllersName,
 			collections.Int32Key,
-			collections.BoolValue,
 		),
 	}
 

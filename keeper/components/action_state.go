@@ -22,20 +22,12 @@ package components
 
 import (
 	"context"
-	"errors"
-
-	"cosmossdk.io/collections"
 
 	"orbiter.dev/types"
 )
 
 func (k *ActionComponent) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
-	paused, err := k.PausedControllers.Get(ctx, int32(id))
-	// default not paused.
-	if errors.Is(err, collections.ErrNotFound) {
-		return false, nil
-	}
-	return paused, err
+	return k.PausedControllers.Has(ctx, int32(id))
 }
 
 func (k *ActionComponent) SetPausedController(ctx context.Context, id types.ActionID) error {
@@ -47,7 +39,7 @@ func (k *ActionComponent) SetPausedController(ctx context.Context, id types.Acti
 		return nil
 	}
 
-	return k.PausedControllers.Set(ctx, int32(id), true)
+	return k.PausedControllers.Set(ctx, int32(id))
 }
 
 func (k *ActionComponent) SetUnpausedController(ctx context.Context, id types.ActionID) error {
@@ -59,5 +51,5 @@ func (k *ActionComponent) SetUnpausedController(ctx context.Context, id types.Ac
 		return nil
 	}
 
-	return k.PausedControllers.Set(ctx, int32(id), false)
+	return k.PausedControllers.Remove(ctx, int32(id))
 }
