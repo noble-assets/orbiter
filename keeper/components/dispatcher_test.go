@@ -35,7 +35,7 @@ import (
 	"orbiter.dev/types/interfaces"
 )
 
-func TestNewDispatcherKeeper(t *testing.T) {
+func TestNewDispatcherComponent(t *testing.T) {
 	deps := mocks.NewDependencies(t)
 
 	testCases := []struct {
@@ -79,7 +79,7 @@ func TestNewDispatcherKeeper(t *testing.T) {
 	}
 }
 
-func TestDispatcherKeeper_Validate(t *testing.T) {
+func TestValidate_DispatcherComponent(t *testing.T) {
 	testCases := []struct {
 		name           string
 		OrbitsHandler  interfaces.PacketHandler[*types.OrbitPacket]

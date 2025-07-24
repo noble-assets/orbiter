@@ -33,7 +33,7 @@ import (
 	"orbiter.dev/types"
 )
 
-func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
+func TestUpdateDispatchedAmountStats(t *testing.T) {
 	denom := "uusdc"
 	testCases := []struct {
 		name               string
@@ -158,7 +158,7 @@ func TestDispatcherKeeper_updateDispatchedAmountStats(t *testing.T) {
 	}
 }
 
-func TestDispatcherKeeper_updateStats(t *testing.T) {
+func TestUpdateStats(t *testing.T) {
 	testCases := []struct {
 		name            string
 		transferAttr    func() *types.TransferAttributes
@@ -312,7 +312,7 @@ func TestDispatcherKeeper_updateStats(t *testing.T) {
 	}
 }
 
-func TestDispatcherKeeper_updateDispatchedCountsStats(t *testing.T) {
+func TestUpdateDispatchedCountsStats(t *testing.T) {
 	testCases := []struct {
 		name               string
 		sourceOrbitID      types.OrbitID
@@ -397,7 +397,7 @@ func TestDispatcherKeeper_updateDispatchedCountsStats(t *testing.T) {
 	}
 }
 
-func TestDispatcherKeeper_buildDenomDispatchedAmounts(t *testing.T) {
+func TestBuildDenomDispatchedAmounts(t *testing.T) {
 	testCases := []struct {
 		name               string
 		transferAttributes func() *types.TransferAttributes
@@ -405,7 +405,7 @@ func TestDispatcherKeeper_buildDenomDispatchedAmounts(t *testing.T) {
 		expectedAmounts    map[string]types.AmountDispatched // key: denom
 	}{
 		{
-			name: "single entry wirh same denoms",
+			name: "single entry with same denoms",
 			transferAttributes: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)

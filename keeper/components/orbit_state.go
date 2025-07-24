@@ -32,18 +32,18 @@ import (
 // PausedControllers
 // ====================================================================================================
 
-func (k *OrbitComponent) IsControllerPaused(
+func (c *OrbitComponent) IsControllerPaused(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) (bool, error) {
-	paused, err := k.PausedControllers.Has(ctx, int32(protocolID))
+	paused, err := c.PausedControllers.Has(ctx, int32(protocolID))
 	return paused, err
 }
 
-func (k *OrbitComponent) SetPausedController(ctx context.Context,
+func (c *OrbitComponent) SetPausedController(ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
-	paused, err := k.IsControllerPaused(ctx, protocolID)
+	paused, err := c.IsControllerPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -51,14 +51,14 @@ func (k *OrbitComponent) SetPausedController(ctx context.Context,
 		return nil
 	}
 
-	return k.PausedControllers.Set(ctx, int32(protocolID))
+	return c.PausedControllers.Set(ctx, int32(protocolID))
 }
 
-func (k *OrbitComponent) SetUnpausedController(
+func (c *OrbitComponent) SetUnpausedController(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
-	paused, err := k.IsControllerPaused(ctx, protocolID)
+	paused, err := c.IsControllerPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -66,27 +66,27 @@ func (k *OrbitComponent) SetUnpausedController(
 		return nil
 	}
 
-	return k.PausedControllers.Remove(ctx, int32(protocolID))
+	return c.PausedControllers.Remove(ctx, int32(protocolID))
 }
 
 // ====================================================================================================
 // PausedOrbits
 // ====================================================================================================
 
-func (k *OrbitComponent) IsOrbitPaused(
+func (c *OrbitComponent) IsOrbitPaused(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) (bool, error) {
-	paused, err := k.PausedOrbits.Has(ctx, collections.Join(int32(protocolID), counterpartyID))
+	paused, err := c.PausedOrbits.Has(ctx, collections.Join(int32(protocolID), counterpartyID))
 	return paused, err
 }
 
-func (k *OrbitComponent) SetPausedOrbit(ctx context.Context,
+func (c *OrbitComponent) SetPausedOrbit(ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) error {
-	paused, err := k.IsOrbitPaused(ctx, protocolID, counterpartyID)
+	paused, err := c.IsOrbitPaused(ctx, protocolID, counterpartyID)
 	if err != nil {
 		return err
 	}
@@ -94,15 +94,15 @@ func (k *OrbitComponent) SetPausedOrbit(ctx context.Context,
 		return nil
 	}
 
-	return k.PausedOrbits.Set(ctx, collections.Join(int32(protocolID), counterpartyID))
+	return c.PausedOrbits.Set(ctx, collections.Join(int32(protocolID), counterpartyID))
 }
 
-func (k *OrbitComponent) SetUnpausedOrbit(
+func (c *OrbitComponent) SetUnpausedOrbit(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) error {
-	paused, err := k.IsOrbitPaused(ctx, protocolID, counterpartyID)
+	paused, err := c.IsOrbitPaused(ctx, protocolID, counterpartyID)
 	if err != nil {
 		return err
 	}
@@ -110,5 +110,5 @@ func (k *OrbitComponent) SetUnpausedOrbit(
 		return nil
 	}
 
-	return k.PausedOrbits.Remove(ctx, collections.Join(int32(protocolID), counterpartyID))
+	return c.PausedOrbits.Remove(ctx, collections.Join(int32(protocolID), counterpartyID))
 }

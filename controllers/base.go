@@ -50,7 +50,7 @@ func (b *BaseController[ID]) ID() ID {
 	return b.id
 }
 
-// ID returns the controller name.
+// Name returns the controller name.
 func (b *BaseController[ID]) Name() string {
 	return b.id.String()
 }

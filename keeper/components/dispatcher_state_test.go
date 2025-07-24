@@ -33,7 +33,7 @@ import (
 	"orbiter.dev/types"
 )
 
-func newDispatcherKeeper(t testing.TB) (*components.DispatcherComponent, *mocks.Dependencies) {
+func newDispatcherComponent(t testing.TB) (*components.DispatcherComponent, *mocks.Dependencies) {
 	deps := mocks.NewDependencies(t)
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
@@ -53,7 +53,7 @@ func newDispatcherKeeper(t testing.TB) (*components.DispatcherComponent, *mocks.
 
 func TestGetDispatched(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherKeeper(t)
+	dispatcher, deps := newDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	sourceInfo := types.OrbitID{
@@ -91,7 +91,7 @@ func TestGetDispatched(t *testing.T) {
 
 func TestHasDispatchedAmount(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherKeeper(t)
+	dispatcher, deps := newDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	sourceInfo := types.OrbitID{
@@ -127,7 +127,7 @@ func TestHasDispatchedAmount(t *testing.T) {
 
 func TestSetDispatched(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherKeeper(t)
+	dispatcher, deps := newDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	sourceOrbitID := types.OrbitID{
@@ -179,7 +179,7 @@ func TestSetDispatched(t *testing.T) {
 
 func TestGetDispatchedByProtocolID(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherKeeper(t)
+	dispatcher, deps := newDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	protocolID := types.PROTOCOL_IBC
@@ -241,7 +241,7 @@ func TestGetDispatchedByProtocolID(t *testing.T) {
 }
 
 func TestDispatched_EmptyStates(t *testing.T) {
-	dispatcher, deps := newDispatcherKeeper(t)
+	dispatcher, deps := newDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	sourceInfo := types.OrbitID{
@@ -282,7 +282,7 @@ func TestDispatched_EmptyStates(t *testing.T) {
 }
 
 func TestDispatched_MultipleProtocolsAndChains(t *testing.T) {
-	dispatcher, deps := newDispatcherKeeper(t)
+	dispatcher, deps := newDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	// Test with multiple protocols and chains
@@ -379,7 +379,7 @@ func TestDispatched_MultipleProtocolsAndChains(t *testing.T) {
 
 func TestGetDispatchedByDestinationProtocolID(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherKeeper(t)
+	dispatcher, deps := newDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	protocolSource1 := types.PROTOCOL_IBC

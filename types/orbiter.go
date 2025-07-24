@@ -25,7 +25,7 @@ import (
 )
 
 // NewPayload returns a validated instance reference of
-// an orbiter payload.
+// an orbiter payload. Empty preActions slice is normalized to nil.
 func NewPayload(
 	orbit *Orbit,
 	preActions []*Action,

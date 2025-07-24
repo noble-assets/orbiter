@@ -66,7 +66,7 @@ func NewDispatcherComponent(
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	dispatcherKeeper := DispatcherComponent{
+	dispatcherComponent := DispatcherComponent{
 		logger:        logger.With(types.ComponentPrefix, types.DispatcherComponentName),
 		OrbitHandler:  orbitHandler,
 		ActionHandler: actionHandler,
@@ -97,7 +97,7 @@ func NewDispatcherComponent(
 		),
 	}
 
-	return &dispatcherKeeper, dispatcherKeeper.Validate()
+	return &dispatcherComponent, dispatcherComponent.Validate()
 }
 
 // Validate checks that the fields of the dispatcher component are valid.

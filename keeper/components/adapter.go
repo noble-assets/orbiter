@@ -65,46 +65,46 @@ func NewAdapterComponent(
 }
 
 // Validate returns an error if the component instance is not valid.
-func (k *AdapterComponent) Validate() error {
-	if k.logger == nil {
+func (c *AdapterComponent) Validate() error {
+	if c.logger == nil {
 		return types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
-	if k.bankKeeper == nil {
+	if c.bankKeeper == nil {
 		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
-	if k.dispatcher == nil {
+	if c.dispatcher == nil {
 		return types.ErrNilPointer.Wrap("dispatcher cannot be nil")
 	}
-	if k.router == nil {
+	if c.router == nil {
 		return types.ErrNilPointer.Wrap("router cannot be nil")
 	}
 	return nil
 }
 
-func (k *AdapterComponent) Logger() log.Logger {
-	return k.logger
+func (c *AdapterComponent) Logger() log.Logger {
+	return c.logger
 }
 
-func (k *AdapterComponent) Router() AdapterRouter {
-	return k.router
+func (c *AdapterComponent) Router() AdapterRouter {
+	return c.router
 }
 
-func (k *AdapterComponent) SetRouter(ar AdapterRouter) error {
-	if k.router != nil && k.router.Sealed() {
+func (c *AdapterComponent) SetRouter(ar AdapterRouter) error {
+	if c.router != nil && c.router.Sealed() {
 		return errors.New("cannot reset a sealed router")
 	}
 
-	k.router = ar
-	k.router.Seal()
+	c.router = ar
+	c.router.Seal()
 	return nil
 }
 
 // ParsePayload implements types.PayloadAdapter.
-func (k *AdapterComponent) ParsePayload(
+func (c *AdapterComponent) ParsePayload(
 	id types.ProtocolID,
 	payloadBz []byte,
 ) (bool, *types.Payload, error) {
-	adapter, found := k.router.Route(id)
+	adapter, found := c.router.Route(id)
 	if !found {
 		return false, &types.Payload{}, fmt.Errorf("adapter not found for protocol ID: %s", id)
 	}
@@ -113,12 +113,12 @@ func (k *AdapterComponent) ParsePayload(
 }
 
 // BeforeTransferHook implements types.PayloadAdapter.
-func (k *AdapterComponent) BeforeTransferHook(
+func (c *AdapterComponent) BeforeTransferHook(
 	ctx context.Context,
 	sourceOrbitID types.OrbitID,
 	payload *types.Payload,
 ) error {
-	adapter, found := k.router.Route(sourceOrbitID.ProtocolID)
+	adapter, found := c.router.Route(sourceOrbitID.ProtocolID)
 	if !found {
 		return fmt.Errorf("adapter not found for protocol ID: %s", sourceOrbitID.ProtocolID)
 	}
@@ -127,16 +127,16 @@ func (k *AdapterComponent) BeforeTransferHook(
 		return fmt.Errorf("before transfer hook failed: %w", err)
 	}
 
-	return k.clearOrbiterBalances(ctx)
+	return c.clearOrbiterBalances(ctx)
 }
 
 // AfterTransferHook implements types.PayloadAdapter.
-func (k *AdapterComponent) AfterTransferHook(
+func (c *AdapterComponent) AfterTransferHook(
 	ctx context.Context,
 	sourceOrbitID types.OrbitID,
 	payload *types.Payload,
 ) (*types.TransferAttributes, error) {
-	adapter, found := k.router.Route(sourceOrbitID.ProtocolID)
+	adapter, found := c.router.Route(sourceOrbitID.ProtocolID)
 	if !found {
 		return nil, fmt.Errorf("adapter not found for protocol ID: %s", sourceOrbitID.ProtocolID)
 	}
@@ -145,8 +145,8 @@ func (k *AdapterComponent) AfterTransferHook(
 		return nil, fmt.Errorf("after transfer hook failed: %w", err)
 	}
 
-	balances := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
-	if err := k.validateModuleBalance(balances); err != nil {
+	balances := c.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
+	if err := c.validateModuleBalance(balances); err != nil {
 		return nil, types.ErrValidation.Wrap(err.Error())
 	}
 
@@ -164,26 +164,26 @@ func (k *AdapterComponent) AfterTransferHook(
 }
 
 // ProcessPayload implements types.PayloadAdapter.
-func (k *AdapterComponent) ProcessPayload(
+func (c *AdapterComponent) ProcessPayload(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	payload *types.Payload,
 ) error {
-	return k.dispatcher.DispatchPayload(ctx, transferAttr, payload)
+	return c.dispatcher.DispatchPayload(ctx, transferAttr, payload)
 }
 
 // clearOrbiterBalances sends all balances of the orbiter module account to
 // a sub-account. This method allows to start a forwarding with the module holding
 // only the coins the received transaction is transferring.
-func (k *AdapterComponent) clearOrbiterBalances(ctx context.Context) error {
-	coins := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
+func (c *AdapterComponent) clearOrbiterBalances(ctx context.Context) error {
+	coins := c.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
 	if coins.IsZero() {
 		return nil
 	}
-	return k.bankKeeper.SendCoins(ctx, types.ModuleAddress, types.DustCollectorAddress, coins)
+	return c.bankKeeper.SendCoins(ctx, types.ModuleAddress, types.DustCollectorAddress, coins)
 }
 
-func (k *AdapterComponent) validateModuleBalance(coins sdk.Coins) error {
+func (c *AdapterComponent) validateModuleBalance(coins sdk.Coins) error {
 	if coins.IsZero() {
 		return errors.New("expected orbiter module to hold coins after transfer")
 	}

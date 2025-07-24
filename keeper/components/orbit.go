@@ -60,7 +60,7 @@ func NewOrbitComponent(
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	orbitsKeeper := OrbitComponent{
+	orbitComponent := OrbitComponent{
 		logger:     logger.With(types.ComponentPrefix, types.OrbitComponentName),
 		bankKeeper: bankKeeper,
 
@@ -79,46 +79,46 @@ func NewOrbitComponent(
 		),
 	}
 
-	return &orbitsKeeper, orbitsKeeper.Validate()
+	return &orbitComponent, orbitComponent.Validate()
 }
 
-func (k *OrbitComponent) Validate() error {
-	if k.logger == nil {
+func (c *OrbitComponent) Validate() error {
+	if c.logger == nil {
 		return types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
-	if k.bankKeeper == nil {
+	if c.bankKeeper == nil {
 		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
-	if k.router == nil {
+	if c.router == nil {
 		return types.ErrNilPointer.Wrap("controllers router cannot be nil")
 	}
 	return nil
 }
 
-func (k *OrbitComponent) Logger() log.Logger {
-	return k.logger
+func (c *OrbitComponent) Logger() log.Logger {
+	return c.logger
 }
 
-func (k *OrbitComponent) Router() OrbitRouter {
-	return k.router
+func (c *OrbitComponent) Router() OrbitRouter {
+	return c.router
 }
 
-func (k *OrbitComponent) SetRouter(ocr OrbitRouter) error {
-	if k.router != nil && k.router.Sealed() {
+func (c *OrbitComponent) SetRouter(ocr OrbitRouter) error {
+	if c.router != nil && c.router.Sealed() {
 		return errors.New("cannot reset a sealed router")
 	}
 
-	k.router = ocr
-	k.router.Seal()
+	c.router = ocr
+	c.router.Seal()
 	return nil
 }
 
-func (k *OrbitComponent) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
-	if err := k.ValidatePacket(ctx, packet); err != nil {
+func (c *OrbitComponent) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
+	if err := c.validatePacket(ctx, packet); err != nil {
 		return types.ErrValidation.Wrap(err.Error())
 	}
 
-	c, found := k.router.Route(packet.Orbit.ProtocolID())
+	controller, found := c.router.Route(packet.Orbit.ProtocolID())
 	if !found {
 		return fmt.Errorf(
 			"controller not found for orbit with protocol ID: %s",
@@ -126,10 +126,10 @@ func (k *OrbitComponent) HandlePacket(ctx context.Context, packet *types.OrbitPa
 		)
 	}
 
-	return c.HandlePacket(ctx, packet)
+	return controller.HandlePacket(ctx, packet)
 }
 
-func (k *OrbitComponent) ValidatePacket(ctx context.Context, packet *types.OrbitPacket) error {
+func (c *OrbitComponent) validatePacket(ctx context.Context, packet *types.OrbitPacket) error {
 	err := packet.Validate()
 	if err != nil {
 		return fmt.Errorf("error validating orbit packet: %w", err)
@@ -140,7 +140,7 @@ func (k *OrbitComponent) ValidatePacket(ctx context.Context, packet *types.Orbit
 		return fmt.Errorf("error getting attributes from orbit packet: %w", err)
 	}
 
-	err = k.ValidateOrbit(ctx, packet.Orbit.ProtocolID(), attr.CounterpartyID())
+	err = c.ValidateOrbit(ctx, packet.Orbit.ProtocolID(), attr.CounterpartyID())
 	if err != nil {
 		return fmt.Errorf(
 			"error validating orbit controller for protocol ID %s and counterparty ID %s: %w",
@@ -148,25 +148,25 @@ func (k *OrbitComponent) ValidatePacket(ctx context.Context, packet *types.Orbit
 		)
 	}
 
-	return k.validateInitialConditions(ctx, packet)
+	return c.validateInitialConditions(ctx, packet)
 }
 
-func (k *OrbitComponent) ValidateOrbit(
+func (c *OrbitComponent) ValidateOrbit(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) error {
-	if err := k.validateController(ctx, protocolID); err != nil {
+	if err := c.validateController(ctx, protocolID); err != nil {
 		return err
 	}
-	return k.validateOrbit(ctx, protocolID, counterpartyID)
+	return c.validateOrbit(ctx, protocolID, counterpartyID)
 }
 
-func (k *OrbitComponent) validateController(
+func (c *OrbitComponent) validateController(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
-	isPaused, err := k.IsControllerPaused(ctx, protocolID)
+	isPaused, err := c.IsControllerPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -180,12 +180,12 @@ func (k *OrbitComponent) validateController(
 	return nil
 }
 
-func (k *OrbitComponent) validateOrbit(
+func (c *OrbitComponent) validateOrbit(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) error {
-	isPaused, err := k.IsOrbitPaused(ctx, protocolID, counterpartyID)
+	isPaused, err := c.IsOrbitPaused(ctx, protocolID, counterpartyID)
 	if err != nil {
 		return err
 	}
@@ -199,11 +199,11 @@ func (k *OrbitComponent) validateOrbit(
 	return nil
 }
 
-func (k *OrbitComponent) validateInitialConditions(
+func (c *OrbitComponent) validateInitialConditions(
 	ctx context.Context,
 	packet *types.OrbitPacket,
 ) error {
-	balances := k.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
+	balances := c.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
 
 	if balances.Len() != 1 {
 		return fmt.Errorf("expected exactly 1 balance, got %d", balances.Len())
@@ -221,35 +221,36 @@ func (k *OrbitComponent) validateInitialConditions(
 	return nil
 }
 
-func (k *OrbitComponent) Pause(
+func (c *OrbitComponent) Pause(
+	ctx context.Context,
+	protocolID types.ProtocolID,
+	counterpartyIDs []string,
+) error {
+	switch {
+	case len(counterpartyIDs) == 0:
+		return c.pauseProtocol(ctx, protocolID)
+	default:
+		return c.pauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
+	}
+}
+
+func (c *OrbitComponent) Unpause(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	if len(counterpartyIDs) == 0 {
-		return k.pauseProtocol(ctx, protocolID)
+		return c.unpauseProtocol(ctx, protocolID)
 	} else {
-		return k.pauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
+		return c.unpauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
 	}
 }
 
-func (k *OrbitComponent) Unpause(
-	ctx context.Context,
-	protocolID types.ProtocolID,
-	counterpartyIDs []string,
-) error {
-	if len(counterpartyIDs) == 0 {
-		return k.unpauseProtocol(ctx, protocolID)
-	} else {
-		return k.unpauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
-	}
-}
-
-func (k *OrbitComponent) pauseProtocol(
+func (c *OrbitComponent) pauseProtocol(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
-	if err := k.SetPausedController(ctx, protocolID); err != nil {
+	if err := c.SetPausedController(ctx, protocolID); err != nil {
 		return fmt.Errorf(
 			"error pausing all orbits for protocol %s: %w",
 			protocolID,
@@ -259,13 +260,13 @@ func (k *OrbitComponent) pauseProtocol(
 	return nil
 }
 
-func (k *OrbitComponent) pauseProtocolDestinations(
+func (c *OrbitComponent) pauseProtocolDestinations(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		if err := k.SetPausedOrbit(ctx, protocolID, ID); err != nil {
+		if err := c.SetPausedOrbit(ctx, protocolID, ID); err != nil {
 			return fmt.Errorf(
 				"error pausing orbit for protocol %s and counterparty %s: %w",
 				protocolID,
@@ -277,11 +278,11 @@ func (k *OrbitComponent) pauseProtocolDestinations(
 	return nil
 }
 
-func (k *OrbitComponent) unpauseProtocol(
+func (c *OrbitComponent) unpauseProtocol(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
-	if err := k.SetUnpausedController(ctx, protocolID); err != nil {
+	if err := c.SetUnpausedController(ctx, protocolID); err != nil {
 		return fmt.Errorf(
 			"error unpausing all orbits for protocol %s: %w",
 			protocolID,
@@ -291,13 +292,13 @@ func (k *OrbitComponent) unpauseProtocol(
 	return nil
 }
 
-func (k *OrbitComponent) unpauseProtocolDestinations(
+func (c *OrbitComponent) unpauseProtocolDestinations(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		if err := k.SetUnpausedOrbit(ctx, protocolID, ID); err != nil {
+		if err := c.SetUnpausedOrbit(ctx, protocolID, ID); err != nil {
 			return fmt.Errorf(
 				"error unpausing orbit for protocol %s and counterparty %s: %w",
 				protocolID,
