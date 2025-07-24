@@ -95,7 +95,6 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 				}
 				orbit, err := types.NewOrbit(types.PROTOCOL_IBC, &attrOrbit, []byte{})
 				require.NoError(t, err)
-				require.NoError(t, err)
 
 				return &types.Payload{
 					Orbit: orbit,
@@ -173,7 +172,6 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 					payloadWrapper := types.PayloadWrapper{}
 					err = types.UnmarshalJSON(encCfg.Codec, payloadWrapperBz, &payloadWrapper)
 					require.NoError(t, err)
-					require.Equal(t, tC.payload().Orbit, payloadWrapper.Orbiter.Orbit)
 					require.Equal(t, tC.payload().Orbit, payloadWrapper.Orbiter.Orbit)
 					require.Equal(t, len(tC.payload().PreActions), len(payloadWrapper.Orbiter.PreActions))
 				})
