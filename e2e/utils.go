@@ -50,6 +50,7 @@ func (s Suite) GetChannels(t *testing.T, ctx context.Context) (string, string) {
 		s.Chain.Config().ChainID,
 	)
 	require.NoError(t, err)
+	require.NotEmpty(t, orbiterToCounterpartyChannelInfo)
 	orbiterToCounterpartyChannelID := orbiterToCounterpartyChannelInfo[0].ChannelID
 
 	counterpartyToOrbiterChannelInfo, err := s.IBC.Relayer.GetChannels(
@@ -58,6 +59,7 @@ func (s Suite) GetChannels(t *testing.T, ctx context.Context) (string, string) {
 		s.IBC.CounterpartyChain.Config().ChainID,
 	)
 	require.NoError(t, err)
+	require.NotEmpty(t, counterpartyToOrbiterChannelInfo)
 	counterpartyToOrbiterChannelID := counterpartyToOrbiterChannelInfo[0].ChannelID
 
 	return orbiterToCounterpartyChannelID, counterpartyToOrbiterChannelID
