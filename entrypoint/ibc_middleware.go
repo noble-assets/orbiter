@@ -40,15 +40,15 @@ func NewIBCMiddleware(
 	payloadAdapter interfaces.PayloadAdapter,
 ) IBCMiddleware {
 	if app == nil {
-		panic(errors.New("IBCModule cannot be nil"))
+		panic(errors.New("IBC module cannot be nil"))
 	}
 
 	if ics4Wrapper == nil {
-		panic(errors.New("ICS4Wrapper cannot be nil"))
+		panic(errors.New("ICS4 wrapper cannot be nil"))
 	}
 
 	if payloadAdapter == nil {
-		panic(errors.New("OrbiterPayloadHandler cannot be nil"))
+		panic(errors.New("payload adapter cannot be nil"))
 	}
 
 	return IBCMiddleware{

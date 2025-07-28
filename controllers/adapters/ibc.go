@@ -130,7 +130,7 @@ func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *types.Payload, error)
 	return true, payload, nil
 }
 
-// IsIcs20Packet returns a boolean indicating wheater the data is an ICS20
+// IsIcs20Packet returns a boolean indicating whether the data is an ICS20
 // packet, and if true, the fungible token packet data.
 func (p *IBCParser) IsIcs20Packet(data []byte) (bool, transfertypes.FungibleTokenPacketData) {
 	var ics20Data transfertypes.FungibleTokenPacketData

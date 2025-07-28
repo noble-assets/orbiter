@@ -42,6 +42,6 @@ type PayloadAdapter interface {
 		types.OrbitID,
 		*types.Payload,
 	) (*types.TransferAttributes, error)
-	// ProcessPayload processed the parsed payload.
+	// ProcessPayload processes the parsed payload.
 	ProcessPayload(context.Context, *types.TransferAttributes, *types.Payload) error
 }

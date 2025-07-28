@@ -28,6 +28,10 @@ import (
 	"orbiter.dev/testutil"
 )
 
+type contextKey string
+
+const FailingContextKey contextKey = "failing"
+
 func init() {
 	testutil.Authority = testutil.NewNobleAddress()
 	testutil.SetSDKConfig()

@@ -143,7 +143,7 @@ func (c *CCTPController) validateAttributes(attr *orbits.CCTPAttributes) error {
 	return attr.Validate()
 }
 
-// executeOrbi is the core controller logic which perform
+// executeOrbit is the core controller logic which performs
 // the state transition calling into the CCTP server to
 // initiate a cross-chain transfer.
 func (c *CCTPController) executeOrbit(

@@ -178,7 +178,7 @@ func (c *FeeController) ValidateFee(feeInfo *actions.FeeInfo) error {
 		return types.ErrNilPointer.Wrap("fee info")
 	}
 	if feeInfo.BasisPoints == 0 {
-		return errors.New("fee basis point cannot be zero")
+		return errors.New("fee basis point must be greater than zero")
 	}
 	if feeInfo.BasisPoints > types.BPSNormalizer {
 		return fmt.Errorf("fee basis point cannot be higher than %d", types.BPSNormalizer)

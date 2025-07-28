@@ -51,6 +51,7 @@ An example of a JSON structured payload is:
       "protocol_id": "PROTOCOL_CCTP",
       "attributes": {
         "@type": "/noble.orbiter.controllers.orbits.v1.CCTPAttributes",
+        // Note: mint_recipient and destination_caller are 32-byte values encoded as base64
         "destination_domain": 0,
         "mint_recipient": "PNWAxASH2RPmgMV+/Tb4e78ON1WL8SoFGnwbWWHxfuA=",
         "destination_caller": "xWtN0TuqjWo90XiknI61JUxYexN2JgZaEaWGxhA/rXE="
@@ -155,8 +156,8 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
 
 ```go
  "orbiter.dev/types"
- "orbiter.dev/types/components/actions"
- "orbiter.dev/types/components/orbits"
+ "orbiter.dev/types/controllers/actions"
+ "orbiter.dev/types/controllers/orbits"
  "orbiter.dev/testutil"
 ```
 

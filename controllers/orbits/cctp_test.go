@@ -111,7 +111,7 @@ func TestHandlePacket(t *testing.T) {
 		{
 			name: "error - cctp server returns an error",
 			setup: func() context.Context {
-				return context.WithValue(context.Background(), "failing", true) //nolint:staticcheck
+				return context.WithValue(context.Background(), mocks.FailingContextKey, true)
 			},
 			packet: func() *types.OrbitPacket {
 				orbit, err := orbits.NewCCTPOrbit(

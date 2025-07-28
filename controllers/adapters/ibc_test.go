@@ -185,7 +185,7 @@ func TestParsePayload(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				if tc.expectIsOrbiter {
-					require.NotNil(t, payload.Orbit, "expected orbit to be not nil")
+					require.NotNil(t, payload.Orbit)
 					require.Equal(t, tc.expectPayload.Orbit.ProtocolId, payload.Orbit.ProtocolId, "expected different id")
 					require.Equal(t, tc.expectPayload.Orbit.Attributes.TypeUrl, payload.Orbit.Attributes.TypeUrl, "expected different orbit attributes type url")
 
