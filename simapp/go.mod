@@ -1,6 +1,6 @@
 module orbiter.dev/simapp
 
-go 1.24.3
+go 1.24
 
 require (
 	cosmossdk.io/client/v2 v2.0.0-beta.1
