@@ -374,7 +374,7 @@ func TestValidateAttributesFeeController(t *testing.T) {
 					},
 				},
 			},
-			expErr: "cannot be zero",
+			expErr: "must be greater than zero",
 		},
 		{
 			name: "error - basis points over maximum",
@@ -481,7 +481,7 @@ func TestValidateFee(t *testing.T) {
 				Recipient:   "",
 				BasisPoints: 0,
 			},
-			expErr: "cannot be zero",
+			expErr: "must be greater than zero",
 		},
 		{
 			name: "error - over maximum basis points",
