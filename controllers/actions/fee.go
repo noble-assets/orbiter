@@ -71,7 +71,7 @@ type FeeController struct {
 	BankKeeper actions.BankKeeperFee
 }
 
-// Validate performs basic valdiation for the fee controller.
+// Validate performs basic validation for the fee controller.
 func (c *FeeController) Validate() error {
 	if c.BaseController == nil {
 		return types.ErrNilPointer.Wrap("base controller cannot be nil")
@@ -99,6 +99,9 @@ func (c *FeeController) HandlePacket(
 		transferAttr.DestinationDenom(),
 		attr.FeesInfo,
 	)
+	if feesToDistribute.Total.GT(transferAttr.DestinationAmount()) {
+		return types.ErrInvalidAttributes.Wrap("total fees exceed transfer amount")
+	}
 
 	err = c.executeAction(ctx, feesToDistribute.Values)
 	if err != nil {
@@ -115,6 +118,8 @@ func (c *FeeController) HandlePacket(
 	return nil
 }
 
+// GetAttributes returns the fee attributes concrete type from
+// a fee action.
 func (c *FeeController) GetAttributes(action *types.Action) (*actions.FeeAttributes, error) {
 	attr, err := c.extractAttributes(action)
 	if err != nil {
@@ -122,7 +127,7 @@ func (c *FeeController) GetAttributes(action *types.Action) (*actions.FeeAttribu
 	}
 	err = c.ValidateAttributes(attr)
 	if err != nil {
-		return attr, types.ErrValidation.Wrap(err.Error())
+		return nil, types.ErrValidation.Wrap(err.Error())
 	}
 
 	return attr, nil
