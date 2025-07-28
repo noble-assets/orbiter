@@ -37,6 +37,8 @@ import (
 	"orbiter.dev/types/controllers/orbits"
 )
 
+const OrbiterModuleAddr = "noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d"
+
 func TestIbc(t *testing.T) {
 	t.Parallel()
 
@@ -128,7 +130,7 @@ func TestIbc(t *testing.T) {
 
 	// Transfer funds to the orbiter module
 	transfer = ibc.WalletAmount{
-		Address: "noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d",
+		Address: OrbiterModuleAddr,
 		Denom:   dstIbcDenom,
 		Amount:  amountToSend,
 	}
