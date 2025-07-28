@@ -48,57 +48,57 @@ func TestJSONParser_Parse(t *testing.T) {
 		expErr         string
 	}{
 		{
-			name:           "fail when string is empty",
+			name:           "error - when string is empty",
 			orbiterPayload: func() string { return "" },
 			expErr:         "not a valid json",
 		},
 		{
-			name:           "fail when string is not valid JSON",
+			name:           "error - when string is not valid JSON",
 			orbiterPayload: func() string { return "invalid json string" },
 			expErr:         "not a valid json",
 		},
 		{
-			name:           "fail when string does not contain orbiter prefix",
+			name:           "error - when string does not contain orbiter prefix",
 			orbiterPayload: func() string { return `{"other_field": "value"}` },
 			expErr:         "json does not contain orbiter prefix",
 		},
 		{
-			name: "fail when orbiter prefix exists but is null",
+			name: "error - when orbiter prefix exists but is null",
 			orbiterPayload: func() string {
 				return fmt.Sprintf(`{"%s": null}`, types.OrbiterPrefix)
 			},
 			expErr: "json does not contain orbiter prefix",
 		},
 		{
-			name: "fail when orbiter prefix is not a map",
+			name: "error - when orbiter prefix is not a map",
 			orbiterPayload: func() string {
 				return fmt.Sprintf(`{"%s": "string_value"}`, types.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
-			name: "fail when orbiter prefix is an array",
+			name: "error - when orbiter prefix is an array",
 			orbiterPayload: func() string {
 				return fmt.Sprintf(`{"%s": ["array", "value"]}`, types.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
-			name: "fail when orbiter prefix is a number",
+			name: "error - when orbiter prefix is a number",
 			orbiterPayload: func() string {
 				return fmt.Sprintf(`{"%s": 123}`, types.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
-			name: "fail when orbiter prefix is a boolean",
+			name: "error - when orbiter prefix is a boolean",
 			orbiterPayload: func() string {
 				return fmt.Sprintf(`{"%s": true}`, types.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
-			name: "fail when orbiter prefix contains invalid data for NewPayloadFromString",
+			name: "error - when orbiter prefix contains invalid data for NewPayloadFromString",
 			orbiterPayload: func() string {
 				return fmt.Sprintf(
 					`{"%s": {"invalid_field": "invalid_value"}}`,
@@ -108,7 +108,7 @@ func TestJSONParser_Parse(t *testing.T) {
 			expErr: "failed to cast json string into Payload",
 		},
 		{
-			name: "fail - when payload is valid but attributes are not registered",
+			name: "error - when payload is valid but attributes are not registered",
 			orbiterPayload: func() string {
 				_, str := testutil.CreatePayloadWrapperJSON(t)
 				return str

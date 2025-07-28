@@ -37,7 +37,7 @@ import (
 	"orbiter.dev/types/controllers/actions"
 )
 
-func TestFeeController_GetAttributes(t *testing.T) {
+func TestGetAttributesFeeController(t *testing.T) {
 	recipient := sdk.AccAddress(testutil.AddressBytes())
 
 	testCases := []struct {
@@ -47,14 +47,14 @@ func TestFeeController_GetAttributes(t *testing.T) {
 		expErr        string
 	}{
 		{
-			name: "fail - nil action",
+			name: "error - nil action",
 			action: func() *types.Action {
 				return nil
 			},
 			expErr: "received nil fee attributes",
 		},
 		{
-			name: "fail - invalid attributes type",
+			name: "error - invalid attributes type",
 			action: func() *types.Action {
 				action, err := types.NewAction(
 					types.ACTION_FEE,
@@ -66,7 +66,7 @@ func TestFeeController_GetAttributes(t *testing.T) {
 			expErr: "expected *actions.FeeAttributes",
 		},
 		{
-			name: "fail - nil attributes",
+			name: "error - nil attributes",
 			action: func() *types.Action {
 				action := types.Action{
 					Id:         types.ACTION_FEE,
@@ -126,7 +126,7 @@ func TestFeeController_GetAttributes(t *testing.T) {
 	}
 }
 
-func TestFeeController_ComputeFeesToDistribute(t *testing.T) {
+func TestComputeFeesToDistribute(t *testing.T) {
 	denom := "uusdc"
 	bigNumber, ok := sdkmath.NewIntFromString(
 		"115792089237316195423570985008687907853269984665640564039457584007913129639935",
@@ -303,7 +303,6 @@ func TestFeeController_ComputeFeesToDistribute(t *testing.T) {
 	}
 }
 
-func TestFeeController_ValidateAttributes(t *testing.T) {
 func TestValidateAttributesFeeController(t *testing.T) {
 	recipient := sdk.AccAddress(testutil.AddressBytes())
 
@@ -466,18 +465,18 @@ func TestValidateAttributesFeeController(t *testing.T) {
 	}
 }
 
-func TestFeeController_ValidateFee(t *testing.T) {
+func TestValidateFee(t *testing.T) {
 	testCases := []struct {
 		name    string
 		feeInfo *actions.FeeInfo
 		expErr  string
 	}{
 		{
-			name:   "fail - nil fee info",
+			name:   "error - nil fee info",
 			expErr: types.ErrNilPointer.Error(),
 		},
 		{
-			name: "fail - zero basis points",
+			name: "error - zero basis points",
 			feeInfo: &actions.FeeInfo{
 				Recipient:   "",
 				BasisPoints: 0,
@@ -485,7 +484,7 @@ func TestFeeController_ValidateFee(t *testing.T) {
 			expErr: "cannot be zero",
 		},
 		{
-			name: "fail - over maximum basis points",
+			name: "error - over maximum basis points",
 			feeInfo: &actions.FeeInfo{
 				Recipient:   "",
 				BasisPoints: types.BPSNormalizer + 1,
@@ -493,7 +492,7 @@ func TestFeeController_ValidateFee(t *testing.T) {
 			expErr: "cannot be higher",
 		},
 		{
-			name: "fail - recipient is empty",
+			name: "error - recipient is empty",
 			feeInfo: &actions.FeeInfo{
 				Recipient:   "",
 				BasisPoints: 1,
@@ -501,7 +500,7 @@ func TestFeeController_ValidateFee(t *testing.T) {
 			expErr: "empty address",
 		},
 		{
-			name: "fail - recipient is not valid address",
+			name: "error - recipient is not valid address",
 			feeInfo: &actions.FeeInfo{
 				Recipient:   "a",
 				BasisPoints: 1,
@@ -578,7 +577,7 @@ func TestComputeFeeAmount(t *testing.T) {
 	}
 }
 
-func TestFeeController_HandlePacket(t *testing.T) {
+func TestHandlePacketFeeController(t *testing.T) {
 	recipient := sdk.AccAddress(testutil.AddressBytes())
 	validAction, err := types.NewAction(
 		types.ACTION_FEE,
@@ -610,7 +609,7 @@ func TestFeeController_HandlePacket(t *testing.T) {
 		expErr          string
 	}{
 		{
-			name: "fail - invalid attributes",
+			name: "error - invalid attributes",
 			action: func() *types.Action {
 				action, err := types.NewAction(
 					types.ACTION_FEE,

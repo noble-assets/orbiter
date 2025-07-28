@@ -49,11 +49,11 @@ func TestNewCCTPController(t *testing.T) {
 			msgServer: &mocks.CCTPMsgServer{},
 		},
 		{
-			name:     "fail - nil logger",
+			name:     "error - nil logger",
 			expError: "logger cannot be nil",
 		},
 		{
-			name:     "fail - when no CCTP server is provided",
+			name:     "error - when no CCTP server is provided",
 			logger:   log.NewNopLogger(),
 			expError: types.ErrNilPointer.Error(),
 		},
@@ -109,7 +109,7 @@ func TestHandlePacket(t *testing.T) {
 			},
 		},
 		{
-			name: "fail - cctp server returns an error",
+			name: "error - cctp server returns an error",
 			setup: func() context.Context {
 				return context.WithValue(context.Background(), "failing", true) //nolint:staticcheck
 			},
@@ -179,7 +179,7 @@ func TestExtractAttributes(t *testing.T) {
 			},
 		},
 		{
-			name: "fail - wrong attributes",
+			name: "error - wrong attributes",
 			orbit: func() *types.Orbit {
 				invalidAttr := testdata.TestOrbitAttr{}
 				route := &types.Orbit{
@@ -193,7 +193,7 @@ func TestExtractAttributes(t *testing.T) {
 			expError: "expected *orbits.CCTPAttributes",
 		},
 		{
-			name: "fail - empty attributes",
+			name: "error - empty attributes",
 			orbit: func() *types.Orbit {
 				return &types.Orbit{
 					ProtocolId: types.PROTOCOL_CCTP,
@@ -243,7 +243,7 @@ func TestNewCCTPHandler(t *testing.T) {
 			msgServer: &mocks.CCTPMsgServer{},
 		},
 		{
-			name:      "fail - nil msg server",
+			name:      "error - nil msg server",
 			msgServer: nil,
 			expErr:    "cannot be nil",
 		},

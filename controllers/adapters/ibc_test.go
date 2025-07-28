@@ -95,7 +95,7 @@ func TestParsePayload(t *testing.T) {
 			errorContains:   "not a valid json",
 		},
 		{
-			name: "fail - orbiter payload with nil orbit attributes",
+			name: "error - orbiter payload with nil orbit attributes",
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
 				types.ModuleAddress.String(),
