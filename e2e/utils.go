@@ -36,7 +36,7 @@ import (
 )
 
 const (
-	OneCoin         = 1_000_000
+	OneE6           = 1_000_000
 	MaxSearchBlocks = 30
 )
 
@@ -44,6 +44,8 @@ const (
 // The first ID returned is from the orbiter chain to the counterparty,
 // the second one is the ID from the counterparty to the orbiter chain.
 func (s Suite) GetChannels(t *testing.T, ctx context.Context) (string, string) {
+	t.Helper()
+
 	orbiterToCounterpartyChannelInfo, err := s.IBC.Relayer.GetChannels(
 		ctx,
 		s.IBC.RelayerReporter,
@@ -72,6 +74,8 @@ func (s *Suite) GetIbcTransferBlockExecution(
 	ctx context.Context,
 	startHeight int64,
 ) int64 {
+	t.Helper()
+
 	reg := s.Chain.Config().EncodingConfig.InterfaceRegistry
 
 	maxHeight := startHeight + MaxSearchBlocks

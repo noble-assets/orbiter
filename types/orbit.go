@@ -195,14 +195,14 @@ func (o *Orbit) SetAttributes(a OrbitAttributes) error {
 	if !ok {
 		return sdkerrors.ErrPackAny.Wrapf("can't proto marshal %T", m)
 	}
-	// Now we set the any type with cache. The cache value
+	// Now we set the anyValue type with cache. The cache value
 	// is the proto message itself before being converted into
-	// an any.
-	any, err := cdctypes.NewAnyWithValue(m)
+	// an anyValue.
+	anyValue, err := cdctypes.NewAnyWithValue(m)
 	if err != nil {
 		return err
 	}
-	o.Attributes = any
+	o.Attributes = anyValue
 	return nil
 }
 

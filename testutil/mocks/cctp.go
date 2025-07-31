@@ -31,9 +31,7 @@ import (
 
 var _ orbits.CCTPMsgServer = CCTPMsgServer{}
 
-type CCTPMsgServer struct {
-	MaxTransferAmount int64
-}
+type CCTPMsgServer struct{}
 
 func (c CCTPMsgServer) DepositForBurnWithCaller(
 	ctx context.Context,

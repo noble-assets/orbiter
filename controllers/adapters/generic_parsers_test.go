@@ -164,8 +164,7 @@ func TestJSONParser_Parse(t *testing.T) {
 			payload, err := parser.Parse(tC.orbiterPayload())
 
 			if tC.expErr != "" {
-				require.Error(t, err)
-				require.Contains(t, err.Error(), tC.expErr)
+				require.ErrorContains(t, err, tC.expErr)
 				require.Equal(t, tC.expPayload, payload)
 			} else {
 				require.NoError(t, err)

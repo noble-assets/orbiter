@@ -137,11 +137,11 @@ func (a *Action) SetAttributes(attr ActionAttributes) error {
 		return sdkerrors.ErrPackAny.Wrapf("can't proto marshal %T", m)
 	}
 
-	any, err := cdctypes.NewAnyWithValue(m)
+	anyValue, err := cdctypes.NewAnyWithValue(m)
 	if err != nil {
 		return err
 	}
-	a.Attributes = any
+	a.Attributes = anyValue
 	return nil
 }
 

@@ -82,7 +82,9 @@ func (i IBCMiddleware) OnRecvPacket(
 	)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
-	} else if !isOrbiterPayload {
+	}
+
+	if !isOrbiterPayload {
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
 

@@ -47,7 +47,7 @@ func TestIbc(t *testing.T) {
 
 	orbiterToCounterpartyChannelID, counterpartyToOrbiterChannelID := s.GetChannels(t, ctx)
 
-	amountToSend := math.NewInt(OneCoin)
+	amountToSend := math.NewInt(OneE6)
 
 	transfer := ibc.WalletAmount{
 		Address: s.IBC.Account.FormattedAddress(),

@@ -68,7 +68,7 @@ type IBCAdapter struct {
 	parser *IBCParser
 }
 
-// ParsePayload dispatch the payload parsing to the underlying IBC parser.
+// ParsePayload dispatches the payload parsing to the underlying IBC parser.
 func (a *IBCAdapter) ParsePayload(payloadBz []byte) (bool, *types.Payload, error) {
 	return a.parser.ParsePayload(payloadBz)
 }
@@ -89,6 +89,10 @@ var _ interfaces.PayloadParser = &IBCParser{}
 
 // NewIBCParser returns a new instance of an IBC parser.
 func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
+	if cdc == nil {
+		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
+	}
+
 	jsonParser, err := NewJSONParser(cdc)
 	if err != nil {
 		return nil, err
@@ -103,14 +107,14 @@ type IBCParser struct {
 	JSONParser
 }
 
-// ParsePayload parses the payload from an IBC memo to retrieve the orbiter
+// ParsePayload parses the payload from an IBC transfer to retrieve the orbiter
 // payload. It returns:
 // - bool: whether the payload is intended for the Orbiter module.
 // - Payload: the parsed payload.
 // - error: an error, if one occurred during parsing.
 func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *types.Payload, error) {
-	isIcs20Packet, data := p.IsIcs20Packet(payloadBz)
-	if !isIcs20Packet {
+	data, err := p.GetICS20PacketData(payloadBz)
+	if err != nil {
 		return false, nil, nil
 	}
 
@@ -130,12 +134,10 @@ func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *types.Payload, error)
 	return true, payload, nil
 }
 
-// IsIcs20Packet returns a boolean indicating whether the data is an ICS20
-// packet, and if true, the fungible token packet data.
-func (p *IBCParser) IsIcs20Packet(data []byte) (bool, transfertypes.FungibleTokenPacketData) {
+// GetICS20PacketData returns unmarshalled ICS-20 packet data if it is present in the data
+// as well as a boolean indicating the successful decoding.
+func (p *IBCParser) GetICS20PacketData(data []byte) (transfertypes.FungibleTokenPacketData, error) {
 	var ics20Data transfertypes.FungibleTokenPacketData
-	if err := transfertypes.ModuleCdc.UnmarshalJSON(data, &ics20Data); err != nil {
-		return false, transfertypes.FungibleTokenPacketData{}
-	}
-	return true, ics20Data
+	err := transfertypes.ModuleCdc.UnmarshalJSON(data, &ics20Data)
+	return ics20Data, err
 }

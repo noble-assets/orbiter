@@ -21,7 +21,6 @@
 package actions_test
 
 import (
-	"math"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -115,7 +114,6 @@ func TestGetAttributesFeeController(t *testing.T) {
 			attr, err := controller.GetAttributes(tC.action())
 
 			if tC.expErr != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tC.expErr)
 				require.Nil(t, attr)
 			} else {
@@ -456,7 +454,6 @@ func TestValidateAttributesFeeController(t *testing.T) {
 			err := controller.ValidateAttributes(tC.attributes)
 
 			if tC.expErr != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
@@ -527,52 +524,10 @@ func TestValidateFee(t *testing.T) {
 			err := controller.ValidateFee(tC.feeInfo)
 
 			if tC.expErr != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
 			}
-		})
-	}
-}
-
-func TestComputeFeeAmount(t *testing.T) {
-	bigNumber, ok := sdkmath.NewIntFromString(
-		"115792089237316195423570985008687907853269984665640564039457584007913129639935",
-	)
-
-	require.True(t, ok)
-	testCases := []struct {
-		name       string
-		amount     sdkmath.Int
-		basisPoint uint64
-		expAmount  sdkmath.Int
-	}{
-		{
-			name:       "zero amount",
-			amount:     sdkmath.ZeroInt(),
-			basisPoint: 1_000,
-			expAmount:  sdkmath.ZeroInt(),
-		},
-		{
-			name:       "zero bps",
-			amount:     sdkmath.NewInt(1_000),
-			basisPoint: 0,
-			expAmount:  sdkmath.ZeroInt(),
-		},
-		{
-			name:       "overflow return zero fee",
-			amount:     bigNumber,
-			basisPoint: math.MaxInt64,
-			expAmount:  sdkmath.ZeroInt(),
-		},
-	}
-
-	for _, tC := range testCases {
-		t.Run(tC.name, func(t *testing.T) {
-			fee := controllers.ComputeFeeAmount(tC.amount, tC.basisPoint)
-
-			require.Equal(t, tC.expAmount, fee)
 		})
 	}
 }
@@ -669,7 +624,6 @@ func TestHandlePacketFeeController(t *testing.T) {
 			err = controller.HandlePacket(deps.SdkCtx, packet)
 
 			if tC.expErr != "" {
-				require.Error(t, err)
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)

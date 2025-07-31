@@ -49,7 +49,6 @@ func TestHooks(t *testing.T) {
 
 func TestNewIBCParser(t *testing.T) {
 	parser, err := adapters.NewIBCParser(nil)
-	require.Error(t, err)
 	require.ErrorContains(t, err, "cannot be nil")
 	require.Nil(t, parser)
 }
@@ -180,8 +179,7 @@ func TestParsePayload(t *testing.T) {
 
 			require.Equal(t, tc.expectIsOrbiter, isOrbiterPayload)
 			if tc.expectError {
-				require.Error(t, err)
-				require.Contains(t, err.Error(), tc.errorContains)
+				require.ErrorContains(t, err, tc.errorContains)
 			} else {
 				require.NoError(t, err)
 				if tc.expectIsOrbiter {

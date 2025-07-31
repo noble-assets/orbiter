@@ -60,8 +60,9 @@ func NewMocks() Mocks {
 }
 
 func CheckIfFailing(ctx context.Context) bool {
-	if ctx.Value(FailingContextKey) != nil && ctx.Value(FailingContextKey) == true {
-		return true
+	isFailing := ctx.Value(FailingContextKey)
+	if isFailing == nil || isFailing == false {
+		return false
 	}
-	return false
+	return true
 }

@@ -67,8 +67,7 @@ func TestNewCCTPController(t *testing.T) {
 			)
 
 			if tC.expError != "" {
-				require.Error(t, err)
-				require.Contains(t, err.Error(), tC.expError)
+				require.ErrorContains(t, err, tC.expError)
 				require.Nil(t, controller)
 			} else {
 				require.NoError(t, err)
@@ -148,8 +147,7 @@ func TestHandlePacket(t *testing.T) {
 			err = controller.HandlePacket(ctx, tC.packet())
 
 			if tC.expError != "" {
-				require.Error(t, err)
-				require.Contains(t, err.Error(), tC.expError)
+				require.ErrorContains(t, err, tC.expError)
 			} else {
 				require.NoError(t, err)
 			}
@@ -169,26 +167,26 @@ func TestExtractAttributes(t *testing.T) {
 			orbit: func() *types.Orbit {
 				attr, err := orbits.NewCCTPAttributes(1, []byte("recipient"), []byte("caller"))
 				require.NoError(t, err)
-				route := &types.Orbit{
+				orbit := &types.Orbit{
 					ProtocolId: types.PROTOCOL_CCTP,
 				}
-				err = route.SetAttributes(attr)
+				err = orbit.SetAttributes(attr)
 				require.NoError(t, err)
 
-				return route
+				return orbit
 			},
 		},
 		{
 			name: "error - wrong attributes",
 			orbit: func() *types.Orbit {
 				invalidAttr := testdata.TestOrbitAttr{}
-				route := &types.Orbit{
+				orbit := &types.Orbit{
 					ProtocolId: types.PROTOCOL_CCTP,
 				}
-				err := route.SetAttributes(&invalidAttr)
+				err := orbit.SetAttributes(&invalidAttr)
 				require.NoError(t, err)
 
-				return route
+				return orbit
 			},
 			expError: "expected *orbits.CCTPAttributes",
 		},
@@ -220,9 +218,8 @@ func TestExtractAttributes(t *testing.T) {
 			attributes, err := controller.extractAttributes(tC.orbit())
 
 			if tC.expError != "" {
-				require.Error(t, err)
 				require.Nil(t, attributes)
-				require.Contains(t, err.Error(), tC.expError)
+				require.ErrorContains(t, err, tC.expError)
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, attributes)
@@ -256,8 +253,7 @@ func TestNewCCTPHandler(t *testing.T) {
 			)
 
 			if tc.expErr != "" {
-				require.Error(t, err)
-				require.Contains(t, err.Error(), tc.expErr)
+				require.ErrorContains(t, err, tc.expErr)
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, handler)

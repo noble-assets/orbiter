@@ -137,9 +137,6 @@ func (c *CCTPController) extractAttributes(
 // validateAttributes returns an error if the provided CCTP attributes are
 // not valid.
 func (c *CCTPController) validateAttributes(attr *orbits.CCTPAttributes) error {
-	if attr == nil {
-		return types.ErrNilPointer.Wrap("CCTP attributes")
-	}
 	return attr.Validate()
 }
 

@@ -99,8 +99,8 @@ func (c *FeeController) HandlePacket(
 		transferAttr.DestinationDenom(),
 		attr.FeesInfo,
 	)
-	if feesToDistribute.Total.GT(transferAttr.DestinationAmount()) {
-		return types.ErrInvalidAttributes.Wrap("total fees exceed transfer amount")
+	if feesToDistribute.Total.GTE(transferAttr.DestinationAmount()) {
+		return types.ErrInvalidAttributes.Wrap("total fees equal or exceed transfer amount")
 	}
 
 	err = c.executeAction(ctx, feesToDistribute.Values)

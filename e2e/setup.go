@@ -45,6 +45,7 @@ import (
 var (
 	numValidators = 1
 	numFullNodes  = 0
+	burnLimit     = math.NewInt(1_000_000_000)
 )
 
 type IBC struct {
@@ -145,7 +146,10 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 	}))
 
 	t.Cleanup(func() {
-		_ = interchain.Close()
+		err := interchain.Close()
+		if err != nil {
+			t.Logf("failed to close interchain: %v", err)
+		}
 	})
 
 	wallets := interchaintest.GetAndFundTestUsers(
@@ -291,7 +295,7 @@ func preGenesis(ctx context.Context, suite *Suite) func(ibc.Chain) error {
 func modifyGenesis(suite *Suite) func(cc ibc.ChainConfig, b []byte) ([]byte, error) {
 	return func(cc ibc.ChainConfig, b []byte) ([]byte, error) {
 		tokenMessenger := make([]byte, 32)
-		copy(tokenMessenger[12:], suite.CircleRoles.Pauser.Address())
+		copy(tokenMessenger[12:], suite.CircleRoles.TokenMessenger.Address())
 
 		updatedGenesis := []cosmos.GenesisKV{
 			cosmos.NewGenesisKV(
@@ -328,7 +332,7 @@ func modifyGenesis(suite *Suite) func(cc ibc.ChainConfig, b []byte) ([]byte, err
 					Paused: false,
 				},
 				PerMessageBurnLimitList: []cctptypes.PerMessageBurnLimit{
-					{Denom: DenomMetadataUsdc.Base, Amount: math.NewInt(1_000_000_000)},
+					{Denom: DenomMetadataUsdc.Base, Amount: burnLimit},
 				},
 			}),
 		}
