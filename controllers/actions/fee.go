@@ -38,6 +38,15 @@ import (
 
 var _ interfaces.ControllerAction = &FeeController{}
 
+// FeeController is the controller to execute
+// fee payment actions.
+type FeeController struct {
+	*controllers.BaseController[types.ActionID]
+
+	logger     log.Logger
+	BankKeeper actions.BankKeeperFee
+}
+
 // NewFeeController returns a new validated instance of
 // the fee controller.
 func NewFeeController(
@@ -63,14 +72,6 @@ func NewFeeController(
 	return &feeController, feeController.Validate()
 }
 
-// FeeController is the controller to execute
-// fee payment actions.
-type FeeController struct {
-	logger log.Logger
-	*controllers.BaseController[types.ActionID]
-	BankKeeper actions.BankKeeperFee
-}
-
 // Validate performs basic validation for the fee controller.
 func (c *FeeController) Validate() error {
 	if c.BaseController == nil {
@@ -79,6 +80,7 @@ func (c *FeeController) Validate() error {
 	if c.BankKeeper == nil {
 		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
+
 	return nil
 }
 
@@ -136,30 +138,6 @@ func (c *FeeController) GetAttributes(action *types.Action) (*actions.FeeAttribu
 	return attr, nil
 }
 
-// extractAttributes extract the fee attributes. Return an error in case
-// of invalid attributes.
-func (c *FeeController) extractAttributes(
-	action *types.Action,
-) (*actions.FeeAttributes, error) {
-	if action == nil {
-		return nil, types.ErrNilPointer.Wrap("received nil fee attributes")
-	}
-	attr, err := action.CachedAttributes()
-	if err != nil {
-		return nil, err
-	}
-
-	feeAttr, ok := attr.(*actions.FeeAttributes)
-	if !ok {
-		return nil, sdkerrors.ErrInvalidType.Wrapf(
-			"expected %T, got %T",
-			&actions.FeeAttributes{},
-			attr,
-		)
-	}
-	return feeAttr, nil
-}
-
 // ValidateAttributes returns an error if the provided fee attributes are
 // not valid.
 func (c *FeeController) ValidateAttributes(attr *actions.FeeAttributes) error {
@@ -171,6 +149,7 @@ func (c *FeeController) ValidateAttributes(attr *actions.FeeAttributes) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -188,6 +167,7 @@ func (c *FeeController) ValidateFee(feeInfo *actions.FeeInfo) error {
 	}
 
 	_, err := sdk.AccAddressFromBech32(feeInfo.Recipient)
+
 	return err
 }
 
@@ -242,6 +222,31 @@ func (c *FeeController) executeAction(
 	return nil
 }
 
+// extractAttributes extract the fee attributes. Return an error in case
+// of invalid attributes.
+func (c *FeeController) extractAttributes(
+	action *types.Action,
+) (*actions.FeeAttributes, error) {
+	if action == nil {
+		return nil, types.ErrNilPointer.Wrap("received nil fee attributes")
+	}
+	attr, err := action.CachedAttributes()
+	if err != nil {
+		return nil, err
+	}
+
+	feeAttr, ok := attr.(*actions.FeeAttributes)
+	if !ok {
+		return nil, sdkerrors.ErrInvalidType.Wrapf(
+			"expected %T, got %T",
+			&actions.FeeAttributes{},
+			attr,
+		)
+	}
+
+	return feeAttr, nil
+}
+
 // ComputeFeeAmount returns the fee associated with the provided basis
 // points and amount. The function returns an error in case of overflow.
 func ComputeFeeAmount(amount math.Int, basisPoints uint64) (math.Int, error) {
@@ -250,5 +255,6 @@ func ComputeFeeAmount(amount math.Int, basisPoints uint64) (math.Int, error) {
 	if err != nil || fee.IsZero() {
 		return math.ZeroInt(), err
 	}
+
 	return fee.QuoRaw(types.BPSNormalizer), nil
 }

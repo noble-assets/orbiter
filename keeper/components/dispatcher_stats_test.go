@@ -172,6 +172,7 @@ func TestUpdateStats(t *testing.T) {
 			transferAttr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
+
 				return ta
 			},
 			orbit: func() *types.Orbit {
@@ -180,6 +181,7 @@ func TestUpdateStats(t *testing.T) {
 				}
 				orbit, err := types.NewOrbit(2, attr, []byte{})
 				require.NoError(t, err)
+
 				return orbit
 			},
 			expectedAmounts: map[string]types.AmountDispatched{
@@ -196,6 +198,7 @@ func TestUpdateStats(t *testing.T) {
 				ta, err := types.NewTransferAttributes(2, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 				ta.SetDestinationAmount(math.NewInt(95))
+
 				return ta
 			},
 			orbit: func() *types.Orbit {
@@ -204,6 +207,7 @@ func TestUpdateStats(t *testing.T) {
 				}
 				orbit, err := types.NewOrbit(1, attr, []byte{})
 				require.NoError(t, err)
+
 				return orbit
 			},
 			expectedAmounts: map[string]types.AmountDispatched{
@@ -221,6 +225,7 @@ func TestUpdateStats(t *testing.T) {
 				require.NoError(t, err)
 				ta.SetDestinationDenom("gwei")
 				ta.SetDestinationAmount(math.NewInt(50))
+
 				return ta
 			},
 			orbit: func() *types.Orbit {
@@ -229,6 +234,7 @@ func TestUpdateStats(t *testing.T) {
 				}
 				orbit, err := types.NewOrbit(1, attr, []byte{})
 				require.NoError(t, err)
+
 				return orbit
 			},
 			expectedAmounts: map[string]types.AmountDispatched{
@@ -248,6 +254,7 @@ func TestUpdateStats(t *testing.T) {
 			transferAttr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
+
 				return ta
 			},
 			orbit: func() *types.Orbit {
@@ -409,6 +416,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 			transferAttributes: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
+
 				return ta
 			},
 			expectedEntries: 1,
@@ -426,6 +434,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 				require.NoError(t, err)
 				ta.SetDestinationDenom("gwei")
 				ta.SetDestinationAmount(math.NewInt(50))
+
 				return ta
 			},
 			expectedEntries: 2,

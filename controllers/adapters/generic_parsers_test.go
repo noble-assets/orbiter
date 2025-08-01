@@ -65,35 +65,35 @@ func TestJSONParser_Parse(t *testing.T) {
 		{
 			name: "error - when orbiter prefix exists but is null",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": null}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%q": null}`, types.OrbiterPrefix)
 			},
 			expErr: "json does not contain orbiter prefix",
 		},
 		{
 			name: "error - when orbiter prefix is not a map",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": "string_value"}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%q": "string_value"}`, types.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
 			name: "error - when orbiter prefix is an array",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": ["array", "value"]}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%q: ["array", "value"]}`, types.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
 			name: "error - when orbiter prefix is a number",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": 123}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%q": 123}`, types.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
 			name: "error - when orbiter prefix is a boolean",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": true}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%q": true}`, types.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
@@ -101,7 +101,7 @@ func TestJSONParser_Parse(t *testing.T) {
 			name: "error - when orbiter prefix contains invalid data for NewPayloadFromString",
 			orbiterPayload: func() string {
 				return fmt.Sprintf(
-					`{"%s": {"invalid_field": "invalid_value"}}`,
+					`{"%q": {"invalid_field": "invalid_value"}}`,
 					types.OrbiterPrefix,
 				)
 			},
@@ -111,6 +111,7 @@ func TestJSONParser_Parse(t *testing.T) {
 			name: "error - when payload is valid but attributes are not registered",
 			orbiterPayload: func() string {
 				_, str := testutil.CreatePayloadWrapperJSON(t)
+
 				return str
 			},
 			expErr: "unable to resolve type",

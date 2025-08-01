@@ -34,6 +34,14 @@ import (
 
 var _ porttypes.Middleware = &IBCMiddleware{}
 
+// IBCMiddleware implements the ICS26 callbacks (IBCModule) and ICS4Wrapper.
+type IBCMiddleware struct {
+	porttypes.IBCModule
+	porttypes.ICS4Wrapper
+
+	payloadAdapter interfaces.PayloadAdapter
+}
+
 func NewIBCMiddleware(
 	app porttypes.IBCModule,
 	ics4Wrapper porttypes.ICS4Wrapper,
@@ -56,14 +64,6 @@ func NewIBCMiddleware(
 		ICS4Wrapper:    ics4Wrapper,
 		payloadAdapter: payloadAdapter,
 	}
-}
-
-// IBCMiddleware implements the ICS26 callbacks (IBCModule) and ICS4Wrapper.
-type IBCMiddleware struct {
-	porttypes.IBCModule
-	porttypes.ICS4Wrapper
-
-	payloadAdapter interfaces.PayloadAdapter
 }
 
 // ====================================================================================================

@@ -40,6 +40,7 @@ func CreateValidIBCPacketData(sender, receiver, memo string) []byte {
 		receiver,
 		memo,
 	)
+
 	return packetData.GetBytes()
 }
 
@@ -52,6 +53,8 @@ func CreateValidOrbiterPayload() string {
 }
 
 func CreatePayloadWrapperJSON(t *testing.T) (*types.Payload, string) {
+	t.Helper()
+
 	encCfg := MakeTestEncodingConfig("noble")
 	encCfg.InterfaceRegistry.RegisterImplementations(
 		(*types.OrbitAttributes)(nil),
@@ -74,6 +77,8 @@ func CreatePayloadWrapperJSON(t *testing.T) (*types.Payload, string) {
 }
 
 func CreatePayloadWrapperWithActionJSON(t *testing.T) (*types.Payload, string) {
+	t.Helper()
+
 	encCfg := MakeTestEncodingConfig("noble")
 	encCfg.InterfaceRegistry.RegisterImplementations(
 		(*types.OrbitAttributes)(nil),

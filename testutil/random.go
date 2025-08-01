@@ -31,6 +31,7 @@ func RandomBytes(n int) []byte {
 	if err != nil {
 		panic(err)
 	}
+
 	return b
 }
 

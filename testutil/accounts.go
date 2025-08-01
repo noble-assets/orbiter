@@ -31,11 +31,13 @@ var Authority string
 // generated using the secp256k1 algorithm.
 func AddressBytes() []byte {
 	key := secp256k1.GenPrivKey()
+
 	return key.PubKey().Address().Bytes()
 }
 
 func generateAddress(bytes []byte) string {
 	address, _ := sdk.Bech32ifyAddressBytes(Prefix, bytes)
+
 	return address
 }
 

@@ -29,21 +29,22 @@ import (
 	"orbiter.dev/types"
 )
 
-// NewJSONParser returns a reference to a JSONParser instance.
-func NewJSONParser(cdc codec.Codec) (*JSONParser, error) {
-	if cdc == nil {
-		return nil, errors.New("codec cannot be nil for JSON parser")
-	}
-	return &JSONParser{
-		cdc: cdc,
-	}, nil
-}
-
 // JSONParser is an utility type capable of parsing
 // a JSON representation of the orbiter payload into
 // the data transfer type.
 type JSONParser struct {
 	cdc codec.Codec
+}
+
+// NewJSONParser returns a reference to a JSONParser instance.
+func NewJSONParser(cdc codec.Codec) (*JSONParser, error) {
+	if cdc == nil {
+		return nil, errors.New("codec cannot be nil for JSON parser")
+	}
+
+	return &JSONParser{
+		cdc: cdc,
+	}, nil
 }
 
 // Parse returns the orbiter payload from a JSON formatted

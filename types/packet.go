@@ -28,6 +28,17 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// TransferAttributes defines the cross-chain transfer information
+// passed down the orbiter to handle actions and routing.
+type TransferAttributes struct {
+	// Source fields have only getter methods.
+	sourceOrbitID OrbitID
+	sourceCoin    sdk.Coin
+	// Destination field have both setters and getters
+	// because they can be mutated by actions.
+	destinationCoin sdk.Coin
+}
+
 // NewTransferAttributes returns a validated reference to a
 // transfer attributes type.
 func NewTransferAttributes(
@@ -54,17 +65,6 @@ func NewTransferAttributes(
 	return &transferAttr, transferAttr.Validate()
 }
 
-// TransferAttributes defines the cross-chain transfer information
-// passed down the orbiter to handle actions and routing.
-type TransferAttributes struct {
-	// Source fields have only getter methods.
-	sourceOrbitID OrbitID
-	sourceCoin    sdk.Coin
-	// Destination field have both setters and getters
-	// because they can be mutated by actions.
-	destinationCoin sdk.Coin
-}
-
 // Validate returns an error if any of the fields is not valid.
 func (a *TransferAttributes) Validate() error {
 	if a == nil {
@@ -85,6 +85,7 @@ func (a *TransferAttributes) Validate() error {
 	if !a.destinationCoin.IsPositive() {
 		return errors.New("destination amount must be positive")
 	}
+
 	return nil
 }
 
@@ -92,6 +93,7 @@ func (a *TransferAttributes) SourceProtocolID() ProtocolID {
 	if a != nil {
 		return a.sourceOrbitID.ProtocolID
 	}
+
 	return PROTOCOL_UNSUPPORTED
 }
 
@@ -99,6 +101,7 @@ func (a *TransferAttributes) SourceCounterpartyID() string {
 	if a == nil {
 		return ""
 	}
+
 	return a.sourceOrbitID.CounterpartyID
 }
 
@@ -106,6 +109,7 @@ func (a *TransferAttributes) SourceAmount() math.Int {
 	if a == nil || a.sourceCoin.Amount.IsNil() {
 		return math.ZeroInt()
 	}
+
 	return a.sourceCoin.Amount
 }
 
@@ -113,6 +117,7 @@ func (a *TransferAttributes) SourceDenom() string {
 	if a == nil {
 		return ""
 	}
+
 	return a.sourceCoin.Denom
 }
 
@@ -120,6 +125,7 @@ func (a *TransferAttributes) DestinationAmount() math.Int {
 	if a == nil || a.destinationCoin.Amount.IsNil() {
 		return math.ZeroInt()
 	}
+
 	return a.destinationCoin.Amount
 }
 
@@ -127,6 +133,7 @@ func (a *TransferAttributes) DestinationDenom() string {
 	if a == nil {
 		return ""
 	}
+
 	return a.destinationCoin.Denom
 }
 
@@ -138,10 +145,13 @@ func (a *TransferAttributes) DestinationDenom() string {
 func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 	if a == nil {
 		fmt.Println("Warning: SetDestinaitonAmount() called on nil TransferAttributes")
+
 		return
 	}
+
 	if amount.IsNil() || amount.IsNegative() {
 		a.destinationCoin.Amount = math.ZeroInt()
+
 		return
 	}
 	a.destinationCoin.Amount = amount
@@ -155,9 +165,17 @@ func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 func (a *TransferAttributes) SetDestinationDenom(denom string) {
 	if a == nil {
 		fmt.Println("Warning: SetDestinaitonDenom() called on nil TransferAttributes")
+
 		return
 	}
 	a.destinationCoin.Denom = denom
+}
+
+// OrbitPacket defines the data structure used to handle a routing packet. The routing info
+// are extended with the cross chain transfer attributes.
+type OrbitPacket struct {
+	TransferAttributes *TransferAttributes
+	Orbit              *Orbit
 }
 
 // NewOrbitPacket returns a pointer to a validated instance of the
@@ -169,13 +187,6 @@ func NewOrbitPacket(transferAttr *TransferAttributes, orbit *Orbit) (*OrbitPacke
 	}
 
 	return &orbitPacket, orbitPacket.Validate()
-}
-
-// OrbitPacket defines the data structure used to handle a routing packet. The routing info
-// are extended with the cross chain transfer attributes.
-type OrbitPacket struct {
-	TransferAttributes *TransferAttributes
-	Orbit              *Orbit
 }
 
 // Validate returns an error if the instance is not valid.
@@ -192,6 +203,13 @@ func (p *OrbitPacket) Validate() error {
 	return p.TransferAttributes.Validate()
 }
 
+// ActionPacket defines the data structure used to handle an action. The action
+// attributes are extended with the cross chain transfer ones.
+type ActionPacket struct {
+	TransferAttributes *TransferAttributes
+	Action             *Action
+}
+
 // NewActionPacket returns a pointer to a validated instance of the
 // action packet.
 func NewActionPacket(transferAttr *TransferAttributes, action *Action) (*ActionPacket, error) {
@@ -201,13 +219,6 @@ func NewActionPacket(transferAttr *TransferAttributes, action *Action) (*ActionP
 	}
 
 	return &actionPacket, actionPacket.Validate()
-}
-
-// ActionPacket defines the data structure used to handle an action. The action
-// attributes are extended with the cross chain transfer ones.
-type ActionPacket struct {
-	TransferAttributes *TransferAttributes
-	Action             *Action
 }
 
 // Validate returns an error if any of the action packet field is

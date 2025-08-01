@@ -78,6 +78,7 @@ func (c *AdapterComponent) Validate() error {
 	if c.router == nil {
 		return types.ErrNilPointer.Wrap("router cannot be nil")
 	}
+
 	return nil
 }
 
@@ -96,6 +97,7 @@ func (c *AdapterComponent) SetRouter(ar AdapterRouter) error {
 
 	c.router = ar
 	c.router.Seal()
+
 	return nil
 }
 
@@ -180,6 +182,7 @@ func (c *AdapterComponent) clearOrbiterBalances(ctx context.Context) error {
 	if coins.IsZero() {
 		return nil
 	}
+
 	return c.bankKeeper.SendCoins(ctx, types.ModuleAddress, types.DustCollectorAddress, coins)
 }
 

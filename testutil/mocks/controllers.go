@@ -49,6 +49,7 @@ func (o *OrbitController) HandlePacket(ctx context.Context, _ *types.OrbitPacket
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the orbit packet")
 	}
+
 	return nil
 }
 
@@ -73,6 +74,7 @@ func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.Action
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the action packet")
 	}
+
 	return nil
 }
 
@@ -95,6 +97,7 @@ func (a *NoOpAdapterController) AfterTransferHook(ctx context.Context, _ *types.
 	if CheckIfFailing(ctx) {
 		return errors.New("error in after transfer hook")
 	}
+
 	return nil
 }
 
@@ -103,6 +106,7 @@ func (a *NoOpAdapterController) BeforeTransferHook(ctx context.Context, _ *types
 	if CheckIfFailing(ctx) {
 		return errors.New("error in before transfer hook")
 	}
+
 	return nil
 }
 

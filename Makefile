@@ -69,6 +69,7 @@ lint:
 	@echo "==================================================================="
 	@echo "Running linter..."
 	@go tool golangci-lint run -c ./.golangci.yaml
+	@go-license --config .github/license.yaml --verify $(FILES)
 	@echo "Completed linting!"
 
 vulncheck:

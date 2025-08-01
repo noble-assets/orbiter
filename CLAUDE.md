@@ -91,10 +91,9 @@ The module processes JSON payloads containing:
 
 ## Development
 
-- Uses Go 1.24.3
+- Uses Go 1.24.4
 - Cosmos SDK v0.50.13
 - IBC-Go v8.3.2
 - Circle CCTP integration
 - Buf for protobuf tooling
 - Docker required for protobuf generation and e2e tests
-

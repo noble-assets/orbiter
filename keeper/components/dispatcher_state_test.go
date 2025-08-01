@@ -33,8 +33,12 @@ import (
 	"orbiter.dev/types"
 )
 
-func newDispatcherComponent(t testing.TB) (*components.DispatcherComponent, *mocks.Dependencies) {
-	deps := mocks.NewDependencies(t)
+const UsdcDenom = "uusdc"
+
+func newDispatcherComponent(tb testing.TB) (*components.DispatcherComponent, *mocks.Dependencies) {
+	tb.Helper()
+
+	deps := mocks.NewDependencies(tb)
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
 	dispatcher, err := components.NewDispatcherComponent(
@@ -44,9 +48,9 @@ func newDispatcherComponent(t testing.TB) (*components.DispatcherComponent, *moc
 		&mocks.OrbitsHandler{},
 		&mocks.ActionsHandler{},
 	)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 	_, err = sb.Build()
-	require.NoError(t, err)
+	require.NoError(tb, err)
 
 	return dispatcher, &deps
 }
@@ -64,10 +68,9 @@ func TestGetDispatched(t *testing.T) {
 		ProtocolID:     types.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
-	denom := "uusdc"
 
 	// ACT: Test getting non-existent dispatch record
-	result := dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	result := dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom)
 	require.Equal(t, types.AmountDispatched{
 		Incoming: math.ZeroInt(),
 		Outgoing: math.ZeroInt(),
@@ -79,11 +82,17 @@ func TestGetDispatched(t *testing.T) {
 		Outgoing: math.NewInt(50),
 	}
 
-	err := dispatcher.SetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom, expectedAmount)
+	err := dispatcher.SetDispatchedAmount(
+		ctx,
+		sourceInfo,
+		destinationInfo,
+		UsdcDenom,
+		expectedAmount,
+	)
 	require.NoError(t, err)
 
 	// ACT: Test getting existing dispatch record
-	result = dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	result = dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom)
 
 	// ASSERT
 	require.Equal(t, expectedAmount, result)
@@ -102,10 +111,9 @@ func TestHasDispatchedAmount(t *testing.T) {
 		ProtocolID:     types.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
-	denom := "uusdc"
 
 	// ACT
-	result := dispatcher.HasDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	result := dispatcher.HasDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom)
 
 	// ASSERT
 	require.False(t, result)
@@ -115,11 +123,11 @@ func TestHasDispatchedAmount(t *testing.T) {
 		Incoming: math.NewInt(100),
 		Outgoing: math.NewInt(50),
 	}
-	err := dispatcher.SetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom, amount)
+	err := dispatcher.SetDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom, amount)
 	require.NoError(t, err)
 
 	// ACT: Test existing dispatch record
-	result = dispatcher.HasDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	result = dispatcher.HasDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom)
 
 	// ASSERT
 	require.True(t, result)
@@ -138,7 +146,6 @@ func TestSetDispatched(t *testing.T) {
 		ProtocolID:     types.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
-	denom := "uusdc"
 
 	amount := types.AmountDispatched{
 		Incoming: math.NewInt(200),
@@ -146,12 +153,12 @@ func TestSetDispatched(t *testing.T) {
 	}
 
 	// ACT: Test setting dispatch record
-	err := dispatcher.SetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, denom, amount)
+	err := dispatcher.SetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, UsdcDenom, amount)
 
 	// ASSERT
 	require.NoError(t, err)
 
-	result := dispatcher.GetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, denom)
+	result := dispatcher.GetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, UsdcDenom)
 	require.Equal(t, amount, result)
 
 	// ARRANGE: Test updating existing dispatch record
@@ -165,7 +172,7 @@ func TestSetDispatched(t *testing.T) {
 		ctx,
 		sourceOrbitID,
 		destinationOrbitID,
-		denom,
+		UsdcDenom,
 		updatedAmount,
 	)
 
@@ -173,7 +180,7 @@ func TestSetDispatched(t *testing.T) {
 	require.NoError(t, err)
 
 	// Verify the record was updated
-	result = dispatcher.GetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, denom)
+	result = dispatcher.GetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, UsdcDenom)
 	require.Equal(t, updatedAmount, result)
 }
 
@@ -204,7 +211,6 @@ func TestGetDispatchedByProtocolID(t *testing.T) {
 		ProtocolID:     types.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
-	denom := "uusdc"
 
 	// Set dispatch records
 	amount1 := types.AmountDispatched{
@@ -216,9 +222,9 @@ func TestGetDispatchedByProtocolID(t *testing.T) {
 		Outgoing: math.NewInt(100),
 	}
 
-	err := dispatcher.SetDispatchedAmount(ctx, sourceInfo1, destinationInfo, denom, amount1)
+	err := dispatcher.SetDispatchedAmount(ctx, sourceInfo1, destinationInfo, UsdcDenom, amount1)
 	require.NoError(t, err)
-	err = dispatcher.SetDispatchedAmount(ctx, sourceInfo2, destinationInfo, denom, amount2)
+	err = dispatcher.SetDispatchedAmount(ctx, sourceInfo2, destinationInfo, UsdcDenom, amount2)
 	require.NoError(t, err)
 
 	// ACT: Test getting protocol total dispatched
@@ -252,16 +258,15 @@ func TestDispatched_EmptyStates(t *testing.T) {
 		ProtocolID:     types.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
-	denom := "uusdc"
 
 	// Test all methods with empty state
-	result := dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	result := dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom)
 	require.Equal(t, types.AmountDispatched{
 		Incoming: math.ZeroInt(),
 		Outgoing: math.ZeroInt(),
 	}, result)
 
-	hasDispatched := dispatcher.HasDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	hasDispatched := dispatcher.HasDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom)
 	require.False(t, hasDispatched)
 
 	totalDispatched := dispatcher.GetDispatchedAmountsByProtocolID(ctx, types.PROTOCOL_IBC)
@@ -275,6 +280,7 @@ func TestDispatched_EmptyStates(t *testing.T) {
 		types.PROTOCOL_IBC,
 		func(sourceCounterpartyId string, dispatchedInfo types.ChainAmountDispatched) bool {
 			called = true
+
 			return false
 		},
 	)

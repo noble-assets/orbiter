@@ -27,6 +27,7 @@ func NewProtocolID(id int32) (ProtocolID, error) {
 	if err := protocolID.Validate(); err != nil {
 		return PROTOCOL_UNSUPPORTED, err
 	}
+
 	return protocolID, nil
 }
 
@@ -39,6 +40,7 @@ func (id ProtocolID) Validate() error {
 	if _, found := ProtocolID_name[int32(id)]; !found {
 		return ErrIDNotSupported.Wrapf("unknown protocol id %d", int32(id))
 	}
+
 	return nil
 }
 

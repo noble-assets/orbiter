@@ -32,16 +32,17 @@ import (
 	"orbiter.dev/testutil/mocks"
 )
 
-func OrbiterKeeper(t testing.TB) (sdk.Context, *mocks.Mocks, *keeper.Keeper) {
-	deps := mocks.NewDependencies(t)
+func OrbiterKeeper(tb testing.TB) (sdk.Context, *mocks.Mocks, *keeper.Keeper) {
+	tb.Helper()
+
+	deps := mocks.NewDependencies(tb)
 	mocks := mocks.NewMocks()
-	k, ctx := orbiterKeeperWithMocks(t, &deps, &mocks)
+	k, ctx := orbiterKeeperWithMocks(&deps, &mocks)
 
 	return ctx, &mocks, k
 }
 
 func orbiterKeeperWithMocks(
-	_ testing.TB,
 	deps *mocks.Dependencies,
 	m *mocks.Mocks,
 ) (*keeper.Keeper, sdk.Context) {

@@ -92,6 +92,7 @@ func (c *OrbitComponent) Validate() error {
 	if c.router == nil {
 		return types.ErrNilPointer.Wrap("controllers router cannot be nil")
 	}
+
 	return nil
 }
 
@@ -110,7 +111,33 @@ func (c *OrbitComponent) SetRouter(ocr OrbitRouter) error {
 
 	c.router = ocr
 	c.router.Seal()
+
 	return nil
+}
+
+func (c *OrbitComponent) Pause(
+	ctx context.Context,
+	protocolID types.ProtocolID,
+	counterpartyIDs []string,
+) error {
+	switch {
+	case len(counterpartyIDs) == 0:
+		return c.pauseProtocol(ctx, protocolID)
+	default:
+		return c.pauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
+	}
+}
+
+func (c *OrbitComponent) Unpause(
+	ctx context.Context,
+	protocolID types.ProtocolID,
+	counterpartyIDs []string,
+) error {
+	if len(counterpartyIDs) == 0 {
+		return c.unpauseProtocol(ctx, protocolID)
+	} else {
+		return c.unpauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
+	}
 }
 
 func (c *OrbitComponent) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
@@ -127,6 +154,18 @@ func (c *OrbitComponent) HandlePacket(ctx context.Context, packet *types.OrbitPa
 	}
 
 	return controller.HandlePacket(ctx, packet)
+}
+
+func (c *OrbitComponent) ValidateOrbit(
+	ctx context.Context,
+	protocolID types.ProtocolID,
+	counterpartyID string,
+) error {
+	if err := c.validateController(ctx, protocolID); err != nil {
+		return err
+	}
+
+	return c.validateOrbit(ctx, protocolID, counterpartyID)
 }
 
 func (c *OrbitComponent) validatePacket(ctx context.Context, packet *types.OrbitPacket) error {
@@ -149,17 +188,6 @@ func (c *OrbitComponent) validatePacket(ctx context.Context, packet *types.Orbit
 	}
 
 	return c.validateInitialConditions(ctx, packet)
-}
-
-func (c *OrbitComponent) ValidateOrbit(
-	ctx context.Context,
-	protocolID types.ProtocolID,
-	counterpartyID string,
-) error {
-	if err := c.validateController(ctx, protocolID); err != nil {
-		return err
-	}
-	return c.validateOrbit(ctx, protocolID, counterpartyID)
 }
 
 func (c *OrbitComponent) validateController(
@@ -196,6 +224,7 @@ func (c *OrbitComponent) validateOrbit(
 			counterpartyID,
 		)
 	}
+
 	return nil
 }
 
@@ -221,31 +250,6 @@ func (c *OrbitComponent) validateInitialConditions(
 	return nil
 }
 
-func (c *OrbitComponent) Pause(
-	ctx context.Context,
-	protocolID types.ProtocolID,
-	counterpartyIDs []string,
-) error {
-	switch {
-	case len(counterpartyIDs) == 0:
-		return c.pauseProtocol(ctx, protocolID)
-	default:
-		return c.pauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
-	}
-}
-
-func (c *OrbitComponent) Unpause(
-	ctx context.Context,
-	protocolID types.ProtocolID,
-	counterpartyIDs []string,
-) error {
-	if len(counterpartyIDs) == 0 {
-		return c.unpauseProtocol(ctx, protocolID)
-	} else {
-		return c.unpauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
-	}
-}
-
 func (c *OrbitComponent) pauseProtocol(
 	ctx context.Context,
 	protocolID types.ProtocolID,
@@ -257,6 +261,7 @@ func (c *OrbitComponent) pauseProtocol(
 			err,
 		)
 	}
+
 	return nil
 }
 
@@ -275,6 +280,7 @@ func (c *OrbitComponent) pauseProtocolDestinations(
 			)
 		}
 	}
+
 	return nil
 }
 
@@ -289,6 +295,7 @@ func (c *OrbitComponent) unpauseProtocol(
 			err,
 		)
 	}
+
 	return nil
 }
 
@@ -307,5 +314,6 @@ func (c *OrbitComponent) unpauseProtocolDestinations(
 			)
 		}
 	}
+
 	return nil
 }

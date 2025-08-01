@@ -49,11 +49,11 @@ var (
 	_ module.HasServices         = AppModule{}
 )
 
+type AppModuleBasic struct{}
+
 func NewAppModuleBasic() AppModuleBasic {
 	return AppModuleBasic{}
 }
-
-type AppModuleBasic struct{}
 
 func (a AppModuleBasic) Name() string {
 	return types.ModuleName
@@ -71,6 +71,7 @@ func (a AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 type AppModule struct {
 	AppModuleBasic
+
 	keeper *keeper.Keeper
 }
 
@@ -117,5 +118,6 @@ func (a AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, bz json.Raw
 
 func (a AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
 	genesis := a.keeper.ExportGenesis(ctx)
+
 	return cdc.MustMarshalJSON(genesis)
 }

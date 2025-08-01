@@ -41,5 +41,5 @@ func (c CCTPMsgServer) DepositForBurnWithCaller(
 		return nil, errors.New("error calling deposit for burn with caller api")
 	}
 
-	return nil, nil
+	return &cctptypes.MsgDepositForBurnWithCallerResponse{}, nil
 }

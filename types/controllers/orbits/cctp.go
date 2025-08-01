@@ -45,6 +45,7 @@ func NewCCTPAttributes(
 		MintRecipient:     mintRecipient,
 		DestinationCaller: destinationCaller,
 	}
+
 	return &attr, attr.Validate()
 }
 
@@ -63,6 +64,7 @@ func (a *CCTPAttributes) Validate() error {
 	if len(a.DestinationCaller) == 0 {
 		return errors.New("destination caller cannot be empty")
 	}
+
 	return nil
 }
 

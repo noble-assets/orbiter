@@ -69,8 +69,9 @@ func NewCCTPController(
 // CCTPController is the orbit controller to perform
 // a CCTP transfer.
 type CCTPController struct {
-	logger log.Logger
 	*controllers.BaseController[types.ProtocolID]
+
+	logger  log.Logger
 	handler *cctpHandler
 }
 
@@ -86,6 +87,7 @@ func (c *CCTPController) Validate() error {
 	if c.handler == nil {
 		return types.ErrNilPointer.Wrap("CCTP handler")
 	}
+
 	return nil
 }
 
@@ -161,6 +163,7 @@ func (c *CCTPController) executeOrbit(
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -171,6 +174,7 @@ func newCCTPHandler(
 	handler := cctpHandler{
 		CCTPMsgServer: msgServer,
 	}
+
 	return &handler, handler.validate()
 }
 
@@ -185,5 +189,6 @@ func (h *cctpHandler) validate() error {
 	if h.CCTPMsgServer == nil {
 		return types.ErrNilPointer.Wrap("CCTP message server cannot be nil")
 	}
+
 	return nil
 }

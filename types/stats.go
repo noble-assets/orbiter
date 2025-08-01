@@ -34,6 +34,11 @@ func NewAmountDispatched(
 	}
 }
 
+type ChainAmountDispatched struct {
+	orbitID          OrbitID
+	amountDispatched AmountDispatched
+}
+
 func NewChainAmountDispatched(
 	orbitID OrbitID,
 	amountDispatched AmountDispatched,
@@ -44,11 +49,6 @@ func NewChainAmountDispatched(
 	}
 }
 
-type ChainAmountDispatched struct {
-	orbitID          OrbitID
-	amountDispatched AmountDispatched
-}
-
 func (cad *ChainAmountDispatched) OrbitID() OrbitID {
 	return cad.orbitID
 }
@@ -57,14 +57,14 @@ func (cad *ChainAmountDispatched) AmountDispatched() AmountDispatched {
 	return cad.amountDispatched
 }
 
+type TotalDispatched struct {
+	chainsAmount map[string]ChainAmountDispatched
+}
+
 func NewTotalDispatched() *TotalDispatched {
 	return &TotalDispatched{
 		chainsAmount: make(map[string]ChainAmountDispatched),
 	}
-}
-
-type TotalDispatched struct {
-	chainsAmount map[string]ChainAmountDispatched
 }
 
 func (td *TotalDispatched) ChainAmount(counterpartyID string) ChainAmountDispatched {

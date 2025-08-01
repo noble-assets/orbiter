@@ -35,6 +35,16 @@ import (
 
 var _ interfaces.ControllerAdapter = &IBCAdapter{}
 
+// IBCAdapter is the type component in charge of adapting the
+// memo of an IBC ICS20 transfer to the common payload type
+// handled by the module.
+type IBCAdapter struct {
+	*controllers.BaseController[types.ProtocolID]
+
+	logger log.Logger
+	parser *IBCParser
+}
+
 // NewIBCAdapter returns a reference to a new IBCAdapter instance.
 func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	if logger == nil {
@@ -59,15 +69,6 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	}, nil
 }
 
-// IBCAdapter is the type component in charge of adapting the
-// memo of an IBC ICS20 transfer to the common payload type
-// handled by the module.
-type IBCAdapter struct {
-	logger log.Logger
-	*controllers.BaseController[types.ProtocolID]
-	parser *IBCParser
-}
-
 // ParsePayload dispatches the payload parsing to the underlying IBC parser.
 func (a *IBCAdapter) ParsePayload(payloadBz []byte) (bool, *types.Payload, error) {
 	return a.parser.ParsePayload(payloadBz)
@@ -87,6 +88,10 @@ func (a *IBCAdapter) AfterTransferHook(context.Context, *types.Payload) error {
 
 var _ interfaces.PayloadParser = &IBCParser{}
 
+type IBCParser struct {
+	JSONParser
+}
+
 // NewIBCParser returns a new instance of an IBC parser.
 func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 	if cdc == nil {
@@ -103,10 +108,6 @@ func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 	}, nil
 }
 
-type IBCParser struct {
-	JSONParser
-}
-
 // ParsePayload parses the payload from an IBC transfer to retrieve the orbiter
 // payload. It returns:
 // - bool: whether the payload is intended for the Orbiter module.
@@ -115,7 +116,10 @@ type IBCParser struct {
 func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *types.Payload, error) {
 	data, err := p.GetICS20PacketData(payloadBz)
 	if err != nil {
-		return false, nil, nil
+		// Despite the error is not nil, we don't return it. We
+		// want the non fungible token packet data error to be
+		// returned from the ICS20 app.
+		return false, nil, nil //nolint:nilerr
 	}
 
 	if data.GetReceiver() != types.ModuleAddress.String() {
@@ -139,5 +143,6 @@ func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *types.Payload, error)
 func (p *IBCParser) GetICS20PacketData(data []byte) (transfertypes.FungibleTokenPacketData, error) {
 	var ics20Data transfertypes.FungibleTokenPacketData
 	err := transfertypes.ModuleCdc.UnmarshalJSON(data, &ics20Data)
+
 	return ics20Data, err
 }

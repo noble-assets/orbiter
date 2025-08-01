@@ -101,6 +101,7 @@ func TestHandlePacket(t *testing.T) {
 					[]byte(""),
 				)
 				require.NoError(t, err)
+
 				return &types.OrbitPacket{
 					Orbit:              orbit,
 					TransferAttributes: transferAttr,

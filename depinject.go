@@ -70,11 +70,11 @@ type ModuleOutputs struct {
 }
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
-	if in.Config.Authority == "" {
+	if in.Config.GetAuthority() == "" {
 		panic("authority for x/orbiter module must be set")
 	}
 
-	authority := authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
+	authority := authtypes.NewModuleAddressOrBech32Address(in.Config.GetAuthority())
 
 	k := keeper.NewKeeper(
 		in.Codec,

@@ -108,6 +108,7 @@ func (d *DispatcherComponent) Validate() error {
 	if d.ActionHandler == nil {
 		return types.ErrNilPointer.Wrap("actions handler cannot be nil")
 	}
+
 	return nil
 }
 
@@ -147,6 +148,7 @@ func (d *DispatcherComponent) validatePayload(payload *types.Payload) error {
 	if payload == nil {
 		return types.ErrNilPointer.Wrap("payload cannot be nil")
 	}
+
 	return payload.Validate()
 }
 
@@ -158,7 +160,6 @@ func (d *DispatcherComponent) dispatchActions(
 	actions []*types.Action,
 ) error {
 	for _, action := range actions {
-
 		packet, err := types.NewActionPacket(transferAttr, action)
 		if err != nil {
 			return fmt.Errorf("error creating action %s packet: %w", action.ID(), err)
@@ -169,6 +170,7 @@ func (d *DispatcherComponent) dispatchActions(
 			return fmt.Errorf("error dispatching action %s packet: %w", action.ID(), err)
 		}
 	}
+
 	return nil
 }
 
@@ -196,6 +198,7 @@ func (d *DispatcherComponent) dispatchOrbit(
 			err,
 		)
 	}
+
 	return nil
 }
 

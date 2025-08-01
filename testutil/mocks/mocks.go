@@ -64,5 +64,6 @@ func CheckIfFailing(ctx context.Context) bool {
 	if isFailing == nil || isFailing == false {
 		return false
 	}
+
 	return true
 }

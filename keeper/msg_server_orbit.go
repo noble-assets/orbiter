@@ -62,6 +62,7 @@ func (m msgServer) PauseCounterparties(
 			"counterparties: %s", err.Error(),
 		)
 	}
+
 	return &types.MsgPauseCounterpartiesResponse{}, nil
 }
 

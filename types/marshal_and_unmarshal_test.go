@@ -60,6 +60,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 				}
 				orbit, err := types.NewOrbit(types.PROTOCOL_IBC, &attr, []byte{})
 				require.NoError(t, err)
+
 				return &types.Payload{
 					Orbit: orbit,
 				}
