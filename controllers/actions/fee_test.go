@@ -139,6 +139,7 @@ func TestComputeFeesToDistribute(t *testing.T) {
 		amount             sdkmath.Int
 		feesInfo           []*actions.FeeInfo
 		expFeeToDistribute *actions.FeesToDistribute
+		expErr             string
 	}{
 		{
 			name:   "success - single fee recipient",
@@ -229,20 +230,6 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			},
 		},
 		{
-			name:   "success - overflow handling returns zero fee",
-			amount: bigNumber,
-			feesInfo: []*actions.FeeInfo{
-				{
-					Recipient:   recipient1.String(),
-					BasisPoints: 100,
-				},
-			},
-			expFeeToDistribute: &actions.FeesToDistribute{
-				Total:  sdkmath.ZeroInt(),
-				Values: []actions.RecipientAmount{},
-			},
-		},
-		{
 			name:   "success - mixed calculations",
 			amount: sdkmath.NewInt(1_000_000),
 			feesInfo: []*actions.FeeInfo{
@@ -283,6 +270,21 @@ func TestComputeFeesToDistribute(t *testing.T) {
 				Values: []actions.RecipientAmount{},
 			},
 		},
+		{
+			name:   "error - overflow handling returns zero fee",
+			amount: bigNumber,
+			feesInfo: []*actions.FeeInfo{
+				{
+					Recipient:   recipient1.String(),
+					BasisPoints: 100,
+				},
+			},
+			expFeeToDistribute: &actions.FeesToDistribute{
+				Total:  sdkmath.ZeroInt(),
+				Values: []actions.RecipientAmount{},
+			},
+			expErr: "something",
+		},
 	}
 
 	deps := mocks.NewDependencies(t)
@@ -292,11 +294,15 @@ func TestComputeFeesToDistribute(t *testing.T) {
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			result := controller.ComputeFeesToDistribute(tC.amount, denom, tC.feesInfo)
+			result, err := controller.ComputeFeesToDistribute(tC.amount, denom, tC.feesInfo)
 
-			require.NotNil(t, result)
-			require.Equal(t, tC.expFeeToDistribute.Total, result.Total)
-			require.Equal(t, tC.expFeeToDistribute.Values, result.Values)
+			if tC.expErr != "" {
+				require.ErrorContains(t, err, tC.expErr)
+			} else {
+				require.NotNil(t, result)
+				require.Equal(t, tC.expFeeToDistribute.Total, result.Total)
+				require.Equal(t, tC.expFeeToDistribute.Values, result.Values)
+			}
 		})
 	}
 }

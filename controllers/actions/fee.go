@@ -94,11 +94,14 @@ func (c *FeeController) HandlePacket(
 
 	transferAttr := packet.TransferAttributes
 
-	feesToDistribute := c.ComputeFeesToDistribute(
+	feesToDistribute, err := c.ComputeFeesToDistribute(
 		transferAttr.DestinationAmount(),
 		transferAttr.DestinationDenom(),
 		attr.FeesInfo,
 	)
+	if err != nil {
+		return err
+	}
 	if feesToDistribute.Total.GTE(transferAttr.DestinationAmount()) {
 		return types.ErrInvalidAttributes.Wrap("total fees equal or exceed transfer amount")
 	}
@@ -191,12 +194,12 @@ func (c *FeeController) ValidateFee(feeInfo *actions.FeeInfo) error {
 // ComputeFeesToDistribute computes the fee to distribute based on the
 // action fees information and the amount and denom to transfer.
 //
-// CONTRACT: the input has already been validated.
+// CONTRACT: the inputs have already been validated.
 func (c *FeeController) ComputeFeesToDistribute(
 	transferAmount math.Int,
 	transferDenom string,
 	feesInfo []*actions.FeeInfo,
-) *actions.FeesToDistribute {
+) (*actions.FeesToDistribute, error) {
 	fees := actions.FeesToDistribute{
 		Total:  math.ZeroInt(),
 		Values: make([]actions.RecipientAmount, 0),
@@ -205,7 +208,10 @@ func (c *FeeController) ComputeFeesToDistribute(
 	for _, feeInfo := range feesInfo {
 		addr, _ := sdk.AccAddressFromBech32(feeInfo.Recipient)
 
-		feeAmount := ComputeFeeAmount(transferAmount, uint64(feeInfo.BasisPoints))
+		feeAmount, err := ComputeFeeAmount(transferAmount, uint64(feeInfo.BasisPoints))
+		if err != nil {
+			return nil, err
+		}
 		if feeAmount.IsPositive() {
 			fee := sdk.NewCoin(transferDenom, feeAmount)
 			fees.Values = append(
@@ -216,7 +222,7 @@ func (c *FeeController) ComputeFeesToDistribute(
 		}
 	}
 
-	return &fees
+	return &fees, nil
 }
 
 // executeAction is the core controller logic which perform
@@ -237,12 +243,12 @@ func (c *FeeController) executeAction(
 }
 
 // ComputeFeeAmount returns the fee associated with the provided basis
-// points and amount. The function returns zero if overflow.
-func ComputeFeeAmount(amount math.Int, basisPoints uint64) math.Int {
+// points and amount. The function returns an error in case of overflow.
+func ComputeFeeAmount(amount math.Int, basisPoints uint64) (math.Int, error) {
 	basisPointsInt := math.NewIntFromUint64(basisPoints)
 	fee, err := amount.SafeMul(basisPointsInt)
 	if err != nil || fee.IsZero() {
-		return math.ZeroInt()
+		return math.ZeroInt(), err
 	}
-	return fee.QuoRaw(types.BPSNormalizer)
+	return fee.QuoRaw(types.BPSNormalizer), nil
 }
