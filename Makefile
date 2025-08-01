@@ -71,6 +71,12 @@ lint:
 	@go tool golangci-lint run -c ./.golangci.yaml
 	@echo "Completed linting!"
 
+vulncheck:
+	@echo "==================================================================="
+	@echo "Running vulnerability check..."
+	@go tool govulncheck ./...
+	@echo "Completed vulnerability check!"
+
 #=============================================================================#
 #                                    Test                                     #
 #=============================================================================#
