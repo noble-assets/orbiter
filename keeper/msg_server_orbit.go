@@ -135,7 +135,7 @@ func (m msgServer) ReplaceDepositForBurn(
 		)
 	}
 
-	handler := cctpController.GetHanlder()
+	handler := cctpController.GetHandler()
 
 	msgReplace := cctptypes.MsgReplaceDepositForBurn{
 		From:                 types.ModuleAddress.String(),

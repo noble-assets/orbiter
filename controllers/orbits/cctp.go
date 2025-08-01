@@ -114,7 +114,7 @@ func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.OrbitPa
 	return nil
 }
 
-func (c *CCTPController) GetHanlder() *cctpHandler {
+func (c *CCTPController) GetHandler() *cctpHandler {
 	return c.handler
 }
 
