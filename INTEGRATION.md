@@ -221,3 +221,14 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
 8. The payload is now ready to be added in the ICS20 memo field.
 
 A working example for the payload creation can be found in the file `e2e/ibc_to_cctp_test.go`.
+
+### Important Notes
+
+- The recipient of the cross-chain transfer MUST be the orbiter module address:
+
+| Mainnet                                      | Testnet                                      |
+| -------------------------------------------- | -------------------------------------------- |
+| noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d | noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d |
+
+- The Noble chain commits to executing the outgoing transfer using the protocol specified in the
+  `orbit` field as part of the same transaction that processes the incoming request.
