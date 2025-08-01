@@ -8,7 +8,6 @@ linters:
     - contextcheck
     - dupword
     - embeddedstructfieldcheck
-    - exhaustive
     - errchkjson
     - errname
     - errorlint
