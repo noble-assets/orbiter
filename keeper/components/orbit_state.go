@@ -37,6 +37,7 @@ func (c *OrbitComponent) IsControllerPaused(
 	protocolID types.ProtocolID,
 ) (bool, error) {
 	paused, err := c.PausedControllers.Has(ctx, int32(protocolID))
+
 	return paused, err
 }
 
@@ -79,6 +80,7 @@ func (c *OrbitComponent) IsOrbitPaused(
 	counterpartyID string,
 ) (bool, error) {
 	paused, err := c.PausedOrbits.Has(ctx, collections.Join(int32(protocolID), counterpartyID))
+
 	return paused, err
 }
 

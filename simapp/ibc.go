@@ -34,6 +34,8 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	soloclient "github.com/cosmos/ibc-go/v8/modules/light-clients/06-solomachine"
 	tmclient "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
+
+	"orbiter.dev/entrypoint"
 )
 
 func (app *SimApp) RegisterIBCModules() error {
@@ -89,6 +91,11 @@ func (app *SimApp) RegisterIBCModules() error {
 
 	var transferStack porttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
+	transferStack = entrypoint.NewIBCMiddleware(
+		transferStack,
+		app.IBCKeeper.ChannelKeeper,
+		app.OrbiterKeeper.AdapterComponent(),
+	)
 	transferStack = blockibc.NewIBCMiddleware(transferStack, app.FTFKeeper)
 
 	ibcRouter := porttypes.NewRouter().AddRoute(transfertypes.ModuleName, transferStack)

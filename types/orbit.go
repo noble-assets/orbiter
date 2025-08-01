@@ -43,6 +43,15 @@ type OrbitAttributes interface {
 // ID
 // ====================================================================================================
 
+// OrbitID is an internal type used to uniquely
+// represent a source or a destination of a cross-chain
+// transfer and the bridge protocol used.
+type OrbitID struct {
+	ProtocolID ProtocolID
+	// Protocol specific identifier of a counterparty.
+	CounterpartyID string
+}
+
 // NewOrbitID returns a validated orbit identifier instance.
 func NewOrbitID(
 	protocolID ProtocolID,
@@ -56,15 +65,6 @@ func NewOrbitID(
 	return attr, attr.Validate()
 }
 
-// OrbitID is an internal type used to uniquely
-// represent a source or a destination of a cross-chain
-// transfer and the bridge protocol used.
-type OrbitID struct {
-	ProtocolID ProtocolID
-	// Protocol specific identifier of a counterparty.
-	CounterpartyID string
-}
-
 // Validate returns an error if any of the orbit id field
 // is not valid.
 func (i OrbitID) Validate() error {
@@ -74,6 +74,7 @@ func (i OrbitID) Validate() error {
 	if i.CounterpartyID == "" {
 		return errors.New("counterparty id cannot be empty string")
 	}
+
 	return nil
 }
 
@@ -150,6 +151,7 @@ func (o *Orbit) Validate() error {
 	if o.Attributes == nil {
 		return ErrNilPointer.Wrap("orbit attributes are not set")
 	}
+
 	return nil
 }
 
@@ -159,6 +161,7 @@ func (o *Orbit) ProtocolID() ProtocolID {
 	if o != nil {
 		return o.ProtocolId
 	}
+
 	return PROTOCOL_UNSUPPORTED
 }
 
@@ -181,6 +184,7 @@ func (o *Orbit) CachedAttributes() (OrbitAttributes, error) {
 			av,
 		)
 	}
+
 	return a, nil
 }
 
@@ -195,14 +199,15 @@ func (o *Orbit) SetAttributes(a OrbitAttributes) error {
 	if !ok {
 		return sdkerrors.ErrPackAny.Wrapf("can't proto marshal %T", m)
 	}
-	// Now we set the any type with cache. The cache value
+	// Now we set the anyValue type with cache. The cache value
 	// is the proto message itself before being converted into
-	// an any.
-	any, err := cdctypes.NewAnyWithValue(m)
+	// an anyValue.
+	anyValue, err := cdctypes.NewAnyWithValue(m)
 	if err != nil {
 		return err
 	}
-	o.Attributes = any
+	o.Attributes = anyValue
+
 	return nil
 }
 
@@ -212,6 +217,8 @@ func (o *Orbit) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 	if o == nil {
 		return ErrNilPointer.Wrap("orbit is a nil pointer")
 	}
+
 	var attributes OrbitAttributes
+
 	return unpacker.UnpackAny(o.Attributes, &attributes)
 }

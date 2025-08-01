@@ -21,6 +21,10 @@
 package orbiter
 
 import (
+	"fmt"
+
+	cctpkeeper "github.com/circlefin/noble-cctp/x/cctp/keeper"
+
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/core/store"
@@ -30,9 +34,12 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	modulev1 "orbiter.dev/api/module/v1"
+	actionsctrl "orbiter.dev/controllers/actions"
+	adaptersctrl "orbiter.dev/controllers/adapters"
+	orbitsctrl "orbiter.dev/controllers/orbits"
 	"orbiter.dev/keeper"
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/controllers/actions"
 )
 
 func init() {
@@ -63,11 +70,11 @@ type ModuleOutputs struct {
 }
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
-	if in.Config.Authority == "" {
+	if in.Config.GetAuthority() == "" {
 		panic("authority for x/orbiter module must be set")
 	}
 
-	authority := authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
+	authority := authtypes.NewModuleAddressOrBech32Address(in.Config.GetAuthority())
 
 	k := keeper.NewKeeper(
 		in.Codec,
@@ -85,8 +92,15 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	}
 }
 
+type ComponentsBankKeeper interface {
+	actions.BankKeeper
+}
+
 type ComponentsInputs struct {
 	Orbiters *keeper.Keeper
+
+	BankKeeper ComponentsBankKeeper
+	CCTPKeeper *cctpkeeper.Keeper
 }
 
 func InjectComponents(in ComponentsInputs) {
@@ -96,19 +110,37 @@ func InjectComponents(in ComponentsInputs) {
 }
 
 func InjectOrbitControllers(in ComponentsInputs) {
-	var controllers []interfaces.ControllerOrbit
+	cctp, err := orbitsctrl.NewCCTPController(
+		in.Orbiters.OrbitComponent().Logger(),
+		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
+	)
+	if err != nil {
+		panic(fmt.Errorf("error creating cctp controller: %w", err))
+	}
 
-	in.Orbiters.SetOrbitControllers(controllers...)
+	in.Orbiters.SetOrbitControllers(cctp)
 }
 
 func InjectActionControllers(in ComponentsInputs) {
-	var controllers []interfaces.ControllerAction
+	fee, err := actionsctrl.NewFeeController(
+		in.Orbiters.ActionComponent().Logger(),
+		in.BankKeeper,
+	)
+	if err != nil {
+		panic(fmt.Errorf("error creating fee controller: %w", err))
+	}
 
-	in.Orbiters.SetActionControllers(controllers...)
+	in.Orbiters.SetActionControllers(fee)
 }
 
 func InjectAdapterControllers(in ComponentsInputs) {
-	var controllers []interfaces.ControllerAdapter
+	ibc, err := adaptersctrl.NewIBCAdapter(
+		in.Orbiters.Codec(),
+		in.Orbiters.AdapterComponent().Logger(),
+	)
+	if err != nil {
+		panic(fmt.Errorf("error creating ibc adapter: %w", err))
+	}
 
-	in.Orbiters.SetAdapterControllers(controllers...)
+	in.Orbiters.SetAdapterControllers(ibc)
 }

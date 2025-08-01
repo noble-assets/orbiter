@@ -112,41 +112,6 @@ func validateKeeperInputs(
 	if err != nil {
 		return errors.New("authority for x/orbiter module is not valid")
 	}
-	return nil
-}
-
-// setComponents registers all required components in the
-// orbiter keeper.
-func (k *Keeper) setComponents(
-	cdc codec.Codec,
-	logger log.Logger,
-	sb *collections.SchemaBuilder,
-	bankKeeper types.BankKeeper,
-) error {
-	actionComp, err := components.NewActionComponent(cdc, sb, logger)
-	if err != nil {
-		return fmt.Errorf("error creating a new actions component: %w", err)
-	}
-
-	orbitComp, err := components.NewOrbitComponent(cdc, sb, logger, bankKeeper)
-	if err != nil {
-		return fmt.Errorf("error creating a new orbits component: %w", err)
-	}
-
-	dispatcherComp, err := components.NewDispatcherComponent(cdc, sb, logger, orbitComp, actionComp)
-	if err != nil {
-		return fmt.Errorf("error creating a new dispatcher component: %w", err)
-	}
-
-	adapterComp, err := components.NewAdapterComponent(logger, bankKeeper, dispatcherComp)
-	if err != nil {
-		return fmt.Errorf("error creating a new adapters component: %w", err)
-	}
-
-	k.actionComponent = actionComp
-	k.orbitComponent = orbitComp
-	k.dispatcherComponent = dispatcherComp
-	k.adapterComponent = adapterComp
 
 	return nil
 }
@@ -225,4 +190,40 @@ func (k *Keeper) SetAdapterControllers(controllers ...interfaces.ControllerAdapt
 	if err := k.adapterComponent.SetRouter(router); err != nil {
 		panic(err)
 	}
+}
+
+// setComponents registers all required components in the
+// orbiter keeper.
+func (k *Keeper) setComponents(
+	cdc codec.Codec,
+	logger log.Logger,
+	sb *collections.SchemaBuilder,
+	bankKeeper types.BankKeeper,
+) error {
+	actionComp, err := components.NewActionComponent(cdc, sb, logger)
+	if err != nil {
+		return fmt.Errorf("error creating a new actions component: %w", err)
+	}
+
+	orbitComp, err := components.NewOrbitComponent(cdc, sb, logger, bankKeeper)
+	if err != nil {
+		return fmt.Errorf("error creating a new orbits component: %w", err)
+	}
+
+	dispatcherComp, err := components.NewDispatcherComponent(cdc, sb, logger, orbitComp, actionComp)
+	if err != nil {
+		return fmt.Errorf("error creating a new dispatcher component: %w", err)
+	}
+
+	adapterComp, err := components.NewAdapterComponent(logger, bankKeeper, dispatcherComp)
+	if err != nil {
+		return fmt.Errorf("error creating a new adapters component: %w", err)
+	}
+
+	k.actionComponent = actionComp
+	k.orbitComponent = orbitComp
+	k.dispatcherComponent = dispatcherComp
+	k.adapterComponent = adapterComp
+
+	return nil
 }

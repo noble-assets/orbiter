@@ -97,6 +97,7 @@ func NewPayloadWrapper(
 	payloadWrapper := PayloadWrapper{
 		Orbiter: payload,
 	}
+
 	return &payloadWrapper, nil
 }
 
@@ -106,6 +107,7 @@ func (pw *PayloadWrapper) Validate() error {
 	if pw == nil {
 		return ErrNilPointer.Wrap("payload wrapper is a nil pointer")
 	}
+
 	return pw.Orbiter.Validate()
 }
 

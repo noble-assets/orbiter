@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package noble.orbiter.controllers.orbits.v1;
+
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "orbiter.dev/types/controllers/orbits";
+
+// CCTPAttributes defines the concrete implementation of the
+// OrbitAttributes interface to execute a cross-chain routing
+// via the CCTP protocol.
+message CCTPAttributes {
+  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.OrbitAttributes";
+
+  // destination_domain represents the CCTP destination
+  // domain identifier: https://developers.circle.com/cctp/supported-domains
+  uint32 destination_domain = 1;
+
+  // mint_recipient represents the address which will receive
+  // the cross-chain transfer.
+  bytes mint_recipient = 2;
+
+  // destination_caller is the address of the account in charge
+  // of completing the CCTP routing.
+  bytes destination_caller = 3;
+}

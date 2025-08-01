@@ -49,7 +49,9 @@ type Dependencies struct {
 	Logger       log.Logger
 }
 
-func NewDependencies(t testing.TB) Dependencies {
+func NewDependencies(tb testing.TB) Dependencies {
+	tb.Helper()
+
 	key := storetypes.NewKVStoreKey(types.ModuleName)
 	tkey := storetypes.NewTransientStoreKey(fmt.Sprintf("transient_%s", types.ModuleName))
 
@@ -58,7 +60,7 @@ func NewDependencies(t testing.TB) Dependencies {
 	cms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, db)
 	cms.MountStoreWithDB(tkey, storetypes.StoreTypeTransient, db)
 	err := cms.LoadLatestVersion()
-	assert.NoError(t, err)
+	assert.NoError(tb, err)
 
 	ctx := sdk.NewContext(cms, cmtproto.Header{Time: time.Now()}, false, log.NewNopLogger())
 

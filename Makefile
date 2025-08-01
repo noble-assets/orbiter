@@ -69,7 +69,14 @@ lint:
 	@echo "==================================================================="
 	@echo "Running linter..."
 	@go tool golangci-lint run -c ./.golangci.yaml
+	@go-license --config .github/license.yaml --verify $(FILES)
 	@echo "Completed linting!"
+
+vulncheck:
+	@echo "==================================================================="
+	@echo "Running vulnerability check..."
+	@go tool govulncheck ./...
+	@echo "Completed vulnerability check!"
 
 #=============================================================================#
 #                                    Test                                     #
@@ -78,8 +85,20 @@ lint:
 test-unit:
 	@echo "==================================================================="
 	@echo "Running unit tests for keeper package..."
-	@go test -cover -coverpkg=./keeper/... -coverprofile=coverage.out -race -v ./keeper/...
-	@go tool cover -html=coverage.out && go tool cover -func=coverage.out
+	@go test -v ./keeper/...
+	@echo "Running unit tests for controllers package..."
+	@go test -v ./controllers/...
+	@echo "Running unit tests for types package..."
+	@go test -v ./types/...
+
+test-unit-viz:
+	@echo "==================================================================="
+	@echo "Running unit tests for keeper package..."
+	@go test -cover -coverpkg=./keeper/... -coverprofile=coverage_keeper.out -race -v ./keeper/...
+	@go tool cover -html=coverage_keeper.out && go tool cover -func=coverage_keeper.out
+	@echo "Running unit tests for controllers package..."
+	@go test -cover -coverpkg=./controllers/... -coverprofile=coverage_controllers.out -race -v ./controllers/...
+	@go tool cover -html=coverage_controllers.out && go tool cover -func=coverage_controllers.out
 	@echo "Running unit tests for types package..."
 	@go test -v ./types/...
 

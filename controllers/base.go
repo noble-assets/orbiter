@@ -35,6 +35,7 @@ func NewBaseController[ID interfaces.IdentifierConstraint](id ID) (*BaseControll
 	if err := id.Validate(); err != nil {
 		return nil, err
 	}
+
 	return &BaseController[ID]{
 		id: id,
 	}, nil

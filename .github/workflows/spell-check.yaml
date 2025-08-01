@@ -1,0 +1,21 @@
+name: Spell Check
+on:
+  pull_request:
+jobs:
+  spellcheck:
+    name: Run codespell
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install codespell
+        run: pip install codespell
+      - name: Run codespell for codebase
+        run: codespell --skip="*/go.mod,*/go.sum"
+      - name: Run codespell for doc
+        run: |
+          codespell README.md INTEGRATION.md

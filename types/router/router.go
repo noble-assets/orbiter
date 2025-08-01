@@ -69,11 +69,13 @@ func (r *Router[ID, T]) AddRoute(route T) error {
 // HasRoute checks if a route with the given ID exists.
 func (r *Router[ID, T]) HasRoute(id ID) bool {
 	_, exists := r.routes[id]
+
 	return exists
 }
 
 // Route retrieves a route by ID.
 func (r *Router[ID, T]) Route(id ID) (T, bool) {
 	route, exists := r.routes[id]
+
 	return route, exists
 }

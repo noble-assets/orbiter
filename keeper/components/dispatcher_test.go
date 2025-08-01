@@ -46,7 +46,6 @@ func TestNewDispatcherComponent(t *testing.T) {
 		ActionsHandler interfaces.PacketHandler[*types.ActionPacket]
 		expError       string
 	}{
-		// TODO: add all failing cases
 		{
 			name:           "success - passing all correct inputs",
 			codec:          deps.EncCfg.Codec,

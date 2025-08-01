@@ -28,6 +28,10 @@ import (
 	"orbiter.dev/testutil"
 )
 
+type contextKey string
+
+const FailingContextKey contextKey = "failing"
+
 func init() {
 	testutil.Authority = testutil.NewNobleAddress()
 	testutil.SetSDKConfig()
@@ -36,6 +40,8 @@ func init() {
 type Mocks struct {
 	// Cosmos SDK
 	BankKeeper *BankKeeper
+	// Circle
+	CCTPMsgServer *CCTPMsgServer
 }
 
 func NewMocks() Mocks {
@@ -46,14 +52,18 @@ func NewMocks() Mocks {
 	mocks := Mocks{
 		// Cosmos SDK
 		BankKeeper: &bk,
+		// Circle
+		CCTPMsgServer: &CCTPMsgServer{},
 	}
 
 	return mocks
 }
 
 func CheckIfFailing(ctx context.Context) bool {
-	if ctx.Value("failing") != nil && ctx.Value("failing") == true {
-		return true
+	isFailing := ctx.Value(FailingContextKey)
+	if isFailing == nil || isFailing == false {
+		return false
 	}
-	return false
+
+	return true
 }

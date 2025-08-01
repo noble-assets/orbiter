@@ -1,0 +1,6 @@
+- name: orbiter-simd
+  dockerfile: cosmos
+  build-target: make build
+  build-dir: simapp
+  binaries:
+    - simapp/build/simd

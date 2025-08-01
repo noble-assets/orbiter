@@ -87,6 +87,7 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 				if err != nil {
 					return collections.Triple[uint32, string, string]{}, err
 				}
+
 				return collections.Join3(
 					orbitID.ProtocolID.Uint32(),
 					orbitID.CounterpartyID,
@@ -122,6 +123,7 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 				if err != nil {
 					return 0, err
 				}
+
 				return orbitID.ProtocolID.Uint32(), nil
 			},
 		),
@@ -195,6 +197,7 @@ func (d *DispatcherComponent) GetDispatchedAmountsByProtocolID(
 
 	callback := func(sourceCounterpartyId string, amountDispatched types.ChainAmountDispatched) bool {
 		totalDispatched.SetAmountDispatched(sourceCounterpartyId, amountDispatched)
+
 		return false
 	}
 
@@ -203,6 +206,7 @@ func (d *DispatcherComponent) GetDispatchedAmountsByProtocolID(
 		protocolID,
 		callback,
 	)
+
 	return *totalDispatched
 }
 
@@ -224,6 +228,7 @@ func (d *DispatcherComponent) IterateDispatchedAmountsByProtocolID(
 				return true, err
 			}
 			dispatchedInfo := types.NewChainAmountDispatched(orbitID, value)
+
 			return callback(key.K2(), *dispatchedInfo), nil
 		},
 	)
@@ -240,6 +245,7 @@ func (d *DispatcherComponent) GetDispatchedAmountsByDestinationProtocolID(
 
 	callback := func(sourceCounterpartyId string, amountDispatched types.ChainAmountDispatched) bool {
 		totalDispatched.SetAmountDispatched(sourceCounterpartyId, amountDispatched)
+
 		return false
 	}
 
@@ -248,6 +254,7 @@ func (d *DispatcherComponent) GetDispatchedAmountsByDestinationProtocolID(
 		protocolID,
 		callback,
 	)
+
 	return *totalDispatched
 }
 
@@ -276,6 +283,7 @@ func (d *DispatcherComponent) IterateDispatchedAmountsByDestinationProtocolID(
 				return true, err
 			}
 			dispatchedInfo := types.NewChainAmountDispatched(orbitID, value)
+
 			return callback(indexedKey.K2(), *dispatchedInfo), nil
 		},
 	)
@@ -315,6 +323,7 @@ func (d *DispatcherComponent) HasDispatchedCounts(
 	destinationInfo types.OrbitID,
 ) bool {
 	countDispatches := d.GetDispatchedCounts(ctx, sourceInfo, destinationInfo)
+
 	return countDispatches != 0
 }
 

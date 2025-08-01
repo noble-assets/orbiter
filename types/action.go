@@ -44,6 +44,7 @@ func NewActionID(id int32) (ActionID, error) {
 	if err := actionID.Validate(); err != nil {
 		return ACTION_UNSUPPORTED, err
 	}
+
 	return actionID, nil
 }
 
@@ -55,6 +56,7 @@ func (id ActionID) Validate() error {
 	if _, found := ActionID_name[int32(id)]; !found {
 		return ErrIDNotSupported.Wrapf("unknown action id %d", int32(id))
 	}
+
 	return nil
 }
 
@@ -91,6 +93,7 @@ func (a *Action) Validate() error {
 	if a.Attributes == nil {
 		return ErrNilPointer.Wrap("action attributes are not set")
 	}
+
 	return nil
 }
 
@@ -100,6 +103,7 @@ func (a *Action) ID() ActionID {
 	if a != nil {
 		return a.Id
 	}
+
 	return ACTION_UNSUPPORTED
 }
 
@@ -123,6 +127,7 @@ func (a *Action) CachedAttributes() (ActionAttributes, error) {
 			av,
 		)
 	}
+
 	return attr, nil
 }
 
@@ -137,11 +142,12 @@ func (a *Action) SetAttributes(attr ActionAttributes) error {
 		return sdkerrors.ErrPackAny.Wrapf("can't proto marshal %T", m)
 	}
 
-	any, err := cdctypes.NewAnyWithValue(m)
+	anyValue, err := cdctypes.NewAnyWithValue(m)
 	if err != nil {
 		return err
 	}
-	a.Attributes = any
+	a.Attributes = anyValue
+
 	return nil
 }
 
@@ -152,5 +158,6 @@ func (a *Action) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 		return ErrNilPointer.Wrap("action is a nil pointer")
 	}
 	var attributes ActionAttributes
+
 	return unpacker.UnpackAny(a.Attributes, &attributes)
 }

@@ -74,6 +74,7 @@ func (c *ActionComponent) Validate() error {
 	if c.router == nil {
 		return types.ErrNilPointer.Wrap("router cannot be nil")
 	}
+
 	return nil
 }
 
@@ -92,6 +93,33 @@ func (c *ActionComponent) SetRouter(acr ActionRouter) error {
 
 	c.router = acr
 	c.router.Seal()
+
+	return nil
+}
+
+// Pause allows to pause an action controller.
+func (c *ActionComponent) Pause(ctx context.Context, actionID types.ActionID) error {
+	if err := c.SetPausedController(ctx, actionID); err != nil {
+		return fmt.Errorf(
+			"error pausing action %s: %w",
+			actionID,
+			err,
+		)
+	}
+
+	return nil
+}
+
+// Unpause allows to unpause an action controller.
+func (c *ActionComponent) Unpause(ctx context.Context, actionID types.ActionID) error {
+	if err := c.SetUnpausedController(ctx, actionID); err != nil {
+		return fmt.Errorf(
+			"error unpausing action %s: %w",
+			actionID,
+			err,
+		)
+	}
+
 	return nil
 }
 
@@ -121,6 +149,7 @@ func (c *ActionComponent) validatePacket(ctx context.Context, packet *types.Acti
 	if err != nil {
 		return fmt.Errorf("error validating action controller: %w", err)
 	}
+
 	return nil
 }
 
@@ -138,29 +167,5 @@ func (c *ActionComponent) validateController(
 		return fmt.Errorf("action id %s is paused", id)
 	}
 
-	return nil
-}
-
-// Pause allows to pause an action controller.
-func (c *ActionComponent) Pause(ctx context.Context, actionID types.ActionID) error {
-	if err := c.SetPausedController(ctx, actionID); err != nil {
-		return fmt.Errorf(
-			"error pausing action %s: %w",
-			actionID,
-			err,
-		)
-	}
-	return nil
-}
-
-// Unpause allows to unpause an action controller.
-func (c *ActionComponent) Unpause(ctx context.Context, actionID types.ActionID) error {
-	if err := c.SetUnpausedController(ctx, actionID); err != nil {
-		return fmt.Errorf(
-			"error unpausing action %s: %w",
-			actionID,
-			err,
-		)
-	}
 	return nil
 }
