@@ -33,4 +33,8 @@ type CCTPMsgServer interface {
 		context.Context,
 		*cctptypes.MsgDepositForBurnWithCaller,
 	) (*cctptypes.MsgDepositForBurnWithCallerResponse, error)
+	ReplaceDepositForBurn(
+		context.Context,
+		*cctptypes.MsgReplaceDepositForBurn,
+	) (*cctptypes.MsgReplaceDepositForBurnResponse, error)
 }

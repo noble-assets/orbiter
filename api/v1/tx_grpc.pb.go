@@ -23,6 +23,7 @@ const (
 	Msg_PauseCounterparties_FullMethodName   = "/noble.orbiter.v1.Msg/PauseCounterparties"
 	Msg_UnpauseProtocol_FullMethodName       = "/noble.orbiter.v1.Msg/UnpauseProtocol"
 	Msg_UnpauseCounterparties_FullMethodName = "/noble.orbiter.v1.Msg/UnpauseCounterparties"
+	Msg_ReplaceDepositForBurn_FullMethodName = "/noble.orbiter.v1.Msg/ReplaceDepositForBurn"
 	Msg_PauseAction_FullMethodName           = "/noble.orbiter.v1.Msg/PauseAction"
 	Msg_UnpauseAction_FullMethodName         = "/noble.orbiter.v1.Msg/UnpauseAction"
 )
@@ -41,6 +42,8 @@ type MsgClient interface {
 	UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error)
 	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
 	UnpauseCounterparties(ctx context.Context, in *MsgUnpauseCounterparties, opts ...grpc.CallOption) (*MsgUnpauseCounterpartiesResponse, error)
+	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
+	ReplaceDepositForBurn(ctx context.Context, in *MsgReplaceDepositForBurn, opts ...grpc.CallOption) (*MsgReplaceDepositForBurnResponse, error)
 	// PauseAction pauses a specific action controller.
 	PauseAction(ctx context.Context, in *MsgPauseAction, opts ...grpc.CallOption) (*MsgPauseActionResponse, error)
 	// UnpauseAction resumes a specific action controller.
@@ -95,6 +98,16 @@ func (c *msgClient) UnpauseCounterparties(ctx context.Context, in *MsgUnpauseCou
 	return out, nil
 }
 
+func (c *msgClient) ReplaceDepositForBurn(ctx context.Context, in *MsgReplaceDepositForBurn, opts ...grpc.CallOption) (*MsgReplaceDepositForBurnResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgReplaceDepositForBurnResponse)
+	err := c.cc.Invoke(ctx, Msg_ReplaceDepositForBurn_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) PauseAction(ctx context.Context, in *MsgPauseAction, opts ...grpc.CallOption) (*MsgPauseActionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MsgPauseActionResponse)
@@ -129,6 +142,8 @@ type MsgServer interface {
 	UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error)
 	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
 	UnpauseCounterparties(context.Context, *MsgUnpauseCounterparties) (*MsgUnpauseCounterpartiesResponse, error)
+	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
+	ReplaceDepositForBurn(context.Context, *MsgReplaceDepositForBurn) (*MsgReplaceDepositForBurnResponse, error)
 	// PauseAction pauses a specific action controller.
 	PauseAction(context.Context, *MsgPauseAction) (*MsgPauseActionResponse, error)
 	// UnpauseAction resumes a specific action controller.
@@ -154,6 +169,9 @@ func (UnimplementedMsgServer) UnpauseProtocol(context.Context, *MsgUnpauseProtoc
 }
 func (UnimplementedMsgServer) UnpauseCounterparties(context.Context, *MsgUnpauseCounterparties) (*MsgUnpauseCounterpartiesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnpauseCounterparties not implemented")
+}
+func (UnimplementedMsgServer) ReplaceDepositForBurn(context.Context, *MsgReplaceDepositForBurn) (*MsgReplaceDepositForBurnResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReplaceDepositForBurn not implemented")
 }
 func (UnimplementedMsgServer) PauseAction(context.Context, *MsgPauseAction) (*MsgPauseActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PauseAction not implemented")
@@ -254,6 +272,24 @@ func _Msg_UnpauseCounterparties_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_ReplaceDepositForBurn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgReplaceDepositForBurn)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ReplaceDepositForBurn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_ReplaceDepositForBurn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ReplaceDepositForBurn(ctx, req.(*MsgReplaceDepositForBurn))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_PauseAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgPauseAction)
 	if err := dec(in); err != nil {
@@ -312,6 +348,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnpauseCounterparties",
 			Handler:    _Msg_UnpauseCounterparties_Handler,
+		},
+		{
+			MethodName: "ReplaceDepositForBurn",
+			Handler:    _Msg_ReplaceDepositForBurn_Handler,
 		},
 		{
 			MethodName: "PauseAction",

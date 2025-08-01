@@ -36,6 +36,15 @@ import (
 
 var _ interfaces.ControllerOrbit = &CCTPController{}
 
+// CCTPController is the orbit controller to perform
+// a CCTP transfer.
+type CCTPController struct {
+	*controllers.BaseController[types.ProtocolID]
+
+	logger  log.Logger
+	handler *cctpHandler
+}
+
 // NewCCTPController returns a validated instance of the
 // Cross-Chain Transfer Protocol controller.
 func NewCCTPController(
@@ -64,15 +73,6 @@ func NewCCTPController(
 	}
 
 	return &cctpController, cctpController.Validate()
-}
-
-// CCTPController is the orbit controller to perform
-// a CCTP transfer.
-type CCTPController struct {
-	*controllers.BaseController[types.ProtocolID]
-
-	logger  log.Logger
-	handler *cctpHandler
 }
 
 // Validate returns an error if the instance of the controller
@@ -112,6 +112,10 @@ func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.OrbitPa
 	}
 
 	return nil
+}
+
+func (c *CCTPController) GetHanlder() *cctpHandler {
+	return c.handler
 }
 
 // extractAttributes extract the CCTP orbit attributes. Return an error in case
@@ -167,6 +171,12 @@ func (c *CCTPController) executeOrbit(
 	return nil
 }
 
+// cctpHandler is the type responsible to initiate a CCTP
+// transfer.
+type cctpHandler struct {
+	orbits.CCTPMsgServer
+}
+
 // newCCTPHandler returns a validated instance of the CCTP handler.
 func newCCTPHandler(
 	msgServer orbits.CCTPMsgServer,
@@ -176,12 +186,6 @@ func newCCTPHandler(
 	}
 
 	return &handler, handler.validate()
-}
-
-// cctpHandler is the type responsible to initiate a CCTP
-// transfer.
-type cctpHandler struct {
-	orbits.CCTPMsgServer
 }
 
 // validate returns an error if the CCTP handler instance is not valid.

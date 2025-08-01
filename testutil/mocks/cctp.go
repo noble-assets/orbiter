@@ -43,3 +43,15 @@ func (c CCTPMsgServer) DepositForBurnWithCaller(
 
 	return &cctptypes.MsgDepositForBurnWithCallerResponse{}, nil
 }
+
+// ReplaceDepositForBurn implements orbits.CCTPMsgServer.
+func (c CCTPMsgServer) ReplaceDepositForBurn(
+	ctx context.Context,
+	msg *cctptypes.MsgReplaceDepositForBurn,
+) (*cctptypes.MsgReplaceDepositForBurnResponse, error) {
+	if CheckIfFailing(ctx) {
+		return nil, errors.New("error calling replace deposit for burn")
+	}
+
+	return &cctptypes.MsgReplaceDepositForBurnResponse{}, nil
+}

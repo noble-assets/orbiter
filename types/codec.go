@@ -37,6 +37,7 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 		&MsgUnpauseCounterparties{},
 		&MsgPauseAction{},
 		&MsgUnpauseAction{},
+		&MsgReplaceDepositForBurn{},
 	)
 
 	registry.RegisterInterface(

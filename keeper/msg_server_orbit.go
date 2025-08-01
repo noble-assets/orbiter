@@ -22,7 +22,13 @@ package keeper
 
 import (
 	"context"
+	"errors"
 
+	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"orbiter.dev/controllers/orbits"
 	"orbiter.dev/types"
 )
 
@@ -104,4 +110,44 @@ func (m msgServer) UnpauseCounterparties(
 	}
 
 	return &types.MsgUnpauseCounterpartiesResponse{}, nil
+}
+
+// ReplaceDepositForBurn implements types.MsgServer.
+func (m msgServer) ReplaceDepositForBurn(
+	ctx context.Context,
+	msg *types.MsgReplaceDepositForBurn,
+) (*types.MsgReplaceDepositForBurnResponse, error) {
+	if err := m.CheckIsAuthority(msg.Signer); err != nil {
+		return nil, err
+	}
+
+	controller, found := m.OrbitComponent().Router().Route(types.PROTOCOL_CCTP)
+	if !found {
+		return nil, errors.New("cctp controller not found")
+	}
+
+	cctpController, ok := controller.(*orbits.CCTPController)
+	if !ok {
+		return nil, sdkerrors.ErrInvalidType.Wrapf(
+			"expected %T, got %T",
+			(*orbits.CCTPController)(nil),
+			controller,
+		)
+	}
+
+	handler := cctpController.GetHanlder()
+
+	msgReplace := cctptypes.MsgReplaceDepositForBurn{
+		From:                 types.ModuleAddress.String(),
+		OriginalMessage:      msg.OriginalMessage,
+		OriginalAttestation:  msg.OriginalAttestation,
+		NewDestinationCaller: msg.NewDestinationCaller,
+		NewMintRecipient:     msg.NewMintRecipient,
+	}
+	_, err := handler.ReplaceDepositForBurn(ctx, &msgReplace)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgReplaceDepositForBurnResponse{}, nil
 }
