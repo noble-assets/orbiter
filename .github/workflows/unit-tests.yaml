@@ -2,8 +2,8 @@ name: Unit Tests
 on:
   push:
     paths-ignore:
-      - '!**.md'
-      - '!**.yaml'
+      - '**.md'
+      - '**.yaml'
 jobs:
   unit-test:
     runs-on: ubuntu-latest
