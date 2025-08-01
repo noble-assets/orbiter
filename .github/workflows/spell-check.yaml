@@ -15,8 +15,7 @@ jobs:
       - name: Install codespell
         run: pip install codespell
       - name: Run codespell for codebase
-        run: codespell
+        run: codespell --skip="*/go.mod,*/go.sum"
       - name: Run codespell for doc
         run: |
-          cd .github
-          codespell README.md
+          codespell README.md INTEGRATION.md
