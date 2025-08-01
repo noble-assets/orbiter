@@ -60,6 +60,7 @@ func TestGetAttributesFeeController(t *testing.T) {
 					&testdata.TestActionAttr{Whatever: "works"},
 				)
 				require.NoError(t, err)
+
 				return action
 			},
 			expErr: "expected *actions.FeeAttributes",
@@ -71,6 +72,7 @@ func TestGetAttributesFeeController(t *testing.T) {
 					Id:         types.ACTION_FEE,
 					Attributes: nil,
 				}
+
 				return &action
 			},
 			expErr: "action attributes are not set",
@@ -90,6 +92,7 @@ func TestGetAttributesFeeController(t *testing.T) {
 					},
 				)
 				require.NoError(t, err)
+
 				return action
 			},
 			expAttributes: actions.FeeAttributes{
@@ -283,7 +286,7 @@ func TestComputeFeesToDistribute(t *testing.T) {
 				Total:  sdkmath.ZeroInt(),
 				Values: []actions.RecipientAmount{},
 			},
-			expErr: "something",
+			expErr: "overflow",
 		},
 	}
 
@@ -577,6 +580,7 @@ func TestHandlePacketFeeController(t *testing.T) {
 					&testdata.TestActionAttr{Whatever: "works"},
 				)
 				require.NoError(t, err)
+
 				return action
 			},
 			transferAttr: func() *types.TransferAttributes {
@@ -607,6 +611,7 @@ func TestHandlePacketFeeController(t *testing.T) {
 				expTransferAttr.SetDestinationAmount(
 					transferAttr.DestinationAmount().SubRaw(1_000),
 				)
+
 				return transferAttr
 			},
 			expErr: "",

@@ -45,30 +45,6 @@ linters:
     goconst:
       min-occurrences: 2
       numbers: true
-    gocritic:
-      enabled-checks:
-        - badLock
-        - filepathJoin
-        - sortSlice
-        - sprintfQuotedString
-        - syncMapLoadAndDelete
-        - weakCond
-        - boolExprSimplify
-        - httpNoBody
-        - nestingReduce
-        - preferFilepathJoin
-        - redundantSprint
-        - stringConcatSimplify
-        - timeExprSimplify
-        - typeAssertChain
-        - yodaStyleExpr
-        - truncateCmp
-        - equalFold
-        - preferDecodeRune
-        - preferFprint
-        - preferStringWriter
-        - preferWriteByte
-        - sliceClear
     govet:
       disable:
         - fieldalignment
