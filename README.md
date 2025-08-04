@@ -32,12 +32,11 @@ flowchart LR
      direction LR
       a(Actions) --> o(Orbit)
    end
-    S@{ shape: circle, label: "Sender" } -- cross-chain transfer -->  Noble
-    Noble -- cross-chain transfer --> R@{ shape: circle, label: "Recipient" }
-
+    S((Sender)) -- cross-chain transfer -->  Noble
+    Noble -- cross-chain transfer --> R((Recipient))
 ```
 
-An example application is a user that has _USDC_ on Solana and wants to have _USDN_ on Hyperliquid.
+An example application is a user who has _USDC_ on Solana and wants to have _USDN_ on Hyperliquid.
 The orbiter module allows the user to send _USDC_ to Noble Core via CCTP, swap _USDC_ for _USDN_
 through the [Swap module](https://github.com/noble-assets/swap), and finally send the received funds
 to Hyperlane. Everything within a single transaction.

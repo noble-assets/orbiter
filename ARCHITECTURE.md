@@ -12,7 +12,7 @@ This document provides a detailed overview of the `x/orbiter` module architectur
    the expected initial condition for the state transition. Based on the incoming protocol used,
    specific hook can be used.
 4. **Payload Processing**: Adapter forwards validated payload to Dispatcher.
-5. **Payload Dispatching**: The dispatcher coordinate the dispatch of the orbiter payload content.
+5. **Payload Dispatching**: The dispatcher coordinates the dispatch of the orbiter payload content.
 6. **Action Handling**: The dispatcher dispatches pre-actions sequentially. For every action, a
    specific action controller is required to execute the business logic.
 7. **Orbit Handling**: The dispatcher dispatches the cross-chain forwarding operation. Similarly to
