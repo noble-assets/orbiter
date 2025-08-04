@@ -155,10 +155,12 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
 1. Import the required packages from the Orbiter repo:
 
    ```go
-    "orbiter.dev/types"
-    "orbiter.dev/types/controllers/actions"
-    "orbiter.dev/types/controllers/orbits"
-    "orbiter.dev/testutil"
+   import(
+     "orbiter.dev/types"
+     "orbiter.dev/types/controllers/actions"
+     "orbiter.dev/types/controllers/orbits"
+     "orbiter.dev/testutil"
+   )
    ```
 
 2. Define the forwarding attributes:
