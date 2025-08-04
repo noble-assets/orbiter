@@ -129,10 +129,10 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 				)
 				require.NoError(t, err)
 
-				attrActions := testdata.TestActionAttr{
+				attrAction := testdata.TestActionAttr{
 					Whatever: "doesn't kill you makes you stronger",
 				}
-				action, err := types.NewAction(types.ACTION_FEE, &attrActions)
+				action, err := types.NewAction(types.ACTION_FEE, &attrAction)
 				require.NoError(t, err)
 
 				return &types.Payload{

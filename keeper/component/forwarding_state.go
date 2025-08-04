@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package components
+package component
 
 import (
 	"context"
@@ -32,7 +32,7 @@ import (
 // PausedControllers
 // ====================================================================================================
 
-func (c *OrbitComponent) IsControllerPaused(
+func (c *Forwarding) IsControllerPaused(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) (bool, error) {
@@ -41,7 +41,7 @@ func (c *OrbitComponent) IsControllerPaused(
 	return paused, err
 }
 
-func (c *OrbitComponent) SetPausedController(ctx context.Context,
+func (c *Forwarding) SetPausedController(ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
 	paused, err := c.IsControllerPaused(ctx, protocolID)
@@ -55,7 +55,7 @@ func (c *OrbitComponent) SetPausedController(ctx context.Context,
 	return c.PausedControllers.Set(ctx, int32(protocolID))
 }
 
-func (c *OrbitComponent) SetUnpausedController(
+func (c *Forwarding) SetUnpausedController(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -74,17 +74,17 @@ func (c *OrbitComponent) SetUnpausedController(
 // PausedOrbits
 // ====================================================================================================
 
-func (c *OrbitComponent) IsOrbitPaused(
+func (c *Forwarding) IsOrbitPaused(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) (bool, error) {
-	paused, err := c.PausedOrbits.Has(ctx, collections.Join(int32(protocolID), counterpartyID))
+	paused, err := c.PausedForwardings.Has(ctx, collections.Join(int32(protocolID), counterpartyID))
 
 	return paused, err
 }
 
-func (c *OrbitComponent) SetPausedOrbit(ctx context.Context,
+func (c *Forwarding) SetPausedOrbit(ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) error {
@@ -96,10 +96,10 @@ func (c *OrbitComponent) SetPausedOrbit(ctx context.Context,
 		return nil
 	}
 
-	return c.PausedOrbits.Set(ctx, collections.Join(int32(protocolID), counterpartyID))
+	return c.PausedForwardings.Set(ctx, collections.Join(int32(protocolID), counterpartyID))
 }
 
-func (c *OrbitComponent) SetUnpausedOrbit(
+func (c *Forwarding) SetUnpausedOrbit(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
@@ -112,5 +112,5 @@ func (c *OrbitComponent) SetUnpausedOrbit(
 		return nil
 	}
 
-	return c.PausedOrbits.Remove(ctx, collections.Join(int32(protocolID), counterpartyID))
+	return c.PausedForwardings.Remove(ctx, collections.Join(int32(protocolID), counterpartyID))
 }

@@ -29,7 +29,7 @@ import (
 
 var _ types.ForwardingAttributes = &CCTPAttributes{}
 
-// CounterpartyID implements types.OrbitAttributes.
+// CounterpartyID implements types.ForwardingAttributes.
 func (a *CCTPAttributes) CounterpartyID() string {
 	return fmt.Sprintf("%d", a.GetDestinationDomain())
 }

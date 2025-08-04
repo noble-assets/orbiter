@@ -111,14 +111,14 @@ func InjectComponents(in ComponentsInputs) {
 
 func InjectOrbitControllers(in ComponentsInputs) {
 	cctp, err := forwardingctrl.NewCCTPController(
-		in.Orbiters.OrbitComponent().Logger(),
+		in.Orbiters.ForwardingComponent().Logger(),
 		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
 	)
 	if err != nil {
 		panic(fmt.Errorf("error creating cctp controller: %w", err))
 	}
 
-	in.Orbiters.SetOrbitControllers(cctp)
+	in.Orbiters.SetForwardingControllers(cctp)
 }
 
 func InjectActionControllers(in ComponentsInputs) {

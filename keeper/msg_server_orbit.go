@@ -41,7 +41,7 @@ func (m msgServer) PauseProtocol(
 		return nil, err
 	}
 
-	orbitComp := m.OrbitComponent()
+	orbitComp := m.ForwardingComponent()
 
 	if err := orbitComp.Pause(ctx, msg.ProtocolId, nil); err != nil {
 		return nil, types.ErrUnableToPause.Wrapf(
@@ -61,7 +61,7 @@ func (m msgServer) PauseCounterparties(
 		return nil, err
 	}
 
-	orbitComp := m.OrbitComponent()
+	orbitComp := m.ForwardingComponent()
 
 	if err := orbitComp.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
 		return nil, types.ErrUnableToPause.Wrapf(
@@ -81,7 +81,7 @@ func (m msgServer) UnpauseProtocol(
 		return nil, err
 	}
 
-	orbitComp := m.OrbitComponent()
+	orbitComp := m.ForwardingComponent()
 
 	if err := orbitComp.Unpause(ctx, msg.ProtocolId, nil); err != nil {
 		return nil, types.ErrUnableToUnpause.Wrapf(
@@ -101,7 +101,7 @@ func (m msgServer) UnpauseCounterparties(
 		return nil, err
 	}
 
-	orbitComp := m.OrbitComponent()
+	orbitComp := m.ForwardingComponent()
 
 	if err := orbitComp.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
 		return nil, types.ErrUnableToUnpause.Wrapf(
@@ -121,7 +121,7 @@ func (m msgServer) ReplaceDepositForBurn(
 		return nil, err
 	}
 
-	controller, found := m.OrbitComponent().Router().Route(types.PROTOCOL_CCTP)
+	controller, found := m.ForwardingComponent().Router().Route(types.PROTOCOL_CCTP)
 	if !found {
 		return nil, errors.New("cctp controller not found")
 	}

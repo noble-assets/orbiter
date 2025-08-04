@@ -22,8 +22,8 @@ message Forwarding {
 
   // attributes contains protocol-specific configuration data.
   // The actual type depends on the protocol ID and must implement
-  // the `OrbitAttributes` interface.
-  google.protobuf.Any attributes = 2 [(cosmos_proto.accepts_interface) = "noble.orbiter.v1.OrbitAttributes"];
+  // the `ForwardingAttributes` interface.
+  google.protobuf.Any attributes = 2 [(cosmos_proto.accepts_interface) = "noble.orbiter.v1.ForwardingAttributes"];
 
   // passthrough_payload allows to pass additional metadata
   // to the destination chain. This field is not interpreted by

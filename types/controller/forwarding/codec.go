@@ -27,7 +27,7 @@ import (
 )
 
 // RegisterImplementations registers the orbits attributes
-// satisfying the OrbitAttributes interface in the module codec.
+// satisfying the ForwardingAttributes interface in the module codec.
 func RegisterImplementations(registry codectypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*types.ForwardingAttributes)(nil), &CCTPAttributes{})
 }

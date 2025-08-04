@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package components
+package component
 
 import (
 	"context"
@@ -32,16 +32,16 @@ import (
 	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.PayloadDispatcher = &DispatcherComponent{}
+var _ interfaces.PayloadDispatcher = &Dispatcher{}
 
-// DispatcherComponent is a component used to orchestrate the
+// Dispatcher is a component used to orchestrate the
 // dispatch of an incoming orbiter packet. The dispatcher
 // keeps track of the statistics associated with the handled dispatches.
-type DispatcherComponent struct {
+type Dispatcher struct {
 	logger log.Logger
 	// Packet elements handlers
-	OrbitHandler  interfaces.PacketHandler[*types.ForwardingPacket]
-	ActionHandler interfaces.PacketHandler[*types.ActionPacket]
+	ForwardingHandler interfaces.PacketHandler[*types.ForwardingPacket]
+	ActionHandler     interfaces.PacketHandler[*types.ActionPacket]
 	// Stats
 	DispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, types.AmountDispatched, DispatchedAmountsIndexes]
 	DispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
@@ -53,9 +53,9 @@ func NewDispatcherComponent(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-	orbitHandler interfaces.PacketHandler[*types.ForwardingPacket],
+	forwardingHandler interfaces.PacketHandler[*types.ForwardingPacket],
 	actionHandler interfaces.PacketHandler[*types.ActionPacket],
-) (*DispatcherComponent, error) {
+) (*Dispatcher, error) {
 	if cdc == nil {
 		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
 	}
@@ -66,10 +66,10 @@ func NewDispatcherComponent(
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	dispatcherComponent := DispatcherComponent{
-		logger:        logger.With(types.ComponentPrefix, types.DispatcherComponentName),
-		OrbitHandler:  orbitHandler,
-		ActionHandler: actionHandler,
+	dispatcherComponent := Dispatcher{
+		logger:            logger.With(types.ComponentPrefix, types.DispatcherComponentName),
+		ForwardingHandler: forwardingHandler,
+		ActionHandler:     actionHandler,
 		DispatchedAmounts: collections.NewIndexedMap(
 			sb,
 			types.DispatchedAmountsPrefix,
@@ -101,9 +101,9 @@ func NewDispatcherComponent(
 }
 
 // Validate checks that the fields of the dispatcher component are valid.
-func (d *DispatcherComponent) Validate() error {
-	if d.OrbitHandler == nil {
-		return types.ErrNilPointer.Wrap("orbits handler cannot be nil")
+func (d *Dispatcher) Validate() error {
+	if d.ForwardingHandler == nil {
+		return types.ErrNilPointer.Wrap("forwarding handler cannot be nil")
 	}
 	if d.ActionHandler == nil {
 		return types.ErrNilPointer.Wrap("actions handler cannot be nil")
@@ -112,13 +112,13 @@ func (d *DispatcherComponent) Validate() error {
 	return nil
 }
 
-func (d *DispatcherComponent) Logger() log.Logger {
+func (d *Dispatcher) Logger() log.Logger {
 	return d.logger
 }
 
 // DispatchPayload is the entry point to initiate the dispatching
 // of an orbiter payload.
-func (d *DispatcherComponent) DispatchPayload(
+func (d *Dispatcher) DispatchPayload(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	payload *types.Payload,
@@ -131,12 +131,12 @@ func (d *DispatcherComponent) DispatchPayload(
 		return fmt.Errorf("actions dispatch failed: %w", err)
 	}
 
-	if err := d.dispatchOrbit(ctx, transferAttr, payload.Forwarding); err != nil {
-		return fmt.Errorf("orbit dispatch failed: %w", err)
+	if err := d.dispatchForwarding(ctx, transferAttr, payload.Forwarding); err != nil {
+		return fmt.Errorf("forwarding dispatch failed: %w", err)
 	}
 
 	if err := d.UpdateStats(ctx, transferAttr, payload.Forwarding); err != nil {
-		d.logger.Error("Error ypdating Orbiter statistics", "error", err.Error())
+		d.logger.Error("Error updating Orbiter statistics", "error", err.Error())
 	}
 
 	return nil
@@ -144,7 +144,7 @@ func (d *DispatcherComponent) DispatchPayload(
 
 // validatePayload checks if the payload is not nil, and calls
 // its validation method.
-func (d *DispatcherComponent) validatePayload(payload *types.Payload) error {
+func (d *Dispatcher) validatePayload(payload *types.Payload) error {
 	if payload == nil {
 		return types.ErrNilPointer.Wrap("payload cannot be nil")
 	}
@@ -154,7 +154,7 @@ func (d *DispatcherComponent) validatePayload(payload *types.Payload) error {
 
 // dispatchActions iterates through all the actions, creates
 // the action packets and dispatch them for execution.
-func (d *DispatcherComponent) dispatchActions(
+func (d *Dispatcher) dispatchActions(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	actions []*types.Action,
@@ -174,9 +174,9 @@ func (d *DispatcherComponent) dispatchActions(
 	return nil
 }
 
-// dispatchOrbit creates the orbit packet and dispatch
+// dispatchForwarding creates the forwarding packet and dispatch
 // it for execution.
-func (d *DispatcherComponent) dispatchOrbit(
+func (d *Dispatcher) dispatchForwarding(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	forwarding *types.Forwarding,
@@ -184,16 +184,16 @@ func (d *DispatcherComponent) dispatchOrbit(
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {
 		return fmt.Errorf(
-			"error creating orbit packet for protocol ID %s: %w",
+			"error creating forwarding packet for protocol ID %s: %w",
 			packet.Forwarding.ProtocolID(),
 			err,
 		)
 	}
 
-	err = d.dispatchOrbitPacket(ctx, packet)
+	err = d.dispatchForwardingPacket(ctx, packet)
 	if err != nil {
 		return fmt.Errorf(
-			"error dispatching orbit packet for protocol %s: %w",
+			"error dispatching forwarding packet for protocol %s: %w",
 			packet.Forwarding.ProtocolID(),
 			err,
 		)
@@ -204,18 +204,18 @@ func (d *DispatcherComponent) dispatchOrbit(
 
 // dispatchActionPacket dispatch the action packet to the
 // action handler.
-func (d *DispatcherComponent) dispatchActionPacket(
+func (d *Dispatcher) dispatchActionPacket(
 	ctx context.Context,
 	packet *types.ActionPacket,
 ) error {
 	return d.ActionHandler.HandlePacket(ctx, packet)
 }
 
-// dispatchOrbitPacket dispatch the orbit packet to the
-// orbit handler.
-func (d *DispatcherComponent) dispatchOrbitPacket(
+// dispatchForwardingPacket dispatch the forwarding packet to the
+// forwarding handler.
+func (d *Dispatcher) dispatchForwardingPacket(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
-	return d.OrbitHandler.HandlePacket(ctx, packet)
+	return d.ForwardingHandler.HandlePacket(ctx, packet)
 }

@@ -93,7 +93,7 @@ func TestIbc(t *testing.T) {
 	destinationCaller := testutil.RandomBytes(32)
 	passthroughPayload := []byte("")
 
-	orbit, err := forwarding.NewCCTPForwarding(
+	forwarding, err := forwarding.NewCCTPForwarding(
 		destinationDomain,
 		mintRecipient,
 		destinationCaller,
@@ -117,7 +117,7 @@ func TestIbc(t *testing.T) {
 	err = action.SetAttributes(&feeAttr)
 	require.NoError(t, err)
 
-	payload, err := types.NewPayloadWrapper(orbit, []*types.Action{&action})
+	payload, err := types.NewPayloadWrapper(forwarding, []*types.Action{&action})
 	require.NoError(t, err)
 
 	encCfg := testutil.MakeTestEncodingConfig("noble")

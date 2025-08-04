@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package components
+package component
 
 import (
 	"context"
@@ -36,9 +36,9 @@ import (
 
 type ActionRouter = interfaces.Router[types.ActionID, interfaces.ControllerAction]
 
-var _ interfaces.ActionComponent = &ActionComponent{}
+var _ interfaces.ActionComponent = &Action{}
 
-type ActionComponent struct {
+type Action struct {
 	logger log.Logger
 	// router is an action controllers router.
 	router ActionRouter
@@ -51,8 +51,8 @@ func NewActionComponent(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-) (*ActionComponent, error) {
-	actionComponent := ActionComponent{
+) (*Action, error) {
+	actionComponent := Action{
 		logger: logger.With(types.ComponentPrefix, types.ActionComponentName),
 		router: router.New[types.ActionID, interfaces.ControllerAction](),
 		PausedControllers: collections.NewKeySet(
@@ -67,7 +67,7 @@ func NewActionComponent(
 }
 
 // Validate returns an error if the component instance is not valid.
-func (c *ActionComponent) Validate() error {
+func (c *Action) Validate() error {
 	if c.logger == nil {
 		return types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
@@ -78,15 +78,15 @@ func (c *ActionComponent) Validate() error {
 	return nil
 }
 
-func (c *ActionComponent) Logger() log.Logger {
+func (c *Action) Logger() log.Logger {
 	return c.logger
 }
 
-func (c *ActionComponent) Router() ActionRouter {
+func (c *Action) Router() ActionRouter {
 	return c.router
 }
 
-func (c *ActionComponent) SetRouter(acr ActionRouter) error {
+func (c *Action) SetRouter(acr ActionRouter) error {
 	if c.router != nil && c.router.Sealed() {
 		return errors.New("cannot reset a sealed router")
 	}
@@ -98,7 +98,7 @@ func (c *ActionComponent) SetRouter(acr ActionRouter) error {
 }
 
 // Pause allows to pause an action controller.
-func (c *ActionComponent) Pause(ctx context.Context, actionID types.ActionID) error {
+func (c *Action) Pause(ctx context.Context, actionID types.ActionID) error {
 	if err := c.SetPausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error pausing action %s: %w",
@@ -111,7 +111,7 @@ func (c *ActionComponent) Pause(ctx context.Context, actionID types.ActionID) er
 }
 
 // Unpause allows to unpause an action controller.
-func (c *ActionComponent) Unpause(ctx context.Context, actionID types.ActionID) error {
+func (c *Action) Unpause(ctx context.Context, actionID types.ActionID) error {
 	if err := c.SetUnpausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error unpausing action %s: %w",
@@ -123,7 +123,7 @@ func (c *ActionComponent) Unpause(ctx context.Context, actionID types.ActionID) 
 	return nil
 }
 
-func (c *ActionComponent) HandlePacket(
+func (c *Action) HandlePacket(
 	ctx context.Context,
 	packet *types.ActionPacket,
 ) error {
@@ -139,7 +139,7 @@ func (c *ActionComponent) HandlePacket(
 	return controller.HandlePacket(ctx, packet)
 }
 
-func (c *ActionComponent) validatePacket(ctx context.Context, packet *types.ActionPacket) error {
+func (c *Action) validatePacket(ctx context.Context, packet *types.ActionPacket) error {
 	err := packet.Validate()
 	if err != nil {
 		return fmt.Errorf("error validating action packet: %w", err)
@@ -155,7 +155,7 @@ func (c *ActionComponent) validatePacket(ctx context.Context, packet *types.Acti
 
 // validateController returns an error if the controller associated with
 // the action ID is not valid.
-func (c *ActionComponent) validateController(
+func (c *Action) validateController(
 	ctx context.Context,
 	id types.ActionID,
 ) error {

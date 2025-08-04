@@ -30,7 +30,7 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/keeper/components"
+	"orbiter.dev/keeper/component"
 	"orbiter.dev/types"
 	"orbiter.dev/types/interfaces"
 )
@@ -45,7 +45,7 @@ type Keeper struct {
 
 	// Components.
 	actionComponent     interfaces.ActionComponent
-	orbitComponent      interfaces.OrbitComponent
+	forwardingComponent interfaces.ForwardingComponent
 	dispatcherComponent interfaces.DispatcherComponent
 	adapterComponent    interfaces.AdapterComponent
 }
@@ -144,8 +144,8 @@ func (k *Keeper) ActionComponent() interfaces.ActionComponent {
 	return k.actionComponent
 }
 
-func (k *Keeper) OrbitComponent() interfaces.OrbitComponent {
-	return k.orbitComponent
+func (k *Keeper) ForwardingComponent() interfaces.ForwardingComponent {
+	return k.forwardingComponent
 }
 
 func (k *Keeper) DispatcherComponent() interfaces.PayloadDispatcher {
@@ -156,14 +156,14 @@ func (k *Keeper) AdapterComponent() interfaces.AdapterComponent {
 	return k.adapterComponent
 }
 
-func (k *Keeper) SetOrbitControllers(controllers ...interfaces.ControllerOrbit) {
-	router := k.orbitComponent.Router()
+func (k *Keeper) SetForwardingControllers(controllers ...interfaces.ControllerForwarding) {
+	router := k.forwardingComponent.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
 			panic(err)
 		}
 	}
-	if err := k.orbitComponent.SetRouter(router); err != nil {
+	if err := k.forwardingComponent.SetRouter(router); err != nil {
 		panic(err)
 	}
 }
@@ -200,28 +200,34 @@ func (k *Keeper) setComponents(
 	sb *collections.SchemaBuilder,
 	bankKeeper types.BankKeeper,
 ) error {
-	actionComp, err := components.NewActionComponent(cdc, sb, logger)
+	actionComp, err := component.NewActionComponent(cdc, sb, logger)
 	if err != nil {
-		return fmt.Errorf("error creating a new actions component: %w", err)
+		return fmt.Errorf("error creating a new action component: %w", err)
 	}
 
-	orbitComp, err := components.NewOrbitComponent(cdc, sb, logger, bankKeeper)
+	forwardingComp, err := component.NewForwardingComponent(cdc, sb, logger, bankKeeper)
 	if err != nil {
-		return fmt.Errorf("error creating a new orbits component: %w", err)
+		return fmt.Errorf("error creating a new forwarding component: %w", err)
 	}
 
-	dispatcherComp, err := components.NewDispatcherComponent(cdc, sb, logger, orbitComp, actionComp)
+	dispatcherComp, err := component.NewDispatcherComponent(
+		cdc,
+		sb,
+		logger,
+		forwardingComp,
+		actionComp,
+	)
 	if err != nil {
 		return fmt.Errorf("error creating a new dispatcher component: %w", err)
 	}
 
-	adapterComp, err := components.NewAdapterComponent(logger, bankKeeper, dispatcherComp)
+	adapterComp, err := component.NewAdapterComponent(logger, bankKeeper, dispatcherComp)
 	if err != nil {
-		return fmt.Errorf("error creating a new adapters component: %w", err)
+		return fmt.Errorf("error creating a new adapter component: %w", err)
 	}
 
 	k.actionComponent = actionComp
-	k.orbitComponent = orbitComp
+	k.forwardingComponent = forwardingComp
 	k.dispatcherComponent = dispatcherComp
 	k.adapterComponent = adapterComp
 

@@ -34,7 +34,7 @@ import (
 	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.ControllerOrbit = &CCTPController{}
+var _ interfaces.ControllerForwarding = &CCTPController{}
 
 // CCTPController is the forwarding controller to perform
 // a CCTP transfer.
@@ -67,7 +67,7 @@ func NewCCTPController(
 	}
 
 	cctpController := CCTPController{
-		logger:         logger.With(types.OrbitControllerName, baseController.Name()),
+		logger:         logger.With(types.ForwardingControllerName, baseController.Name()),
 		BaseController: baseController,
 		handler:        handler,
 	}
@@ -103,7 +103,7 @@ func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.Forward
 		return types.ErrValidation.Wrap(err.Error())
 	}
 
-	err = c.executeOrbit(ctx, packet.TransferAttributes, attr)
+	err = c.executeForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
 		return types.ErrControllerExecution.Wrapf(
 			"an error occurred executing the orbit: %s",
@@ -146,10 +146,10 @@ func (c *CCTPController) ValidateAttributes(attr *forwardingtypes.CCTPAttributes
 	return attr.Validate()
 }
 
-// executeOrbit is the core controller logic which performs
+// executeForwarding is the core controller logic which performs
 // the state transition calling into the CCTP server to
 // initiate a cross-chain transfer.
-func (c *CCTPController) executeOrbit(
+func (c *CCTPController) executeForwarding(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	cctpAttr *forwardingtypes.CCTPAttributes,

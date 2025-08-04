@@ -32,12 +32,12 @@ type Loggable interface {
 	Logger() log.Logger
 }
 
-// OrbitComponent defines the behavior the Orbiter module
+// ForwardingComponent defines the behavior the Orbiter module
 // expected from a type to act as an orbits component.
-type OrbitComponent interface {
+type ForwardingComponent interface {
 	Loggable
 	PacketHandler[*types.ForwardingPacket]
-	RouterProvider[types.ProtocolID, ControllerOrbit]
+	RouterProvider[types.ProtocolID, ControllerForwarding]
 	Pause(context.Context, types.ProtocolID, []string) error
 	Unpause(context.Context, types.ProtocolID, []string) error
 }

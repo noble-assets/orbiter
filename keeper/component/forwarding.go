@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package components
+package component
 
 import (
 	"context"
@@ -34,55 +34,55 @@ import (
 	router "orbiter.dev/types/router"
 )
 
-type OrbitRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerOrbit]
+type ForwardingRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerForwarding]
 
-var _ interfaces.OrbitComponent = &OrbitComponent{}
+var _ interfaces.ForwardingComponent = &Forwarding{}
 
-type OrbitComponent struct {
+type Forwarding struct {
 	logger     log.Logger
-	bankKeeper types.BankKeeperOrbit
-	// router is an orbit controllers router.
-	router OrbitRouter
-	// PausedOrbits keeps track of the paused protocol id and counterparty id combinations.
-	PausedOrbits collections.KeySet[collections.Pair[int32, string]]
+	bankKeeper types.BankKeeperForwarding
+	// router is a forwarding controllers router.
+	router ForwardingRouter
+	// PausedForwardings keeps track of the paused protocol id and counterparty id combinations.
+	PausedForwardings collections.KeySet[collections.Pair[int32, string]]
 	// PausedController keeps track of the paused protocol ids.
 	PausedControllers collections.KeySet[int32]
 }
 
-// NewOrbitComponent returns a validated instance of an orbit component.
-func NewOrbitComponent(
+// NewForwardingComponent returns a validated instance of an forwarding component.
+func NewForwardingComponent(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-	bankKeeper types.BankKeeperOrbit,
-) (*OrbitComponent, error) {
+	bankKeeper types.BankKeeperForwarding,
+) (*Forwarding, error) {
 	if logger == nil {
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	orbitComponent := OrbitComponent{
-		logger:     logger.With(types.ComponentPrefix, types.OrbitComponentName),
+	forwardingComponent := Forwarding{
+		logger:     logger.With(types.ComponentPrefix, types.ForwardingComponentName),
 		bankKeeper: bankKeeper,
 
-		router: router.New[types.ProtocolID, interfaces.ControllerOrbit](),
-		PausedOrbits: collections.NewKeySet(
+		router: router.New[types.ProtocolID, interfaces.ControllerForwarding](),
+		PausedForwardings: collections.NewKeySet(
 			sb,
-			types.PausedOrbitPrefix,
-			types.PausedOrbitsName,
+			types.PausedForwardingPrefix,
+			types.PausedForwardingName,
 			collections.PairKeyCodec(collections.Int32Key, collections.StringKey),
 		),
 		PausedControllers: collections.NewKeySet(
 			sb,
-			types.PausedOrbitControllersPrefix,
-			types.PausedOrbitControllersName,
+			types.PausedForwardingControllersPrefix,
+			types.PausedForwardingControllersName,
 			collections.Int32Key,
 		),
 	}
 
-	return &orbitComponent, orbitComponent.Validate()
+	return &forwardingComponent, forwardingComponent.Validate()
 }
 
-func (c *OrbitComponent) Validate() error {
+func (c *Forwarding) Validate() error {
 	if c.logger == nil {
 		return types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
@@ -96,15 +96,15 @@ func (c *OrbitComponent) Validate() error {
 	return nil
 }
 
-func (c *OrbitComponent) Logger() log.Logger {
+func (c *Forwarding) Logger() log.Logger {
 	return c.logger
 }
 
-func (c *OrbitComponent) Router() OrbitRouter {
+func (c *Forwarding) Router() ForwardingRouter {
 	return c.router
 }
 
-func (c *OrbitComponent) SetRouter(ocr OrbitRouter) error {
+func (c *Forwarding) SetRouter(ocr ForwardingRouter) error {
 	if c.router != nil && c.router.Sealed() {
 		return errors.New("cannot reset a sealed router")
 	}
@@ -115,7 +115,7 @@ func (c *OrbitComponent) SetRouter(ocr OrbitRouter) error {
 	return nil
 }
 
-func (c *OrbitComponent) Pause(
+func (c *Forwarding) Pause(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
@@ -128,7 +128,7 @@ func (c *OrbitComponent) Pause(
 	}
 }
 
-func (c *OrbitComponent) Unpause(
+func (c *Forwarding) Unpause(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
@@ -140,7 +140,10 @@ func (c *OrbitComponent) Unpause(
 	}
 }
 
-func (c *OrbitComponent) HandlePacket(ctx context.Context, packet *types.ForwardingPacket) error {
+func (c *Forwarding) HandlePacket(
+	ctx context.Context,
+	packet *types.ForwardingPacket,
+) error {
 	if err := c.validatePacket(ctx, packet); err != nil {
 		return types.ErrValidation.Wrap(err.Error())
 	}
@@ -156,7 +159,7 @@ func (c *OrbitComponent) HandlePacket(ctx context.Context, packet *types.Forward
 	return controller.HandlePacket(ctx, packet)
 }
 
-func (c *OrbitComponent) ValidateOrbit(
+func (c *Forwarding) ValidateOrbit(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
@@ -168,7 +171,10 @@ func (c *OrbitComponent) ValidateOrbit(
 	return c.validateOrbit(ctx, protocolID, counterpartyID)
 }
 
-func (c *OrbitComponent) validatePacket(ctx context.Context, packet *types.ForwardingPacket) error {
+func (c *Forwarding) validatePacket(
+	ctx context.Context,
+	packet *types.ForwardingPacket,
+) error {
 	err := packet.Validate()
 	if err != nil {
 		return fmt.Errorf("error validating orbit packet: %w", err)
@@ -190,7 +196,7 @@ func (c *OrbitComponent) validatePacket(ctx context.Context, packet *types.Forwa
 	return c.validateInitialConditions(ctx, packet)
 }
 
-func (c *OrbitComponent) validateController(
+func (c *Forwarding) validateController(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -208,7 +214,7 @@ func (c *OrbitComponent) validateController(
 	return nil
 }
 
-func (c *OrbitComponent) validateOrbit(
+func (c *Forwarding) validateOrbit(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
@@ -228,7 +234,7 @@ func (c *OrbitComponent) validateOrbit(
 	return nil
 }
 
-func (c *OrbitComponent) validateInitialConditions(
+func (c *Forwarding) validateInitialConditions(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
@@ -250,7 +256,7 @@ func (c *OrbitComponent) validateInitialConditions(
 	return nil
 }
 
-func (c *OrbitComponent) pauseProtocol(
+func (c *Forwarding) pauseProtocol(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -265,7 +271,7 @@ func (c *OrbitComponent) pauseProtocol(
 	return nil
 }
 
-func (c *OrbitComponent) pauseProtocolDestinations(
+func (c *Forwarding) pauseProtocolDestinations(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
@@ -284,7 +290,7 @@ func (c *OrbitComponent) pauseProtocolDestinations(
 	return nil
 }
 
-func (c *OrbitComponent) unpauseProtocol(
+func (c *Forwarding) unpauseProtocol(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -299,7 +305,7 @@ func (c *OrbitComponent) unpauseProtocol(
 	return nil
 }
 
-func (c *OrbitComponent) unpauseProtocolDestinations(
+func (c *Forwarding) unpauseProtocolDestinations(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,

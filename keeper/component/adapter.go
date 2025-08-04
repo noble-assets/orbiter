@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package components
+package component
 
 import (
 	"context"
@@ -35,9 +35,9 @@ import (
 
 type AdapterRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerAdapter]
 
-var _ interfaces.AdapterComponent = &AdapterComponent{}
+var _ interfaces.AdapterComponent = &Adapter{}
 
-type AdapterComponent struct {
+type Adapter struct {
 	logger log.Logger
 	// router is an adapter controllers router.
 	router     AdapterRouter
@@ -49,12 +49,12 @@ func NewAdapterComponent(
 	logger log.Logger,
 	bankKeeper types.BankKeeperAdapter,
 	dispatcher interfaces.PayloadDispatcher,
-) (*AdapterComponent, error) {
+) (*Adapter, error) {
 	if logger == nil {
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	adaptersKeeper := AdapterComponent{
+	adaptersKeeper := Adapter{
 		logger:     logger.With(types.ComponentPrefix, types.AdaptersComponentName),
 		router:     router.New[types.ProtocolID, interfaces.ControllerAdapter](),
 		bankKeeper: bankKeeper,
@@ -65,7 +65,7 @@ func NewAdapterComponent(
 }
 
 // Validate returns an error if the component instance is not valid.
-func (c *AdapterComponent) Validate() error {
+func (c *Adapter) Validate() error {
 	if c.logger == nil {
 		return types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
@@ -82,15 +82,15 @@ func (c *AdapterComponent) Validate() error {
 	return nil
 }
 
-func (c *AdapterComponent) Logger() log.Logger {
+func (c *Adapter) Logger() log.Logger {
 	return c.logger
 }
 
-func (c *AdapterComponent) Router() AdapterRouter {
+func (c *Adapter) Router() AdapterRouter {
 	return c.router
 }
 
-func (c *AdapterComponent) SetRouter(ar AdapterRouter) error {
+func (c *Adapter) SetRouter(ar AdapterRouter) error {
 	if c.router != nil && c.router.Sealed() {
 		return errors.New("cannot reset a sealed router")
 	}
@@ -102,7 +102,7 @@ func (c *AdapterComponent) SetRouter(ar AdapterRouter) error {
 }
 
 // ParsePayload implements types.PayloadAdapter.
-func (c *AdapterComponent) ParsePayload(
+func (c *Adapter) ParsePayload(
 	id types.ProtocolID,
 	payloadBz []byte,
 ) (bool, *types.Payload, error) {
@@ -115,7 +115,7 @@ func (c *AdapterComponent) ParsePayload(
 }
 
 // BeforeTransferHook implements types.PayloadAdapter.
-func (c *AdapterComponent) BeforeTransferHook(
+func (c *Adapter) BeforeTransferHook(
 	ctx context.Context,
 	sourceOrbitID types.OrbitID,
 	payload *types.Payload,
@@ -133,7 +133,7 @@ func (c *AdapterComponent) BeforeTransferHook(
 }
 
 // AfterTransferHook implements types.PayloadAdapter.
-func (c *AdapterComponent) AfterTransferHook(
+func (c *Adapter) AfterTransferHook(
 	ctx context.Context,
 	sourceOrbitID types.OrbitID,
 	payload *types.Payload,
@@ -166,7 +166,7 @@ func (c *AdapterComponent) AfterTransferHook(
 }
 
 // ProcessPayload implements types.PayloadAdapter.
-func (c *AdapterComponent) ProcessPayload(
+func (c *Adapter) ProcessPayload(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	payload *types.Payload,
@@ -177,7 +177,7 @@ func (c *AdapterComponent) ProcessPayload(
 // clearOrbiterBalances sends all balances of the orbiter module account to
 // a sub-account. This method allows to start a forwarding with the module holding
 // only the coins the received transaction is transferring.
-func (c *AdapterComponent) clearOrbiterBalances(ctx context.Context) error {
+func (c *Adapter) clearOrbiterBalances(ctx context.Context) error {
 	coins := c.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
 	if coins.IsZero() {
 		return nil
@@ -186,7 +186,7 @@ func (c *AdapterComponent) clearOrbiterBalances(ctx context.Context) error {
 	return c.bankKeeper.SendCoins(ctx, types.ModuleAddress, types.DustCollectorAddress, coins)
 }
 
-func (c *AdapterComponent) validateModuleBalance(coins sdk.Coins) error {
+func (c *Adapter) validateModuleBalance(coins sdk.Coins) error {
 	if coins.IsZero() {
 		return errors.New("expected orbiter module to hold coins after transfer")
 	}

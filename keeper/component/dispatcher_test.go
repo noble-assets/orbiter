@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package components_test
+package component_test
 
 import (
 	"testing"
@@ -29,7 +29,7 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/keeper/components"
+	"orbiter.dev/keeper/component"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/types"
 	"orbiter.dev/types/interfaces"
@@ -50,7 +50,7 @@ func TestNewDispatcherComponent(t *testing.T) {
 			name:           "success - passing all correct inputs",
 			codec:          deps.EncCfg.Codec,
 			logger:         deps.Logger,
-			OrbitsHandler:  &mocks.OrbitsHandler{},
+			OrbitsHandler:  &mocks.ForwardingHandler{},
 			ActionsHandler: &mocks.ActionsHandler{},
 			expError:       "",
 		},
@@ -58,7 +58,7 @@ func TestNewDispatcherComponent(t *testing.T) {
 
 	for _, tc := range testCases {
 		sb := collections.NewSchemaBuilder(deps.StoreService)
-		_, err := components.NewDispatcherComponent(
+		_, err := component.NewDispatcherComponent(
 			tc.codec,
 			sb,
 			tc.logger,
@@ -80,35 +80,35 @@ func TestNewDispatcherComponent(t *testing.T) {
 
 func TestValidate_DispatcherComponent(t *testing.T) {
 	testCases := []struct {
-		name           string
-		OrbitsHandler  interfaces.PacketHandler[*types.ForwardingPacket]
-		ActionsHandler interfaces.PacketHandler[*types.ActionPacket]
-		expError       string
+		name              string
+		ForwardingHandler interfaces.PacketHandler[*types.ForwardingPacket]
+		ActionHandler     interfaces.PacketHandler[*types.ActionPacket]
+		expError          string
 	}{
 		{
-			name:           "success - all mandatory fields are set",
-			OrbitsHandler:  &mocks.OrbitsHandler{},
-			ActionsHandler: &mocks.ActionsHandler{},
-			expError:       "",
+			name:              "success - all mandatory fields are set",
+			ForwardingHandler: &mocks.ForwardingHandler{},
+			ActionHandler:     &mocks.ActionsHandler{},
+			expError:          "",
 		},
 		{
-			name:           "error - nil orbits handler",
-			OrbitsHandler:  nil,
-			ActionsHandler: &mocks.ActionsHandler{},
-			expError:       "cannot be nil",
+			name:              "error - nil orbits handler",
+			ForwardingHandler: nil,
+			ActionHandler:     &mocks.ActionsHandler{},
+			expError:          "cannot be nil",
 		},
 		{
-			name:           "error - nil actions handler",
-			OrbitsHandler:  &mocks.OrbitsHandler{},
-			ActionsHandler: nil,
-			expError:       "cannot be nil",
+			name:              "error - nil actions handler",
+			ForwardingHandler: &mocks.ForwardingHandler{},
+			ActionHandler:     nil,
+			expError:          "cannot be nil",
 		},
 	}
 
 	for _, tc := range testCases {
-		dispatcher := components.DispatcherComponent{
-			OrbitHandler:  tc.OrbitsHandler,
-			ActionHandler: tc.ActionsHandler,
+		dispatcher := component.Dispatcher{
+			ForwardingHandler: tc.ForwardingHandler,
+			ActionHandler:     tc.ActionHandler,
 		}
 		err := dispatcher.Validate()
 

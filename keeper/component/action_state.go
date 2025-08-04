@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package components
+package component
 
 import (
 	"context"
@@ -26,11 +26,11 @@ import (
 	"orbiter.dev/types"
 )
 
-func (c *ActionComponent) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
+func (c *Action) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
 	return c.PausedControllers.Has(ctx, int32(id))
 }
 
-func (c *ActionComponent) SetPausedController(ctx context.Context, id types.ActionID) error {
+func (c *Action) SetPausedController(ctx context.Context, id types.ActionID) error {
 	paused, err := c.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err
@@ -42,7 +42,7 @@ func (c *ActionComponent) SetPausedController(ctx context.Context, id types.Acti
 	return c.PausedControllers.Set(ctx, int32(id))
 }
 
-func (c *ActionComponent) SetUnpausedController(ctx context.Context, id types.ActionID) error {
+func (c *Action) SetUnpausedController(ctx context.Context, id types.ActionID) error {
 	paused, err := c.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err
