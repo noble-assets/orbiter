@@ -45,7 +45,7 @@ func (o *OrbitController) Name() string {
 }
 
 // HandlePacket implements types.OrbitController.
-func (o *OrbitController) HandlePacket(ctx context.Context, _ *types.OrbitPacket) error {
+func (o *OrbitController) HandlePacket(ctx context.Context, _ *types.ForwardingPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the orbit packet")
 	}

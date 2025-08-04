@@ -26,10 +26,10 @@ import (
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 
-	"orbiter.dev/types/controllers/orbits"
+	"orbiter.dev/types/controller/forwarding"
 )
 
-var _ orbits.CCTPMsgServer = CCTPMsgServer{}
+var _ forwarding.CCTPMsgServer = CCTPMsgServer{}
 
 type CCTPMsgServer struct{}
 

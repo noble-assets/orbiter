@@ -28,7 +28,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"orbiter.dev/controllers/orbits"
+	"orbiter.dev/controller/forwarding"
 	"orbiter.dev/types"
 )
 
@@ -126,11 +126,11 @@ func (m msgServer) ReplaceDepositForBurn(
 		return nil, errors.New("cctp controller not found")
 	}
 
-	cctpController, ok := controller.(*orbits.CCTPController)
+	cctpController, ok := controller.(*forwarding.CCTPController)
 	if !ok {
 		return nil, sdkerrors.ErrInvalidType.Wrapf(
 			"expected %T, got %T",
-			(*orbits.CCTPController)(nil),
+			(*forwarding.CCTPController)(nil),
 			controller,
 		)
 	}

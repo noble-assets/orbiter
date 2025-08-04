@@ -33,16 +33,16 @@ import (
 func (d *DispatcherComponent) UpdateStats(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	orbit *types.Orbit,
+	forwarding *types.Forwarding,
 ) error {
 	if transferAttr == nil {
 		return types.ErrNilPointer.Wrap("received nil transfer attributes")
 	}
-	if orbit == nil {
-		return types.ErrNilPointer.Wrap("received nil orbit")
+	if forwarding == nil {
+		return types.ErrNilPointer.Wrap("received nil forwarding")
 	}
 
-	attr, err := orbit.CachedAttributes()
+	attr, err := forwarding.CachedAttributes()
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (d *DispatcherComponent) UpdateStats(
 	}
 
 	var destOrbitID types.OrbitID
-	if destOrbitID, err = types.NewOrbitID(orbit.ProtocolID(), attr.CounterpartyID()); err != nil {
+	if destOrbitID, err = types.NewOrbitID(forwarding.ProtocolID(), attr.CounterpartyID()); err != nil {
 		return err
 	}
 

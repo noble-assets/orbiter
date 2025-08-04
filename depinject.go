@@ -34,12 +34,12 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	modulev1 "orbiter.dev/api/module/v1"
-	actionsctrl "orbiter.dev/controllers/actions"
-	adaptersctrl "orbiter.dev/controllers/adapters"
-	orbitsctrl "orbiter.dev/controllers/orbits"
+	actionctrl "orbiter.dev/controller/action"
+	adapterctrl "orbiter.dev/controller/adapter"
+	forwardingctrl "orbiter.dev/controller/forwarding"
 	"orbiter.dev/keeper"
 	"orbiter.dev/types"
-	"orbiter.dev/types/controllers/actions"
+	actiontypes "orbiter.dev/types/controller/action"
 )
 
 func init() {
@@ -93,7 +93,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 }
 
 type ComponentsBankKeeper interface {
-	actions.BankKeeper
+	actiontypes.BankKeeper
 }
 
 type ComponentsInputs struct {
@@ -110,7 +110,7 @@ func InjectComponents(in ComponentsInputs) {
 }
 
 func InjectOrbitControllers(in ComponentsInputs) {
-	cctp, err := orbitsctrl.NewCCTPController(
+	cctp, err := forwardingctrl.NewCCTPController(
 		in.Orbiters.OrbitComponent().Logger(),
 		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
 	)
@@ -122,7 +122,7 @@ func InjectOrbitControllers(in ComponentsInputs) {
 }
 
 func InjectActionControllers(in ComponentsInputs) {
-	fee, err := actionsctrl.NewFeeController(
+	fee, err := actionctrl.NewFeeController(
 		in.Orbiters.ActionComponent().Logger(),
 		in.BankKeeper,
 	)
@@ -134,7 +134,7 @@ func InjectActionControllers(in ComponentsInputs) {
 }
 
 func InjectAdapterControllers(in ComponentsInputs) {
-	ibc, err := adaptersctrl.NewIBCAdapter(
+	ibc, err := adapterctrl.NewIBCAdapter(
 		in.Orbiters.Codec(),
 		in.Orbiters.AdapterComponent().Logger(),
 	)

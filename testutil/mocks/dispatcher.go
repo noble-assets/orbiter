@@ -35,8 +35,8 @@ import (
 )
 
 var (
-	_ interfaces.PacketHandler[*types.ActionPacket] = &ActionsHandler{}
-	_ interfaces.PacketHandler[*types.OrbitPacket]  = &OrbitsHandler{}
+	_ interfaces.PacketHandler[*types.ActionPacket]     = &ActionsHandler{}
+	_ interfaces.PacketHandler[*types.ForwardingPacket] = &OrbitsHandler{}
 )
 
 type (
@@ -44,7 +44,7 @@ type (
 	OrbitsHandler  struct{}
 )
 
-func (o *OrbitsHandler) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
+func (o *OrbitsHandler) HandlePacket(ctx context.Context, packet *types.ForwardingPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the orbit packet")
 	}

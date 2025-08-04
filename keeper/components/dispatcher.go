@@ -40,7 +40,7 @@ var _ interfaces.PayloadDispatcher = &DispatcherComponent{}
 type DispatcherComponent struct {
 	logger log.Logger
 	// Packet elements handlers
-	OrbitHandler  interfaces.PacketHandler[*types.OrbitPacket]
+	OrbitHandler  interfaces.PacketHandler[*types.ForwardingPacket]
 	ActionHandler interfaces.PacketHandler[*types.ActionPacket]
 	// Stats
 	DispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, types.AmountDispatched, DispatchedAmountsIndexes]
@@ -53,7 +53,7 @@ func NewDispatcherComponent(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-	orbitHandler interfaces.PacketHandler[*types.OrbitPacket],
+	orbitHandler interfaces.PacketHandler[*types.ForwardingPacket],
 	actionHandler interfaces.PacketHandler[*types.ActionPacket],
 ) (*DispatcherComponent, error) {
 	if cdc == nil {
@@ -131,11 +131,11 @@ func (d *DispatcherComponent) DispatchPayload(
 		return fmt.Errorf("actions dispatch failed: %w", err)
 	}
 
-	if err := d.dispatchOrbit(ctx, transferAttr, payload.Orbit); err != nil {
+	if err := d.dispatchOrbit(ctx, transferAttr, payload.Forwarding); err != nil {
 		return fmt.Errorf("orbit dispatch failed: %w", err)
 	}
 
-	if err := d.UpdateStats(ctx, transferAttr, payload.Orbit); err != nil {
+	if err := d.UpdateStats(ctx, transferAttr, payload.Forwarding); err != nil {
 		d.logger.Error("Error ypdating Orbiter statistics", "error", err.Error())
 	}
 
@@ -179,13 +179,13 @@ func (d *DispatcherComponent) dispatchActions(
 func (d *DispatcherComponent) dispatchOrbit(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	orbit *types.Orbit,
+	forwarding *types.Forwarding,
 ) error {
-	packet, err := types.NewOrbitPacket(transferAttr, orbit)
+	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {
 		return fmt.Errorf(
 			"error creating orbit packet for protocol ID %s: %w",
-			packet.Orbit.ProtocolID(),
+			packet.Forwarding.ProtocolID(),
 			err,
 		)
 	}
@@ -194,7 +194,7 @@ func (d *DispatcherComponent) dispatchOrbit(
 	if err != nil {
 		return fmt.Errorf(
 			"error dispatching orbit packet for protocol %s: %w",
-			packet.Orbit.ProtocolID(),
+			packet.Forwarding.ProtocolID(),
 			err,
 		)
 	}
@@ -215,7 +215,7 @@ func (d *DispatcherComponent) dispatchActionPacket(
 // orbit handler.
 func (d *DispatcherComponent) dispatchOrbitPacket(
 	ctx context.Context,
-	packet *types.OrbitPacket,
+	packet *types.ForwardingPacket,
 ) error {
 	return d.OrbitHandler.HandlePacket(ctx, packet)
 }

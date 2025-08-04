@@ -42,7 +42,7 @@ func TestNewDispatcherComponent(t *testing.T) {
 		name           string
 		codec          codec.Codec
 		logger         log.Logger
-		OrbitsHandler  interfaces.PacketHandler[*types.OrbitPacket]
+		OrbitsHandler  interfaces.PacketHandler[*types.ForwardingPacket]
 		ActionsHandler interfaces.PacketHandler[*types.ActionPacket]
 		expError       string
 	}{
@@ -81,7 +81,7 @@ func TestNewDispatcherComponent(t *testing.T) {
 func TestValidate_DispatcherComponent(t *testing.T) {
 	testCases := []struct {
 		name           string
-		OrbitsHandler  interfaces.PacketHandler[*types.OrbitPacket]
+		OrbitsHandler  interfaces.PacketHandler[*types.ForwardingPacket]
 		ActionsHandler interfaces.PacketHandler[*types.ActionPacket]
 		expError       string
 	}{

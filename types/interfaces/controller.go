@@ -30,7 +30,7 @@ import (
 // controller has to implement.
 type ControllerOrbit interface {
 	Controller[types.ProtocolID]
-	PacketHandler[*types.OrbitPacket]
+	PacketHandler[*types.ForwardingPacket]
 }
 
 // ControllerAction defines the behavior an action packet

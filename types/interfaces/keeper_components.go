@@ -36,7 +36,7 @@ type Loggable interface {
 // expected from a type to act as an orbits component.
 type OrbitComponent interface {
 	Loggable
-	PacketHandler[*types.OrbitPacket]
+	PacketHandler[*types.ForwardingPacket]
 	RouterProvider[types.ProtocolID, ControllerOrbit]
 	Pause(context.Context, types.ProtocolID, []string) error
 	Unpause(context.Context, types.ProtocolID, []string) error

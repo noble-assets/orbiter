@@ -140,16 +140,16 @@ func (c *OrbitComponent) Unpause(
 	}
 }
 
-func (c *OrbitComponent) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
+func (c *OrbitComponent) HandlePacket(ctx context.Context, packet *types.ForwardingPacket) error {
 	if err := c.validatePacket(ctx, packet); err != nil {
 		return types.ErrValidation.Wrap(err.Error())
 	}
 
-	controller, found := c.router.Route(packet.Orbit.ProtocolID())
+	controller, found := c.router.Route(packet.Forwarding.ProtocolID())
 	if !found {
 		return fmt.Errorf(
 			"controller not found for orbit with protocol ID: %s",
-			packet.Orbit.ProtocolID(),
+			packet.Forwarding.ProtocolID(),
 		)
 	}
 
@@ -168,22 +168,22 @@ func (c *OrbitComponent) ValidateOrbit(
 	return c.validateOrbit(ctx, protocolID, counterpartyID)
 }
 
-func (c *OrbitComponent) validatePacket(ctx context.Context, packet *types.OrbitPacket) error {
+func (c *OrbitComponent) validatePacket(ctx context.Context, packet *types.ForwardingPacket) error {
 	err := packet.Validate()
 	if err != nil {
 		return fmt.Errorf("error validating orbit packet: %w", err)
 	}
 
-	attr, err := packet.Orbit.CachedAttributes()
+	attr, err := packet.Forwarding.CachedAttributes()
 	if err != nil {
 		return fmt.Errorf("error getting attributes from orbit packet: %w", err)
 	}
 
-	err = c.ValidateOrbit(ctx, packet.Orbit.ProtocolID(), attr.CounterpartyID())
+	err = c.ValidateOrbit(ctx, packet.Forwarding.ProtocolID(), attr.CounterpartyID())
 	if err != nil {
 		return fmt.Errorf(
 			"error validating orbit controller for protocol ID %s and counterparty ID %s: %w",
-			packet.Orbit.ProtocolID(), attr.CounterpartyID(), err,
+			packet.Forwarding.ProtocolID(), attr.CounterpartyID(), err,
 		)
 	}
 
@@ -230,7 +230,7 @@ func (c *OrbitComponent) validateOrbit(
 
 func (c *OrbitComponent) validateInitialConditions(
 	ctx context.Context,
-	packet *types.OrbitPacket,
+	packet *types.ForwardingPacket,
 ) error {
 	balances := c.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
 

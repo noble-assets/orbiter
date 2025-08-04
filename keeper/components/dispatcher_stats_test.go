@@ -39,7 +39,7 @@ func TestUpdateStats(t *testing.T) {
 		name           string
 		setup          func(context.Context, *components.DispatcherComponent)
 		transferAttr   func() *types.TransferAttributes
-		orbit          func() *types.Orbit
+		forwarding     func() *types.Forwarding
 		expErr         string
 		expAmounts     map[string]types.AmountDispatched
 		expectedCounts uint32
@@ -47,8 +47,8 @@ func TestUpdateStats(t *testing.T) {
 		{
 			name:         "error - nil transfer attributes",
 			transferAttr: func() *types.TransferAttributes { return nil },
-			orbit: func() *types.Orbit {
-				return &types.Orbit{
+			forwarding: func() *types.Forwarding {
+				return &types.Forwarding{
 					ProtocolId: 2,
 					Attributes: nil,
 				}
@@ -56,15 +56,15 @@ func TestUpdateStats(t *testing.T) {
 			expErr: "nil transfer attributes",
 		},
 		{
-			name: "error - nil orbit",
+			name: "error - nil forwarding",
 			transferAttr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 
 				return ta
 			},
-			orbit:  func() *types.Orbit { return nil },
-			expErr: "nil orbit",
+			forwarding: func() *types.Forwarding { return nil },
+			expErr:     "nil forwarding",
 		},
 		{
 			name: "error - destination protocol ID is not supported",
@@ -74,18 +74,18 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			orbit: func() *types.Orbit {
-				attr := &testdata.TestOrbitAttr{
+			forwarding: func() *types.Forwarding {
+				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				orbit := types.Orbit{
+				forwarding := types.Forwarding{
 					ProtocolId:         0,
 					PassthroughPayload: []byte{},
 				}
-				err := orbit.SetAttributes(attr)
+				err := forwarding.SetAttributes(attr)
 				require.NoError(t, err)
 
-				return &orbit
+				return &forwarding
 			},
 			expErr: "id is not supported",
 		},
@@ -97,13 +97,13 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			orbit: func() *types.Orbit {
-				return &types.Orbit{
+			forwarding: func() *types.Forwarding {
+				return &types.Forwarding{
 					ProtocolId: 2,
 					Attributes: nil,
 				}
 			},
-			expErr: "orbit attributes are not set",
+			expErr: "forwarding attributes are not set",
 		},
 		{
 			name: "success - same amount and denom",
@@ -113,11 +113,11 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			orbit: func() *types.Orbit {
-				attr := &testdata.TestOrbitAttr{
+			forwarding: func() *types.Forwarding {
+				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				orbit, err := types.NewOrbit(2, attr, []byte{})
+				orbit, err := types.NewForwarding(2, attr, []byte{})
 				require.NoError(t, err)
 
 				return orbit
@@ -139,11 +139,11 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			orbit: func() *types.Orbit {
-				attr := &testdata.TestOrbitAttr{
+			forwarding: func() *types.Forwarding {
+				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				orbit, err := types.NewOrbit(1, attr, []byte{})
+				orbit, err := types.NewForwarding(1, attr, []byte{})
 				require.NoError(t, err)
 
 				return orbit
@@ -166,11 +166,11 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			orbit: func() *types.Orbit {
-				attr := &testdata.TestOrbitAttr{
+			forwarding: func() *types.Forwarding {
+				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				orbit, err := types.NewOrbit(1, attr, []byte{})
+				orbit, err := types.NewForwarding(1, attr, []byte{})
 				require.NoError(t, err)
 
 				return orbit
@@ -222,14 +222,14 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			orbit: func() *types.Orbit {
-				attr := &testdata.TestOrbitAttr{
+			forwarding: func() *types.Forwarding {
+				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				orbit, err := types.NewOrbit(1, attr, []byte{})
+				forwarding, err := types.NewForwarding(1, attr, []byte{})
 				require.NoError(t, err)
 
-				return orbit
+				return forwarding
 			},
 			expAmounts: map[string]types.AmountDispatched{
 				"uusdc": {
@@ -255,8 +255,8 @@ func TestUpdateStats(t *testing.T) {
 			}
 
 			transferAttr := tC.transferAttr()
-			orbit := tC.orbit()
-			err := dispatcher.UpdateStats(ctx, transferAttr, orbit)
+			forwarding := tC.forwarding()
+			err := dispatcher.UpdateStats(ctx, transferAttr, forwarding)
 
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)
@@ -268,9 +268,9 @@ func TestUpdateStats(t *testing.T) {
 					ProtocolID:     transferAttr.SourceProtocolID(),
 					CounterpartyID: transferAttr.SourceCounterpartyID(),
 				}
-				attr, _ := orbit.CachedAttributes()
+				attr, _ := forwarding.CachedAttributes()
 				destOrbitID := types.OrbitID{
-					ProtocolID:     orbit.ProtocolID(),
+					ProtocolID:     forwarding.ProtocolID(),
 					CounterpartyID: attr.CounterpartyID(),
 				}
 

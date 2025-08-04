@@ -25,8 +25,8 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/controllers/actions"
-	"orbiter.dev/types/controllers/orbits"
+	actionctrl "orbiter.dev/types/controller/action"
+	forwardingctrl "orbiter.dev/types/controller/forwarding"
 )
 
 var amino = codec.NewLegacyAmino()
@@ -44,6 +44,6 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	types.RegisterInterfaces(registry)
 
-	orbits.RegisterImplementations(registry)
-	actions.RegisterImplementations(registry)
+	forwardingctrl.RegisterImplementations(registry)
+	actionctrl.RegisterImplementations(registry)
 }

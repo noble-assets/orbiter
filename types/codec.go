@@ -42,7 +42,7 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 
 	registry.RegisterInterface(
 		"noble.orbiter.v1.OrbitAttributes",
-		(*OrbitAttributes)(nil),
+		(*ForwardingAttributes)(nil),
 	)
 
 	registry.RegisterInterface(

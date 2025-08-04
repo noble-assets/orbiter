@@ -45,11 +45,11 @@ func CreateValidIBCPacketData(sender, receiver, memo string) []byte {
 }
 
 func CreateValidOrbiterPayloadWithActions() string {
-	return `{"orbiter": {"orbit": {"protocol_id": 2, "attributes": { "@type" : "/testpb.TestOrbitAttr", "planet": "earth" }}, "pre_actions": [{"id": 1, "attributes": { "@type" : "/testpb.TestActionAttr", "whatever": "it takes" }}]}}`
+	return `{"orbiter": {"forwarding": {"protocol_id": 2, "attributes": { "@type" : "/testpb.TestForwardingAttr", "planet": "earth" }}, "pre_actions": [{"id": 1, "attributes": { "@type" : "/testpb.TestActionAttr", "whatever": "it takes" }}]}}`
 }
 
 func CreateValidOrbiterPayload() string {
-	return `{"orbiter": {"orbit": {"protocol_id": 2, "attributes": { "@type" : "/testpb.TestOrbitAttr", "planet": "earth" }}}}`
+	return `{"orbiter": {"forwarding": {"protocol_id": 2, "attributes": { "@type" : "/testpb.TestForwardingAttr", "planet": "earth" }}}}`
 }
 
 func CreatePayloadWrapperJSON(t *testing.T) (*types.Payload, string) {
@@ -57,18 +57,18 @@ func CreatePayloadWrapperJSON(t *testing.T) (*types.Payload, string) {
 
 	encCfg := MakeTestEncodingConfig("noble")
 	encCfg.InterfaceRegistry.RegisterImplementations(
-		(*types.OrbitAttributes)(nil),
-		&testdata.TestOrbitAttr{},
+		(*types.ForwardingAttributes)(nil),
+		&testdata.TestForwardingAttr{},
 	)
 
-	orbitAttributes := testdata.TestOrbitAttr{Planet: "venus"}
-	orbit, err := types.NewOrbit(
+	forwardingAttributes := testdata.TestForwardingAttr{Planet: "venus"}
+	forwarding, err := types.NewForwarding(
 		types.PROTOCOL_IBC,
-		&orbitAttributes,
+		&forwardingAttributes,
 		[]byte("payload"),
 	)
 	require.NoError(t, err)
-	payloadWrapper, err := types.NewPayloadWrapper(orbit, []*types.Action{})
+	payloadWrapper, err := types.NewPayloadWrapper(forwarding, []*types.Action{})
 	require.NoError(t, err)
 	bz, err := types.MarshalJSON(encCfg.Codec, payloadWrapper)
 	require.NoError(t, err)
@@ -81,18 +81,18 @@ func CreatePayloadWrapperWithActionJSON(t *testing.T) (*types.Payload, string) {
 
 	encCfg := MakeTestEncodingConfig("noble")
 	encCfg.InterfaceRegistry.RegisterImplementations(
-		(*types.OrbitAttributes)(nil),
-		&testdata.TestOrbitAttr{},
+		(*types.ForwardingAttributes)(nil),
+		&testdata.TestForwardingAttr{},
 	)
 	encCfg.InterfaceRegistry.RegisterImplementations(
 		(*types.ActionAttributes)(nil),
 		&testdata.TestActionAttr{},
 	)
 
-	orbitAttributes := testdata.TestOrbitAttr{Planet: "venus"}
-	orbit, err := types.NewOrbit(
+	forwardingAttributes := testdata.TestForwardingAttr{Planet: "venus"}
+	forwarding, err := types.NewForwarding(
 		types.PROTOCOL_IBC,
-		&orbitAttributes,
+		&forwardingAttributes,
 		[]byte("payload"),
 	)
 	require.NoError(t, err)
@@ -105,7 +105,7 @@ func CreatePayloadWrapperWithActionJSON(t *testing.T) (*types.Payload, string) {
 	action2, err := types.NewAction(types.ACTION_FEE, &actionAttributes2)
 	require.NoError(t, err)
 
-	payloadWrapper, err := types.NewPayloadWrapper(orbit, []*types.Action{
+	payloadWrapper, err := types.NewPayloadWrapper(forwarding, []*types.Action{
 		action1,
 		action2,
 	})
