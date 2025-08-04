@@ -41,9 +41,9 @@ func (m msgServer) PauseProtocol(
 		return nil, err
 	}
 
-	orbitComp := m.ForwardingComponent()
+	forwardingComp := m.ForwardingComponent()
 
-	if err := orbitComp.Pause(ctx, msg.ProtocolId, nil); err != nil {
+	if err := forwardingComp.Pause(ctx, msg.ProtocolId, nil); err != nil {
 		return nil, types.ErrUnableToPause.Wrapf(
 			"protocol: %s", err.Error(),
 		)
@@ -61,9 +61,9 @@ func (m msgServer) PauseCounterparties(
 		return nil, err
 	}
 
-	orbitComp := m.ForwardingComponent()
+	forwardingComp := m.ForwardingComponent()
 
-	if err := orbitComp.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
+	if err := forwardingComp.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
 		return nil, types.ErrUnableToPause.Wrapf(
 			"counterparties: %s", err.Error(),
 		)
@@ -81,9 +81,9 @@ func (m msgServer) UnpauseProtocol(
 		return nil, err
 	}
 
-	orbitComp := m.ForwardingComponent()
+	forwardingComp := m.ForwardingComponent()
 
-	if err := orbitComp.Unpause(ctx, msg.ProtocolId, nil); err != nil {
+	if err := forwardingComp.Unpause(ctx, msg.ProtocolId, nil); err != nil {
 		return nil, types.ErrUnableToUnpause.Wrapf(
 			"protocol: %s", err.Error(),
 		)
@@ -101,9 +101,9 @@ func (m msgServer) UnpauseCounterparties(
 		return nil, err
 	}
 
-	orbitComp := m.ForwardingComponent()
+	forwardingComp := m.ForwardingComponent()
 
-	if err := orbitComp.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
+	if err := forwardingComp.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
 		return nil, types.ErrUnableToUnpause.Wrapf(
 			"counterparties: %s", err.Error(),
 		)

@@ -106,7 +106,7 @@ func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.Forward
 	err = c.executeForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
 		return types.ErrControllerExecution.Wrapf(
-			"an error occurred executing the orbit: %s",
+			"an error occurred executing the forwarding: %s",
 			err.Error(),
 		)
 	}

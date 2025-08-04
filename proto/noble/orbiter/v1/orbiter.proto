@@ -23,7 +23,7 @@ message Payload {
   // and executes before completing the cross-chain routing.
   repeated Action pre_actions = 1;
 
-  // orbit contains the required information to complete a cross-chain
+  // forwarding contains the required information to complete a cross-chain
   // routing through an orbiter-supported protocol.
   Forwarding forwarding = 2;
 }

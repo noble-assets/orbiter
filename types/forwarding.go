@@ -84,7 +84,7 @@ func (f *Forwarding) ProtocolID() ProtocolID {
 }
 
 // CachedAttributes returns the attributes interface from the
-// codec Any type. Returns nil if the orbit does not have
+// codec Any type. Returns nil if the forwarding does not have
 // attributes set.
 func (f *Forwarding) CachedAttributes() (ForwardingAttributes, error) {
 	if f == nil {
@@ -109,7 +109,7 @@ func (f *Forwarding) CachedAttributes() (ForwardingAttributes, error) {
 // SetAttributes sets the attributes as codec Any type.
 func (f *Forwarding) SetAttributes(a ForwardingAttributes) error {
 	if f == nil {
-		return ErrNilPointer.Wrap("orbit is a nil pointer")
+		return ErrNilPointer.Wrap("forwarding is a nil pointer")
 	}
 	// The interface we want to pack as any must
 	// implement the proto Message interface.
@@ -133,7 +133,7 @@ func (f *Forwarding) SetAttributes(a ForwardingAttributes) error {
 // an Any type into an interface registered in the codec.
 func (f *Forwarding) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 	if f == nil {
-		return ErrNilPointer.Wrap("orbit is a nil pointer")
+		return ErrNilPointer.Wrap("forwarding is a nil pointer")
 	}
 
 	var attributes ForwardingAttributes

@@ -26,7 +26,7 @@ import (
 	"orbiter.dev/types"
 )
 
-// ControllerForwarding defines the behavior an orbit packet
+// ControllerForwarding defines the behavior a forwarding packet
 // controller has to implement.
 type ControllerForwarding interface {
 	Controller[types.ProtocolID]

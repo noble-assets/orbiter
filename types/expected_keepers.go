@@ -34,7 +34,7 @@ type BankKeeper interface {
 }
 
 // BankKeeperForwarding represents the bank behavior expected
-// by the orbit component.
+// by the forwarding component.
 type BankKeeperForwarding interface {
 	// Queries
 	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins

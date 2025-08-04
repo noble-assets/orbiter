@@ -92,7 +92,7 @@ func TestValidate_DispatcherComponent(t *testing.T) {
 			expError:          "",
 		},
 		{
-			name:              "error - nil orbits handler",
+			name:              "error - nil forwarding handler",
 			ForwardingHandler: nil,
 			ActionHandler:     &mocks.ActionsHandler{},
 			expError:          "cannot be nil",

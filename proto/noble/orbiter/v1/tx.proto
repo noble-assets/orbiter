@@ -17,11 +17,11 @@ service Msg {
 
   // Orbits
 
-  // PauseProtocol pauses an entire orbit protocol.
+  // PauseProtocol pauses an entire forwarding protocol.
   rpc PauseProtocol(MsgPauseProtocol) returns (MsgPauseProtocolResponse);
   // PauseCounterparties pauses specific counterparty pairs for a protocol.
   rpc PauseCounterparties(MsgPauseCounterparties) returns (MsgPauseCounterpartiesResponse);
-  // UnpauseProtocol resumes an entire orbit protocol.
+  // UnpauseProtocol resumes an entire forwarding protocol.
   rpc UnpauseProtocol(MsgUnpauseProtocol) returns (MsgUnpauseProtocolResponse);
   // UnpauseCounterparties resumes specific counterparty pairs for a protocol.
   rpc UnpauseCounterparties(MsgUnpauseCounterparties) returns (MsgUnpauseCounterpartiesResponse);
@@ -37,7 +37,7 @@ service Msg {
   rpc UnpauseAction(MsgUnpauseAction) returns (MsgUnpauseActionResponse);
 }
 
-// MsgPauseProtocol pauses an entire orbit protocol.
+// MsgPauseProtocol pauses an entire forwarding protocol.
 message MsgPauseProtocol {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "orbiter/PauseProtocol";
@@ -74,7 +74,7 @@ message MsgPauseCounterparties {
 // from a MsgPauseCounterparties request.
 message MsgPauseCounterpartiesResponse {}
 
-// MsgUnpauseProtocol resumes an entire orbit protocol.
+// MsgUnpauseProtocol resumes an entire forwarding protocol.
 message MsgUnpauseProtocol {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "orbiter/UnpauseProtocol";

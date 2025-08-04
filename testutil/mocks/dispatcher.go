@@ -49,7 +49,7 @@ func (o *ForwardingHandler) HandlePacket(
 	packet *types.ForwardingPacket,
 ) error {
 	if CheckIfFailing(ctx) {
-		return errors.New("error dispatching the orbit packet")
+		return errors.New("error dispatching the forwarding packet")
 	}
 
 	return nil

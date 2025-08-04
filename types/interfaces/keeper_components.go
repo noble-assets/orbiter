@@ -33,7 +33,7 @@ type Loggable interface {
 }
 
 // ForwardingComponent defines the behavior the Orbiter module
-// expected from a type to act as an orbits component.
+// expected from a type to act as a forwardings component.
 type ForwardingComponent interface {
 	Loggable
 	PacketHandler[*types.ForwardingPacket]

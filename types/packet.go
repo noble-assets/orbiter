@@ -253,17 +253,17 @@ type ForwardingPacket struct {
 }
 
 // NewForwardingPacket returns a pointer to a validated instance of the
-// orbit packet.
+// forwarding packet.
 func NewForwardingPacket(
 	transferAttr *TransferAttributes,
 	forwarding *Forwarding,
 ) (*ForwardingPacket, error) {
-	orbitPacket := ForwardingPacket{
+	forwardingPacket := ForwardingPacket{
 		TransferAttributes: transferAttr,
 		Forwarding:         forwarding,
 	}
 
-	return &orbitPacket, orbitPacket.Validate()
+	return &forwardingPacket, forwardingPacket.Validate()
 }
 
 // Validate returns an error if the instance is not valid.
