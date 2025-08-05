@@ -77,7 +77,7 @@ type Payload struct {
 	// pre_actions are a list of actions the orbiter module can interpret
 	// and executes before completing the cross-chain routing.
 	PreActions []*Action `protobuf:"bytes,1,rep,name=pre_actions,json=preActions,proto3" json:"pre_actions,omitempty"`
-	// orbit contains the required information to complete a cross-chain
+	// forwarding contains the required information to complete a cross-chain
 	// routing through an orbiter-supported protocol.
 	Forwarding *Forwarding `protobuf:"bytes,2,opt,name=forwarding,proto3" json:"forwarding,omitempty"`
 }

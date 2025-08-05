@@ -34,11 +34,11 @@ const (
 //
 // Msg defines the RPC methods for the Orbiter module.
 type MsgClient interface {
-	// PauseProtocol pauses an entire orbit protocol.
+	// PauseProtocol pauses an entire forwarding protocol.
 	PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error)
 	// PauseCounterparties pauses specific counterparty pairs for a protocol.
 	PauseCounterparties(ctx context.Context, in *MsgPauseCounterparties, opts ...grpc.CallOption) (*MsgPauseCounterpartiesResponse, error)
-	// UnpauseProtocol resumes an entire orbit protocol.
+	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error)
 	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
 	UnpauseCounterparties(ctx context.Context, in *MsgUnpauseCounterparties, opts ...grpc.CallOption) (*MsgUnpauseCounterpartiesResponse, error)
@@ -134,11 +134,11 @@ func (c *msgClient) UnpauseAction(ctx context.Context, in *MsgUnpauseAction, opt
 //
 // Msg defines the RPC methods for the Orbiter module.
 type MsgServer interface {
-	// PauseProtocol pauses an entire orbit protocol.
+	// PauseProtocol pauses an entire forwarding protocol.
 	PauseProtocol(context.Context, *MsgPauseProtocol) (*MsgPauseProtocolResponse, error)
 	// PauseCounterparties pauses specific counterparty pairs for a protocol.
 	PauseCounterparties(context.Context, *MsgPauseCounterparties) (*MsgPauseCounterpartiesResponse, error)
-	// UnpauseProtocol resumes an entire orbit protocol.
+	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error)
 	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
 	UnpauseCounterparties(context.Context, *MsgUnpauseCounterparties) (*MsgUnpauseCounterpartiesResponse, error)

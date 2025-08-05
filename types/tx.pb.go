@@ -31,7 +31,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgPauseProtocol pauses an entire orbit protocol.
+// MsgPauseProtocol pauses an entire forwarding protocol.
 type MsgPauseProtocol struct {
 	// Address of the signer who is requesting to pause the protocol.
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
@@ -190,7 +190,7 @@ func (m *MsgPauseCounterpartiesResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgPauseCounterpartiesResponse proto.InternalMessageInfo
 
-// MsgUnpauseProtocol resumes an entire orbit protocol.
+// MsgUnpauseProtocol resumes an entire forwarding protocol.
 type MsgUnpauseProtocol struct {
 	// Address of the signer who is requesting to unpause the protocol.
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
@@ -670,11 +670,11 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	// PauseProtocol pauses an entire orbit protocol.
+	// PauseProtocol pauses an entire forwarding protocol.
 	PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error)
 	// PauseCounterparties pauses specific counterparty pairs for a protocol.
 	PauseCounterparties(ctx context.Context, in *MsgPauseCounterparties, opts ...grpc.CallOption) (*MsgPauseCounterpartiesResponse, error)
-	// UnpauseProtocol resumes an entire orbit protocol.
+	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error)
 	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
 	UnpauseCounterparties(ctx context.Context, in *MsgUnpauseCounterparties, opts ...grpc.CallOption) (*MsgUnpauseCounterpartiesResponse, error)
@@ -759,11 +759,11 @@ func (c *msgClient) UnpauseAction(ctx context.Context, in *MsgUnpauseAction, opt
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	// PauseProtocol pauses an entire orbit protocol.
+	// PauseProtocol pauses an entire forwarding protocol.
 	PauseProtocol(context.Context, *MsgPauseProtocol) (*MsgPauseProtocolResponse, error)
 	// PauseCounterparties pauses specific counterparty pairs for a protocol.
 	PauseCounterparties(context.Context, *MsgPauseCounterparties) (*MsgPauseCounterpartiesResponse, error)
-	// UnpauseProtocol resumes an entire orbit protocol.
+	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error)
 	// UnpauseCounterparties resumes specific counterparty pairs for a protocol.
 	UnpauseCounterparties(context.Context, *MsgUnpauseCounterparties) (*MsgUnpauseCounterpartiesResponse, error)

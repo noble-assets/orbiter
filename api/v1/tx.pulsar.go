@@ -6261,7 +6261,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// MsgPauseProtocol pauses an entire orbit protocol.
+// MsgPauseProtocol pauses an entire forwarding protocol.
 type MsgPauseProtocol struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -6417,7 +6417,7 @@ func (*MsgPauseCounterpartiesResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_v1_tx_proto_rawDescGZIP(), []int{3}
 }
 
-// MsgUnpauseProtocol resumes an entire orbit protocol.
+// MsgUnpauseProtocol resumes an entire forwarding protocol.
 type MsgUnpauseProtocol struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
