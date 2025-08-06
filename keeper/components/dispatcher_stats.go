@@ -63,7 +63,10 @@ func (d *DispatcherComponent) UpdateStats(
 	// and outgoing amount, which could be different too, but are not part
 	// of the key. If the denom changed, we have to set two values with
 	// a different key.
-	denomDispatchedAmounts := d.BuildDenomDispatchedAmounts(transferAttr)
+	denomDispatchedAmounts, err := d.BuildDenomDispatchedAmounts(transferAttr)
+	if err != nil {
+		return err
+	}
 
 	for _, dda := range denomDispatchedAmounts {
 		if err := d.updateDispatchedAmountStats(ctx, &sourceOrbitID, &destOrbitID, dda.Denom, dda.AmountDispatched); err != nil {
@@ -152,7 +155,10 @@ type denomDispatchedAmount struct {
 // extract the amounts dispatched that have to be dumped to state.
 func (d *DispatcherComponent) BuildDenomDispatchedAmounts(
 	transferAttributes *types.TransferAttributes,
-) []denomDispatchedAmount {
+) ([]denomDispatchedAmount, error) {
+	if transferAttributes == nil {
+		return nil, types.ErrNilPointer.Wrap("received nil transfer attributes")
+	}
 	sourceDenom := transferAttributes.SourceDenom()
 	sourceAmount := transferAttributes.SourceAmount()
 	destDenom := transferAttributes.DestinationDenom()
@@ -186,5 +192,5 @@ func (d *DispatcherComponent) BuildDenomDispatchedAmounts(
 		})
 	}
 
-	return ddas
+	return ddas, nil
 }

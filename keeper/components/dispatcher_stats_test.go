@@ -295,8 +295,14 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 	testCases := []struct {
 		name               string
 		transferAttributes func() *types.TransferAttributes
-		expectedAmounts    map[string]types.AmountDispatched
+		expAmounts         map[string]types.AmountDispatched
+		expErr             string
 	}{
+		{
+			name:               "error - nil transfer attributes",
+			transferAttributes: func() *types.TransferAttributes { return nil },
+			expErr:             "nil transfer attributes",
+		},
 		{
 			name: "single entry with same denoms",
 			transferAttributes: func() *types.TransferAttributes {
@@ -305,7 +311,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 
 				return ta
 			},
-			expectedAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]types.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(100),
@@ -321,7 +327,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 
 				return ta
 			},
-			expectedAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]types.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(50),
@@ -338,7 +344,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 
 				return ta
 			},
-			expectedAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]types.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.ZeroInt(),
@@ -355,22 +361,27 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 		t.Run(tC.name, func(t *testing.T) {
 			dispatcher, _ := mocks.NewDispatcherComponent(t)
 
-			dda := dispatcher.BuildDenomDispatchedAmounts(tC.transferAttributes())
-			expectedEntries := len(tC.expectedAmounts)
+			ddas, err := dispatcher.BuildDenomDispatchedAmounts(tC.transferAttributes())
 
-			require.Len(t, dda, expectedEntries)
+			if tC.expErr != "" {
+				require.ErrorContains(t, err, tC.expErr)
+			} else {
+				expectedEntries := len(tC.expAmounts)
 
-			// Convert result to map for easier verification
-			ddaMap := make(map[string]types.AmountDispatched, len(dda))
-			for _, entry := range dda {
-				ddaMap[entry.Denom] = entry.AmountDispatched
-			}
+				require.Len(t, ddas, expectedEntries)
 
-			for denom, expectedAmount := range tC.expectedAmounts {
-				actualAmount, exists := ddaMap[denom]
-				require.True(t, exists)
-				require.Equal(t, expectedAmount.Incoming, actualAmount.Incoming)
-				require.Equal(t, expectedAmount.Outgoing, actualAmount.Outgoing)
+				// Convert result to map for easier verification
+				ddaMap := make(map[string]types.AmountDispatched, len(ddas))
+				for _, entry := range ddas {
+					ddaMap[entry.Denom] = entry.AmountDispatched
+				}
+
+				for denom, expectedAmount := range tC.expAmounts {
+					actualAmount, exists := ddaMap[denom]
+					require.True(t, exists)
+					require.Equal(t, expectedAmount.Incoming, actualAmount.Incoming)
+					require.Equal(t, expectedAmount.Outgoing, actualAmount.Outgoing)
+				}
 			}
 		})
 	}
