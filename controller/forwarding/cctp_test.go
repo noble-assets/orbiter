@@ -94,7 +94,7 @@ func TestHandlePacket(t *testing.T) {
 		{
 			name: "success - valid packet processing",
 			packet: func() *types.ForwardingPacket {
-				orbit, err := forwardingtypes.NewCCTPForwarding(
+				forwarding, err := forwardingtypes.NewCCTPForwarding(
 					1,
 					[]byte("recipient"),
 					[]byte("caller"),
@@ -103,7 +103,7 @@ func TestHandlePacket(t *testing.T) {
 				require.NoError(t, err)
 
 				return &types.ForwardingPacket{
-					Forwarding:         orbit,
+					Forwarding:         forwarding,
 					TransferAttributes: transferAttr,
 				}
 			},
@@ -114,7 +114,7 @@ func TestHandlePacket(t *testing.T) {
 				return context.WithValue(context.Background(), mocks.FailingContextKey, true)
 			},
 			packet: func() *types.ForwardingPacket {
-				orbit, err := forwardingtypes.NewCCTPForwarding(
+				forwarding, err := forwardingtypes.NewCCTPForwarding(
 					1,
 					[]byte("recipient"),
 					[]byte("caller"),
@@ -123,7 +123,7 @@ func TestHandlePacket(t *testing.T) {
 				require.NoError(t, err)
 
 				return &types.ForwardingPacket{
-					Forwarding:         orbit,
+					Forwarding:         forwarding,
 					TransferAttributes: transferAttr,
 				}
 			},
@@ -172,26 +172,26 @@ func TestExtractAttributes(t *testing.T) {
 					[]byte("caller"),
 				)
 				require.NoError(t, err)
-				orbit := &types.Forwarding{
+				forwarding := &types.Forwarding{
 					ProtocolId: types.PROTOCOL_CCTP,
 				}
-				err = orbit.SetAttributes(attr)
+				err = forwarding.SetAttributes(attr)
 				require.NoError(t, err)
 
-				return orbit
+				return forwarding
 			},
 		},
 		{
 			name: "error - wrong attributes",
 			forwarding: func() *types.Forwarding {
 				invalidAttr := testdata.TestForwardingAttr{}
-				orbit := &types.Forwarding{
+				forwarding := &types.Forwarding{
 					ProtocolId: types.PROTOCOL_CCTP,
 				}
-				err := orbit.SetAttributes(&invalidAttr)
+				err := forwarding.SetAttributes(&invalidAttr)
 				require.NoError(t, err)
 
-				return orbit
+				return forwarding
 			},
 			expError: "expected *forwarding.CCTPAttributes",
 		},

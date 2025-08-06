@@ -269,7 +269,7 @@ func NewForwardingPacket(
 // Validate returns an error if the instance is not valid.
 func (p *ForwardingPacket) Validate() error {
 	if p == nil {
-		return ErrNilPointer.Wrap("orbit packet is not set")
+		return ErrNilPointer.Wrap("forwarding packet is not set")
 	}
 
 	err := p.Forwarding.Validate()
