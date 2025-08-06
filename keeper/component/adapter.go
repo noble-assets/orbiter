@@ -45,7 +45,7 @@ type Adapter struct {
 	router     AdapterRouter
 	bankKeeper types.BankKeeperAdapter
 	dispatcher interfaces.PayloadDispatcher
-	Params     collections.Item[types.AdapterParams]
+	params     collections.Item[types.AdapterParams]
 }
 
 func NewAdapter(
@@ -70,7 +70,7 @@ func NewAdapter(
 		router:     router.New[types.ProtocolID, interfaces.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
-		Params: collections.NewItem(
+		params: collections.NewItem(
 			sb,
 			types.AdapterParamsPrefix,
 			types.AdapterParamsName,
@@ -195,6 +195,25 @@ func (c *Adapter) ProcessPayload(
 	return c.dispatcher.DispatchPayload(ctx, transferAttr, payload)
 }
 
+// CheckPassthroughPayloadSize checks that the passthrough payload
+// size is not higher than the maximum allowed.
+func (c *AdapterComponent) CheckPassthroughPayloadSize(
+	ctx context.Context,
+	passthroughPayload []byte,
+) error {
+	params := c.GetParams(ctx)
+
+	if len(passthroughPayload) > int(params.MaxPassthroughPayloadSize) {
+		return fmt.Errorf(
+			"passthrough payload size %d > max allowed %d bytes",
+			len(passthroughPayload),
+			params.MaxPassthroughPayloadSize,
+		)
+	}
+
+	return nil
+}
+
 // commonBeforeTransferHook groups all the logic that must be executed
 // before completing the cross-chain transfer, regardless the incoming
 // protocol used.
@@ -202,7 +221,7 @@ func (c *Adapter) commonBeforeTransferHook(
 	ctx context.Context,
 	passthroughPayload []byte,
 ) error {
-	if err := c.checkPassthroughPayloadSize(ctx, passthroughPayload); err != nil {
+	if err := c.CheckPassthroughPayloadSize(ctx, passthroughPayload); err != nil {
 		return err
 	}
 
@@ -213,11 +232,11 @@ func (c *Adapter) commonBeforeTransferHook(
 	return nil
 }
 
-func (c *Adapter) checkPassthroughPayloadSize(
+func (c *Adapter) CheckPassthroughPayloadSize(
 	ctx context.Context,
 	passthroughPayload []byte,
 ) error {
-	params, err := c.Params.Get(ctx)
+	params, err := c.params.Get(ctx)
 	if err != nil {
 		return fmt.Errorf("error getting %s component params", types.AdaptersComponentName)
 	}
