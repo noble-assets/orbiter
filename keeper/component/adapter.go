@@ -237,6 +237,44 @@ func (a *Adapter) commonBeforeTransferHook(
 	return nil
 }
 
+// commonBeforeTransferHook groups all the logic that must be executed
+// before completing the cross-chain transfer, regardless the incoming
+// protocol used.
+func (c *Adapter) commonBeforeTransferHook(
+	ctx context.Context,
+	passthroughPayload []byte,
+) error {
+	if err := c.checkPassthroughPayloadSize(ctx, passthroughPayload); err != nil {
+		return err
+	}
+
+	if err := c.clearOrbiterBalances(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Adapter) checkPassthroughPayloadSize(
+	ctx context.Context,
+	passthroughPayload []byte,
+) error {
+	params, err := c.Params.Get(ctx)
+	if err != nil {
+		return fmt.Errorf("error getting %s component params", types.AdaptersComponentName)
+	}
+
+	if len(passthroughPayload) > int(params.MaxPassthroughPayloadSize) {
+		return fmt.Errorf(
+			"passthrough payload size %d is higher than maximum allowed %d",
+			len(passthroughPayload),
+			params.MaxPassthroughPayloadSize,
+		)
+	}
+
+	return nil
+}
+
 // clearOrbiterBalances sends all balances of the orbiter module account to
 // a sub-account. This method allows to start a forwarding with the module holding
 // only the coins the received transaction is transferring.
