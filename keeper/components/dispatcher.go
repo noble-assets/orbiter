@@ -135,7 +135,7 @@ func (d *DispatcherComponent) DispatchPayload(
 		return fmt.Errorf("orbit dispatch failed: %w", err)
 	}
 
-	if err := d.updateStats(ctx, transferAttr, payload.Orbit); err != nil {
+	if err := d.UpdateStats(ctx, transferAttr, payload.Orbit); err != nil {
 		d.logger.Error("Error ypdating Orbiter statistics", "error", err.Error())
 	}
 

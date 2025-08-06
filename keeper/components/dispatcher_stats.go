@@ -29,31 +29,31 @@ import (
 	"orbiter.dev/types"
 )
 
-// updateStats updates all the statistics the module keep track of.
-// CONTRACT: transferAttr and orbit are not nil pointers.
-func (d *DispatcherComponent) updateStats(
+// UpdateStats updates all the statistics the module keep track of.
+func (d *DispatcherComponent) UpdateStats(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	orbit *types.Orbit,
 ) error {
+	if transferAttr == nil {
+		return types.ErrNilPointer.Wrap("received nil transfer attributes")
+	}
+	if orbit == nil {
+		return types.ErrNilPointer.Wrap("received nil orbit")
+	}
+
 	attr, err := orbit.CachedAttributes()
 	if err != nil {
 		return err
 	}
 
-	var sourceAttr types.OrbitID
-	if sourceAttr, err = types.NewOrbitID(
-		transferAttr.SourceProtocolID(),
-		transferAttr.SourceCounterpartyID(),
-	); err != nil {
+	var sourceOrbitID types.OrbitID
+	if sourceOrbitID, err = types.NewOrbitID(transferAttr.SourceProtocolID(), transferAttr.SourceCounterpartyID()); err != nil {
 		return err
 	}
 
-	var destinationAttr types.OrbitID
-	if destinationAttr, err = types.NewOrbitID(
-		orbit.ProtocolID(),
-		attr.CounterpartyID(),
-	); err != nil {
+	var destOrbitID types.OrbitID
+	if destOrbitID, err = types.NewOrbitID(orbit.ProtocolID(), attr.CounterpartyID()); err != nil {
 		return err
 	}
 
@@ -62,16 +62,16 @@ func (d *DispatcherComponent) updateStats(
 	// If the denom is not changed, we can set a single type with incoming
 	// and outgoing amount, which could be different too, but are not part
 	// of the key. If the denom changed, we have to set two values with
-	// a different denom.
-	denomDispatchedAmounts := d.buildDenomDispatchedAmounts(transferAttr)
+	// a different key.
+	denomDispatchedAmounts := d.BuildDenomDispatchedAmounts(transferAttr)
 
 	for _, dda := range denomDispatchedAmounts {
-		if err := d.updateDispatchedAmountStats(ctx, &sourceAttr, &destinationAttr, dda.Denom, dda.AmountDispatched); err != nil {
-			return fmt.Errorf("update incoming stats failure: %w", err)
+		if err := d.updateDispatchedAmountStats(ctx, &sourceOrbitID, &destOrbitID, dda.Denom, dda.AmountDispatched); err != nil {
+			return fmt.Errorf("update dispatched amount stats failure: %w", err)
 		}
 	}
 
-	if err := d.updateDispatchedCountsStats(ctx, &sourceAttr, &destinationAttr); err != nil {
+	if err := d.updateDispatchedCountsStats(ctx, &sourceOrbitID, &destOrbitID); err != nil {
 		return fmt.Errorf("update dispatch counts stats failure: %w", err)
 	}
 
@@ -148,9 +148,9 @@ type denomDispatchedAmount struct {
 	AmountDispatched types.AmountDispatched
 }
 
-// buildDenomDispatchedAmounts is an helper method used to
+// BuildDenomDispatchedAmounts is an helper method used to
 // extract the amounts dispatched that have to be dumped to state.
-func (d *DispatcherComponent) buildDenomDispatchedAmounts(
+func (d *DispatcherComponent) BuildDenomDispatchedAmounts(
 	transferAttributes *types.TransferAttributes,
 ) []denomDispatchedAmount {
 	sourceDenom := transferAttributes.SourceDenom()
@@ -158,8 +158,9 @@ func (d *DispatcherComponent) buildDenomDispatchedAmounts(
 	destDenom := transferAttributes.DestinationDenom()
 	destAmount := transferAttributes.DestinationAmount()
 
-	dda := make([]denomDispatchedAmount, 1, 2)
-	dda[0] = denomDispatchedAmount{
+	ddas := make([]denomDispatchedAmount, 1, 2)
+
+	ddas[0] = denomDispatchedAmount{
 		Denom: sourceDenom,
 		AmountDispatched: types.AmountDispatched{
 			Incoming: sourceAmount,
@@ -167,10 +168,16 @@ func (d *DispatcherComponent) buildDenomDispatchedAmounts(
 		},
 	}
 
+	// We can have two situations here:
+	// - An action changed the destination denom (e.g. swap): In this case we have to
+	//   append a new entry in the slice.
+	// - No action changed the destination denom: In this case we have to
+	//   set the destination amount, which can be different than the source
+	//   amount (e.g. fees)
 	if sourceDenom == destDenom {
-		dda[0].AmountDispatched.Outgoing = destAmount
+		ddas[0].AmountDispatched.Outgoing = destAmount
 	} else {
-		dda = append(dda, denomDispatchedAmount{
+		ddas = append(ddas, denomDispatchedAmount{
 			Denom: destDenom,
 			AmountDispatched: types.AmountDispatched{
 				Incoming: math.ZeroInt(),
@@ -179,5 +186,5 @@ func (d *DispatcherComponent) buildDenomDispatchedAmounts(
 		})
 	}
 
-	return dda
+	return ddas
 }

@@ -22,6 +22,7 @@ package components
 
 import (
 	"context"
+	"fmt"
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/collections/indexes"
@@ -66,7 +67,7 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			func(pk DispatchedAmountsKey, value types.AmountDispatched) (uint32, error) {
 				orbitID, err := types.ParseOrbitID(pk.K3())
 				if err != nil {
-					return 0, err
+					return 0, fmt.Errorf("error parsing destination orbit ID: %w", err)
 				}
 
 				return orbitID.ProtocolID.Uint32(), nil
@@ -85,7 +86,10 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			func(pk DispatchedAmountsKey, value types.AmountDispatched) (collections.Triple[uint32, string, string], error) {
 				orbitID, err := types.ParseOrbitID(pk.K3())
 				if err != nil {
-					return collections.Triple[uint32, string, string]{}, err
+					return collections.Triple[uint32, string, string]{}, fmt.Errorf(
+						"error parsing destination orbit ID: %w",
+						err,
+					)
 				}
 
 				return collections.Join3(
@@ -121,7 +125,10 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 			func(pk DispatchedCountsKey, _ uint32) (uint32, error) {
 				orbitID, err := types.ParseOrbitID(pk.K3())
 				if err != nil {
-					return 0, err
+					return 0, fmt.Errorf(
+						"error parsing destination orbit ID: %w",
+						err,
+					)
 				}
 
 				return orbitID.ProtocolID.Uint32(), nil
@@ -131,7 +138,7 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 }
 
 // ====================================================================================================
-// Dispatched
+// Dispatched Amount
 // ====================================================================================================
 
 func (d *DispatcherComponent) GetDispatchedAmount(
@@ -174,15 +181,15 @@ func (d *DispatcherComponent) HasDispatchedAmount(
 
 func (d *DispatcherComponent) SetDispatchedAmount(
 	ctx context.Context,
-	sourceInfo types.OrbitID,
-	destinationOrbitID types.OrbitID,
+	sourceOrbitID types.OrbitID,
+	destOrbitID types.OrbitID,
 	denom string,
 	amountDispatched types.AmountDispatched,
 ) error {
 	key := collections.Join4(
-		sourceInfo.ProtocolID.Uint32(),
-		sourceInfo.CounterpartyID,
-		destinationOrbitID.ID(),
+		sourceOrbitID.ProtocolID.Uint32(),
+		sourceOrbitID.CounterpartyID,
+		destOrbitID.ID(),
 		denom,
 	)
 
@@ -295,7 +302,7 @@ func (d *DispatcherComponent) IterateDispatchedAmountsByDestinationProtocolID(
 }
 
 // ====================================================================================================
-// DispatchCounts
+// Dispatched Counts
 // ====================================================================================================
 
 func (d *DispatcherComponent) GetDispatchedCounts(

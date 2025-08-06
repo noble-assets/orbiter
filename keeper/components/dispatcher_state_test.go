@@ -25,39 +25,17 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"cosmossdk.io/collections"
 	"cosmossdk.io/math"
 
-	"orbiter.dev/keeper/components"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/types"
 )
 
 const UsdcDenom = "uusdc"
 
-func newDispatcherComponent(tb testing.TB) (*components.DispatcherComponent, *mocks.Dependencies) {
-	tb.Helper()
-
-	deps := mocks.NewDependencies(tb)
-
-	sb := collections.NewSchemaBuilder(deps.StoreService)
-	dispatcher, err := components.NewDispatcherComponent(
-		deps.EncCfg.Codec,
-		sb,
-		deps.Logger,
-		&mocks.OrbitsHandler{},
-		&mocks.ActionsHandler{},
-	)
-	require.NoError(tb, err)
-	_, err = sb.Build()
-	require.NoError(tb, err)
-
-	return dispatcher, &deps
-}
-
-func TestGetDispatched(t *testing.T) {
+func TestGetDispatchedAmount(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherComponent(t)
+	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	sourceInfo := types.OrbitID{
@@ -100,7 +78,7 @@ func TestGetDispatched(t *testing.T) {
 
 func TestHasDispatchedAmount(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherComponent(t)
+	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	sourceInfo := types.OrbitID{
@@ -133,9 +111,9 @@ func TestHasDispatchedAmount(t *testing.T) {
 	require.True(t, result)
 }
 
-func TestSetDispatched(t *testing.T) {
+func TestSetDispatchedAmount(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherComponent(t)
+	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	sourceOrbitID := types.OrbitID{
@@ -182,11 +160,21 @@ func TestSetDispatched(t *testing.T) {
 	// Verify the record was updated
 	result = dispatcher.GetDispatchedAmount(ctx, sourceOrbitID, destinationOrbitID, UsdcDenom)
 	require.Equal(t, updatedAmount, result)
+
+	// ARRANGE: set a dispatched amount with an invalid destination protocol ID
+	invalidDestOrbitID := types.OrbitID{
+		ProtocolID:     0,
+		CounterpartyID: "ethereum",
+	}
+
+	// ACT
+	err = dispatcher.SetDispatchedAmount(ctx, sourceOrbitID, invalidDestOrbitID, UsdcDenom, amount)
+	require.ErrorContains(t, err, "error parsing destination orbit ID")
 }
 
-func TestGetDispatchedByProtocolID(t *testing.T) {
+func TestGetDispatchedAmountByProtocolID(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherComponent(t)
+	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	protocolID := types.PROTOCOL_IBC
@@ -246,8 +234,8 @@ func TestGetDispatchedByProtocolID(t *testing.T) {
 	require.Equal(t, channelTwo.AmountDispatched(), amount2)
 }
 
-func TestDispatched_EmptyStates(t *testing.T) {
-	dispatcher, deps := newDispatcherComponent(t)
+func TestDispatchedAmountEmptyStates(t *testing.T) {
+	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	sourceInfo := types.OrbitID{
@@ -287,8 +275,8 @@ func TestDispatched_EmptyStates(t *testing.T) {
 	require.False(t, called)
 }
 
-func TestDispatched_MultipleProtocolsAndChains(t *testing.T) {
-	dispatcher, deps := newDispatcherComponent(t)
+func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
+	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	// Test with multiple protocols and chains
@@ -379,13 +367,59 @@ func TestDispatched_MultipleProtocolsAndChains(t *testing.T) {
 	require.Len(t, cctpTotal.ChainsAmount(), 1) // only counterparty "0"
 }
 
+func TestSetAndGetDispatchedCounts(t *testing.T) {
+	// ARRANGE
+	dispatcher, deps := mocks.NewDispatcherComponent(t)
+	ctx := deps.SdkCtx
+
+	sourceOrbitID := types.OrbitID{
+		ProtocolID:     types.PROTOCOL_IBC,
+		CounterpartyID: "channel-1",
+	}
+	destinationOrbitID := types.OrbitID{
+		ProtocolID:     types.PROTOCOL_CCTP,
+		CounterpartyID: "0",
+	}
+
+	// ACT: Test setting dispatch record
+	err := dispatcher.SetDispatchedCounts(ctx, sourceOrbitID, destinationOrbitID, 1)
+
+	// ASSERT
+	require.NoError(t, err)
+
+	result := dispatcher.GetDispatchedCounts(ctx, sourceOrbitID, destinationOrbitID)
+	require.Equal(t, uint32(1), result)
+
+	// ARRANGE: Test updating existing dispatched counts record
+
+	// ACT
+	err = dispatcher.SetDispatchedCounts(ctx, sourceOrbitID, destinationOrbitID, 10)
+
+	// ASSERT
+	require.NoError(t, err)
+
+	// Verify the record was updated
+	result = dispatcher.GetDispatchedCounts(ctx, sourceOrbitID, destinationOrbitID)
+	require.Equal(t, uint32(10), result)
+
+	// ARRANGE: set a dispatched counts with an invalid destination protocol ID
+	invalidDestOrbitID := types.OrbitID{
+		ProtocolID:     0,
+		CounterpartyID: "ethereum",
+	}
+
+	// ACT
+	err = dispatcher.SetDispatchedCounts(ctx, sourceOrbitID, invalidDestOrbitID, 1)
+	require.ErrorContains(t, err, "error parsing destination orbit ID")
+}
+
 // ====================================================================================================
 // Indexes
 // ====================================================================================================
 
-func TestGetDispatchedByDestinationProtocolID(t *testing.T) {
+func TestGetDispatchedAmountByDestinationProtocolID(t *testing.T) {
 	// ARRANGE
-	dispatcher, deps := newDispatcherComponent(t)
+	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
 	protocolSource1 := types.PROTOCOL_IBC
@@ -400,19 +434,19 @@ func TestGetDispatchedByDestinationProtocolID(t *testing.T) {
 	require.Empty(t, result.ChainsAmount())
 
 	// ARRANGE: Set up test data
-	sourceInfo1 := types.OrbitID{
+	sourceOrbitID1 := types.OrbitID{
 		ProtocolID:     protocolSource1,
 		CounterpartyID: "channel-1",
 	}
-	sourceInfo2 := types.OrbitID{
+	sourceOrbitID2 := types.OrbitID{
 		ProtocolID:     protocolSource1,
 		CounterpartyID: "channel-2",
 	}
-	sourceInfo3 := types.OrbitID{
+	sourceOrbitID3 := types.OrbitID{
 		ProtocolID:     protocolSource2,
 		CounterpartyID: "ethereum",
 	}
-	destinationInfo := types.OrbitID{
+	destOrbitID := types.OrbitID{
 		ProtocolID:     protocolDestination,
 		CounterpartyID: "0",
 	}
@@ -428,11 +462,11 @@ func TestGetDispatchedByDestinationProtocolID(t *testing.T) {
 		Outgoing: math.NewInt(100),
 	}
 
-	err := dispatcher.SetDispatchedAmount(ctx, sourceInfo1, destinationInfo, denom, amount1)
+	err := dispatcher.SetDispatchedAmount(ctx, sourceOrbitID1, destOrbitID, denom, amount1)
 	require.NoError(t, err)
-	err = dispatcher.SetDispatchedAmount(ctx, sourceInfo2, destinationInfo, denom, amount2)
+	err = dispatcher.SetDispatchedAmount(ctx, sourceOrbitID2, destOrbitID, denom, amount2)
 	require.NoError(t, err)
-	err = dispatcher.SetDispatchedAmount(ctx, sourceInfo3, destinationInfo, denom, amount2)
+	err = dispatcher.SetDispatchedAmount(ctx, sourceOrbitID3, destOrbitID, denom, amount2)
 	require.NoError(t, err)
 
 	// ACT: Test getting protocol total dispatched
@@ -451,9 +485,9 @@ func TestGetDispatchedByDestinationProtocolID(t *testing.T) {
 	channelOne := result.ChainAmount("channel-1")
 	channelTwo := result.ChainAmount("channel-2")
 	ethereum := result.ChainAmount("ethereum")
-	require.Equal(t, channelOne.OrbitID(), destinationInfo)
-	require.Equal(t, channelTwo.OrbitID(), destinationInfo)
-	require.Equal(t, ethereum.OrbitID(), destinationInfo)
+	require.Equal(t, channelOne.OrbitID(), destOrbitID)
+	require.Equal(t, channelTwo.OrbitID(), destOrbitID)
+	require.Equal(t, ethereum.OrbitID(), destOrbitID)
 	require.Equal(t, channelOne.AmountDispatched(), amount1)
 	require.Equal(t, channelTwo.AmountDispatched(), amount2)
 	require.Equal(t, ethereum.AmountDispatched(), amount2)

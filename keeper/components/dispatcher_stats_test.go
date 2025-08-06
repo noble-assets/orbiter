@@ -18,157 +18,95 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package components
+package components_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"cosmossdk.io/collections"
 	"cosmossdk.io/math"
 
+	"orbiter.dev/keeper/components"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
 )
 
-func TestUpdateDispatchedAmountStats(t *testing.T) {
-	denom := "uusdc"
-	testCases := []struct {
-		name               string
-		sourceOrbitID      types.OrbitID
-		destinationOrbitID types.OrbitID
-		amountDispatched   types.AmountDispatched
-		twoUpdates         bool
-		expError           string
-	}{
-		{
-			name:               "error - default values (default protocol ID is not valid)",
-			sourceOrbitID:      types.OrbitID{},
-			destinationOrbitID: types.OrbitID{},
-			amountDispatched:   *types.NewAmountDispatched(math.ZeroInt(), math.ZeroInt()),
-			expError:           "id is not supported",
-		},
-		{
-			name: "success - non default values and zero incoming dispatched amount",
-			sourceOrbitID: types.OrbitID{
-				ProtocolID:     1,
-				CounterpartyID: "noble",
-			},
-			destinationOrbitID: types.OrbitID{
-				ProtocolID:     2,
-				CounterpartyID: "ethereum",
-			},
-			amountDispatched: *types.NewAmountDispatched(math.ZeroInt(), math.NewInt(1)),
-			expError:         "",
-		},
-		{
-			name: "success - non default values and zero outgoing dispatched amount",
-			sourceOrbitID: types.OrbitID{
-				ProtocolID:     1,
-				CounterpartyID: "noble",
-			},
-			destinationOrbitID: types.OrbitID{
-				ProtocolID:     2,
-				CounterpartyID: "ethereum",
-			},
-			amountDispatched: *types.NewAmountDispatched(math.NewInt(1), math.ZeroInt()),
-			expError:         "",
-		},
-		{
-			name:               "success - second dispatched amount update",
-			sourceOrbitID:      types.OrbitID{ProtocolID: 1, CounterpartyID: "noble"},
-			destinationOrbitID: types.OrbitID{ProtocolID: 2, CounterpartyID: "ethereum"},
-			amountDispatched:   *types.NewAmountDispatched(math.NewInt(1), math.ZeroInt()),
-			twoUpdates:         true,
-			expError:           "",
-		},
-	}
-
-	for _, tc := range testCases {
-		deps := mocks.NewDependencies(t)
-		ctx := deps.SdkCtx
-
-		sb := collections.NewSchemaBuilder(deps.StoreService)
-		dispatcher, err := NewDispatcherComponent(
-			deps.EncCfg.Codec,
-			sb,
-			deps.Logger,
-			&mocks.OrbitsHandler{},
-			&mocks.ActionsHandler{},
-		)
-		require.NoError(t, err)
-		_, err = sb.Build()
-		require.NoError(t, err)
-
-		err = dispatcher.updateDispatchedAmountStats(
-			ctx,
-			&tc.sourceOrbitID,
-			&tc.destinationOrbitID,
-			denom,
-			tc.amountDispatched,
-		)
-
-		t.Run(tc.name, func(t *testing.T) {
-			if tc.expError != "" {
-				require.ErrorContains(t, err, tc.expError)
-				da := dispatcher.GetDispatchedAmount(
-					ctx,
-					tc.sourceOrbitID,
-					tc.destinationOrbitID,
-					denom,
-				)
-				require.Equal(t, math.ZeroInt(), da.Incoming)
-				require.Equal(t, math.ZeroInt(), da.Outgoing)
-			} else {
-				require.NoError(t, err)
-				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceOrbitID, tc.destinationOrbitID, denom)
-				require.Equal(t, tc.amountDispatched.Incoming, da.Incoming)
-				require.Equal(t, tc.amountDispatched.Outgoing, da.Outgoing)
-			}
-		})
-
-		t.Run("SecondUpdate/"+tc.name, func(t *testing.T) {
-			err = dispatcher.updateDispatchedAmountStats(
-				ctx,
-				&tc.sourceOrbitID,
-				&tc.destinationOrbitID,
-				denom,
-				tc.amountDispatched,
-			)
-
-			if tc.expError != "" {
-				require.ErrorContains(t, err, tc.expError)
-				da := dispatcher.GetDispatchedAmount(
-					ctx,
-					tc.sourceOrbitID,
-					tc.destinationOrbitID,
-					denom,
-				)
-				require.Equal(t, math.ZeroInt(), da.Incoming)
-				require.Equal(t, math.ZeroInt(), da.Outgoing)
-			} else {
-				require.NoError(t, err)
-				da := dispatcher.GetDispatchedAmount(ctx, tc.sourceOrbitID, tc.destinationOrbitID, denom)
-				require.Equal(t, tc.amountDispatched.Incoming.MulRaw(2), da.Incoming)
-				require.Equal(t, tc.amountDispatched.Outgoing.MulRaw(2), da.Outgoing)
-			}
-		})
-	}
-}
-
 func TestUpdateStats(t *testing.T) {
 	testCases := []struct {
-		name            string
-		transferAttr    func() *types.TransferAttributes
-		orbit           func() *types.Orbit
-		expectedError   string
-		expectedAmounts map[string]types.AmountDispatched // key: denom
-		expectedCounts  uint32
+		name           string
+		setup          func(context.Context, *components.DispatcherComponent)
+		transferAttr   func() *types.TransferAttributes
+		orbit          func() *types.Orbit
+		expErr         string
+		expAmounts     map[string]types.AmountDispatched
+		expectedCounts uint32
 	}{
 		{
-			name: "success - incoming and outgoing with same amount and denom",
+			name:         "error - nil transfer attributes",
+			transferAttr: func() *types.TransferAttributes { return nil },
+			orbit: func() *types.Orbit {
+				return &types.Orbit{
+					ProtocolId: 2,
+					Attributes: nil,
+				}
+			},
+			expErr: "nil transfer attributes",
+		},
+		{
+			name: "error - nil orbit",
+			transferAttr: func() *types.TransferAttributes {
+				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				require.NoError(t, err)
+
+				return ta
+			},
+			orbit:  func() *types.Orbit { return nil },
+			expErr: "nil orbit",
+		},
+		{
+			name: "error - destination protocol ID is not supported",
+			transferAttr: func() *types.TransferAttributes {
+				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				require.NoError(t, err)
+
+				return ta
+			},
+			orbit: func() *types.Orbit {
+				attr := &testdata.TestOrbitAttr{
+					Planet: "ethereum",
+				}
+				orbit := types.Orbit{
+					ProtocolId:         0,
+					PassthroughPayload: []byte{},
+				}
+				err := orbit.SetAttributes(attr)
+				require.NoError(t, err)
+
+				return &orbit
+			},
+			expErr: "id is not supported",
+		},
+		{
+			name: "error - invalid orbit attributes",
+			transferAttr: func() *types.TransferAttributes {
+				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				require.NoError(t, err)
+
+				return ta
+			},
+			orbit: func() *types.Orbit {
+				return &types.Orbit{
+					ProtocolId: 2,
+					Attributes: nil,
+				}
+			},
+			expErr: "orbit attributes are not set",
+		},
+		{
+			name: "success - same amount and denom",
 			transferAttr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
@@ -184,7 +122,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return orbit
 			},
-			expectedAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]types.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(100),
@@ -193,7 +131,7 @@ func TestUpdateStats(t *testing.T) {
 			expectedCounts: 1,
 		},
 		{
-			name: "success - incoming and outgoing with same denom",
+			name: "success - same denom and different amount",
 			transferAttr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(2, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
@@ -210,7 +148,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return orbit
 			},
-			expectedAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]types.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(95),
@@ -237,7 +175,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return orbit
 			},
-			expectedAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]types.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.ZeroInt(),
@@ -250,155 +188,104 @@ func TestUpdateStats(t *testing.T) {
 			expectedCounts: 1,
 		},
 		{
-			name: "error - invalid orbit attributes",
+			name: "success - different denom and previous stored stats",
+			setup: func(ctx context.Context, d *components.DispatcherComponent) {
+				sourceOrbitID := types.OrbitID{
+					ProtocolID:     1,
+					CounterpartyID: "hyperliquid",
+				}
+
+				destOrbitID := types.OrbitID{
+					ProtocolID:     1,
+					CounterpartyID: "ethereum",
+				}
+
+				err := d.SetDispatchedCounts(ctx, sourceOrbitID, destOrbitID, 10)
+				require.NoError(t, err)
+
+				da := types.AmountDispatched{
+					Incoming: math.NewInt(1_000),
+					Outgoing: math.NewInt(1_000),
+				}
+				err = d.SetDispatchedAmount(ctx, sourceOrbitID, destOrbitID, "uusdc", da)
+				require.NoError(t, err)
+
+				err = d.SetDispatchedAmount(ctx, destOrbitID, sourceOrbitID, "uusdc", da)
+				require.NoError(t, err)
+			},
 			transferAttr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 
+				ta.SetDestinationDenom("gwei")
+				ta.SetDestinationAmount(math.NewInt(50))
+
 				return ta
 			},
 			orbit: func() *types.Orbit {
-				return &types.Orbit{
-					ProtocolId: 2,
-					Attributes: nil,
+				attr := &testdata.TestOrbitAttr{
+					Planet: "ethereum",
 				}
+				orbit, err := types.NewOrbit(1, attr, []byte{})
+				require.NoError(t, err)
+
+				return orbit
 			},
-			expectedError: "orbit attributes are not set",
+			expAmounts: map[string]types.AmountDispatched{
+				"uusdc": {
+					Incoming: math.NewInt(1_100),
+					Outgoing: math.NewInt(1_000),
+				},
+				"gwei": {
+					Incoming: math.ZeroInt(),
+					Outgoing: math.NewInt(50),
+				},
+			},
+			expectedCounts: 11, // 1 from the test + 10 from the setup
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			deps := mocks.NewDependencies(t)
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			dispatcher, deps := mocks.NewDispatcherComponent(t)
 			ctx := deps.SdkCtx
 
-			sb := collections.NewSchemaBuilder(deps.StoreService)
-			dispatcher, err := NewDispatcherComponent(
-				deps.EncCfg.Codec,
-				sb,
-				deps.Logger,
-				&mocks.OrbitsHandler{},
-				&mocks.ActionsHandler{},
-			)
-			require.NoError(t, err)
-			_, err = sb.Build()
-			require.NoError(t, err)
+			if tC.setup != nil {
+				tC.setup(ctx, dispatcher)
+			}
 
-			transferAttr := tc.transferAttr()
-			orbit := tc.orbit()
-			err = dispatcher.updateStats(ctx, transferAttr, orbit)
+			transferAttr := tC.transferAttr()
+			orbit := tC.orbit()
+			err := dispatcher.UpdateStats(ctx, transferAttr, orbit)
 
-			if tc.expectedError != "" {
-				require.ErrorContains(t, err, tc.expectedError)
+			if tC.expErr != "" {
+				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
 
 				// Create expected source and destination info
-				sourceInfo := types.OrbitID{
+				sourceOrbitID := types.OrbitID{
 					ProtocolID:     transferAttr.SourceProtocolID(),
 					CounterpartyID: transferAttr.SourceCounterpartyID(),
 				}
 				attr, _ := orbit.CachedAttributes()
-				destinationInfo := types.OrbitID{
+				destOrbitID := types.OrbitID{
 					ProtocolID:     orbit.ProtocolID(),
 					CounterpartyID: attr.CounterpartyID(),
 				}
 
 				// Verify amount stats
-				for denom, expectedAmount := range tc.expectedAmounts {
-					actualAmount := dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+				for denom, expectedAmount := range tC.expAmounts {
+					actualAmount := dispatcher.GetDispatchedAmount(ctx, sourceOrbitID, destOrbitID, denom)
+
 					require.Equal(t, expectedAmount.Incoming, actualAmount.Incoming)
 					require.Equal(t, expectedAmount.Outgoing, actualAmount.Outgoing)
 				}
 
 				// Verify count stats
-				actualCounts := dispatcher.GetDispatchedCounts(ctx, sourceInfo, destinationInfo)
-				require.Equal(t, tc.expectedCounts, actualCounts)
-			}
-		})
-	}
-}
+				actualCounts := dispatcher.GetDispatchedCounts(ctx, sourceOrbitID, destOrbitID)
 
-func TestUpdateDispatchedCountsStats(t *testing.T) {
-	testCases := []struct {
-		name               string
-		sourceOrbitID      types.OrbitID
-		destinationOrbitID types.OrbitID
-		twoUpdates         bool
-		expError           string
-	}{
-		{
-			name:               "error - default values (invalid protocol ID)",
-			sourceOrbitID:      types.OrbitID{},
-			destinationOrbitID: types.OrbitID{},
-			expError:           "id is not supported",
-		},
-		{
-			name: "success - non default values and zero incoming dispatched amount",
-			sourceOrbitID: types.OrbitID{
-				ProtocolID:     1,
-				CounterpartyID: "noble",
-			},
-			destinationOrbitID: types.OrbitID{
-				ProtocolID:     2,
-				CounterpartyID: "ethereum",
-			},
-			expError: "",
-		},
-		{
-			name:               "success - second dispatched amount update",
-			sourceOrbitID:      types.OrbitID{ProtocolID: 1, CounterpartyID: "noble"},
-			destinationOrbitID: types.OrbitID{ProtocolID: 2, CounterpartyID: "ethereum"},
-			twoUpdates:         true,
-			expError:           "",
-		},
-	}
-
-	for _, tc := range testCases {
-		deps := mocks.NewDependencies(t)
-		ctx := deps.SdkCtx
-
-		sb := collections.NewSchemaBuilder(deps.StoreService)
-		dispatcher, err := NewDispatcherComponent(
-			deps.EncCfg.Codec,
-			sb,
-			deps.Logger,
-			&mocks.OrbitsHandler{},
-			&mocks.ActionsHandler{},
-		)
-		require.NoError(t, err)
-		_, err = sb.Build()
-		require.NoError(t, err)
-
-		err = dispatcher.updateDispatchedCountsStats(ctx, &tc.sourceOrbitID, &tc.destinationOrbitID)
-
-		t.Run(tc.name, func(t *testing.T) {
-			if tc.expError != "" {
-				require.ErrorContains(t, err, tc.expError)
-				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceOrbitID, tc.destinationOrbitID)
-				require.Equal(t, uint32(0), dc)
-			} else {
-				require.NoError(t, err)
-				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceOrbitID, tc.destinationOrbitID)
-				require.Equal(t, uint32(1), dc)
-			}
-		})
-
-		t.Run("SecondUpdate/"+tc.name, func(t *testing.T) {
-			err = dispatcher.updateDispatchedCountsStats(
-				ctx,
-				&tc.sourceOrbitID,
-				&tc.destinationOrbitID,
-			)
-
-			if tc.expError != "" {
-				require.ErrorContains(t, err, tc.expError)
-				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceOrbitID, tc.destinationOrbitID)
-				require.Equal(t, uint32(0), dc)
-			} else {
-				require.NoError(t, err)
-				dc := dispatcher.GetDispatchedCounts(ctx, tc.sourceOrbitID, tc.destinationOrbitID)
-				require.Equal(t, uint32(2), dc)
+				require.Equal(t, tC.expectedCounts, actualCounts)
 			}
 		})
 	}
@@ -408,8 +295,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 	testCases := []struct {
 		name               string
 		transferAttributes func() *types.TransferAttributes
-		expectedEntries    int
-		expectedAmounts    map[string]types.AmountDispatched // key: denom
+		expectedAmounts    map[string]types.AmountDispatched
 	}{
 		{
 			name: "single entry with same denoms",
@@ -419,11 +305,26 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 
 				return ta
 			},
-			expectedEntries: 1,
 			expectedAmounts: map[string]types.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(100),
+				},
+			},
+		},
+		{
+			name: "single entry with same denoms but different amounts",
+			transferAttributes: func() *types.TransferAttributes {
+				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				require.NoError(t, err)
+				ta.SetDestinationAmount(math.NewInt(50))
+
+				return ta
+			},
+			expectedAmounts: map[string]types.AmountDispatched{
+				"uusdc": {
+					Incoming: math.NewInt(100),
+					Outgoing: math.NewInt(50),
 				},
 			},
 		},
@@ -437,7 +338,6 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 
 				return ta
 			},
-			expectedEntries: 2,
 			expectedAmounts: map[string]types.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
@@ -451,67 +351,27 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			deps := mocks.NewDependencies(t)
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			dispatcher, _ := mocks.NewDispatcherComponent(t)
 
-			sb := collections.NewSchemaBuilder(deps.StoreService)
-			dispatcher, err := NewDispatcherComponent(
-				deps.EncCfg.Codec,
-				sb,
-				deps.Logger,
-				&mocks.OrbitsHandler{},
-				&mocks.ActionsHandler{},
-			)
-			require.NoError(t, err)
-			_, err = sb.Build()
-			require.NoError(t, err)
+			dda := dispatcher.BuildDenomDispatchedAmounts(tC.transferAttributes())
+			expectedEntries := len(tC.expectedAmounts)
 
-			result := dispatcher.buildDenomDispatchedAmounts(tc.transferAttributes())
-
-			// Verify number of entries
-			require.Equal(
-				t,
-				tc.expectedEntries,
-				len(result),
-				"Expected %d entries, got %d",
-				tc.expectedEntries,
-				len(result),
-			)
+			require.Len(t, dda, expectedEntries)
 
 			// Convert result to map for easier verification
-			resultMap := make(map[string]types.AmountDispatched, len(result))
-			for _, entry := range result {
-				resultMap[entry.Denom] = entry.AmountDispatched
+			ddaMap := make(map[string]types.AmountDispatched, len(dda))
+			for _, entry := range dda {
+				ddaMap[entry.Denom] = entry.AmountDispatched
 			}
 
-			// Verify each expected amount
-			for denom, expectedAmount := range tc.expectedAmounts {
-				actualAmount, exists := resultMap[denom]
-				require.True(t, exists, "Expected denom %s not found in result", denom)
-				require.Equal(
-					t,
-					expectedAmount.Incoming,
-					actualAmount.Incoming,
-					"Incoming amount mismatch for denom %s",
-					denom,
-				)
-				require.Equal(
-					t,
-					expectedAmount.Outgoing,
-					actualAmount.Outgoing,
-					"Outgoing amount mismatch for denom %s",
-					denom,
-				)
+			for denom, expectedAmount := range tC.expectedAmounts {
+				actualAmount, exists := ddaMap[denom]
+				require.True(t, exists)
+				require.Equal(t, expectedAmount.Incoming, actualAmount.Incoming)
+				require.Equal(t, expectedAmount.Outgoing, actualAmount.Outgoing)
 			}
-
-			// Verify no extra entries
-			require.Equal(
-				t,
-				len(tc.expectedAmounts),
-				len(resultMap),
-				"Number of result entries doesn't match expected",
-			)
 		})
 	}
 }
