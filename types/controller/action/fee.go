@@ -34,3 +34,10 @@ type FeesToDistribute struct {
 	Total  math.Int
 	Values []RecipientAmount
 }
+
+func NewFeesToDistribute() FeesToDistribute {
+	return FeesToDistribute{
+		Total:  math.ZeroInt(),
+		Values: make([]RecipientAmount, 0),
+	}
+}

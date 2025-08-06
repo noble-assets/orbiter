@@ -218,7 +218,7 @@ func (a *TransferAttributes) DestinationDenom() string {
 // nil defensively for robustness.
 func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 	if a == nil {
-		fmt.Println("Warning: SetDestinaitonAmount() called on nil TransferAttributes")
+		fmt.Println("Warning: SetDestinationAmount() called on nil TransferAttributes")
 
 		return
 	}
@@ -238,7 +238,7 @@ func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 // nil defensively for robustness.
 func (a *TransferAttributes) SetDestinationDenom(denom string) {
 	if a == nil {
-		fmt.Println("Warning: SetDestinaitonDenom() called on nil TransferAttributes")
+		fmt.Println("Warning: SetDestinationDenom() called on nil TransferAttributes")
 
 		return
 	}

@@ -44,7 +44,7 @@ func (c CCTPMsgServer) DepositForBurnWithCaller(
 	return &cctptypes.MsgDepositForBurnWithCallerResponse{}, nil
 }
 
-// ReplaceDepositForBurn implements orbits.CCTPMsgServer.
+// ReplaceDepositForBurn implements forwarding.CCTPMsgServer.
 func (c CCTPMsgServer) ReplaceDepositForBurn(
 	ctx context.Context,
 	msg *cctptypes.MsgReplaceDepositForBurn,

@@ -180,10 +180,7 @@ func (c *FeeController) ComputeFeesToDistribute(
 	transferDenom string,
 	feesInfo []*actiontypes.FeeInfo,
 ) (*actiontypes.FeesToDistribute, error) {
-	fees := actiontypes.FeesToDistribute{
-		Total:  math.ZeroInt(),
-		Values: make([]actiontypes.RecipientAmount, 0),
-	}
+	fees := actiontypes.NewFeesToDistribute()
 
 	for _, feeInfo := range feesInfo {
 		addr, _ := sdk.AccAddressFromBech32(feeInfo.Recipient)

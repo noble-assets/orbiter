@@ -41,7 +41,7 @@ func NewBaseController[ID interfaces.IdentifierConstraint](id ID) (*BaseControll
 	}, nil
 }
 
-// BaseController is a generic types that implements the types.BaseController interface.
+// BaseController is a generic controller that implements interfaces.Controller.
 type BaseController[ID interfaces.IdentifierConstraint] struct {
 	id ID
 }
