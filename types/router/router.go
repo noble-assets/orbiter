@@ -32,7 +32,7 @@ type Router[ID interfaces.IdentifierConstraint, T interfaces.Routable[ID]] struc
 	sealed bool
 }
 
-func New[ID interfaces.IdentifierConstraint, T interfaces.Routable[ID]]() interfaces.Router[ID, T] {
+func New[ID interfaces.IdentifierConstraint, T interfaces.Routable[ID]]() *Router[ID, T] {
 	return &Router[ID, T]{
 		routes: make(map[ID]T),
 	}
