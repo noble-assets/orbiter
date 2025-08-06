@@ -1,9 +1,10 @@
 name: End to End Tests
 on:
   pull_request:
-    paths:
-      - '!**.md'
-      - '!**.yaml'
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.yaml'
+      - '**/*.yml'
 env:
   TAR_PATH: docker-image.tar
   ARTIFACT_NAME: tar-docker-image
