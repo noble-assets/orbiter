@@ -31,7 +31,7 @@ import (
 	"orbiter.dev/types"
 )
 
-func TestNewOrbit(t *testing.T) {
+func TestNewForwarding(t *testing.T) {
 	testCases := []struct {
 		name               string
 		id                 types.ProtocolID
@@ -96,7 +96,7 @@ func TestNewOrbit(t *testing.T) {
 	}
 }
 
-func TestValidateOrbit(t *testing.T) {
+func TestValidateForwading(t *testing.T) {
 	testCases := []struct {
 		name       string
 		forwarding *types.Forwarding

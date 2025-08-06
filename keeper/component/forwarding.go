@@ -159,7 +159,7 @@ func (c *Forwarding) HandlePacket(
 	return controller.HandlePacket(ctx, packet)
 }
 
-func (c *Forwarding) ValidateOrbit(
+func (c *Forwarding) ValidateForwarding(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
@@ -168,7 +168,7 @@ func (c *Forwarding) ValidateOrbit(
 		return err
 	}
 
-	return c.validateOrbit(ctx, protocolID, counterpartyID)
+	return c.validateForwarding(ctx, protocolID, counterpartyID)
 }
 
 func (c *Forwarding) validatePacket(
@@ -185,7 +185,7 @@ func (c *Forwarding) validatePacket(
 		return fmt.Errorf("error getting attributes from forwarding packet: %w", err)
 	}
 
-	err = c.ValidateOrbit(ctx, packet.Forwarding.ProtocolID(), attr.CounterpartyID())
+	err = c.ValidateForwarding(ctx, packet.Forwarding.ProtocolID(), attr.CounterpartyID())
 	if err != nil {
 		return fmt.Errorf(
 			"error validating forwarding controller for protocol ID %s and counterparty ID %s: %w",
@@ -214,7 +214,7 @@ func (c *Forwarding) validateController(
 	return nil
 }
 
-func (c *Forwarding) validateOrbit(
+func (c *Forwarding) validateForwarding(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,

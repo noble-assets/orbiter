@@ -71,11 +71,11 @@ func TestOrbitID(t *testing.T) {
 
 func TestParseOrbitID(t *testing.T) {
 	testCases := []struct {
-		name                   string
-		id                     string
-		expectedProtocolID     types.ProtocolID
-		expectedCounterpartyID string
-		expErr                 string
+		name              string
+		id                string
+		expProtocolID     types.ProtocolID
+		expCounterpartyID string
+		expErr            string
 	}{
 		{
 			name:   "error - when invalid format (no colon)",
@@ -93,22 +93,22 @@ func TestParseOrbitID(t *testing.T) {
 			expErr: "invalid orbit",
 		},
 		{
-			name:                   "error - when the format is not valid (multiple colons)",
-			id:                     "1:channel:1",
-			expectedProtocolID:     types.PROTOCOL_IBC,
-			expectedCounterpartyID: "channel:1",
+			name:              "success - when the format is not valid (multiple colons)",
+			id:                "1:channel:1",
+			expProtocolID:     types.PROTOCOL_IBC,
+			expCounterpartyID: "channel:1",
 		},
 		{
-			name:                   "success - with valid IBC ID",
-			id:                     "1:channel-1",
-			expectedProtocolID:     types.PROTOCOL_IBC,
-			expectedCounterpartyID: "channel-1",
+			name:              "success - with valid IBC ID",
+			id:                "1:channel-1",
+			expProtocolID:     types.PROTOCOL_IBC,
+			expCounterpartyID: "channel-1",
 		},
 		{
-			name:                   "success - with valid CCTP ID",
-			id:                     "2:0",
-			expectedProtocolID:     types.PROTOCOL_CCTP,
-			expectedCounterpartyID: "0",
+			name:              "success - with valid CCTP ID",
+			id:                "2:0",
+			expProtocolID:     types.PROTOCOL_CCTP,
+			expCounterpartyID: "0",
 		},
 	}
 
@@ -120,8 +120,8 @@ func TestParseOrbitID(t *testing.T) {
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tC.expectedProtocolID, orbitID.ProtocolID)
-				require.Equal(t, tC.expectedCounterpartyID, orbitID.CounterpartyID)
+				require.Equal(t, tC.expProtocolID, orbitID.ProtocolID)
+				require.Equal(t, tC.expCounterpartyID, orbitID.CounterpartyID)
 			}
 		})
 	}
