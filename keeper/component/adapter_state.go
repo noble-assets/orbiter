@@ -23,7 +23,7 @@ package component
 import (
 	"context"
 
-	"orbiter.dev/types"
+	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
 // GetParams returns the adapter params from state. In case of an error,
@@ -31,12 +31,12 @@ import (
 //
 // NOTE: Returning the default is safe here since it returns zero
 // bytes allowed, which is the restrictive condition.
-func (a *Adapter) GetParams(ctx context.Context) types.AdapterParams {
+func (a *Adapter) GetParams(ctx context.Context) adaptertypes.Params {
 	params, err := a.params.Get(ctx)
 	if err != nil {
 		a.logger.Error("error getting params", "err", err.Error())
 
-		return types.AdapterParams{
+		return adaptertypes.Params{
 			MaxPassthroughPayloadSize: 0,
 		}
 	}
@@ -44,6 +44,6 @@ func (a *Adapter) GetParams(ctx context.Context) types.AdapterParams {
 	return params
 }
 
-func (a *Adapter) SetParams(ctx context.Context, params types.AdapterParams) error {
+func (a *Adapter) SetParams(ctx context.Context, params adaptertypes.Params) error {
 	return a.params.Set(ctx, params)
 }

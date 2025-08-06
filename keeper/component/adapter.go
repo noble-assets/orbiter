@@ -31,6 +31,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"orbiter.dev/types"
+	adaptertypes "orbiter.dev/types/component/adapter"
 	"orbiter.dev/types/interfaces"
 	"orbiter.dev/types/router"
 )
@@ -45,7 +46,7 @@ type Adapter struct {
 	router     AdapterRouter
 	bankKeeper types.BankKeeperAdapter
 	dispatcher interfaces.PayloadDispatcher
-	params     collections.Item[types.AdapterParams]
+	params     collections.Item[adaptertypes.Params]
 }
 
 func NewAdapter(
@@ -74,7 +75,7 @@ func NewAdapter(
 			sb,
 			types.AdapterParamsPrefix,
 			types.AdapterParamsName,
-			codec.CollValue[types.AdapterParams](cdc),
+			codec.CollValue[adaptertypes.Params](cdc),
 		),
 	}
 
@@ -239,7 +240,7 @@ func (a *Adapter) commonBeforeTransferHook(
 
 // CheckPassthroughPayloadSize checks that the passthrough payload
 // size is not higher than the maximum allowed.
-func (c *AdapterComponent) CheckPassthroughPayloadSize(
+func (c *Adapter) CheckPassthroughPayloadSize(
 	ctx context.Context,
 	passthroughPayload []byte,
 ) error {
@@ -269,26 +270,6 @@ func (c *Adapter) commonBeforeTransferHook(
 
 	if err := c.clearOrbiterBalances(ctx); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func (c *Adapter) CheckPassthroughPayloadSize(
-	ctx context.Context,
-	passthroughPayload []byte,
-) error {
-	params, err := c.params.Get(ctx)
-	if err != nil {
-		return fmt.Errorf("error getting %s component params", types.AdaptersComponentName)
-	}
-
-	if len(passthroughPayload) > int(params.MaxPassthroughPayloadSize) {
-		return fmt.Errorf(
-			"passthrough payload size %d is higher than maximum allowed %d",
-			len(passthroughPayload),
-			params.MaxPassthroughPayloadSize,
-		)
 	}
 
 	return nil
