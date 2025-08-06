@@ -50,7 +50,7 @@ type CCTPController struct {
 func NewCCTPController(
 	logger log.Logger,
 	msgServer orbits.CCTPMsgServer,
-) (interfaces.ControllerOrbit, error) {
+) (*CCTPController, error) {
 	if logger == nil {
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
@@ -61,7 +61,7 @@ func NewCCTPController(
 		return nil, err
 	}
 
-	handler, err := newCCTPHandler(msgServer)
+	handler, err := NewCCTPHandler(msgServer)
 	if err != nil {
 		return nil, err
 	}
@@ -93,12 +93,12 @@ func (c *CCTPController) Validate() error {
 
 // HandlePacket validates and process a CCTP cross-chain transfer.
 func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
-	attr, err := c.extractAttributes(packet.Orbit)
+	attr, err := c.ExtractAttributes(packet.Orbit)
 	if err != nil {
 		return types.ErrInvalidAttributes.Wrap(err.Error())
 	}
 
-	err = c.validateAttributes(attr)
+	err = c.ValidateAttributes(attr)
 	if err != nil {
 		return types.ErrValidation.Wrap(err.Error())
 	}
@@ -118,9 +118,9 @@ func (c *CCTPController) GetHandler() *cctpHandler {
 	return c.handler
 }
 
-// extractAttributes extract the CCTP orbit attributes. Return an error in case
+// ExtractAttributes extract the CCTP orbit attributes. Return an error in case
 // of invalid attributes.
-func (c *CCTPController) extractAttributes(
+func (c *CCTPController) ExtractAttributes(
 	orbit *types.Orbit,
 ) (*orbits.CCTPAttributes, error) {
 	attr, err := orbit.CachedAttributes()
@@ -140,9 +140,9 @@ func (c *CCTPController) extractAttributes(
 	return cctpAttr, nil
 }
 
-// validateAttributes returns an error if the provided CCTP attributes are
+// ValidateAttributes returns an error if the provided CCTP attributes are
 // not valid.
-func (c *CCTPController) validateAttributes(attr *orbits.CCTPAttributes) error {
+func (c *CCTPController) ValidateAttributes(attr *orbits.CCTPAttributes) error {
 	return attr.Validate()
 }
 
@@ -177,8 +177,8 @@ type cctpHandler struct {
 	orbits.CCTPMsgServer
 }
 
-// newCCTPHandler returns a validated instance of the CCTP handler.
-func newCCTPHandler(
+// NewCCTPHandler returns a validated instance of the CCTP handler.
+func NewCCTPHandler(
 	msgServer orbits.CCTPMsgServer,
 ) (*cctpHandler, error) {
 	handler := cctpHandler{
