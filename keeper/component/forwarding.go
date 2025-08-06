@@ -49,8 +49,8 @@ type Forwarding struct {
 	PausedControllers collections.KeySet[int32]
 }
 
-// NewForwardingComponent returns a validated instance of an forwarding component.
-func NewForwardingComponent(
+// NewForwarding returns a validated instance of an forwarding component.
+func NewForwarding(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,

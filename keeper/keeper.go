@@ -200,17 +200,17 @@ func (k *Keeper) setComponents(
 	sb *collections.SchemaBuilder,
 	bankKeeper types.BankKeeper,
 ) error {
-	actionComp, err := component.NewActionComponent(cdc, sb, logger)
+	actionComp, err := component.NewAction(cdc, sb, logger)
 	if err != nil {
 		return fmt.Errorf("error creating a new action component: %w", err)
 	}
 
-	forwardingComp, err := component.NewForwardingComponent(cdc, sb, logger, bankKeeper)
+	forwardingComp, err := component.NewForwarding(cdc, sb, logger, bankKeeper)
 	if err != nil {
 		return fmt.Errorf("error creating a new forwarding component: %w", err)
 	}
 
-	dispatcherComp, err := component.NewDispatcherComponent(
+	dispatcherComp, err := component.NewDispatcher(
 		cdc,
 		sb,
 		logger,
@@ -221,7 +221,7 @@ func (k *Keeper) setComponents(
 		return fmt.Errorf("error creating a new dispatcher component: %w", err)
 	}
 
-	adapterComp, err := component.NewAdapterComponent(logger, bankKeeper, dispatcherComp)
+	adapterComp, err := component.NewAdapter(logger, bankKeeper, dispatcherComp)
 	if err != nil {
 		return fmt.Errorf("error creating a new adapter component: %w", err)
 	}

@@ -72,7 +72,7 @@ func NewDispatcherComponent(tb testing.TB) (*component.Dispatcher, *Dependencies
 	deps := NewDependencies(tb)
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
-	dispatcher, err := component.NewDispatcherComponent(
+	dispatcher, err := component.NewDispatcher(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,

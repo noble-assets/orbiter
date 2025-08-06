@@ -46,8 +46,8 @@ type Action struct {
 	PausedControllers collections.KeySet[int32]
 }
 
-// NewActionComponent returns a validated instance of an action component.
-func NewActionComponent(
+// NewAction returns a validated instance of an action component.
+func NewAction(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,

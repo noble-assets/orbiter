@@ -58,7 +58,7 @@ func TestNewDispatcherComponent(t *testing.T) {
 
 	for _, tc := range testCases {
 		sb := collections.NewSchemaBuilder(deps.StoreService)
-		_, err := component.NewDispatcherComponent(
+		_, err := component.NewDispatcher(
 			tc.codec,
 			sb,
 			tc.logger,

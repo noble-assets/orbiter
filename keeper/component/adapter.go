@@ -45,7 +45,7 @@ type Adapter struct {
 	dispatcher interfaces.PayloadDispatcher
 }
 
-func NewAdapterComponent(
+func NewAdapter(
 	logger log.Logger,
 	bankKeeper types.BankKeeperAdapter,
 	dispatcher interfaces.PayloadDispatcher,

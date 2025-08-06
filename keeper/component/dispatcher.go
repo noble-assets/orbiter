@@ -47,9 +47,9 @@ type Dispatcher struct {
 	DispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
 }
 
-// NewDispatcherComponent creates a new validated instance of a the dispatcher
+// NewDispatcher creates a new validated instance of a the dispatcher
 // component.
-func NewDispatcherComponent(
+func NewDispatcher(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
