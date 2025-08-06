@@ -104,9 +104,13 @@ const (
 	AdaptersComponentName = "adapter"
 	AdapterControllerName = "adapter_controller"
 
+	AdapterParamsName = "max_passthrough_payload_size"
+
 	// CCTPNobleDomain is the identifier of the Noble domain
 	// in the CCTP protocol.
 	CCTPNobleDomain = 4
 )
+
+var AdapterParamsPrefix = collections.NewPrefix(40)
 
 var OrbiterPrefix = ModuleName

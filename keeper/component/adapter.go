@@ -25,7 +25,9 @@ import (
 	"errors"
 	"fmt"
 
+	"cosmossdk.io/collections"
 	"cosmossdk.io/log"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"orbiter.dev/types"
@@ -43,13 +45,22 @@ type Adapter struct {
 	router     AdapterRouter
 	bankKeeper types.BankKeeperAdapter
 	dispatcher interfaces.PayloadDispatcher
+	Params     collections.Item[types.AdapterParams]
 }
 
 func NewAdapter(
+	cdc codec.BinaryCodec,
+	sb *collections.SchemaBuilder,
 	logger log.Logger,
 	bankKeeper types.BankKeeperAdapter,
 	dispatcher interfaces.PayloadDispatcher,
 ) (*Adapter, error) {
+	if cdc == nil {
+		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
+	}
+	if sb == nil {
+		return nil, types.ErrNilPointer.Wrap("schema builder cannot be nil")
+	}
 	if logger == nil {
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
@@ -59,6 +70,12 @@ func NewAdapter(
 		router:     router.New[types.ProtocolID, interfaces.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
+		Params: collections.NewItem(
+			sb,
+			types.AdapterParamsPrefix,
+			types.AdapterParamsName,
+			codec.CollValue[types.AdapterParams](cdc),
+		),
 	}
 
 	return &adaptersKeeper, adaptersKeeper.Validate()
@@ -129,7 +146,11 @@ func (c *Adapter) BeforeTransferHook(
 		return fmt.Errorf("before transfer hook failed: %w", err)
 	}
 
-	return c.clearOrbiterBalances(ctx)
+	if err := c.commonBeforeTransferHook(ctx, payload.Forwarding.PassthroughPayload); err != nil {
+		return fmt.Errorf("generic hook failed: %w", err)
+	}
+
+	return nil
 }
 
 // AfterTransferHook implements types.PayloadAdapter.
@@ -172,6 +193,44 @@ func (c *Adapter) ProcessPayload(
 	payload *types.Payload,
 ) error {
 	return c.dispatcher.DispatchPayload(ctx, transferAttr, payload)
+}
+
+// commonBeforeTransferHook groups all the logic that must be executed
+// before completing the cross-chain transfer, regardless the incoming
+// protocol used.
+func (c *Adapter) commonBeforeTransferHook(
+	ctx context.Context,
+	passthroughPayload []byte,
+) error {
+	if err := c.checkPassthroughPayloadSize(ctx, passthroughPayload); err != nil {
+		return err
+	}
+
+	if err := c.clearOrbiterBalances(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Adapter) checkPassthroughPayloadSize(
+	ctx context.Context,
+	passthroughPayload []byte,
+) error {
+	params, err := c.Params.Get(ctx)
+	if err != nil {
+		return fmt.Errorf("error getting %s component params", types.AdaptersComponentName)
+	}
+
+	if len(passthroughPayload) > int(params.MaxPassthroughPayloadSize) {
+		return fmt.Errorf(
+			"passthrough payload size %d is higher than maximum allowed %d",
+			len(passthroughPayload),
+			params.MaxPassthroughPayloadSize,
+		)
+	}
+
+	return nil
 }
 
 // clearOrbiterBalances sends all balances of the orbiter module account to
