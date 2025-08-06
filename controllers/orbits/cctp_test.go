@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package orbits
+package orbits_test
 
 import (
 	"context"
@@ -29,18 +29,18 @@ import (
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
 
-	"orbiter.dev/controllers"
+	"orbiter.dev/controllers/orbits"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
-	"orbiter.dev/types/controllers/orbits"
+	orbitstypes "orbiter.dev/types/controllers/orbits"
 )
 
 func TestNewCCTPController(t *testing.T) {
 	testCases := []struct {
 		name      string
 		logger    log.Logger
-		msgServer orbits.CCTPMsgServer
+		msgServer orbitstypes.CCTPMsgServer
 		expError  string
 	}{
 		{
@@ -61,7 +61,7 @@ func TestNewCCTPController(t *testing.T) {
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			controller, err := NewCCTPController(
+			controller, err := orbits.NewCCTPController(
 				tC.logger,
 				tC.msgServer,
 			)
@@ -94,7 +94,7 @@ func TestHandlePacket(t *testing.T) {
 		{
 			name: "success - valid packet processing",
 			packet: func() *types.OrbitPacket {
-				orbit, err := orbits.NewCCTPOrbit(
+				orbit, err := orbitstypes.NewCCTPOrbit(
 					1,
 					[]byte("recipient"),
 					[]byte("caller"),
@@ -114,7 +114,7 @@ func TestHandlePacket(t *testing.T) {
 				return context.WithValue(context.Background(), mocks.FailingContextKey, true)
 			},
 			packet: func() *types.OrbitPacket {
-				orbit, err := orbits.NewCCTPOrbit(
+				orbit, err := orbitstypes.NewCCTPOrbit(
 					1,
 					[]byte("recipient"),
 					[]byte("caller"),
@@ -132,7 +132,7 @@ func TestHandlePacket(t *testing.T) {
 	}
 
 	logger := log.NewNopLogger()
-	controller, err := NewCCTPController(
+	controller, err := orbits.NewCCTPController(
 		logger,
 		&mocks.CCTPMsgServer{},
 	)
@@ -160,13 +160,13 @@ func TestExtractAttributes(t *testing.T) {
 	testCases := []struct {
 		name          string
 		orbit         func() *types.Orbit
-		expAttributes *orbits.CCTPAttributes
+		expAttributes *orbitstypes.CCTPAttributes
 		expError      string
 	}{
 		{
 			name: "success - valid attributes",
 			orbit: func() *types.Orbit {
-				attr, err := orbits.NewCCTPAttributes(1, []byte("recipient"), []byte("caller"))
+				attr, err := orbitstypes.NewCCTPAttributes(1, []byte("recipient"), []byte("caller"))
 				require.NoError(t, err)
 				orbit := &types.Orbit{
 					ProtocolId: types.PROTOCOL_CCTP,
@@ -202,21 +202,12 @@ func TestExtractAttributes(t *testing.T) {
 		},
 	}
 
-	id := types.PROTOCOL_CCTP
-	baseController, err := controllers.NewBaseController(id)
+	controller, err := orbits.NewCCTPController(log.NewNopLogger(), &mocks.CCTPMsgServer{})
 	require.NoError(t, err)
-
-	handler, err := newCCTPHandler(&mocks.CCTPMsgServer{})
-	require.NoError(t, err)
-	controller := CCTPController{
-		logger:         log.NewNopLogger(),
-		BaseController: baseController,
-		handler:        handler,
-	}
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			attributes, err := controller.extractAttributes(tC.orbit())
+			attributes, err := controller.ExtractAttributes(tC.orbit())
 
 			if tC.expError != "" {
 				require.Nil(t, attributes)
@@ -233,7 +224,7 @@ func TestExtractAttributes(t *testing.T) {
 func TestNewCCTPHandler(t *testing.T) {
 	testCases := []struct {
 		name      string
-		msgServer orbits.CCTPMsgServer
+		msgServer orbitstypes.CCTPMsgServer
 		expErr    string
 	}{
 		{
@@ -249,7 +240,7 @@ func TestNewCCTPHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			handler, err := newCCTPHandler(
+			handler, err := orbits.NewCCTPHandler(
 				tc.msgServer,
 			)
 

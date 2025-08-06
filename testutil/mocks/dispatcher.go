@@ -23,7 +23,13 @@ package mocks
 import (
 	"context"
 	"errors"
+	"testing"
 
+	"github.com/stretchr/testify/require"
+
+	"cosmossdk.io/collections"
+
+	"orbiter.dev/keeper/components"
 	"orbiter.dev/types"
 	"orbiter.dev/types/interfaces"
 )
@@ -55,4 +61,24 @@ func (a *ActionsHandler) HandlePacket(
 	}
 
 	return nil
+}
+
+func NewDispatcherComponent(tb testing.TB) (*components.DispatcherComponent, *Dependencies) {
+	tb.Helper()
+
+	deps := NewDependencies(tb)
+
+	sb := collections.NewSchemaBuilder(deps.StoreService)
+	dispatcher, err := components.NewDispatcherComponent(
+		deps.EncCfg.Codec,
+		sb,
+		deps.Logger,
+		&OrbitsHandler{},
+		&ActionsHandler{},
+	)
+	require.NoError(tb, err)
+	_, err = sb.Build()
+	require.NoError(tb, err)
+
+	return dispatcher, &deps
 }
