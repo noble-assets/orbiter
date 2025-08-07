@@ -1,14 +1,13 @@
 syntax = "proto3";
 
-package noble.orbiter.v1;
+package noble.orbiter.core.v1;
 
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
-import "noble/orbiter/id/v1/action.proto";
-import "noble/orbiter/id/v1/protocol.proto";
+import "noble/orbiter/core/v1/id.proto";
 
-option go_package = "orbiter.dev/types";
+option go_package = "orbiter.dev/types/core";
 
 // Action represents a pre-processing step to be executed on a transfer
 // before routing to the destination counterparty.
@@ -25,12 +24,12 @@ message Action {
 
   // id specifies the type of action to be performed.
   // This determines how the attributes field should be interpreted.
-  noble.orbiter.id.v1.ActionID id = 1;
+  noble.orbiter.core.v1.ActionID id = 1;
 
   // attributes contains the action-specific configuration data.
   // The actual type depends on the action ID and must implement
   // the `ActionAttributes` interface.
-  google.protobuf.Any attributes = 2 [(cosmos_proto.accepts_interface) = "noble.orbiter.v1.ActionAttributes"];
+  google.protobuf.Any attributes = 2 [(cosmos_proto.accepts_interface) = "orbiter.core.v1.ActionAttributes"];
 }
 
 // Forwarding contains the information for a cross-chain forwarding.
@@ -42,12 +41,12 @@ message Forwarding {
 
   // protocol_id specifies the bridging protocol type to use
   // to route incoming funds to a destination chain.
-  noble.orbiter.id.v1.ProtocolID protocol_id = 1;
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1;
 
   // attributes contains protocol-specific configuration data.
   // The actual type depends on the protocol ID and must implement
   // the `ForwardingAttributes` interface.
-  google.protobuf.Any attributes = 2 [(cosmos_proto.accepts_interface) = "noble.orbiter.v1.ForwardingAttributes"];
+  google.protobuf.Any attributes = 2 [(cosmos_proto.accepts_interface) = "orbiter.core.v1.ForwardingAttributes"];
 
   // passthrough_payload allows to pass additional metadata
   // to the destination chain. This field is not interpreted by
