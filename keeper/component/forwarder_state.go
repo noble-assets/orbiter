@@ -32,7 +32,7 @@ import (
 // PausedControllers
 // ====================================================================================================
 
-func (c *Forwarding) IsControllerPaused(
+func (c *Forwarder) IsControllerPaused(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) (bool, error) {
@@ -41,7 +41,7 @@ func (c *Forwarding) IsControllerPaused(
 	return paused, err
 }
 
-func (c *Forwarding) SetPausedController(ctx context.Context,
+func (c *Forwarder) SetPausedController(ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
 	paused, err := c.IsControllerPaused(ctx, protocolID)
@@ -55,7 +55,7 @@ func (c *Forwarding) SetPausedController(ctx context.Context,
 	return c.PausedControllers.Set(ctx, int32(protocolID))
 }
 
-func (c *Forwarding) SetUnpausedController(
+func (c *Forwarder) SetUnpausedController(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -74,7 +74,7 @@ func (c *Forwarding) SetUnpausedController(
 // PausedOrbits
 // ====================================================================================================
 
-func (c *Forwarding) IsOrbitPaused(
+func (c *Forwarder) IsOrbitPaused(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
@@ -84,7 +84,7 @@ func (c *Forwarding) IsOrbitPaused(
 	return paused, err
 }
 
-func (c *Forwarding) SetPausedOrbit(ctx context.Context,
+func (c *Forwarder) SetPausedOrbit(ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
 ) error {
@@ -99,7 +99,7 @@ func (c *Forwarding) SetPausedOrbit(ctx context.Context,
 	return c.PausedForwardings.Set(ctx, collections.Join(int32(protocolID), counterpartyID))
 }
 
-func (c *Forwarding) SetUnpausedOrbit(
+func (c *Forwarder) SetUnpausedOrbit(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,

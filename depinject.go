@@ -111,7 +111,7 @@ func InjectComponents(in ComponentsInputs) {
 
 func InjectOrbitControllers(in ComponentsInputs) {
 	cctp, err := forwardingctrl.NewCCTPController(
-		in.Orbiters.ForwardingComponent().Logger(),
+		in.Orbiters.Forwarder().Logger(),
 		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func InjectOrbitControllers(in ComponentsInputs) {
 
 func InjectActionControllers(in ComponentsInputs) {
 	fee, err := actionctrl.NewFeeController(
-		in.Orbiters.ActionComponent().Logger(),
+		in.Orbiters.Executor().Logger(),
 		in.BankKeeper,
 	)
 	if err != nil {
@@ -136,7 +136,7 @@ func InjectActionControllers(in ComponentsInputs) {
 func InjectAdapterControllers(in ComponentsInputs) {
 	ibc, err := adapterctrl.NewIBCAdapter(
 		in.Orbiters.Codec(),
-		in.Orbiters.AdapterComponent().Logger(),
+		in.Orbiters.Adapter().Logger(),
 	)
 	if err != nil {
 		panic(fmt.Errorf("error creating ibc adapter: %w", err))

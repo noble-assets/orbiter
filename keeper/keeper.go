@@ -44,10 +44,10 @@ type Keeper struct {
 	authority string
 
 	// Components.
-	actionComponent     interfaces.ActionComponent
-	forwardingComponent interfaces.ForwardingComponent
-	dispatcherComponent interfaces.DispatcherComponent
-	adapterComponent    interfaces.AdapterComponent
+	executor   interfaces.Executor
+	forwarder  interfaces.Forwarder
+	dispatcher interfaces.Dispatcher
+	adapter    interfaces.Adapter
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -140,96 +140,95 @@ func (k *Keeper) Authority() string {
 	return k.authority
 }
 
-func (k *Keeper) ActionComponent() interfaces.ActionComponent {
-	return k.actionComponent
+func (k *Keeper) Executor() interfaces.Executor {
+	return k.executor
 }
 
-func (k *Keeper) ForwardingComponent() interfaces.ForwardingComponent {
-	return k.forwardingComponent
+func (k *Keeper) Forwarder() interfaces.Forwarder {
+	return k.forwarder
 }
 
-func (k *Keeper) DispatcherComponent() interfaces.PayloadDispatcher {
-	return k.dispatcherComponent
+func (k *Keeper) Dispatcher() interfaces.PayloadDispatcher {
+	return k.dispatcher
 }
 
-func (k *Keeper) AdapterComponent() interfaces.AdapterComponent {
-	return k.adapterComponent
+func (k *Keeper) Adapter() interfaces.Adapter {
+	return k.adapter
 }
 
 func (k *Keeper) SetForwardingControllers(controllers ...interfaces.ControllerForwarding) {
-	router := k.forwardingComponent.Router()
+	router := k.forwarder.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
 			panic(err)
 		}
 	}
-	if err := k.forwardingComponent.SetRouter(router); err != nil {
+	if err := k.forwarder.SetRouter(router); err != nil {
 		panic(err)
 	}
 }
 
 func (k *Keeper) SetActionControllers(controllers ...interfaces.ControllerAction) {
-	router := k.actionComponent.Router()
+	router := k.executor.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
 			panic(err)
 		}
 	}
-	if err := k.actionComponent.SetRouter(router); err != nil {
+	if err := k.executor.SetRouter(router); err != nil {
 		panic(err)
 	}
 }
 
 func (k *Keeper) SetAdapterControllers(controllers ...interfaces.ControllerAdapter) {
-	router := k.adapterComponent.Router()
+	router := k.adapter.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
 			panic(err)
 		}
 	}
-	if err := k.adapterComponent.SetRouter(router); err != nil {
+	if err := k.adapter.SetRouter(router); err != nil {
 		panic(err)
 	}
 }
 
-// setComponents registers all required components in the
-// orbiter keeper.
+// setComponents registers all required components in the orbiter keeper.
 func (k *Keeper) setComponents(
 	cdc codec.Codec,
 	logger log.Logger,
 	sb *collections.SchemaBuilder,
 	bankKeeper types.BankKeeper,
 ) error {
-	actionComp, err := component.NewAction(cdc, sb, logger)
+	executor, err := component.NewExecutor(cdc, sb, logger)
 	if err != nil {
 		return fmt.Errorf("error creating a new action component: %w", err)
 	}
 
-	forwardingComp, err := component.NewForwarding(cdc, sb, logger, bankKeeper)
+	forwarder, err := component.NewForwarder(cdc, sb, logger, bankKeeper)
 	if err != nil {
 		return fmt.Errorf("error creating a new forwarding component: %w", err)
 	}
 
-	dispatcherComp, err := component.NewDispatcher(
+	dispatcher, err := component.NewDispatcher(
 		cdc,
 		sb,
 		logger,
-		forwardingComp,
-		actionComp,
+		forwarder,
+		executor,
 	)
 	if err != nil {
 		return fmt.Errorf("error creating a new dispatcher component: %w", err)
 	}
 
-	adapterComp, err := component.NewAdapter(logger, bankKeeper, dispatcherComp)
+	adapter, err := component.NewAdapter(logger, bankKeeper, dispatcher)
 	if err != nil {
 		return fmt.Errorf("error creating a new adapter component: %w", err)
 	}
 
-	k.actionComponent = actionComp
-	k.forwardingComponent = forwardingComp
-	k.dispatcherComponent = dispatcherComp
-	k.adapterComponent = adapterComp
+	k.executor = executor
+	k.forwarder = forwarder
+	k.dispatcher = dispatcher
+	k.adapter = adapter
 
 	return nil
 }

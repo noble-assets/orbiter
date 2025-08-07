@@ -36,9 +36,9 @@ import (
 
 type ForwardingRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerForwarding]
 
-var _ interfaces.ForwardingComponent = &Forwarding{}
+var _ interfaces.Forwarder = &Forwarder{}
 
-type Forwarding struct {
+type Forwarder struct {
 	logger     log.Logger
 	bankKeeper types.BankKeeperForwarding
 	// router is a forwarding controllers router.
@@ -49,18 +49,18 @@ type Forwarding struct {
 	PausedControllers collections.KeySet[int32]
 }
 
-// NewForwarding returns a validated instance of an forwarding component.
-func NewForwarding(
+// NewForwarder returns a validated instance of an forwarding component.
+func NewForwarder(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
 	bankKeeper types.BankKeeperForwarding,
-) (*Forwarding, error) {
+) (*Forwarder, error) {
 	if logger == nil {
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	forwardingComponent := Forwarding{
+	forwarder := Forwarder{
 		logger:     logger.With(types.ComponentPrefix, types.ForwardingComponentName),
 		bankKeeper: bankKeeper,
 
@@ -79,10 +79,10 @@ func NewForwarding(
 		),
 	}
 
-	return &forwardingComponent, forwardingComponent.Validate()
+	return &forwarder, forwarder.Validate()
 }
 
-func (c *Forwarding) Validate() error {
+func (c *Forwarder) Validate() error {
 	if c.logger == nil {
 		return types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
@@ -96,15 +96,15 @@ func (c *Forwarding) Validate() error {
 	return nil
 }
 
-func (c *Forwarding) Logger() log.Logger {
+func (c *Forwarder) Logger() log.Logger {
 	return c.logger
 }
 
-func (c *Forwarding) Router() ForwardingRouter {
+func (c *Forwarder) Router() ForwardingRouter {
 	return c.router
 }
 
-func (c *Forwarding) SetRouter(ocr ForwardingRouter) error {
+func (c *Forwarder) SetRouter(ocr ForwardingRouter) error {
 	if c.router != nil && c.router.Sealed() {
 		return errors.New("cannot reset a sealed router")
 	}
@@ -115,7 +115,7 @@ func (c *Forwarding) SetRouter(ocr ForwardingRouter) error {
 	return nil
 }
 
-func (c *Forwarding) Pause(
+func (c *Forwarder) Pause(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
@@ -128,7 +128,7 @@ func (c *Forwarding) Pause(
 	}
 }
 
-func (c *Forwarding) Unpause(
+func (c *Forwarder) Unpause(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
@@ -140,7 +140,7 @@ func (c *Forwarding) Unpause(
 	}
 }
 
-func (c *Forwarding) HandlePacket(
+func (c *Forwarder) HandlePacket(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
@@ -159,7 +159,7 @@ func (c *Forwarding) HandlePacket(
 	return controller.HandlePacket(ctx, packet)
 }
 
-func (c *Forwarding) ValidateForwarding(
+func (c *Forwarder) ValidateForwarding(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
@@ -171,7 +171,7 @@ func (c *Forwarding) ValidateForwarding(
 	return c.validateForwarding(ctx, protocolID, counterpartyID)
 }
 
-func (c *Forwarding) validatePacket(
+func (c *Forwarder) validatePacket(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
@@ -196,7 +196,7 @@ func (c *Forwarding) validatePacket(
 	return c.validateInitialConditions(ctx, packet)
 }
 
-func (c *Forwarding) validateController(
+func (c *Forwarder) validateController(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -214,7 +214,7 @@ func (c *Forwarding) validateController(
 	return nil
 }
 
-func (c *Forwarding) validateForwarding(
+func (c *Forwarder) validateForwarding(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyID string,
@@ -234,7 +234,7 @@ func (c *Forwarding) validateForwarding(
 	return nil
 }
 
-func (c *Forwarding) validateInitialConditions(
+func (c *Forwarder) validateInitialConditions(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
@@ -256,7 +256,7 @@ func (c *Forwarding) validateInitialConditions(
 	return nil
 }
 
-func (c *Forwarding) pauseProtocol(
+func (c *Forwarder) pauseProtocol(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -271,7 +271,7 @@ func (c *Forwarding) pauseProtocol(
 	return nil
 }
 
-func (c *Forwarding) pauseProtocolDestinations(
+func (c *Forwarder) pauseProtocolDestinations(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,
@@ -290,7 +290,7 @@ func (c *Forwarding) pauseProtocolDestinations(
 	return nil
 }
 
-func (c *Forwarding) unpauseProtocol(
+func (c *Forwarder) unpauseProtocol(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 ) error {
@@ -305,7 +305,7 @@ func (c *Forwarding) unpauseProtocol(
 	return nil
 }
 
-func (c *Forwarding) unpauseProtocolDestinations(
+func (c *Forwarder) unpauseProtocolDestinations(
 	ctx context.Context,
 	protocolID types.ProtocolID,
 	counterpartyIDs []string,

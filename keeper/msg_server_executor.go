@@ -35,9 +35,9 @@ func (m msgServer) PauseAction(
 		return nil, err
 	}
 
-	actionComp := m.ActionComponent()
+	executor := m.Executor()
 
-	if err := actionComp.Pause(ctx, msg.ActionId); err != nil {
+	if err := executor.Pause(ctx, msg.ActionId); err != nil {
 		return nil, types.ErrUnableToPause.Wrapf(
 			"action: %s", err.Error(),
 		)
@@ -55,9 +55,9 @@ func (m msgServer) UnpauseAction(
 		return nil, err
 	}
 
-	actionComp := m.ActionComponent()
+	executor := m.Executor()
 
-	if err := actionComp.Unpause(ctx, msg.ActionId); err != nil {
+	if err := executor.Unpause(ctx, msg.ActionId); err != nil {
 		return nil, types.ErrUnableToUnpause.Wrapf(
 			"action: %s", err.Error(),
 		)

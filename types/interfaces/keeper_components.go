@@ -32,9 +32,9 @@ type Loggable interface {
 	Logger() log.Logger
 }
 
-// ForwardingComponent defines the behavior the Orbiter module
-// expected from a type to act as a forwardings component.
-type ForwardingComponent interface {
+// Forwarder defines the behavior a components must
+// have to process forwardings.
+type Forwarder interface {
 	Loggable
 	PacketHandler[*types.ForwardingPacket]
 	RouterProvider[types.ProtocolID, ControllerForwarding]
@@ -42,9 +42,9 @@ type ForwardingComponent interface {
 	Unpause(context.Context, types.ProtocolID, []string) error
 }
 
-// ActionComponent defines the behavior the Orbiter module
-// expected from a type to act as an actions component.
-type ActionComponent interface {
+// Executor defines the behavior a components must
+// have to process pre-actios.
+type Executor interface {
 	Loggable
 	PacketHandler[*types.ActionPacket]
 	RouterProvider[types.ActionID, ControllerAction]
@@ -52,16 +52,16 @@ type ActionComponent interface {
 	Unpause(context.Context, types.ActionID) error
 }
 
-// DispatcherComponent defines the behavior the Orbiter module
-// expected from a type to act as a dispatcher.
-type DispatcherComponent interface {
+// Dispatcher defines the behavior a components must
+// have to dispatch packets.
+type Dispatcher interface {
 	Loggable
 	PayloadDispatcher
 }
 
-// AdapterComponent defines the behavior the Orbiter module
-// expected from a type to act as a cross-chain adapter.
-type AdapterComponent interface {
+// Adapter defines the behavior a component must
+// have to adapt cross-chain packets to the Orbiter.
+type Adapter interface {
 	Loggable
 	PayloadAdapter
 	RouterProvider[types.ProtocolID, ControllerAdapter]
