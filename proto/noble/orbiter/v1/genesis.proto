@@ -2,7 +2,11 @@ syntax = "proto3";
 
 package noble.orbiter.v1;
 
+import "noble/orbiter/component/adapter/v1/genesis.proto";
+
 option go_package = "orbiter.dev/types";
 
 // GenesisState represents the genesis state for the Orbiter module.
-message GenesisState {}
+message GenesisState {
+  noble.orbiter.component.adapter.v1.GenesisState adapter_genesis = 1;
+}

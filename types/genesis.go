@@ -20,8 +20,12 @@
 
 package types
 
+import adapter "orbiter.dev/types/component/adapter"
+
 func DefaultGenesisState() *GenesisState {
-	return &GenesisState{}
+	return &GenesisState{
+		AdapterGenesis: &adapter.GenesisState{},
+	}
 }
 
 func (genesis *GenesisState) Validate() error {
