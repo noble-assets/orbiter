@@ -30,7 +30,7 @@ import (
 	mockorbiter "orbiter.dev/testutil/mocks/orbiter"
 	"orbiter.dev/types"
 	"orbiter.dev/types/component/executor"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
 func TestMsgServerPauseAction(t *testing.T) {
@@ -43,7 +43,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 			name: "error - unauthorized signer",
 			msg: &executor.MsgPauseAction{
 				Signer:   "noble1invalid",
-				ActionId: id.ACTION_FEE,
+				ActionId: core.ACTION_FEE,
 			},
 			expErr: types.ErrUnauthorized.Error(),
 		},
@@ -51,7 +51,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 			name: "success - already paused action",
 			msg: &executor.MsgPauseAction{
 				Signer:   testutil.Authority,
-				ActionId: id.ActionID(99),
+				ActionId: core.ActionID(99),
 			},
 			expErr: "",
 		},
@@ -59,7 +59,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 			name: "success - valid pause request",
 			msg: &executor.MsgPauseAction{
 				Signer:   testutil.Authority,
-				ActionId: id.ACTION_FEE,
+				ActionId: core.ACTION_FEE,
 			},
 			expErr: "",
 		},
@@ -93,7 +93,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			name: "error - unauthorized signer",
 			msg: &executor.MsgUnpauseAction{
 				Signer:   "noble1invalid",
-				ActionId: id.ACTION_FEE,
+				ActionId: core.ACTION_FEE,
 			},
 			expErr: types.ErrUnauthorized.Error(),
 		},
@@ -101,7 +101,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			name: "success - already unpaused action",
 			msg: &executor.MsgUnpauseAction{
 				Signer:   testutil.Authority,
-				ActionId: id.ActionID(99),
+				ActionId: core.ActionID(99),
 			},
 			expErr: "",
 		},
@@ -109,7 +109,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			name: "success - valid unpause request",
 			msg: &executor.MsgUnpauseAction{
 				Signer:   testutil.Authority,
-				ActionId: id.ACTION_FEE,
+				ActionId: core.ACTION_FEE,
 			},
 			expErr: "",
 		},

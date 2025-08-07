@@ -27,6 +27,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
 // JSONParser is an utility type capable of parsing
@@ -49,7 +50,7 @@ func NewJSONParser(cdc codec.Codec) (*JSONParser, error) {
 
 // Parse returns the orbiter payload from a JSON formatted
 // string or an error.
-func (p *JSONParser) Parse(jsonString string) (*types.Payload, error) {
+func (p *JSONParser) Parse(jsonString string) (*core.Payload, error) {
 	var jsonData map[string]any
 	err := json.Unmarshal([]byte(jsonString), &jsonData)
 	if err != nil {
@@ -70,7 +71,7 @@ func (p *JSONParser) Parse(jsonString string) (*types.Payload, error) {
 		)
 	}
 
-	pw := types.PayloadWrapper{}
+	pw := core.PayloadWrapper{}
 	err = types.UnmarshalJSON(p.cdc, []byte(jsonString), &pw)
 	if err != nil {
 		return nil, types.ErrParsingPayload.Wrapf(

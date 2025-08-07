@@ -33,7 +33,7 @@ import (
 	"orbiter.dev/controller"
 	"orbiter.dev/types"
 	actiontypes "orbiter.dev/types/controller/action"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -42,7 +42,7 @@ var _ interfaces.ControllerAction = &FeeController{}
 // FeeController is the controller to execute
 // fee payment action.
 type FeeController struct {
-	*controller.BaseController[id.ActionID]
+	*controller.BaseController[core.ActionID]
 
 	logger     log.Logger
 	BankKeeper actiontypes.BankKeeperFee
@@ -58,7 +58,7 @@ func NewFeeController(
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	id := id.ACTION_FEE
+	id := core.ACTION_FEE
 	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func (c *FeeController) HandlePacket(
 
 // GetAttributes returns the fee attributes concrete type from
 // a fee action.
-func (c *FeeController) GetAttributes(action *types.Action) (*actiontypes.FeeAttributes, error) {
+func (c *FeeController) GetAttributes(action *core.Action) (*actiontypes.FeeAttributes, error) {
 	attr, err := c.extractAttributes(action)
 	if err != nil {
 		return nil, types.ErrInvalidAttributes.Wrap(err.Error())
@@ -223,7 +223,7 @@ func (c *FeeController) executeAction(
 // extractAttributes extract the fee attributes. Return an error in case
 // of invalid attributes.
 func (c *FeeController) extractAttributes(
-	action *types.Action,
+	action *core.Action,
 ) (*actiontypes.FeeAttributes, error) {
 	if action == nil {
 		return nil, types.ErrNilPointer.Wrap("received nil fee attributes")

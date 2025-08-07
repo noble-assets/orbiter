@@ -18,34 +18,22 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package id
+package core
 
-import "fmt"
+import (
+	"github.com/cosmos/gogoproto/proto"
+)
 
-// NewProtocolID returns a validated protocol ID from an int32. If
-// the validation fails, the returned ID is the default ID.
-func NewProtocolID(id int32) (ProtocolID, error) {
-	protocolID := ProtocolID(id)
-	if err := protocolID.Validate(); err != nil {
-		return PROTOCOL_UNSUPPORTED, err
-	}
-
-	return protocolID, nil
+// ActionAttributes is the interface defining the expected behavior
+// for a type to be used to perform actions on the orbiter module.
+type ActionAttributes interface {
+	proto.Message
 }
 
-// Validate returns an error if the ID is not valid.
-func (id ProtocolID) Validate() error {
-	if id == PROTOCOL_UNSUPPORTED {
-		return fmt.Errorf("protocol id is not supported: %s", id.String())
-	}
-	// Check if the protocol ID exists in the proto generated enum map
-	if _, found := ProtocolID_name[int32(id)]; !found {
-		return fmt.Errorf("protocol id is unknown: %d", int32(id))
-	}
-
-	return nil
-}
-
-func (id ProtocolID) Uint32() uint32 {
-	return uint32(id) //nolint:gosec
+// ForwardingAttributes is the interface every protocol forwarding
+// attribute type has to implement.
+type ForwardingAttributes interface {
+	proto.Message
+	// Returns the destination chain identifier.
+	CounterpartyID() string
 }

@@ -34,7 +34,7 @@ import (
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
 	forwardingtypes "orbiter.dev/types/controller/forwarding"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
 func TestNewCCTPController(t *testing.T) {
@@ -80,7 +80,7 @@ func TestNewCCTPController(t *testing.T) {
 
 func TestHandlePacket(t *testing.T) {
 	transferAttr, err := types.NewTransferAttributes(
-		id.PROTOCOL_IBC,
+		core.PROTOCOL_IBC,
 		"channel-01",
 		"uusdc",
 		math.NewInt(1_000_000),
@@ -160,21 +160,21 @@ func TestHandlePacket(t *testing.T) {
 func TestExtractAttributes(t *testing.T) {
 	testCases := []struct {
 		name          string
-		forwarding    func() *types.Forwarding
+		forwarding    func() *core.Forwarding
 		expAttributes *forwardingtypes.CCTPAttributes
 		expError      string
 	}{
 		{
 			name: "success - valid attributes",
-			forwarding: func() *types.Forwarding {
+			forwarding: func() *core.Forwarding {
 				attr, err := forwardingtypes.NewCCTPAttributes(
 					1,
 					[]byte("recipient"),
 					[]byte("caller"),
 				)
 				require.NoError(t, err)
-				forwarding := &types.Forwarding{
-					ProtocolId: id.PROTOCOL_CCTP,
+				forwarding := &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
 				}
 				err = forwarding.SetAttributes(attr)
 				require.NoError(t, err)
@@ -184,10 +184,10 @@ func TestExtractAttributes(t *testing.T) {
 		},
 		{
 			name: "error - wrong attributes",
-			forwarding: func() *types.Forwarding {
+			forwarding: func() *core.Forwarding {
 				invalidAttr := testdata.TestForwardingAttr{}
-				forwarding := &types.Forwarding{
-					ProtocolId: id.PROTOCOL_CCTP,
+				forwarding := &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
 				}
 				err := forwarding.SetAttributes(&invalidAttr)
 				require.NoError(t, err)
@@ -198,12 +198,12 @@ func TestExtractAttributes(t *testing.T) {
 		},
 		{
 			name: "error - empty attributes",
-			forwarding: func() *types.Forwarding {
-				return &types.Forwarding{
-					ProtocolId: id.PROTOCOL_CCTP,
+			forwarding: func() *core.Forwarding {
+				return &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
 				}
 			},
-			expError: types.ErrNilPointer.Error(),
+			expError: "nil pointer",
 		},
 	}
 

@@ -27,14 +27,14 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
 // TransferAttributes defines the cross-chain transfer information
 // passed down the orbiter to handle actions and routing.
 type TransferAttributes struct {
 	// Source fields have only getter methods.
-	sourceOrbitID id.OrbitID
+	sourceOrbitID core.OrbitID
 	sourceCoin    sdk.Coin
 	// Destination field have both setters and getters
 	// because they can be mutated by actions.
@@ -44,12 +44,12 @@ type TransferAttributes struct {
 // NewTransferAttributes returns a validated reference to a
 // transfer attributes type.
 func NewTransferAttributes(
-	sourceProtocolID id.ProtocolID,
+	sourceProtocolID core.ProtocolID,
 	sourceCounterpartyID string,
 	denom string,
 	amount math.Int,
 ) (*TransferAttributes, error) {
-	sourceOrbitID, err := id.NewOrbitID(sourceProtocolID, sourceCounterpartyID)
+	sourceOrbitID, err := core.NewOrbitID(sourceProtocolID, sourceCounterpartyID)
 	if err != nil {
 		return nil, err
 	}
@@ -91,12 +91,12 @@ func (a *TransferAttributes) Validate() error {
 	return nil
 }
 
-func (a *TransferAttributes) SourceProtocolID() id.ProtocolID {
+func (a *TransferAttributes) SourceProtocolID() core.ProtocolID {
 	if a != nil {
 		return a.sourceOrbitID.ProtocolID
 	}
 
-	return id.PROTOCOL_UNSUPPORTED
+	return core.PROTOCOL_UNSUPPORTED
 }
 
 func (a *TransferAttributes) SourceCounterpartyID() string {
@@ -177,14 +177,14 @@ func (a *TransferAttributes) SetDestinationDenom(denom string) {
 // forwarding info are extended with the cross chain transfer attributes.
 type ForwardingPacket struct {
 	TransferAttributes *TransferAttributes
-	Forwarding         *Forwarding
+	Forwarding         *core.Forwarding
 }
 
 // NewForwardingPacket returns a pointer to a validated instance of the
 // forwarding packet.
 func NewForwardingPacket(
 	transferAttr *TransferAttributes,
-	forwarding *Forwarding,
+	forwarding *core.Forwarding,
 ) (*ForwardingPacket, error) {
 	forwardingPacket := ForwardingPacket{
 		TransferAttributes: transferAttr,
@@ -212,12 +212,12 @@ func (p *ForwardingPacket) Validate() error {
 // attributes are extended with the cross chain transfer ones.
 type ActionPacket struct {
 	TransferAttributes *TransferAttributes
-	Action             *Action
+	Action             *core.Action
 }
 
 // NewActionPacket returns a pointer to a validated instance of the
 // action packet.
-func NewActionPacket(transferAttr *TransferAttributes, action *Action) (*ActionPacket, error) {
+func NewActionPacket(transferAttr *TransferAttributes, action *core.Action) (*ActionPacket, error) {
 	actionPacket := ActionPacket{
 		TransferAttributes: transferAttr,
 		Action:             action,

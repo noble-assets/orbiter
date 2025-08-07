@@ -40,7 +40,7 @@ func NewMsgServerAdapter(keeper *Keeper) msgServerAdapter {
 // UpdateParams implements adapter.MsgServer.
 func (s msgServerAdapter) UpdateParams(
 	ctx context.Context,
-	msg *adapter.MsgUpdateParamsRequest,
+	msg *adapter.MsgUpdateParams,
 ) (*adapter.MsgUpdateParamsResponse, error) {
 	if err := s.CheckIsAuthority(msg.Signer); err != nil {
 		return nil, err

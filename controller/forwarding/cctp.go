@@ -31,7 +31,7 @@ import (
 	"orbiter.dev/controller"
 	"orbiter.dev/types"
 	forwardingtypes "orbiter.dev/types/controller/forwarding"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -40,7 +40,7 @@ var _ interfaces.ControllerForwarding = &CCTPController{}
 // CCTPController is the forwarding controller to perform
 // a CCTP transfer.
 type CCTPController struct {
-	*controller.BaseController[id.ProtocolID]
+	*controller.BaseController[core.ProtocolID]
 
 	logger  log.Logger
 	handler *cctpHandler
@@ -56,7 +56,7 @@ func NewCCTPController(
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	id := id.PROTOCOL_CCTP
+	id := core.PROTOCOL_CCTP
 	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (c *CCTPController) GetHandler() *cctpHandler {
 // ExtractAttributes extract the CCTP forwarding attributes. Return an error in case
 // of invalid attributes.
 func (c *CCTPController) ExtractAttributes(
-	forwarding *types.Forwarding,
+	forwarding *core.Forwarding,
 ) (*forwardingtypes.CCTPAttributes, error) {
 	attr, err := forwarding.CachedAttributes()
 	if err != nil {

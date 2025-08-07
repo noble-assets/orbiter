@@ -35,7 +35,7 @@ import (
 	"orbiter.dev/types"
 	"orbiter.dev/types/controller/action"
 	"orbiter.dev/types/controller/forwarding"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
 const OrbiterModuleAddr = "noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d"
@@ -112,13 +112,13 @@ func TestIbc(t *testing.T) {
 		},
 	}
 
-	action := types.Action{
-		Id: id.ACTION_FEE,
+	action := core.Action{
+		Id: core.ACTION_FEE,
 	}
 	err = action.SetAttributes(&feeAttr)
 	require.NoError(t, err)
 
-	payload, err := types.NewPayloadWrapper(forwarding, []*types.Action{&action})
+	payload, err := core.NewPayloadWrapper(forwarding, []*core.Action{&action})
 	require.NoError(t, err)
 
 	encCfg := testutil.MakeTestEncodingConfig("noble")

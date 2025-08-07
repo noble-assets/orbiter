@@ -197,7 +197,7 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
 5. Define the action and set the attributes:
 
 ```go
- action := types.Action{
+ action := core.Action{
   Id: types.ACTION_FEE,
  }
  err = action.SetAttributes(&feeAttr)
@@ -206,7 +206,7 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
 6. Create a wrapped payload:
 
 ```go
- payload, err := types.NewPayloadWrapper(orbit, []*types.Action{&action})
+ payload, err := types.NewPayloadWrapper(orbit, []*core.Action{&action})
 ```
 
 7. Marshal the payload structure into JSON using the codec with registered interfaces:

@@ -24,34 +24,34 @@ import (
 	"context"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
 // ControllerForwarding defines the behavior a forwarding packet
 // controller has to implement.
 type ControllerForwarding interface {
-	Controller[id.ProtocolID]
+	Controller[core.ProtocolID]
 	PacketHandler[*types.ForwardingPacket]
 }
 
 // ControllerAction defines the behavior an action packet
 // controller has to implement.
 type ControllerAction interface {
-	Controller[id.ActionID]
+	Controller[core.ActionID]
 	PacketHandler[*types.ActionPacket]
 }
 
 // ControllerAdapter defines the behavior expected from a specific
 // protocol adapter.
 type ControllerAdapter interface {
-	Controller[id.ProtocolID]
+	Controller[core.ProtocolID]
 	PayloadParser
 	// BeforeTransferHook allows to execute logic BEFORE completing
 	// the cross-chain transfer.
-	BeforeTransferHook(context.Context, *types.Payload) error
+	BeforeTransferHook(context.Context, *core.Payload) error
 	// AfterTransferHook allows to execute logic AFTER completing
 	// the cross-chain transfer.
-	AfterTransferHook(context.Context, *types.Payload) error
+	AfterTransferHook(context.Context, *core.Payload) error
 }
 
 // Controller defines the behavior common to

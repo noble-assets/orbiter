@@ -25,12 +25,12 @@ import (
 	"fmt"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
-var _ types.ForwardingAttributes = &CCTPAttributes{}
+var _ core.ForwardingAttributes = &CCTPAttributes{}
 
-// CounterpartyID implements types.ForwardingAttributes.
+// CounterpartyID implements core.ForwardingAttributes.
 func (a *CCTPAttributes) CounterpartyID() string {
 	return fmt.Sprintf("%d", a.GetDestinationDomain())
 }
@@ -75,11 +75,11 @@ func NewCCTPForwarding(
 	mintRecipient []byte,
 	destinationCaller []byte,
 	passthroughPayload []byte,
-) (*types.Forwarding, error) {
+) (*core.Forwarding, error) {
 	attributes, err := NewCCTPAttributes(destinationDomain, mintRecipient, destinationCaller)
 	if err != nil {
 		return nil, err
 	}
 
-	return types.NewForwarding(id.PROTOCOL_CCTP, attributes, passthroughPayload)
+	return core.NewForwarding(core.PROTOCOL_CCTP, attributes, passthroughPayload)
 }

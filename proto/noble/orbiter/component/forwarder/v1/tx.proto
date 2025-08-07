@@ -75,7 +75,7 @@ message MsgUnpauseProtocol {
   // Address of the signer who is requesting to unpause the protocol.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Bridge protocol to unpause.
-  noble.orbiter.id.v1.ProtocolID protocol_id = 2;
+  noble.orbiter.core.v1.ProtocolID protocol_id = 2;
 }
 
 // MsgUnpauseProtocolResponse is the response type from a MsgUnpauseProtocol request.

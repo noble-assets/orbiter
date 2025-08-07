@@ -30,6 +30,7 @@ import (
 
 	"orbiter.dev/types"
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -122,7 +123,7 @@ func (d *Dispatcher) Logger() log.Logger {
 func (d *Dispatcher) DispatchPayload(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	payload *types.Payload,
+	payload *core.Payload,
 ) error {
 	if err := d.validatePayload(payload); err != nil {
 		return types.ErrValidation.Wrap(err.Error())
@@ -145,7 +146,7 @@ func (d *Dispatcher) DispatchPayload(
 
 // validatePayload checks if the payload is not nil, and calls
 // its validation method.
-func (d *Dispatcher) validatePayload(payload *types.Payload) error {
+func (d *Dispatcher) validatePayload(payload *core.Payload) error {
 	if payload == nil {
 		return types.ErrNilPointer.Wrap("payload cannot be nil")
 	}
@@ -158,7 +159,7 @@ func (d *Dispatcher) validatePayload(payload *types.Payload) error {
 func (d *Dispatcher) dispatchActions(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	actions []*types.Action,
+	actions []*core.Action,
 ) error {
 	for _, action := range actions {
 		packet, err := types.NewActionPacket(transferAttr, action)
@@ -180,7 +181,7 @@ func (d *Dispatcher) dispatchActions(
 func (d *Dispatcher) dispatchForwarding(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	forwarding *types.Forwarding,
+	forwarding *core.Forwarding,
 ) error {
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {

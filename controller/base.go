@@ -21,13 +21,13 @@
 package controller
 
 import (
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/interfaces"
 )
 
 var (
-	_ interfaces.Controller[id.ActionID]   = &BaseController[id.ActionID]{}
-	_ interfaces.Controller[id.ProtocolID] = &BaseController[id.ProtocolID]{}
+	_ interfaces.Controller[core.ActionID]   = &BaseController[core.ActionID]{}
+	_ interfaces.Controller[core.ProtocolID] = &BaseController[core.ProtocolID]{}
 )
 
 // NewBase returns a new instance of a validated BaseController.

@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package id_test
+package core_test
 
 import (
 	fmt "fmt"
@@ -26,38 +26,38 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
 func TestOrbitID(t *testing.T) {
 	testCases := []struct {
 		name       string
-		orbitID    id.OrbitID
+		orbitID    core.OrbitID
 		expectedID string
 	}{
 		{
 			name: "IBC orbit ID",
-			orbitID: id.OrbitID{
-				ProtocolID:     id.PROTOCOL_IBC,
+			orbitID: core.OrbitID{
+				ProtocolID:     core.PROTOCOL_IBC,
 				CounterpartyID: "channel-1",
 			},
-			expectedID: fmt.Sprintf("%d:channel-1", id.PROTOCOL_IBC),
+			expectedID: fmt.Sprintf("%d:channel-1", core.PROTOCOL_IBC),
 		},
 		{
 			name: "CCTP orbit ID",
-			orbitID: id.OrbitID{
-				ProtocolID:     id.PROTOCOL_CCTP,
+			orbitID: core.OrbitID{
+				ProtocolID:     core.PROTOCOL_CCTP,
 				CounterpartyID: "0",
 			},
-			expectedID: fmt.Sprintf("%d:0", id.PROTOCOL_CCTP),
+			expectedID: fmt.Sprintf("%d:0", core.PROTOCOL_CCTP),
 		},
 		{
 			name: "Hyperlane orbit ID",
-			orbitID: id.OrbitID{
-				ProtocolID:     id.PROTOCOL_HYPERLANE,
+			orbitID: core.OrbitID{
+				ProtocolID:     core.PROTOCOL_HYPERLANE,
 				CounterpartyID: "ethereum",
 			},
-			expectedID: fmt.Sprintf("%d:ethereum", id.PROTOCOL_HYPERLANE),
+			expectedID: fmt.Sprintf("%d:ethereum", core.PROTOCOL_HYPERLANE),
 		},
 	}
 
@@ -73,7 +73,7 @@ func TestParseOrbitID(t *testing.T) {
 	testCases := []struct {
 		name              string
 		id                string
-		expProtocolID     id.ProtocolID
+		expProtocolID     core.ProtocolID
 		expCounterpartyID string
 		expErr            string
 	}{
@@ -95,26 +95,26 @@ func TestParseOrbitID(t *testing.T) {
 		{
 			name:              "success - when the format is not valid (multiple colons)",
 			id:                "1:channel:1",
-			expProtocolID:     id.PROTOCOL_IBC,
+			expProtocolID:     core.PROTOCOL_IBC,
 			expCounterpartyID: "channel:1",
 		},
 		{
 			name:              "success - with valid IBC ID",
 			id:                "1:channel-1",
-			expProtocolID:     id.PROTOCOL_IBC,
+			expProtocolID:     core.PROTOCOL_IBC,
 			expCounterpartyID: "channel-1",
 		},
 		{
 			name:              "success - with valid CCTP ID",
 			id:                "2:0",
-			expProtocolID:     id.PROTOCOL_CCTP,
+			expProtocolID:     core.PROTOCOL_CCTP,
 			expCounterpartyID: "0",
 		},
 	}
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			orbitID, err := id.ParseOrbitID(tC.id)
+			orbitID, err := core.ParseOrbitID(tC.id)
 
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)

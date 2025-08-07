@@ -34,7 +34,7 @@ import (
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
 	"orbiter.dev/types/controller/action"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
 func TestGetAttributesFeeController(t *testing.T) {
@@ -42,22 +42,22 @@ func TestGetAttributesFeeController(t *testing.T) {
 
 	testCases := []struct {
 		name          string
-		action        func() *types.Action
+		action        func() *core.Action
 		expAttributes action.FeeAttributes
 		expErr        string
 	}{
 		{
 			name: "error - nil action",
-			action: func() *types.Action {
+			action: func() *core.Action {
 				return nil
 			},
 			expErr: "received nil fee attributes",
 		},
 		{
 			name: "error - invalid attributes type",
-			action: func() *types.Action {
-				action, err := types.NewAction(
-					id.ACTION_FEE,
+			action: func() *core.Action {
+				action, err := core.NewAction(
+					core.ACTION_FEE,
 					&testdata.TestActionAttr{Whatever: "works"},
 				)
 				require.NoError(t, err)
@@ -68,9 +68,9 @@ func TestGetAttributesFeeController(t *testing.T) {
 		},
 		{
 			name: "error - nil attributes",
-			action: func() *types.Action {
-				action := types.Action{
-					Id:         id.ACTION_FEE,
+			action: func() *core.Action {
+				action := core.Action{
+					Id:         core.ACTION_FEE,
 					Attributes: nil,
 				}
 
@@ -80,9 +80,9 @@ func TestGetAttributesFeeController(t *testing.T) {
 		},
 		{
 			name: "success - valid attributes",
-			action: func() *types.Action {
-				action, err := types.NewAction(
-					id.ACTION_FEE,
+			action: func() *core.Action {
+				action, err := core.NewAction(
+					core.ACTION_FEE,
 					&action.FeeAttributes{
 						FeesInfo: []*action.FeeInfo{
 							{
@@ -544,8 +544,8 @@ func TestValidateFee(t *testing.T) {
 
 func TestHandlePacketFeeController(t *testing.T) {
 	recipient := sdk.AccAddress(testutil.AddressBytes())
-	validAction, err := types.NewAction(
-		id.ACTION_FEE,
+	validAction, err := core.NewAction(
+		core.ACTION_FEE,
 		&action.FeeAttributes{
 			FeesInfo: []*action.FeeInfo{
 				{
@@ -557,7 +557,7 @@ func TestHandlePacketFeeController(t *testing.T) {
 	)
 	require.NoError(t, err)
 	transferAttr, err := types.NewTransferAttributes(
-		id.PROTOCOL_CCTP,
+		core.PROTOCOL_CCTP,
 		"1",
 		"uusdc",
 		sdkmath.NewInt(1_000_000),
@@ -567,7 +567,7 @@ func TestHandlePacketFeeController(t *testing.T) {
 	testCases := []struct {
 		name            string
 		setup           func(*mocks.Mocks)
-		action          func() *types.Action
+		action          func() *core.Action
 		transferAttr    func() *types.TransferAttributes
 		expTransferAttr func() *types.TransferAttributes
 		postCheck       func(*mocks.Mocks)
@@ -575,9 +575,9 @@ func TestHandlePacketFeeController(t *testing.T) {
 	}{
 		{
 			name: "error - invalid attributes",
-			action: func() *types.Action {
-				action, err := types.NewAction(
-					id.ACTION_FEE,
+			action: func() *core.Action {
+				action, err := core.NewAction(
+					core.ACTION_FEE,
 					&testdata.TestActionAttr{Whatever: "works"},
 				)
 				require.NoError(t, err)
@@ -596,7 +596,7 @@ func TestHandlePacketFeeController(t *testing.T) {
 					sdk.NewInt64Coin("uusdc", 1_000_000_000),
 				)
 			},
-			action: func() *types.Action {
+			action: func() *core.Action {
 				return validAction
 			},
 			transferAttr: func() *types.TransferAttributes {

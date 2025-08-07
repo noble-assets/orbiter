@@ -24,11 +24,12 @@ import (
 	"context"
 
 	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
 // PayloadDispatcher defines the expected behavior from a type
 // to be used as a payload dispatcher.
 type PayloadDispatcher interface {
 	// Dispatch the payload component to the proper handler.
-	DispatchPayload(context.Context, *types.TransferAttributes, *types.Payload) error
+	DispatchPayload(context.Context, *types.TransferAttributes, *core.Payload) error
 }

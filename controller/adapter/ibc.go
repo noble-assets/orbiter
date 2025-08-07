@@ -30,7 +30,7 @@ import (
 
 	"orbiter.dev/controller"
 	"orbiter.dev/types"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -40,7 +40,7 @@ var _ interfaces.ControllerAdapter = &IBCAdapter{}
 // memo of an IBC ICS20 transfer to the common payload type
 // handled by the module.
 type IBCAdapter struct {
-	*controller.BaseController[id.ProtocolID]
+	*controller.BaseController[core.ProtocolID]
 
 	logger log.Logger
 	parser *IBCParser
@@ -52,7 +52,7 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	id := id.PROTOCOL_IBC
+	id := core.PROTOCOL_IBC
 	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err
@@ -71,19 +71,19 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 }
 
 // ParsePayload dispatches the payload parsing to the underlying IBC parser.
-func (a *IBCAdapter) ParsePayload(payloadBz []byte) (bool, *types.Payload, error) {
+func (a *IBCAdapter) ParsePayload(payloadBz []byte) (bool, *core.Payload, error) {
 	return a.parser.ParsePayload(payloadBz)
 }
 
 // BeforeTransferHook run logic before executing the IBC transfer to the
 // orbiter module.
-func (a *IBCAdapter) BeforeTransferHook(context.Context, *types.Payload) error {
+func (a *IBCAdapter) BeforeTransferHook(context.Context, *core.Payload) error {
 	return nil
 }
 
 // AfterTransferHook run logic after executing the IBC transfer to the orbiter
 // module.
-func (a *IBCAdapter) AfterTransferHook(context.Context, *types.Payload) error {
+func (a *IBCAdapter) AfterTransferHook(context.Context, *core.Payload) error {
 	return nil
 }
 
@@ -114,7 +114,7 @@ func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 // - bool: whether the payload is intended for the Orbiter module.
 // - Payload: the parsed payload.
 // - error: an error, if one occurred during parsing.
-func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *types.Payload, error) {
+func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *core.Payload, error) {
 	data, err := p.GetICS20PacketData(payloadBz)
 	if err != nil {
 		// Despite the error is not nil, we don't return it. We

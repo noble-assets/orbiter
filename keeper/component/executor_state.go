@@ -23,15 +23,15 @@ package component
 import (
 	"context"
 
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
-func (c *Executor) IsControllerPaused(ctx context.Context, id id.ActionID) (bool, error) {
-	return c.PausedControllers.Has(ctx, int32(id))
+func (e *Executor) IsControllerPaused(ctx context.Context, id core.ActionID) (bool, error) {
+	return e.PausedControllers.Has(ctx, int32(id))
 }
 
-func (c *Executor) SetPausedController(ctx context.Context, id id.ActionID) error {
-	paused, err := c.IsControllerPaused(ctx, id)
+func (e *Executor) SetPausedController(ctx context.Context, id core.ActionID) error {
+	paused, err := e.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -42,8 +42,8 @@ func (c *Executor) SetPausedController(ctx context.Context, id id.ActionID) erro
 	return e.PausedControllers.Set(ctx, int32(id))
 }
 
-func (c *Executor) SetUnpausedController(ctx context.Context, id id.ActionID) error {
-	paused, err := c.IsControllerPaused(ctx, id)
+func (e *Executor) SetUnpausedController(ctx context.Context, id core.ActionID) error {
+	paused, err := e.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err
 	}

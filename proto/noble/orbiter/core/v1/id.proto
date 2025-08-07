@@ -22,7 +22,6 @@ enum ActionID {
   ACTION_SWAP = 2;
 }
 
-
 // buf:lint:ignore ENUM_VALUE_PREFIX
 // ProtocolID represents the cross-chain communication protocols supported by the orbiter.
 enum ProtocolID {

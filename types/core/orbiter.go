@@ -18,32 +18,26 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package core
 
 import (
+	"errors"
+
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/gogoproto/proto"
-
-	"orbiter.dev/types/id"
 )
 
 // ====================================================================================================
 // Action
 // ====================================================================================================
 
-// ActionAttributes is the interface defining the expected behavior
-// for a type to be used to perform actions on the orbiter module.
-type ActionAttributes interface {
-	proto.Message
-}
-
 var _ cdctypes.UnpackInterfacesMessage = &Action{}
 
 // NewAction returns a reference to a validated action. This utility
 // function automatically set the attributes in the Any type of the
 // return action.
-func NewAction(id id.ActionID, attr ActionAttributes) (*Action, error) {
+func NewAction(id ActionID, attr ActionAttributes) (*Action, error) {
 	a := Action{
 		Id: id,
 	}
@@ -58,14 +52,14 @@ func NewAction(id id.ActionID, attr ActionAttributes) (*Action, error) {
 // Validate returns an error if the action is not valid.
 func (a *Action) Validate() error {
 	if a == nil {
-		return ErrNilPointer.Wrap("action is a nil pointer")
+		return errors.New("nil pointer: action is not set")
 	}
 	if err := a.Id.Validate(); err != nil {
 		return err
 	}
 
 	if a.Attributes == nil {
-		return ErrNilPointer.Wrap("action attributes are not set")
+		return errors.New("nil pointer: action attributes are not set")
 	}
 
 	return nil
@@ -73,12 +67,12 @@ func (a *Action) Validate() error {
 
 // ID returns the ID. If the ID is not set,
 // the default value is returned.
-func (a *Action) ID() id.ActionID {
+func (a *Action) ID() ActionID {
 	if a != nil {
 		return a.Id
 	}
 
-	return id.ACTION_UNSUPPORTED
+	return ACTION_UNSUPPORTED
 }
 
 // CachedAttributes returns the attributes interface from the
@@ -86,11 +80,11 @@ func (a *Action) ID() id.ActionID {
 // attributes set.
 func (a *Action) CachedAttributes() (ActionAttributes, error) {
 	if a == nil {
-		return nil, ErrNilPointer.Wrap("action is a nil pointer")
+		return nil, errors.New("nil pointer: action is not set")
 	}
 
 	if a.Attributes == nil {
-		return nil, ErrNilPointer.Wrap("action attributes are not set")
+		return nil, errors.New("nil pointer: action attributes are not set")
 	}
 	av := a.Attributes.GetCachedValue()
 	attr, ok := av.(ActionAttributes)
@@ -108,7 +102,7 @@ func (a *Action) CachedAttributes() (ActionAttributes, error) {
 // SetAttributes sets the action attributes into the action as codec Any type.
 func (a *Action) SetAttributes(attr ActionAttributes) error {
 	if a == nil {
-		return ErrNilPointer.Wrap("action is a nil pointer")
+		return errors.New("nil pointer: action is not set")
 	}
 
 	m, ok := attr.(proto.Message)
@@ -129,7 +123,7 @@ func (a *Action) SetAttributes(attr ActionAttributes) error {
 // an Any type into an interface registered in the codec.
 func (a *Action) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 	if a == nil {
-		return ErrNilPointer.Wrap("action is a nil pointer")
+		return errors.New("nil pointer: action is not set")
 	}
 	var attributes ActionAttributes
 
@@ -140,14 +134,6 @@ func (a *Action) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 // Forwarding
 // ====================================================================================================
 
-// ForwardingAttributes is the interface every protocol forwarding
-// attribute type has to implement.
-type ForwardingAttributes interface {
-	proto.Message
-	// Returns the destination chain identifier.
-	CounterpartyID() string
-}
-
 var _ cdctypes.UnpackInterfacesMessage = &Forwarding{}
 
 // NewForwarding returns a reference to a validated forwarding. The
@@ -156,7 +142,7 @@ var _ cdctypes.UnpackInterfacesMessage = &Forwarding{}
 //
 // NOTE: passthroughPayload is currently ignored.
 func NewForwarding(
-	id id.ProtocolID,
+	id ProtocolID,
 	a ForwardingAttributes,
 	passthroughPayload []byte,
 ) (*Forwarding, error) {
@@ -175,13 +161,13 @@ func NewForwarding(
 // Validate returns an error if the forwarding is not valid.
 func (f *Forwarding) Validate() error {
 	if f == nil {
-		return ErrNilPointer.Wrap("forwarding is a nil pointer")
+		return errors.New("nil pointer: forwarding is not set")
 	}
 	if err := f.ProtocolId.Validate(); err != nil {
 		return err
 	}
 	if f.Attributes == nil {
-		return ErrNilPointer.Wrap("forwarding attributes are not set")
+		return errors.New("nil pointer: forwarding attributes are not set")
 	}
 
 	return nil
@@ -189,12 +175,12 @@ func (f *Forwarding) Validate() error {
 
 // ProtocolID returns the protocol ID associated with the forwarding. If
 // the id is not set, the default value is returned.
-func (f *Forwarding) ProtocolID() id.ProtocolID {
+func (f *Forwarding) ProtocolID() ProtocolID {
 	if f != nil {
 		return f.ProtocolId
 	}
 
-	return id.PROTOCOL_UNSUPPORTED
+	return PROTOCOL_UNSUPPORTED
 }
 
 // CachedAttributes returns the attributes interface from the
@@ -202,10 +188,10 @@ func (f *Forwarding) ProtocolID() id.ProtocolID {
 // attributes set.
 func (f *Forwarding) CachedAttributes() (ForwardingAttributes, error) {
 	if f == nil {
-		return nil, ErrNilPointer.Wrap("forwarding is a nil pointer")
+		return nil, errors.New("nil pointer: forwarding is not set")
 	}
 	if f.Attributes == nil {
-		return nil, ErrNilPointer.Wrap("forwarding attributes are not set")
+		return nil, errors.New("nil pointer: forwarding attributes are not set")
 	}
 	av := f.Attributes.GetCachedValue()
 	a, ok := av.(ForwardingAttributes)
@@ -223,7 +209,7 @@ func (f *Forwarding) CachedAttributes() (ForwardingAttributes, error) {
 // SetAttributes sets the attributes as codec Any type.
 func (f *Forwarding) SetAttributes(a ForwardingAttributes) error {
 	if f == nil {
-		return ErrNilPointer.Wrap("forwarding is a nil pointer")
+		return errors.New("nil pointer: forwarding is not set")
 	}
 	// The interface we want to pack as any must
 	// implement the proto Message interface.
@@ -247,7 +233,7 @@ func (f *Forwarding) SetAttributes(a ForwardingAttributes) error {
 // an Any type into an interface registered in the codec.
 func (f *Forwarding) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 	if f == nil {
-		return ErrNilPointer.Wrap("forwarding is a nil pointer")
+		return errors.New("nil pointer: forwarding is not set")
 	}
 
 	var attributes ForwardingAttributes
@@ -281,7 +267,7 @@ func NewPayload(
 // not valid.
 func (p *Payload) Validate() error {
 	if p == nil {
-		return ErrNilPointer.Wrap("payload is a nil pointer")
+		return errors.New("nil pointer: payload is not set")
 	}
 
 	for _, action := range p.PreActions {
@@ -297,7 +283,7 @@ var _ cdctypes.UnpackInterfacesMessage = &Payload{}
 
 func (p *Payload) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 	if p == nil {
-		return ErrNilPointer.Wrap("payload is a nil pointer")
+		return errors.New("nil pointer: payload is not set")
 	}
 
 	if p.PreActions != nil {
@@ -340,7 +326,7 @@ func NewPayloadWrapper(
 // contains non valid fields.
 func (pw *PayloadWrapper) Validate() error {
 	if pw == nil {
-		return ErrNilPointer.Wrap("payload wrapper is a nil pointer")
+		return errors.New("nil pointer: payload wrapper is not set")
 	}
 
 	return pw.Orbiter.Validate()

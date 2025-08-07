@@ -32,12 +32,12 @@ import (
 
 	"orbiter.dev/types"
 	adaptertypes "orbiter.dev/types/component/adapter"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/interfaces"
 	"orbiter.dev/types/router"
 )
 
-type AdapterRouter = interfaces.Router[id.ProtocolID, interfaces.ControllerAdapter]
+type AdapterRouter = interfaces.Router[core.ProtocolID, interfaces.ControllerAdapter]
 
 var _ interfaces.Adapter = &Adapter{}
 
@@ -69,7 +69,7 @@ func NewAdapter(
 
 	adaptersKeeper := Adapter{
 		logger:     logger.With(types.ComponentPrefix, types.AdaptersComponentName),
-		router:     router.New[id.ProtocolID, interfaces.ControllerAdapter](),
+		router:     router.New[core.ProtocolID, interfaces.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
 		params: collections.NewItem(
@@ -124,12 +124,12 @@ func (a *Adapter) SetRouter(r AdapterRouter) error {
 	return nil
 }
 
-// ParsePayload implements types.PayloadAdapter.
-func (a *Adapter) ParsePayload(
-	id id.ProtocolID,
+// ParsePayload implements core.PayloadAdapter.
+func (c *Adapter) ParsePayload(
+	id core.ProtocolID,
 	payloadBz []byte,
-) (bool, *types.Payload, error) {
-	adapter, found := a.router.Route(id)
+) (bool, *core.Payload, error) {
+	adapter, found := c.router.Route(id)
 	if !found {
 		return false, nil, fmt.Errorf("adapter not found for protocol ID: %s", id)
 	}
@@ -140,8 +140,8 @@ func (a *Adapter) ParsePayload(
 // BeforeTransferHook implements types.PayloadAdapter.
 func (a *Adapter) BeforeTransferHook(
 	ctx context.Context,
-	sourceOrbitID id.OrbitID,
-	payload *types.Payload,
+	sourceOrbitID core.OrbitID,
+	payload *core.Payload,
 ) error {
 	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)
 	if !found {
@@ -162,8 +162,8 @@ func (a *Adapter) BeforeTransferHook(
 // AfterTransferHook implements types.PayloadAdapter.
 func (a *Adapter) AfterTransferHook(
 	ctx context.Context,
-	sourceOrbitID id.OrbitID,
-	payload *types.Payload,
+	sourceOrbitID core.OrbitID,
+	payload *core.Payload,
 ) (*types.TransferAttributes, error) {
 	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)
 	if !found {
@@ -196,7 +196,7 @@ func (a *Adapter) AfterTransferHook(
 func (a *Adapter) ProcessPayload(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	payload *types.Payload,
+	payload *core.Payload,
 ) error {
 	return a.dispatcher.DispatchPayload(ctx, transferAttr, payload)
 }

@@ -32,6 +32,7 @@ import (
 	"orbiter.dev/testutil"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
 func TestJSONParser_Parse(t *testing.T) {
@@ -44,7 +45,7 @@ func TestJSONParser_Parse(t *testing.T) {
 		name           string
 		setup          func(reg codectypes.InterfaceRegistry)
 		orbiterPayload func() string
-		expPayload     *types.Payload
+		expPayload     *core.Payload
 		expErr         string
 	}{
 		{
@@ -120,7 +121,7 @@ func TestJSONParser_Parse(t *testing.T) {
 			name: "success - valid payload",
 			setup: func(reg codectypes.InterfaceRegistry) {
 				reg.RegisterImplementations(
-					(*types.ForwardingAttributes)(nil),
+					(*core.ForwardingAttributes)(nil),
 					&testdata.TestForwardingAttr{},
 				)
 			},
@@ -134,12 +135,12 @@ func TestJSONParser_Parse(t *testing.T) {
 			name: "success - valid payload with actions",
 			setup: func(reg codectypes.InterfaceRegistry) {
 				reg.RegisterImplementations(
-					(*types.ForwardingAttributes)(nil),
+					(*core.ForwardingAttributes)(nil),
 					&testdata.TestForwardingAttr{},
 				)
 
 				reg.RegisterImplementations(
-					(*types.ActionAttributes)(nil),
+					(*core.ActionAttributes)(nil),
 					&testdata.TestActionAttr{},
 				)
 			},

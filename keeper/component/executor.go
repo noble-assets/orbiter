@@ -30,12 +30,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/interfaces"
 	"orbiter.dev/types/router"
 )
 
-type ActionRouter = interfaces.Router[id.ActionID, interfaces.ControllerAction]
+type ActionRouter = interfaces.Router[core.ActionID, interfaces.ControllerAction]
 
 var _ interfaces.Executor = &Executor{}
 
@@ -55,7 +55,7 @@ func NewExecutor(
 ) (*Executor, error) {
 	executor := Executor{
 		logger: logger.With(types.ComponentPrefix, types.ActionComponentName),
-		router: router.New[id.ActionID, interfaces.ControllerAction](),
+		router: router.New[core.ActionID, interfaces.ControllerAction](),
 		PausedControllers: collections.NewKeySet(
 			sb,
 			types.PausedActionControllersPrefix,
@@ -103,8 +103,8 @@ func (e *Executor) SetRouter(r ActionRouter) error {
 }
 
 // Pause allows to pause an action controller.
-func (c *Executor) Pause(ctx context.Context, actionID id.ActionID) error {
-	if err := c.SetPausedController(ctx, actionID); err != nil {
+func (e *Executor) Pause(ctx context.Context, actionID core.ActionID) error {
+	if err := e.SetPausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error pausing action %s: %w",
 			actionID,
@@ -116,8 +116,8 @@ func (c *Executor) Pause(ctx context.Context, actionID id.ActionID) error {
 }
 
 // Unpause allows to unpause an action controller.
-func (c *Executor) Unpause(ctx context.Context, actionID id.ActionID) error {
-	if err := c.SetUnpausedController(ctx, actionID); err != nil {
+func (e *Executor) Unpause(ctx context.Context, actionID core.ActionID) error {
+	if err := e.SetUnpausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error unpausing action %s: %w",
 			actionID,
@@ -162,7 +162,7 @@ func (e *Executor) validatePacket(ctx context.Context, packet *types.ActionPacke
 // the action ID is not valid.
 func (e *Executor) validateController(
 	ctx context.Context,
-	id id.ActionID,
+	id core.ActionID,
 ) error {
 	isPaused, err := e.IsControllerPaused(ctx, id)
 	if err != nil {

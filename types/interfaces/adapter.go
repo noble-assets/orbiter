@@ -24,25 +24,29 @@ import (
 	"context"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
+
+// TODO: use this instead of the concrete
+// Move this to core package.
+type AttributesTransferer any
 
 // PayloadAdapter defines the behavior expected by the adapter to handle
 // a generic orbiter payload.
 type PayloadAdapter interface {
 	// ParsePayload allows to parse and validate if the
 	// input bytes represent an orbiter payload.
-	ParsePayload(id.ProtocolID, []byte) (bool, *types.Payload, error)
+	ParsePayload(core.ProtocolID, []byte) (bool, *core.Payload, error)
 	// BeforeTransferHook allows to execute logic BEFORE completing
 	// the cross-chain transfer.
-	BeforeTransferHook(context.Context, id.OrbitID, *types.Payload) error
+	BeforeTransferHook(context.Context, core.OrbitID, *core.Payload) error
 	// AfterTransferHook allows to execute logic AFTER completing
 	// the cross-chain transfer.
 	AfterTransferHook(
 		context.Context,
-		id.OrbitID,
-		*types.Payload,
+		core.OrbitID,
+		*core.Payload,
 	) (*types.TransferAttributes, error)
 	// ProcessPayload processes the parsed payload.
-	ProcessPayload(context.Context, *types.TransferAttributes, *types.Payload) error
+	ProcessPayload(context.Context, *types.TransferAttributes, *core.Payload) error
 }

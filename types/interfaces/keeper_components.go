@@ -26,7 +26,7 @@ import (
 	"cosmossdk.io/log"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/id"
+	"orbiter.dev/types/core"
 )
 
 type Loggable interface {
@@ -38,9 +38,9 @@ type Loggable interface {
 type Forwarder interface {
 	Loggable
 	PacketHandler[*types.ForwardingPacket]
-	RouterProvider[id.ProtocolID, ControllerForwarding]
-	Pause(context.Context, id.ProtocolID, []string) error
-	Unpause(context.Context, id.ProtocolID, []string) error
+	RouterProvider[core.ProtocolID, ControllerForwarding]
+	Pause(context.Context, core.ProtocolID, []string) error
+	Unpause(context.Context, core.ProtocolID, []string) error
 }
 
 // Executor defines the behavior a components must
@@ -48,9 +48,9 @@ type Forwarder interface {
 type Executor interface {
 	Loggable
 	PacketHandler[*types.ActionPacket]
-	RouterProvider[id.ActionID, ControllerAction]
-	Pause(context.Context, id.ActionID) error
-	Unpause(context.Context, id.ActionID) error
+	RouterProvider[core.ActionID, ControllerAction]
+	Pause(context.Context, core.ActionID) error
+	Unpause(context.Context, core.ActionID) error
 }
 
 // Dispatcher defines the behavior a components must
@@ -65,5 +65,5 @@ type Dispatcher interface {
 type Adapter interface {
 	Loggable
 	PayloadAdapter
-	RouterProvider[id.ProtocolID, ControllerAdapter]
+	RouterProvider[core.ProtocolID, ControllerAdapter]
 }
