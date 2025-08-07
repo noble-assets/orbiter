@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package noble.orbiter.identifier.v1;
+package noble.orbiter.id.v1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "orbiter.dev/types/identifier";
+option go_package = "orbiter.dev/types/id";
 
 // buf:lint:ignore ENUM_VALUE_PREFIX
 // ActionID identifies the type of action to be performed on a transfer.

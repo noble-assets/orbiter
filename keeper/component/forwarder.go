@@ -30,12 +30,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 	"orbiter.dev/types/interfaces"
 	router "orbiter.dev/types/router"
 )
 
-type ForwardingRouter = interfaces.Router[identifier.ProtocolID, interfaces.ControllerForwarding]
+type ForwardingRouter = interfaces.Router[id.ProtocolID, interfaces.ControllerForwarding]
 
 var _ interfaces.Forwarder = &Forwarder{}
 
@@ -65,7 +65,7 @@ func NewForwarder(
 		logger:     logger.With(types.ComponentPrefix, types.ForwardingComponentName),
 		bankKeeper: bankKeeper,
 
-		router: router.New[identifier.ProtocolID, interfaces.ControllerForwarding](),
+		router: router.New[id.ProtocolID, interfaces.ControllerForwarding](),
 		PausedForwardings: collections.NewKeySet(
 			sb,
 			types.PausedForwardingPrefix,
@@ -122,7 +122,7 @@ func (f *Forwarder) SetRouter(r ForwardingRouter) error {
 
 func (f *Forwarder) Pause(
 	ctx context.Context,
-	protocolID identifier.ProtocolID,
+	protocolID id.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	switch {
@@ -135,7 +135,7 @@ func (f *Forwarder) Pause(
 
 func (f *Forwarder) Unpause(
 	ctx context.Context,
-	protocolID identifier.ProtocolID,
+	protocolID id.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	if len(counterpartyIDs) == 0 {
@@ -166,7 +166,7 @@ func (f *Forwarder) HandlePacket(
 
 func (f *Forwarder) ValidateForwarding(
 	ctx context.Context,
-	protocolID identifier.ProtocolID,
+	protocolID id.ProtocolID,
 	counterpartyID string,
 ) error {
 	if err := f.validateController(ctx, protocolID); err != nil {
@@ -203,7 +203,7 @@ func (f *Forwarder) validatePacket(
 
 func (f *Forwarder) validateController(
 	ctx context.Context,
-	protocolID identifier.ProtocolID,
+	protocolID id.ProtocolID,
 ) error {
 	isPaused, err := f.IsControllerPaused(ctx, protocolID)
 	if err != nil {
@@ -221,7 +221,7 @@ func (f *Forwarder) validateController(
 
 func (f *Forwarder) validateForwarding(
 	ctx context.Context,
-	protocolID identifier.ProtocolID,
+	protocolID id.ProtocolID,
 	counterpartyID string,
 ) error {
 	isPaused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)
@@ -263,7 +263,7 @@ func (f *Forwarder) validateInitialConditions(
 
 func (f *Forwarder) pauseProtocol(
 	ctx context.Context,
-	protocolID identifier.ProtocolID,
+	protocolID id.ProtocolID,
 ) error {
 	if err := f.SetPausedController(ctx, protocolID); err != nil {
 		return fmt.Errorf(
@@ -278,7 +278,7 @@ func (f *Forwarder) pauseProtocol(
 
 func (f *Forwarder) pauseProtocolDestinations(
 	ctx context.Context,
-	protocolID identifier.ProtocolID,
+	protocolID id.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
@@ -297,7 +297,7 @@ func (f *Forwarder) pauseProtocolDestinations(
 
 func (f *Forwarder) unpauseProtocol(
 	ctx context.Context,
-	protocolID identifier.ProtocolID,
+	protocolID id.ProtocolID,
 ) error {
 	if err := f.SetUnpausedController(ctx, protocolID); err != nil {
 		return fmt.Errorf(
@@ -312,7 +312,7 @@ func (f *Forwarder) unpauseProtocol(
 
 func (f *Forwarder) unpauseProtocolDestinations(
 	ctx context.Context,
-	protocolID identifier.ProtocolID,
+	protocolID id.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {

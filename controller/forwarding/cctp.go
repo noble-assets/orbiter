@@ -31,7 +31,7 @@ import (
 	"orbiter.dev/controller"
 	"orbiter.dev/types"
 	forwardingtypes "orbiter.dev/types/controller/forwarding"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -40,7 +40,7 @@ var _ interfaces.ControllerForwarding = &CCTPController{}
 // CCTPController is the forwarding controller to perform
 // a CCTP transfer.
 type CCTPController struct {
-	*controller.BaseController[identifier.ProtocolID]
+	*controller.BaseController[id.ProtocolID]
 
 	logger  log.Logger
 	handler *cctpHandler
@@ -56,7 +56,7 @@ func NewCCTPController(
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	id := identifier.PROTOCOL_CCTP
+	id := id.PROTOCOL_CCTP
 	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err

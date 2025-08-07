@@ -27,14 +27,14 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 )
 
 // TransferAttributes defines the cross-chain transfer information
 // passed down the orbiter to handle actions and routing.
 type TransferAttributes struct {
 	// Source fields have only getter methods.
-	sourceOrbitID identifier.OrbitID
+	sourceOrbitID id.OrbitID
 	sourceCoin    sdk.Coin
 	// Destination field have both setters and getters
 	// because they can be mutated by actions.
@@ -44,12 +44,12 @@ type TransferAttributes struct {
 // NewTransferAttributes returns a validated reference to a
 // transfer attributes type.
 func NewTransferAttributes(
-	sourceProtocolID identifier.ProtocolID,
+	sourceProtocolID id.ProtocolID,
 	sourceCounterpartyID string,
 	denom string,
 	amount math.Int,
 ) (*TransferAttributes, error) {
-	sourceOrbitID, err := identifier.NewOrbitID(sourceProtocolID, sourceCounterpartyID)
+	sourceOrbitID, err := id.NewOrbitID(sourceProtocolID, sourceCounterpartyID)
 	if err != nil {
 		return nil, err
 	}
@@ -91,12 +91,12 @@ func (a *TransferAttributes) Validate() error {
 	return nil
 }
 
-func (a *TransferAttributes) SourceProtocolID() identifier.ProtocolID {
+func (a *TransferAttributes) SourceProtocolID() id.ProtocolID {
 	if a != nil {
 		return a.sourceOrbitID.ProtocolID
 	}
 
-	return identifier.PROTOCOL_UNSUPPORTED
+	return id.PROTOCOL_UNSUPPORTED
 }
 
 func (a *TransferAttributes) SourceCounterpartyID() string {

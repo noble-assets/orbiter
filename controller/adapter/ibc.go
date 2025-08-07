@@ -30,7 +30,7 @@ import (
 
 	"orbiter.dev/controller"
 	"orbiter.dev/types"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -40,7 +40,7 @@ var _ interfaces.ControllerAdapter = &IBCAdapter{}
 // memo of an IBC ICS20 transfer to the common payload type
 // handled by the module.
 type IBCAdapter struct {
-	*controller.BaseController[identifier.ProtocolID]
+	*controller.BaseController[id.ProtocolID]
 
 	logger log.Logger
 	parser *IBCParser
@@ -52,7 +52,7 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	id := identifier.PROTOCOL_IBC
+	id := id.PROTOCOL_IBC
 	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err

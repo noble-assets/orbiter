@@ -18,40 +18,30 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package controller
+package id
 
-import (
-	"orbiter.dev/types/id"
-	"orbiter.dev/types/interfaces"
-)
+import "fmt"
 
-var (
-	_ interfaces.Controller[id.ActionID]   = &BaseController[id.ActionID]{}
-	_ interfaces.Controller[id.ProtocolID] = &BaseController[id.ProtocolID]{}
-)
-
-// NewBase returns a new instance of a validated BaseController.
-func NewBase[ID interfaces.IdentifierConstraint](id ID) (*BaseController[ID], error) {
-	if err := id.Validate(); err != nil {
-		return nil, err
+// NewActionID returns a validated action ID from an int32. If
+// the validation fails, the returned value signals an unsupported
+// action and an error is returned along with it.
+func NewActionID(id int32) (ActionID, error) {
+	actionID := ActionID(id)
+	if err := actionID.Validate(); err != nil {
+		return ACTION_UNSUPPORTED, err
 	}
 
-	return &BaseController[ID]{
-		id: id,
-	}, nil
+	return actionID, nil
 }
 
-// BaseController is a generic controller that implements interfaces.Controller.
-type BaseController[ID interfaces.IdentifierConstraint] struct {
-	id ID
-}
+// Validate returns an error if the ID is not valid.
+func (id ActionID) Validate() error {
+	if id == ACTION_UNSUPPORTED {
+		return fmt.Errorf("action id is not supported: %s", id.String())
+	}
+	if _, found := ActionID_name[int32(id)]; !found {
+		return fmt.Errorf("action id is unknown: %d", int32(id))
+	}
 
-// ID returns the controller identifier.
-func (b *BaseController[ID]) ID() ID {
-	return b.id
-}
-
-// Name returns the controller name.
-func (b *BaseController[ID]) Name() string {
-	return b.id.String()
+	return nil
 }

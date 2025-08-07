@@ -31,7 +31,7 @@ import (
 	"orbiter.dev/controller/forwarding"
 	"orbiter.dev/types"
 	"orbiter.dev/types/component/forwarder"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 )
 
 var _ forwarder.MsgServer = &msgServerForwarder{}
@@ -136,7 +136,7 @@ func (s msgServerForwarder) ReplaceDepositForBurn(
 		return nil, err
 	}
 
-	controller, found := s.Forwarder().Router().Route(identifier.PROTOCOL_CCTP)
+	controller, found := s.Forwarder().Router().Route(id.PROTOCOL_CCTP)
 	if !found {
 		return nil, errors.New("cctp controller not found")
 	}

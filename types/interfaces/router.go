@@ -21,11 +21,11 @@
 package interfaces
 
 import (
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 )
 
 type IdentifierConstraint interface {
-	identifier.ProtocolID | identifier.ActionID
+	id.ProtocolID | id.ActionID
 	Validate() error
 	String() string
 }

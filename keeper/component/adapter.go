@@ -32,12 +32,12 @@ import (
 
 	"orbiter.dev/types"
 	adaptertypes "orbiter.dev/types/component/adapter"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 	"orbiter.dev/types/interfaces"
 	"orbiter.dev/types/router"
 )
 
-type AdapterRouter = interfaces.Router[identifier.ProtocolID, interfaces.ControllerAdapter]
+type AdapterRouter = interfaces.Router[id.ProtocolID, interfaces.ControllerAdapter]
 
 var _ interfaces.Adapter = &Adapter{}
 
@@ -69,7 +69,7 @@ func NewAdapter(
 
 	adaptersKeeper := Adapter{
 		logger:     logger.With(types.ComponentPrefix, types.AdaptersComponentName),
-		router:     router.New[identifier.ProtocolID, interfaces.ControllerAdapter](),
+		router:     router.New[id.ProtocolID, interfaces.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
 		params: collections.NewItem(
@@ -126,7 +126,7 @@ func (a *Adapter) SetRouter(r AdapterRouter) error {
 
 // ParsePayload implements types.PayloadAdapter.
 func (a *Adapter) ParsePayload(
-	id identifier.ProtocolID,
+	id id.ProtocolID,
 	payloadBz []byte,
 ) (bool, *types.Payload, error) {
 	adapter, found := a.router.Route(id)
@@ -140,7 +140,7 @@ func (a *Adapter) ParsePayload(
 // BeforeTransferHook implements types.PayloadAdapter.
 func (a *Adapter) BeforeTransferHook(
 	ctx context.Context,
-	sourceOrbitID identifier.OrbitID,
+	sourceOrbitID id.OrbitID,
 	payload *types.Payload,
 ) error {
 	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)
@@ -162,7 +162,7 @@ func (a *Adapter) BeforeTransferHook(
 // AfterTransferHook implements types.PayloadAdapter.
 func (a *Adapter) AfterTransferHook(
 	ctx context.Context,
-	sourceOrbitID identifier.OrbitID,
+	sourceOrbitID id.OrbitID,
 	payload *types.Payload,
 ) (*types.TransferAttributes, error) {
 	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)
@@ -224,15 +224,15 @@ func (a *Adapter) CheckPassthroughPayloadSize(
 // commonBeforeTransferHook groups all the logic that must be executed
 // before completing the cross-chain transfer, regardless the incoming
 // protocol used.
-func (c *Adapter) commonBeforeTransferHook(
+func (a *Adapter) commonBeforeTransferHook(
 	ctx context.Context,
 	passthroughPayload []byte,
 ) error {
-	if err := c.CheckPassthroughPayloadSize(ctx, passthroughPayload); err != nil {
+	if err := a.CheckPassthroughPayloadSize(ctx, passthroughPayload); err != nil {
 		return err
 	}
 
-	if err := c.clearOrbiterBalances(ctx); err != nil {
+	if err := a.clearOrbiterBalances(ctx); err != nil {
 		return err
 	}
 

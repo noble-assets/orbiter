@@ -29,48 +29,48 @@ import (
 
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 )
 
 func TestNewForwarding(t *testing.T) {
 	testCases := []struct {
 		name               string
-		id                 identifier.ProtocolID
+		id                 id.ProtocolID
 		attributes         types.ForwardingAttributes
 		passthroughPayload []byte
 		expErr             string
 	}{
 		{
 			name:               "success - with valid attributes",
-			id:                 identifier.PROTOCOL_IBC,
+			id:                 id.PROTOCOL_IBC,
 			attributes:         &testdata.TestForwardingAttr{Planet: "earth"},
 			passthroughPayload: []byte("test payload"),
 			expErr:             "",
 		},
 		{
 			name:               "success - with nil passthrough payload",
-			id:                 identifier.PROTOCOL_CCTP,
+			id:                 id.PROTOCOL_CCTP,
 			attributes:         &testdata.TestForwardingAttr{Planet: "earth"},
 			passthroughPayload: nil,
 			expErr:             "",
 		},
 		{
 			name:               "success - with default attributes",
-			id:                 identifier.PROTOCOL_HYPERLANE,
+			id:                 id.PROTOCOL_HYPERLANE,
 			attributes:         &testdata.TestForwardingAttr{},
 			passthroughPayload: []byte("test"),
 			expErr:             "",
 		},
 		{
 			name:               "error - with nil attributes",
-			id:                 identifier.PROTOCOL_HYPERLANE,
+			id:                 id.PROTOCOL_HYPERLANE,
 			attributes:         nil,
 			passthroughPayload: []byte("test"),
 			expErr:             "can't proto marshal",
 		},
 		{
 			name:               "error - with unsupported id",
-			id:                 identifier.PROTOCOL_UNSUPPORTED,
+			id:                 id.PROTOCOL_UNSUPPORTED,
 			attributes:         &testdata.TestForwardingAttr{Planet: "earth"},
 			passthroughPayload: []byte("test"),
 			expErr:             types.ErrIDNotSupported.Error(),
@@ -106,7 +106,7 @@ func TestValidateForwading(t *testing.T) {
 		{
 			name: "error - with unsupported forwarding",
 			forwarding: &types.Forwarding{
-				ProtocolId: identifier.PROTOCOL_UNSUPPORTED,
+				ProtocolId: id.PROTOCOL_UNSUPPORTED,
 			},
 			expErr: types.ErrIDNotSupported.Error(),
 		},
@@ -118,14 +118,14 @@ func TestValidateForwading(t *testing.T) {
 		{
 			name: "error - when attributes are nil",
 			forwarding: &types.Forwarding{
-				ProtocolId: identifier.PROTOCOL_IBC,
+				ProtocolId: id.PROTOCOL_IBC,
 			},
 			expErr: "not set",
 		},
 		{
 			name: "success - with supported forwarding an non nil attributes",
 			forwarding: &types.Forwarding{
-				ProtocolId: identifier.PROTOCOL_IBC,
+				ProtocolId: id.PROTOCOL_IBC,
 				Attributes: &codectypes.Any{},
 			},
 			expErr: "",
@@ -149,19 +149,19 @@ func TestProtocolID(t *testing.T) {
 	testCases := []struct {
 		name       string
 		forwarding *types.Forwarding
-		expectedID identifier.ProtocolID
+		expectedID id.ProtocolID
 	}{
 		{
 			name: "return orbit ID when forwarding is valid",
 			forwarding: &types.Forwarding{
-				ProtocolId: identifier.PROTOCOL_IBC,
+				ProtocolId: id.PROTOCOL_IBC,
 			},
-			expectedID: identifier.PROTOCOL_IBC,
+			expectedID: id.PROTOCOL_IBC,
 		},
 		{
 			name:       "return PROTOCOL_UNSUPPORTED when forwarding is nil",
 			forwarding: nil,
-			expectedID: identifier.PROTOCOL_UNSUPPORTED,
+			expectedID: id.PROTOCOL_UNSUPPORTED,
 		},
 	}
 

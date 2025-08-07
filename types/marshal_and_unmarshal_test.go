@@ -30,7 +30,7 @@ import (
 	"orbiter.dev/testutil"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 )
 
 func TestMarshalUnmarshalJSON(t *testing.T) {
@@ -59,7 +59,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 				attr := testdata.TestForwardingAttr{
 					Planet: "saturn",
 				}
-				forwarding, err := types.NewForwarding(identifier.PROTOCOL_IBC, &attr, []byte{})
+				forwarding, err := types.NewForwarding(id.PROTOCOL_IBC, &attr, []byte{})
 				require.NoError(t, err)
 
 				return &types.Payload{
@@ -75,7 +75,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 				attr := testdata.TestActionAttr{
 					Whatever: "doesn't kill you makes you stronger",
 				}
-				action, err := types.NewAction(identifier.ACTION_FEE, &attr)
+				action, err := types.NewAction(id.ACTION_FEE, &attr)
 				require.NoError(t, err)
 
 				return &types.Payload{
@@ -96,7 +96,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 					Planet: "saturn",
 				}
 				forwarding, err := types.NewForwarding(
-					identifier.PROTOCOL_IBC,
+					id.PROTOCOL_IBC,
 					&attrForwarding,
 					[]byte{},
 				)
@@ -124,7 +124,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 					Planet: "saturn",
 				}
 				forwarding, err := types.NewForwarding(
-					identifier.PROTOCOL_IBC,
+					id.PROTOCOL_IBC,
 					&attrForwarding,
 					[]byte{},
 				)
@@ -133,7 +133,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 				attrAction := testdata.TestActionAttr{
 					Whatever: "doesn't kill you makes you stronger",
 				}
-				action, err := types.NewAction(identifier.ACTION_FEE, &attrAction)
+				action, err := types.NewAction(id.ACTION_FEE, &attrAction)
 				require.NoError(t, err)
 
 				return &types.Payload{

@@ -25,7 +25,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/gogoproto/proto"
 
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 )
 
 // ====================================================================================================
@@ -43,7 +43,7 @@ var _ cdctypes.UnpackInterfacesMessage = &Action{}
 // NewAction returns a reference to a validated action. This utility
 // function automatically set the attributes in the Any type of the
 // return action.
-func NewAction(id identifier.ActionID, attr ActionAttributes) (*Action, error) {
+func NewAction(id id.ActionID, attr ActionAttributes) (*Action, error) {
 	a := Action{
 		Id: id,
 	}
@@ -73,12 +73,12 @@ func (a *Action) Validate() error {
 
 // ID returns the ID. If the ID is not set,
 // the default value is returned.
-func (a *Action) ID() identifier.ActionID {
+func (a *Action) ID() id.ActionID {
 	if a != nil {
 		return a.Id
 	}
 
-	return identifier.ACTION_UNSUPPORTED
+	return id.ACTION_UNSUPPORTED
 }
 
 // CachedAttributes returns the attributes interface from the
@@ -156,7 +156,7 @@ var _ cdctypes.UnpackInterfacesMessage = &Forwarding{}
 //
 // NOTE: passthroughPayload is currently ignored.
 func NewForwarding(
-	id identifier.ProtocolID,
+	id id.ProtocolID,
 	a ForwardingAttributes,
 	passthroughPayload []byte,
 ) (*Forwarding, error) {
@@ -189,12 +189,12 @@ func (f *Forwarding) Validate() error {
 
 // ProtocolID returns the protocol ID associated with the forwarding. If
 // the id is not set, the default value is returned.
-func (f *Forwarding) ProtocolID() identifier.ProtocolID {
+func (f *Forwarding) ProtocolID() id.ProtocolID {
 	if f != nil {
 		return f.ProtocolId
 	}
 
-	return identifier.PROTOCOL_UNSUPPORTED
+	return id.PROTOCOL_UNSUPPORTED
 }
 
 // CachedAttributes returns the attributes interface from the

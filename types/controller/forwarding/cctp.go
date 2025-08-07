@@ -25,7 +25,7 @@ import (
 	"fmt"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 )
 
 var _ types.ForwardingAttributes = &CCTPAttributes{}
@@ -81,5 +81,5 @@ func NewCCTPForwarding(
 		return nil, err
 	}
 
-	return types.NewForwarding(identifier.PROTOCOL_CCTP, attributes, passthroughPayload)
+	return types.NewForwarding(id.PROTOCOL_CCTP, attributes, passthroughPayload)
 }

@@ -25,18 +25,18 @@ import (
 	"errors"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 	"orbiter.dev/types/interfaces"
 )
 
 var _ interfaces.ControllerForwarding = &ForwardingController{}
 
 type ForwardingController struct {
-	Id identifier.ProtocolID
+	Id id.ProtocolID
 }
 
 // ID implements types.ForwardingController.
-func (o *ForwardingController) ID() identifier.ProtocolID {
+func (o *ForwardingController) ID() id.ProtocolID {
 	return o.Id
 }
 
@@ -57,11 +57,11 @@ func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.Forwar
 var _ interfaces.ControllerAction = &NoOpActionController{}
 
 type NoOpActionController struct {
-	Id identifier.ActionID
+	Id id.ActionID
 }
 
 // ID implements types.ActionController.
-func (a *NoOpActionController) ID() identifier.ActionID {
+func (a *NoOpActionController) ID() id.ActionID {
 	return a.Id
 }
 
@@ -82,10 +82,10 @@ func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.Action
 var _ interfaces.ControllerAdapter = &NoOpAdapterController{}
 
 type NoOpAdapterController struct {
-	Id identifier.ProtocolID
+	Id id.ProtocolID
 }
 
-func (a *NoOpAdapterController) ID() identifier.ProtocolID {
+func (a *NoOpAdapterController) ID() id.ProtocolID {
 	return a.Id
 }
 

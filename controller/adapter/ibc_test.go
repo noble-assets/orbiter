@@ -33,7 +33,7 @@ import (
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 )
 
 func TestHooks(t *testing.T) {
@@ -123,7 +123,7 @@ func TestParsePayload(t *testing.T) {
 			expectIsOrbiter: true,
 			expectPayload: &types.Payload{
 				Forwarding: &types.Forwarding{
-					ProtocolId: identifier.PROTOCOL_CCTP,
+					ProtocolId: id.PROTOCOL_CCTP,
 					Attributes: &codectypes.Any{
 						TypeUrl: "/testpb.TestForwardingAttr",
 					},
@@ -151,12 +151,12 @@ func TestParsePayload(t *testing.T) {
 			expectIsOrbiter: true,
 			expectPayload: &types.Payload{
 				Forwarding: &types.Forwarding{
-					ProtocolId: identifier.PROTOCOL_CCTP,
+					ProtocolId: id.PROTOCOL_CCTP,
 					Attributes: &codectypes.Any{TypeUrl: "/testpb.TestForwardingAttr"},
 				},
 				PreActions: []*types.Action{
 					{
-						Id:         identifier.ACTION_FEE,
+						Id:         id.ACTION_FEE,
 						Attributes: &codectypes.Any{TypeUrl: "/testpb.TestActionAttr"},
 					},
 				},

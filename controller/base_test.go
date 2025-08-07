@@ -26,23 +26,23 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"orbiter.dev/controller"
-	"orbiter.dev/types/identifier"
+	"orbiter.dev/types/id"
 )
 
 func TestNewBaseController(t *testing.T) {
 	testCases := []struct {
 		name       string
-		protocolID identifier.ProtocolID
+		protocolID id.ProtocolID
 		expErr     string
 	}{
 		{
 			name:       "error - when the ID is not valid",
-			protocolID: identifier.PROTOCOL_UNSUPPORTED,
+			protocolID: id.PROTOCOL_UNSUPPORTED,
 			expErr:     "id is not supported",
 		},
 		{
 			name:       "success - with valid ID",
-			protocolID: identifier.PROTOCOL_IBC,
+			protocolID: id.PROTOCOL_IBC,
 			expErr:     "",
 		},
 	}
