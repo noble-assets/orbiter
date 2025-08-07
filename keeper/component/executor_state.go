@@ -26,11 +26,11 @@ import (
 	"orbiter.dev/types"
 )
 
-func (c *Action) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
+func (c *Executor) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
 	return c.PausedControllers.Has(ctx, int32(id))
 }
 
-func (c *Action) SetPausedController(ctx context.Context, id types.ActionID) error {
+func (c *Executor) SetPausedController(ctx context.Context, id types.ActionID) error {
 	paused, err := c.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err
@@ -42,7 +42,7 @@ func (c *Action) SetPausedController(ctx context.Context, id types.ActionID) err
 	return c.PausedControllers.Set(ctx, int32(id))
 }
 
-func (c *Action) SetUnpausedController(ctx context.Context, id types.ActionID) error {
+func (c *Executor) SetUnpausedController(ctx context.Context, id types.ActionID) error {
 	paused, err := c.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err

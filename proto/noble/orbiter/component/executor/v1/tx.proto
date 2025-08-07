@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package noble.orbiter.component.executor.v1;
+
+import "amino/amino.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "noble/orbiter/v1/action.proto";
+
+option go_package = "orbiter.dev/types/component/executor";
+
+// Msg defines the RPC methods for the Executor component.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // Pause pauses a specific action controller.
+  rpc Pause(MsgPauseAction) returns (MsgPauseActionResponse);
+  // Unpause resumes a specific action controller.
+  rpc Unpause(MsgUnpauseAction) returns (MsgUnpauseActionResponse);
+}
+
+// MsgPauseAction pauses a specific action controller.
+message MsgPauseAction {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "orbiter/executor/PauseAction";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address of the signer who is requesting to pause the action.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // Action to pause.
+  noble.orbiter.v1.ActionID action_id = 2;
+}
+
+// MsgPauseActionResponse is the response type from a MsgPauseAction request.
+message MsgPauseActionResponse {}
+
+// MsgUnpauseAction resumes a specific action controller.
+message MsgUnpauseAction {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "orbiter/executor/UnpauseAction";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address of the signer who is requesting to unpause the action.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // Action to unpause.
+  noble.orbiter.v1.ActionID action_id = 2;
+}
+
+// MsgUnpauseActionResponse is the response from a MsgUnpauseAction request.
+message MsgUnpauseActionResponse {}
