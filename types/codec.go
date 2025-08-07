@@ -21,25 +21,17 @@
 package types
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
+
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
 
 // RegisterInterfaces is used to register in the chain codec
 // all interfaces and associated implementations defined in
 // the Orbiter module.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgPauseProtocol{},
-		&MsgPauseCounterparties{},
-		&MsgUnpauseProtocol{},
-		&MsgUnpauseCounterparties{},
-		&MsgPauseAction{},
-		&MsgUnpauseAction{},
-		&MsgReplaceDepositForBurn{},
-	)
-
 	registry.RegisterInterface(
 		"noble.orbiter.v1.ForwardingAttributes",
 		(*ForwardingAttributes)(nil),

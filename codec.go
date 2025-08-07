@@ -25,8 +25,8 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
 	"orbiter.dev/types"
-	actionctrl "orbiter.dev/types/controller/action"
-	forwardingctrl "orbiter.dev/types/controller/forwarding"
+	"orbiter.dev/types/component"
+	"orbiter.dev/types/controller"
 )
 
 var amino = codec.NewLegacyAmino()
@@ -36,14 +36,16 @@ func init() {
 	amino.Seal()
 }
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	types.RegisterLegacyAminoCodec(cdc)
+	component.RegisterLegacyAminoCodec(cdc)
+}
 
 // RegisterInterfaces is used to register in the chain codec
 // all interfaces and associated implementations defined in
 // the Orbiter module.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	types.RegisterInterfaces(registry)
-
-	forwardingctrl.RegisterImplementations(registry)
-	actionctrl.RegisterImplementations(registry)
+	component.RegisterInterfaces(registry)
+	controller.RegisterInterfaces(registry)
 }

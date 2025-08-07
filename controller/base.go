@@ -30,8 +30,8 @@ var (
 	_ interfaces.Controller[types.ProtocolID] = &BaseController[types.ProtocolID]{}
 )
 
-// NewBaseController returns a new instance of a validated BaseController.
-func NewBaseController[ID interfaces.IdentifierConstraint](id ID) (*BaseController[ID], error) {
+// NewBase returns a new instance of a validated BaseController.
+func NewBase[ID interfaces.IdentifierConstraint](id ID) (*BaseController[ID], error) {
 	if err := id.Validate(); err != nil {
 		return nil, err
 	}

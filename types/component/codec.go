@@ -18,21 +18,29 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package keeper
+package component
 
 import (
-	"orbiter.dev/types"
+	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+
+	"orbiter.dev/types/component/executor"
+	"orbiter.dev/types/component/forwarder"
 )
 
-var _ types.QueryServer = &queryServer{}
-
-// queryServer exposes the module keeper for state queries.
-type queryServer struct {
-	*Keeper
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	forwarder.RegisterLegacyAminoCodec(cdc)
+	executor.RegisterLegacyAminoCodec(cdc)
 }
 
-// NewQueryServer returns a reference to the module
-// query server.
-func NewQueryServer(keeper *Keeper) types.QueryServer {
-	return queryServer{Keeper: keeper}
+func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	forwarder.RegisterInterfaces(registry)
+	executor.RegisterInterfaces(registry)
+}
+
+var amino = codec.NewLegacyAmino()
+
+func init() {
+	RegisterLegacyAminoCodec(amino)
+	amino.Seal()
 }

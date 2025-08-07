@@ -40,7 +40,7 @@ var _ interfaces.Forwarder = &Forwarder{}
 
 type Forwarder struct {
 	logger     log.Logger
-	bankKeeper types.BankKeeperForwarding
+	bankKeeper types.BankKeeperForwarder
 	// router is a forwarding controllers router.
 	router ForwardingRouter
 	// PausedForwardings keeps track of the paused protocol id and counterparty id combinations.
@@ -54,7 +54,7 @@ func NewForwarder(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-	bankKeeper types.BankKeeperForwarding,
+	bankKeeper types.BankKeeperForwarder,
 ) (*Forwarder, error) {
 	if logger == nil {
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")

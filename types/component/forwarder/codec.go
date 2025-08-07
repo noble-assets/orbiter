@@ -18,16 +18,47 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package action
+package forwarder
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-
-	"orbiter.dev/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-// RegisterInterfaces registers the actions attributes
-// satisfying the ActionAttributes interface in the module codec.
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgPauseProtocol{}, "orbiter/forwarder/PauseProtocol", nil)
+	cdc.RegisterConcrete(&MsgUnpauseProtocol{}, "orbiter/forwarder/UnpauseProtocol", nil)
+	cdc.RegisterConcrete(&MsgPauseCounterparties{}, "orbiter/forwarder/PauseCounterparties", nil)
+	cdc.RegisterConcrete(
+		&MsgUnpauseCounterparties{},
+		"orbiter/forwarder/UnpauseCounterparties",
+		nil,
+	)
+
+	cdc.RegisterConcrete(
+		&MsgReplaceDepositForBurn{},
+		"orbiter/forwarder/ReplaceDepositForBurn",
+		nil,
+	)
+}
+
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*types.ActionAttributes)(nil), &FeeAttributes{})
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgPauseProtocol{},
+		&MsgUnpauseProtocol{},
+		&MsgPauseCounterparties{},
+		&MsgUnpauseCounterparties{},
+		&MsgReplaceDepositForBurn{},
+	)
+
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+}
+
+var amino = codec.NewLegacyAmino()
+
+func init() {
+	RegisterLegacyAminoCodec(amino)
+	amino.Seal()
 }

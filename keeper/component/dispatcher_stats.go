@@ -27,6 +27,7 @@ import (
 	"cosmossdk.io/math"
 
 	"orbiter.dev/types"
+	dispatchertypes "orbiter.dev/types/component/dispatcher"
 )
 
 // UpdateStats updates all the statistics the module keep track of.
@@ -92,7 +93,7 @@ func (d *Dispatcher) updateDispatchedAmountStats(
 	sourceOrbitID *types.OrbitID,
 	destinationOrbitID *types.OrbitID,
 	denom string,
-	newAmountDispatched types.AmountDispatched,
+	newAmountDispatched dispatchertypes.AmountDispatched,
 ) error {
 	amountDispatched := d.GetDispatchedAmount(
 		ctx,
@@ -148,7 +149,7 @@ func (d *Dispatcher) updateDispatchedCountsStats(
 // buildDispatchedAmounts.
 type denomDispatchedAmount struct {
 	Denom            string
-	AmountDispatched types.AmountDispatched
+	AmountDispatched dispatchertypes.AmountDispatched
 }
 
 // BuildDenomDispatchedAmounts is an helper method used to
@@ -168,7 +169,7 @@ func (d *Dispatcher) BuildDenomDispatchedAmounts(
 
 	ddas[0] = denomDispatchedAmount{
 		Denom: sourceDenom,
-		AmountDispatched: types.AmountDispatched{
+		AmountDispatched: dispatchertypes.AmountDispatched{
 			Incoming: sourceAmount,
 			Outgoing: math.ZeroInt(),
 		},
@@ -185,7 +186,7 @@ func (d *Dispatcher) BuildDenomDispatchedAmounts(
 	} else {
 		ddas = append(ddas, denomDispatchedAmount{
 			Denom: destDenom,
-			AmountDispatched: types.AmountDispatched{
+			AmountDispatched: dispatchertypes.AmountDispatched{
 				Incoming: math.ZeroInt(),
 				Outgoing: destAmount,
 			},

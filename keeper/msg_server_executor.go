@@ -24,44 +24,58 @@ import (
 	"context"
 
 	"orbiter.dev/types"
+	"orbiter.dev/types/component/executor"
 )
 
-// PauseAction implements types.MsgServer.
-func (m msgServer) PauseAction(
+var _ executor.MsgServer = &msgServerExecutor{}
+
+// msgServerExecutor is the server used to handle messages
+// for the executor component.
+type msgServerExecutor struct {
+	// Keeper is the main Orbiter keeper.
+	*Keeper
+}
+
+func NewMsgServerExecutor(keeper *Keeper) msgServerExecutor {
+	return msgServerExecutor{Keeper: keeper}
+}
+
+// Pause implements executor.MsgServer.
+func (s msgServerExecutor) PauseAction(
 	ctx context.Context,
-	msg *types.MsgPauseAction,
-) (*types.MsgPauseActionResponse, error) {
-	if err := m.CheckIsAuthority(msg.Signer); err != nil {
+	msg *executor.MsgPauseAction,
+) (*executor.MsgPauseActionResponse, error) {
+	if err := s.CheckIsAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
-	executor := m.Executor()
+	e := s.Executor()
 
-	if err := executor.Pause(ctx, msg.ActionId); err != nil {
+	if err := e.Pause(ctx, msg.ActionId); err != nil {
 		return nil, types.ErrUnableToPause.Wrapf(
 			"action: %s", err.Error(),
 		)
 	}
 
-	return &types.MsgPauseActionResponse{}, nil
+	return &executor.MsgPauseActionResponse{}, nil
 }
 
-// UnpauseAction implements types.MsgServer.
-func (m msgServer) UnpauseAction(
+// Unpause implements executor.MsgServer.
+func (s msgServerExecutor) UnpauseAction(
 	ctx context.Context,
-	msg *types.MsgUnpauseAction,
-) (*types.MsgUnpauseActionResponse, error) {
-	if err := m.CheckIsAuthority(msg.Signer); err != nil {
+	msg *executor.MsgUnpauseAction,
+) (*executor.MsgUnpauseActionResponse, error) {
+	if err := s.CheckIsAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
-	executor := m.Executor()
+	e := s.Executor()
 
-	if err := executor.Unpause(ctx, msg.ActionId); err != nil {
+	if err := e.Unpause(ctx, msg.ActionId); err != nil {
 		return nil, types.ErrUnableToUnpause.Wrapf(
 			"action: %s", err.Error(),
 		)
 	}
 
-	return &types.MsgUnpauseActionResponse{}, nil
+	return &executor.MsgUnpauseActionResponse{}, nil
 }

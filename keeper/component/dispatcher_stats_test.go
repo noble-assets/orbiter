@@ -32,6 +32,7 @@ import (
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
+	dispatchertypes "orbiter.dev/types/component/dispatcher"
 )
 
 func TestUpdateStats(t *testing.T) {
@@ -41,7 +42,7 @@ func TestUpdateStats(t *testing.T) {
 		transferAttr   func() *types.TransferAttributes
 		forwarding     func() *types.Forwarding
 		expErr         string
-		expAmounts     map[string]types.AmountDispatched
+		expAmounts     map[string]dispatchertypes.AmountDispatched
 		expectedCounts uint32
 	}{
 		{
@@ -122,7 +123,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return orbit
 			},
-			expAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(100),
@@ -148,7 +149,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return orbit
 			},
-			expAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(95),
@@ -175,7 +176,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return orbit
 			},
-			expAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.ZeroInt(),
@@ -203,7 +204,7 @@ func TestUpdateStats(t *testing.T) {
 				err := d.SetDispatchedCounts(ctx, sourceOrbitID, destOrbitID, 10)
 				require.NoError(t, err)
 
-				da := types.AmountDispatched{
+				da := dispatchertypes.AmountDispatched{
 					Incoming: math.NewInt(1_000),
 					Outgoing: math.NewInt(1_000),
 				}
@@ -231,7 +232,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return forwarding
 			},
-			expAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(1_100),
 					Outgoing: math.NewInt(1_000),
@@ -295,7 +296,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 	testCases := []struct {
 		name               string
 		transferAttributes func() *types.TransferAttributes
-		expAmounts         map[string]types.AmountDispatched
+		expAmounts         map[string]dispatchertypes.AmountDispatched
 		expErr             string
 	}{
 		{
@@ -311,7 +312,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 
 				return ta
 			},
-			expAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(100),
@@ -327,7 +328,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 
 				return ta
 			},
-			expAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(50),
@@ -344,7 +345,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 
 				return ta
 			},
-			expAmounts: map[string]types.AmountDispatched{
+			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.ZeroInt(),
@@ -371,7 +372,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 				require.Len(t, ddas, expectedEntries)
 
 				// Convert result to map for easier verification
-				ddaMap := make(map[string]types.AmountDispatched, len(ddas))
+				ddaMap := make(map[string]dispatchertypes.AmountDispatched, len(ddas))
 				for _, entry := range ddas {
 					ddaMap[entry.Denom] = entry.AmountDispatched
 				}

@@ -30,98 +30,112 @@ import (
 
 	"orbiter.dev/controller/forwarding"
 	"orbiter.dev/types"
+	"orbiter.dev/types/component/forwarder"
 )
 
-// PauseProtocol implements types.MsgServer.
-func (m msgServer) PauseProtocol(
+var _ forwarder.MsgServer = &msgServerForwarder{}
+
+// msgServerForwarder is the server used to handle messages
+// for the forwarder component.
+type msgServerForwarder struct {
+	// Keeper is the main Orbiter keeper.
+	*Keeper
+}
+
+func NewMsgServerForwarder(keeper *Keeper) msgServerForwarder {
+	return msgServerForwarder{Keeper: keeper}
+}
+
+// PauseProtocol implements forwarder.MsgServer.
+func (s msgServerForwarder) PauseProtocol(
 	ctx context.Context,
-	msg *types.MsgPauseProtocol,
-) (*types.MsgPauseProtocolResponse, error) {
-	if err := m.CheckIsAuthority(msg.Signer); err != nil {
+	msg *forwarder.MsgPauseProtocol,
+) (*forwarder.MsgPauseProtocolResponse, error) {
+	if err := s.CheckIsAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
-	forwardingComp := m.Forwarder()
+	f := s.Forwarder()
 
-	if err := forwardingComp.Pause(ctx, msg.ProtocolId, nil); err != nil {
+	if err := f.Pause(ctx, msg.ProtocolId, nil); err != nil {
 		return nil, types.ErrUnableToPause.Wrapf(
 			"protocol: %s", err.Error(),
 		)
 	}
 
-	return &types.MsgPauseProtocolResponse{}, nil
+	return &forwarder.MsgPauseProtocolResponse{}, nil
 }
 
-// PauseCounterparties implements types.MsgServer.
-func (m msgServer) PauseCounterparties(
+// UnpauseProtocol implements forwarder.MsgServer.
+func (s msgServerForwarder) UnpauseProtocol(
 	ctx context.Context,
-	msg *types.MsgPauseCounterparties,
-) (*types.MsgPauseCounterpartiesResponse, error) {
-	if err := m.CheckIsAuthority(msg.Signer); err != nil {
+	msg *forwarder.MsgUnpauseProtocol,
+) (*forwarder.MsgUnpauseProtocolResponse, error) {
+	if err := s.CheckIsAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
-	forwardingComp := m.Forwarder()
+	f := s.Forwarder()
 
-	if err := forwardingComp.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
-		return nil, types.ErrUnableToPause.Wrapf(
-			"counterparties: %s", err.Error(),
-		)
-	}
-
-	return &types.MsgPauseCounterpartiesResponse{}, nil
-}
-
-// UnpauseProtocol implements types.MsgServer.
-func (m msgServer) UnpauseProtocol(
-	ctx context.Context,
-	msg *types.MsgUnpauseProtocol,
-) (*types.MsgUnpauseProtocolResponse, error) {
-	if err := m.CheckIsAuthority(msg.Signer); err != nil {
-		return nil, err
-	}
-
-	forwardingComp := m.Forwarder()
-
-	if err := forwardingComp.Unpause(ctx, msg.ProtocolId, nil); err != nil {
+	if err := f.Unpause(ctx, msg.ProtocolId, nil); err != nil {
 		return nil, types.ErrUnableToUnpause.Wrapf(
 			"protocol: %s", err.Error(),
 		)
 	}
 
-	return &types.MsgUnpauseProtocolResponse{}, nil
+	return &forwarder.MsgUnpauseProtocolResponse{}, nil
 }
 
-// UnpauseCounterparties implements types.MsgServer.
-func (m msgServer) UnpauseCounterparties(
+// PauseCounterparties implements forwarder.MsgServer.
+func (s msgServerForwarder) PauseCounterparties(
 	ctx context.Context,
-	msg *types.MsgUnpauseCounterparties,
-) (*types.MsgUnpauseCounterpartiesResponse, error) {
-	if err := m.CheckIsAuthority(msg.Signer); err != nil {
+	msg *forwarder.MsgPauseCounterparties,
+) (*forwarder.MsgPauseCounterpartiesResponse, error) {
+	if err := s.CheckIsAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
-	forwardingComp := m.Forwarder()
+	f := s.Forwarder()
 
-	if err := forwardingComp.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
+	if err := f.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
+		return nil, types.ErrUnableToPause.Wrapf(
+			"counterparties: %s", err.Error(),
+		)
+	}
+
+	return &forwarder.MsgPauseCounterpartiesResponse{}, nil
+}
+
+// UnpauseCounterparties implements forwarder.MsgServer.
+func (s msgServerForwarder) UnpauseCounterparties(
+	ctx context.Context,
+	msg *forwarder.MsgUnpauseCounterparties,
+) (*forwarder.MsgUnpauseCounterpartiesResponse, error) {
+	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+		return nil, err
+	}
+
+	f := s.Forwarder()
+
+	if err := f.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
 		return nil, types.ErrUnableToUnpause.Wrapf(
 			"counterparties: %s", err.Error(),
 		)
 	}
 
-	return &types.MsgUnpauseCounterpartiesResponse{}, nil
+	return &forwarder.MsgUnpauseCounterpartiesResponse{}, nil
 }
 
-// ReplaceDepositForBurn implements types.MsgServer.
-func (m msgServer) ReplaceDepositForBurn(
+// ReplaceDepositForBurn implements forwarder.MsgServer.
+func (s msgServerForwarder) ReplaceDepositForBurn(
 	ctx context.Context,
-	msg *types.MsgReplaceDepositForBurn,
-) (*types.MsgReplaceDepositForBurnResponse, error) {
-	if err := m.CheckIsAuthority(msg.Signer); err != nil {
+	msg *forwarder.MsgReplaceDepositForBurn,
+) (*forwarder.MsgReplaceDepositForBurnResponse, error) {
+	if err := s.CheckIsAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
-	controller, found := m.Forwarder().Router().Route(types.PROTOCOL_CCTP)
+	controller, found := s.Forwarder().Router().Route(types.PROTOCOL_CCTP)
 	if !found {
 		return nil, errors.New("cctp controller not found")
 	}
@@ -149,5 +163,5 @@ func (m msgServer) ReplaceDepositForBurn(
 		return nil, err
 	}
 
-	return &types.MsgReplaceDepositForBurnResponse{}, nil
+	return &forwarder.MsgReplaceDepositForBurnResponse{}, nil
 }

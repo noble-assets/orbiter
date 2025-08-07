@@ -25,7 +25,6 @@ service Msg {
 
   // UnpauseCounterparties resumes specific counterparty pairs for a protocol.
   rpc ReplaceDepositForBurn(MsgReplaceDepositForBurn) returns (MsgReplaceDepositForBurnResponse);
-
 }
 
 // MsgPauseProtocol pauses an entire forwarding protocol.

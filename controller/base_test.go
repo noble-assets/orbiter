@@ -49,7 +49,7 @@ func TestNewBaseController(t *testing.T) {
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			ctrl, err := controller.NewBaseController(tC.protocolID)
+			ctrl, err := controller.NewBase(tC.protocolID)
 
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)

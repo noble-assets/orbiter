@@ -18,10 +18,12 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package dispatcher
 
 import (
 	"cosmossdk.io/math"
+
+	"orbiter.dev/types"
 )
 
 func NewAmountDispatched(
@@ -35,12 +37,12 @@ func NewAmountDispatched(
 }
 
 type ChainAmountDispatched struct {
-	orbitID          OrbitID
+	orbitID          types.OrbitID
 	amountDispatched AmountDispatched
 }
 
 func NewChainAmountDispatched(
-	orbitID OrbitID,
+	orbitID types.OrbitID,
 	amountDispatched AmountDispatched,
 ) *ChainAmountDispatched {
 	return &ChainAmountDispatched{
@@ -49,7 +51,7 @@ func NewChainAmountDispatched(
 	}
 }
 
-func (cad *ChainAmountDispatched) OrbitID() OrbitID {
+func (cad *ChainAmountDispatched) OrbitID() types.OrbitID {
 	return cad.orbitID
 }
 

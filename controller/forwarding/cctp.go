@@ -56,7 +56,7 @@ func NewCCTPController(
 	}
 
 	id := types.PROTOCOL_CCTP
-	baseController, err := controller.NewBaseController(id)
+	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err
 	}

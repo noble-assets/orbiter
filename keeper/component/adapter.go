@@ -35,7 +35,7 @@ import (
 
 type AdapterRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerAdapter]
 
-var _ interfaces.AdapterComponent = &Adapter{}
+var _ interfaces.Adapter = &Adapter{}
 
 type Adapter struct {
 	logger log.Logger

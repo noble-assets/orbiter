@@ -18,30 +18,32 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package keeper
+package executor
 
 import (
-	"orbiter.dev/types"
+	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-var _ types.MsgServer = &msgServer{}
-
-// msgServer exposes the module keeper for state transitions.
-type msgServer struct {
-	*Keeper
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgPauseAction{}, "orbiter/executor/PauseAction", nil)
+	cdc.RegisterConcrete(&MsgUnpauseAction{}, "orbiter/executor/UnpauseAction", nil)
 }
 
-// NewMsgServer returns a reference to the message server.
-func NewMsgServer(keeper *Keeper) types.MsgServer {
-	return msgServer{Keeper: keeper}
+func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgPauseAction{},
+		&MsgUnpauseAction{},
+	)
+
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
-// CheckIsAuthority returns an error is the signer is not the
-// keeper authority.
-func (m msgServer) CheckIsAuthority(signer string) error {
-	if m.Authority() != signer {
-		return types.ErrUnauthorized
-	}
+var amino = codec.NewLegacyAmino()
 
-	return nil
+func init() {
+	RegisterLegacyAminoCodec(amino)
+	amino.Seal()
 }

@@ -192,6 +192,16 @@ func (k *Keeper) SetAdapterControllers(controllers ...interfaces.ControllerAdapt
 	}
 }
 
+// CheckIsAuthority returns an error is the signer is not the
+// keeper authority.
+func (k *Keeper) CheckIsAuthority(signer string) error {
+	if k.Authority() != signer {
+		return types.ErrUnauthorized
+	}
+
+	return nil
+}
+
 // setComponents registers all required components in the orbiter keeper.
 func (k *Keeper) setComponents(
 	cdc codec.Codec,

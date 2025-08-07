@@ -2,7 +2,11 @@ syntax = "proto3";
 
 package noble.orbiter.v1;
 
+import "cosmos/msg/v1/msg.proto";
+
 option go_package = "orbiter.dev/types";
 
 // Msg defines the RPC methods for the Orbiter module.
-service Msg { }
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+}

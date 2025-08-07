@@ -18,16 +18,22 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package action
+package controller
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/controller/action"
+	"orbiter.dev/types/controller/forwarding"
 )
 
-// RegisterInterfaces registers the actions attributes
-// satisfying the ActionAttributes interface in the module codec.
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
+
+// RegisterInterfaces is used to register in the chain codec
+// all interfaces and associated implementations defined in
+// the Orbiter module.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*types.ActionAttributes)(nil), &FeeAttributes{})
+	forwarding.RegisterInterfaces(registry)
+	action.RegisterInterfaces(registry)
 }

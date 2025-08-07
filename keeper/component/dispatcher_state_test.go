@@ -29,6 +29,7 @@ import (
 
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/types"
+	dispatchertypes "orbiter.dev/types/component/dispatcher"
 )
 
 const UsdcDenom = "uusdc"
@@ -49,13 +50,13 @@ func TestGetDispatchedAmount(t *testing.T) {
 
 	// ACT: Test getting non-existent dispatch record
 	result := dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom)
-	require.Equal(t, types.AmountDispatched{
+	require.Equal(t, dispatchertypes.AmountDispatched{
 		Incoming: math.ZeroInt(),
 		Outgoing: math.ZeroInt(),
 	}, result)
 
 	// ARRANGE: Set a dispatch record
-	expectedAmount := types.AmountDispatched{
+	expectedAmount := dispatchertypes.AmountDispatched{
 		Incoming: math.NewInt(100),
 		Outgoing: math.NewInt(50),
 	}
@@ -97,7 +98,7 @@ func TestHasDispatchedAmount(t *testing.T) {
 	require.False(t, result)
 
 	// ARRANGE: Set a dispatch record
-	amount := types.AmountDispatched{
+	amount := dispatchertypes.AmountDispatched{
 		Incoming: math.NewInt(100),
 		Outgoing: math.NewInt(50),
 	}
@@ -125,7 +126,7 @@ func TestSetDispatchedAmount(t *testing.T) {
 		CounterpartyID: "0",
 	}
 
-	amount := types.AmountDispatched{
+	amount := dispatchertypes.AmountDispatched{
 		Incoming: math.NewInt(200),
 		Outgoing: math.NewInt(100),
 	}
@@ -140,7 +141,7 @@ func TestSetDispatchedAmount(t *testing.T) {
 	require.Equal(t, amount, result)
 
 	// ARRANGE: Test updating existing dispatch record
-	updatedAmount := types.AmountDispatched{
+	updatedAmount := dispatchertypes.AmountDispatched{
 		Incoming: math.NewInt(300),
 		Outgoing: math.NewInt(150),
 	}
@@ -201,11 +202,11 @@ func TestGetDispatchedAmountByProtocolID(t *testing.T) {
 	}
 
 	// Set dispatch records
-	amount1 := types.AmountDispatched{
+	amount1 := dispatchertypes.AmountDispatched{
 		Incoming: math.NewInt(100),
 		Outgoing: math.NewInt(50),
 	}
-	amount2 := types.AmountDispatched{
+	amount2 := dispatchertypes.AmountDispatched{
 		Incoming: math.NewInt(200),
 		Outgoing: math.NewInt(100),
 	}
@@ -249,7 +250,7 @@ func TestDispatchedAmountEmptyStates(t *testing.T) {
 
 	// Test all methods with empty state
 	result := dispatcher.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom)
-	require.Equal(t, types.AmountDispatched{
+	require.Equal(t, dispatchertypes.AmountDispatched{
 		Incoming: math.ZeroInt(),
 		Outgoing: math.ZeroInt(),
 	}, result)
@@ -266,7 +267,7 @@ func TestDispatchedAmountEmptyStates(t *testing.T) {
 	dispatcher.IterateDispatchedAmountsByProtocolID(
 		ctx,
 		types.PROTOCOL_IBC,
-		func(sourceCounterpartyId string, dispatchedInfo types.ChainAmountDispatched) bool {
+		func(sourceCounterpartyId string, dispatchedInfo dispatchertypes.ChainAmountDispatched) bool {
 			called = true
 
 			return false
@@ -284,7 +285,7 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 		sourceInfo      types.OrbitID
 		destinationInfo types.OrbitID
 		denom           string
-		amount          types.AmountDispatched
+		amount          dispatchertypes.AmountDispatched
 	}{
 		{
 			sourceInfo: types.OrbitID{
@@ -296,7 +297,7 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 				CounterpartyID: "0",
 			},
 			denom: "uusdc",
-			amount: types.AmountDispatched{
+			amount: dispatchertypes.AmountDispatched{
 				Incoming: math.NewInt(100),
 				Outgoing: math.NewInt(50),
 			},
@@ -311,7 +312,7 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 				CounterpartyID: "1",
 			},
 			denom: "uusdc",
-			amount: types.AmountDispatched{
+			amount: dispatchertypes.AmountDispatched{
 				Incoming: math.NewInt(200),
 				Outgoing: math.NewInt(100),
 			},
@@ -326,7 +327,7 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 				CounterpartyID: "channel-3",
 			},
 			denom: "uusdc",
-			amount: types.AmountDispatched{
+			amount: dispatchertypes.AmountDispatched{
 				Incoming: math.NewInt(300),
 				Outgoing: math.NewInt(150),
 			},
@@ -453,11 +454,11 @@ func TestGetDispatchedAmountByDestinationProtocolID(t *testing.T) {
 	denom := "uusdc"
 
 	// Set dispatch records
-	amount1 := types.AmountDispatched{
+	amount1 := dispatchertypes.AmountDispatched{
 		Incoming: math.NewInt(100),
 		Outgoing: math.NewInt(50),
 	}
-	amount2 := types.AmountDispatched{
+	amount2 := dispatchertypes.AmountDispatched{
 		Incoming: math.NewInt(200),
 		Outgoing: math.NewInt(100),
 	}

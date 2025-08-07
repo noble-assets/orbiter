@@ -29,6 +29,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"orbiter.dev/types"
+	dispatchertypes "orbiter.dev/types/component/dispatcher"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -43,7 +44,7 @@ type Dispatcher struct {
 	ForwardingHandler interfaces.PacketHandler[*types.ForwardingPacket]
 	ActionHandler     interfaces.PacketHandler[*types.ActionPacket]
 	// Stats
-	DispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, types.AmountDispatched, DispatchedAmountsIndexes]
+	DispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, dispatchertypes.AmountDispatched, DispatchedAmountsIndexes]
 	DispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
 }
 
@@ -80,7 +81,7 @@ func NewDispatcher(
 				collections.StringKey,
 				collections.StringKey,
 			),
-			codec.CollValue[types.AmountDispatched](cdc),
+			codec.CollValue[dispatchertypes.AmountDispatched](cdc),
 			newDispatchedAmountsIndexes(sb),
 		),
 		DispatchCounts: collections.NewIndexedMap(

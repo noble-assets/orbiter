@@ -26,8 +26,8 @@ import (
 	"orbiter.dev/types"
 )
 
-// RegisterImplementations registers the forwarding attributes
+// RegisterInterfaces registers the forwarding attributes
 // satisfying the ForwardingAttributes interface in the module codec.
-func RegisterImplementations(registry codectypes.InterfaceRegistry) {
+func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*types.ForwardingAttributes)(nil), &CCTPAttributes{})
 }

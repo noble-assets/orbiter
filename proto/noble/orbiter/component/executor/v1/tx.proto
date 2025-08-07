@@ -14,13 +14,13 @@ option go_package = "orbiter.dev/types/component/executor";
 service Msg {
   option (cosmos.msg.v1.service) = true;
 
-  // Pause pauses a specific action controller.
-  rpc Pause(MsgPauseAction) returns (MsgPauseActionResponse);
-  // Unpause resumes a specific action controller.
-  rpc Unpause(MsgUnpauseAction) returns (MsgUnpauseActionResponse);
+  // PauseAction pauses a specific action.
+  rpc PauseAction(MsgPauseAction) returns (MsgPauseActionResponse);
+  // UnpauseAction resumes a specific action.
+  rpc UnpauseAction(MsgUnpauseAction) returns (MsgUnpauseActionResponse);
 }
 
-// MsgPauseAction pauses a specific action controller.
+// MsgPauseAction pauses a specific action.
 message MsgPauseAction {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "orbiter/executor/PauseAction";
@@ -37,7 +37,7 @@ message MsgPauseAction {
 // MsgPauseActionResponse is the response type from a MsgPauseAction request.
 message MsgPauseActionResponse {}
 
-// MsgUnpauseAction resumes a specific action controller.
+// MsgUnpauseAction resumes a specific action.
 message MsgUnpauseAction {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "orbiter/executor/UnpauseAction";

@@ -29,6 +29,7 @@ import (
 	"cosmossdk.io/math"
 
 	"orbiter.dev/types"
+	dispatchertypes "orbiter.dev/types/component/dispatcher"
 )
 
 type (
@@ -43,10 +44,10 @@ type (
 type DispatchedAmountsIndexes struct {
 	// ByDestinationProtocolID keeps track of entries indexes associated
 	// with a single destination protocol ID.
-	ByDestinationProtocolID *indexes.Multi[uint32, DispatchedAmountsKey, types.AmountDispatched]
+	ByDestinationProtocolID *indexes.Multi[uint32, DispatchedAmountsKey, dispatchertypes.AmountDispatched]
 	// ByDestinationOrbitID keeps track of entries indexes associated with a tuple:
 	// (destination protocol Id, destination chain Id, denom).
-	ByDestinationOrbitID *indexes.Multi[collections.Triple[uint32, string, string], DispatchedAmountsKey, types.AmountDispatched]
+	ByDestinationOrbitID *indexes.Multi[collections.Triple[uint32, string, string], DispatchedAmountsKey, dispatchertypes.AmountDispatched]
 }
 
 func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmountsIndexes {
@@ -64,7 +65,7 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			types.DispatchedAmountsName+"_by_destination_protocol_id",
 			collections.Uint32Key,
 			primaryKeyCodec,
-			func(pk DispatchedAmountsKey, value types.AmountDispatched) (uint32, error) {
+			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (uint32, error) {
 				orbitID, err := types.ParseOrbitID(pk.K3())
 				if err != nil {
 					return 0, fmt.Errorf("error parsing destination orbit ID: %w", err)
@@ -83,7 +84,7 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 				collections.StringKey,
 			),
 			primaryKeyCodec,
-			func(pk DispatchedAmountsKey, value types.AmountDispatched) (collections.Triple[uint32, string, string], error) {
+			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (collections.Triple[uint32, string, string], error) {
 				orbitID, err := types.ParseOrbitID(pk.K3())
 				if err != nil {
 					return collections.Triple[uint32, string, string]{}, fmt.Errorf(
@@ -146,7 +147,7 @@ func (d *Dispatcher) GetDispatchedAmount(
 	sourceInfo types.OrbitID,
 	destinationOrbitID types.OrbitID,
 	denom string,
-) types.AmountDispatched {
+) dispatchertypes.AmountDispatched {
 	key := collections.Join4(
 		sourceInfo.ProtocolID.Uint32(),
 		sourceInfo.CounterpartyID,
@@ -156,7 +157,7 @@ func (d *Dispatcher) GetDispatchedAmount(
 
 	amountDispatched, err := d.DispatchedAmounts.Get(ctx, key)
 	if err != nil {
-		amountDispatched = types.AmountDispatched{
+		amountDispatched = dispatchertypes.AmountDispatched{
 			Incoming: math.ZeroInt(),
 			Outgoing: math.ZeroInt(),
 		}
@@ -184,7 +185,7 @@ func (d *Dispatcher) SetDispatchedAmount(
 	sourceOrbitID types.OrbitID,
 	destOrbitID types.OrbitID,
 	denom string,
-	amountDispatched types.AmountDispatched,
+	amountDispatched dispatchertypes.AmountDispatched,
 ) error {
 	key := collections.Join4(
 		sourceOrbitID.ProtocolID.Uint32(),
@@ -199,10 +200,10 @@ func (d *Dispatcher) SetDispatchedAmount(
 func (d *Dispatcher) GetDispatchedAmountsByProtocolID(
 	ctx context.Context,
 	protocolID types.ProtocolID,
-) types.TotalDispatched {
-	totalDispatched := types.NewTotalDispatched()
+) dispatchertypes.TotalDispatched {
+	totalDispatched := dispatchertypes.NewTotalDispatched()
 
-	callback := func(sourceCounterpartyId string, amountDispatched types.ChainAmountDispatched) bool {
+	callback := func(sourceCounterpartyId string, amountDispatched dispatchertypes.ChainAmountDispatched) bool {
 		totalDispatched.SetAmountDispatched(sourceCounterpartyId, amountDispatched)
 
 		return false
@@ -220,7 +221,7 @@ func (d *Dispatcher) GetDispatchedAmountsByProtocolID(
 func (d *Dispatcher) IterateDispatchedAmountsByProtocolID(
 	ctx context.Context,
 	protocolID types.ProtocolID,
-	callback func(string, types.ChainAmountDispatched) bool,
+	callback func(string, dispatchertypes.ChainAmountDispatched) bool,
 ) {
 	prefix := collections.NewPrefixedQuadRange[uint32, string, string, string](
 		protocolID.Uint32(),
@@ -229,12 +230,12 @@ func (d *Dispatcher) IterateDispatchedAmountsByProtocolID(
 	err := d.DispatchedAmounts.Walk(
 		ctx,
 		prefix,
-		func(key DispatchedAmountsKey, value types.AmountDispatched) (stop bool, err error) {
+		func(key DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (stop bool, err error) {
 			orbitID, err := types.ParseOrbitID(key.K3())
 			if err != nil {
 				return true, err
 			}
-			dispatchedInfo := types.NewChainAmountDispatched(orbitID, value)
+			dispatchedInfo := dispatchertypes.NewChainAmountDispatched(orbitID, value)
 
 			return callback(key.K2(), *dispatchedInfo), nil
 		},
@@ -247,10 +248,10 @@ func (d *Dispatcher) IterateDispatchedAmountsByProtocolID(
 func (d *Dispatcher) GetDispatchedAmountsByDestinationProtocolID(
 	ctx context.Context,
 	protocolID types.ProtocolID,
-) types.TotalDispatched {
-	totalDispatched := types.NewTotalDispatched()
+) dispatchertypes.TotalDispatched {
+	totalDispatched := dispatchertypes.NewTotalDispatched()
 
-	callback := func(sourceCounterpartyId string, amountDispatched types.ChainAmountDispatched) bool {
+	callback := func(sourceCounterpartyId string, amountDispatched dispatchertypes.ChainAmountDispatched) bool {
 		totalDispatched.SetAmountDispatched(sourceCounterpartyId, amountDispatched)
 
 		return false
@@ -268,7 +269,7 @@ func (d *Dispatcher) GetDispatchedAmountsByDestinationProtocolID(
 func (d *Dispatcher) IterateDispatchedAmountsByDestinationProtocolID(
 	ctx context.Context,
 	protocolID types.ProtocolID,
-	callback func(string, types.ChainAmountDispatched) bool,
+	callback func(string, dispatchertypes.ChainAmountDispatched) bool,
 ) {
 	rng := collections.NewPrefixedPairRange[uint32, DispatchedAmountsKey](protocolID.Uint32())
 
@@ -289,7 +290,7 @@ func (d *Dispatcher) IterateDispatchedAmountsByDestinationProtocolID(
 			if err != nil {
 				return true, err
 			}
-			dispatchedInfo := types.NewChainAmountDispatched(orbitID, value)
+			dispatchedInfo := dispatchertypes.NewChainAmountDispatched(orbitID, value)
 
 			return callback(indexedKey.K2(), *dispatchedInfo), nil
 		},

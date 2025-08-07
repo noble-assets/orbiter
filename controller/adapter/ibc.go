@@ -52,7 +52,7 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	}
 
 	id := types.PROTOCOL_IBC
-	baseController, err := controller.NewBaseController(id)
+	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err
 	}

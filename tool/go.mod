@@ -1,4 +1,4 @@
-module orbiter.dev/tools
+module orbiter.dev/tool
 
 go 1.24
 

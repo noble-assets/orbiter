@@ -58,7 +58,7 @@ func NewFeeController(
 	}
 
 	id := types.ACTION_FEE
-	baseController, err := controller.NewBaseController(id)
+	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err
 	}
