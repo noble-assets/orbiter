@@ -20,10 +20,12 @@
 
 package interfaces
 
-import "orbiter.dev/types"
+import (
+	"orbiter.dev/types/identifier"
+)
 
 type IdentifierConstraint interface {
-	types.ProtocolID | types.ActionID
+	identifier.ProtocolID | identifier.ActionID
 	Validate() error
 	String() string
 }

@@ -34,6 +34,7 @@ import (
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
 	forwardingtypes "orbiter.dev/types/controller/forwarding"
+	"orbiter.dev/types/identifier"
 )
 
 func TestNewCCTPController(t *testing.T) {
@@ -79,7 +80,7 @@ func TestNewCCTPController(t *testing.T) {
 
 func TestHandlePacket(t *testing.T) {
 	transferAttr, err := types.NewTransferAttributes(
-		types.PROTOCOL_IBC,
+		identifier.PROTOCOL_IBC,
 		"channel-01",
 		"uusdc",
 		math.NewInt(1_000_000),
@@ -173,7 +174,7 @@ func TestExtractAttributes(t *testing.T) {
 				)
 				require.NoError(t, err)
 				forwarding := &types.Forwarding{
-					ProtocolId: types.PROTOCOL_CCTP,
+					ProtocolId: identifier.PROTOCOL_CCTP,
 				}
 				err = forwarding.SetAttributes(attr)
 				require.NoError(t, err)
@@ -186,7 +187,7 @@ func TestExtractAttributes(t *testing.T) {
 			forwarding: func() *types.Forwarding {
 				invalidAttr := testdata.TestForwardingAttr{}
 				forwarding := &types.Forwarding{
-					ProtocolId: types.PROTOCOL_CCTP,
+					ProtocolId: identifier.PROTOCOL_CCTP,
 				}
 				err := forwarding.SetAttributes(&invalidAttr)
 				require.NoError(t, err)
@@ -199,7 +200,7 @@ func TestExtractAttributes(t *testing.T) {
 			name: "error - empty attributes",
 			forwarding: func() *types.Forwarding {
 				return &types.Forwarding{
-					ProtocolId: types.PROTOCOL_CCTP,
+					ProtocolId: identifier.PROTOCOL_CCTP,
 				}
 			},
 			expError: types.ErrNilPointer.Error(),

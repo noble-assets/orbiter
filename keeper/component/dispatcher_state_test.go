@@ -28,8 +28,8 @@ import (
 	"cosmossdk.io/math"
 
 	"orbiter.dev/testutil/mocks"
-	"orbiter.dev/types"
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
+	"orbiter.dev/types/identifier"
 )
 
 const UsdcDenom = "uusdc"
@@ -39,12 +39,12 @@ func TestGetDispatchedAmount(t *testing.T) {
 	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
-	sourceInfo := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_IBC,
+	sourceInfo := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_IBC,
 		CounterpartyID: "channel-1",
 	}
-	destinationInfo := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_CCTP,
+	destinationInfo := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
 
@@ -82,12 +82,12 @@ func TestHasDispatchedAmount(t *testing.T) {
 	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
-	sourceInfo := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_IBC,
+	sourceInfo := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_IBC,
 		CounterpartyID: "channel-1",
 	}
-	destinationInfo := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_CCTP,
+	destinationInfo := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
 
@@ -117,12 +117,12 @@ func TestSetDispatchedAmount(t *testing.T) {
 	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
-	sourceOrbitID := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_IBC,
+	sourceOrbitID := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_IBC,
 		CounterpartyID: "channel-1",
 	}
-	destinationOrbitID := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_CCTP,
+	destinationOrbitID := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
 
@@ -163,7 +163,7 @@ func TestSetDispatchedAmount(t *testing.T) {
 	require.Equal(t, updatedAmount, result)
 
 	// ARRANGE: set a dispatched amount with an invalid destination protocol ID
-	invalidDestOrbitID := types.OrbitID{
+	invalidDestOrbitID := identifier.OrbitID{
 		ProtocolID:     0,
 		CounterpartyID: "ethereum",
 	}
@@ -178,7 +178,7 @@ func TestGetDispatchedAmountByProtocolID(t *testing.T) {
 	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
-	protocolID := types.PROTOCOL_IBC
+	protocolID := identifier.PROTOCOL_IBC
 
 	// ACT: Test empty protocol (no dispatch records)
 	result := dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolID)
@@ -188,16 +188,16 @@ func TestGetDispatchedAmountByProtocolID(t *testing.T) {
 	require.Empty(t, result.ChainsAmount())
 
 	// ARRANGE: Set up test data
-	sourceInfo1 := types.OrbitID{
+	sourceInfo1 := identifier.OrbitID{
 		ProtocolID:     protocolID,
 		CounterpartyID: "channel-1",
 	}
-	sourceInfo2 := types.OrbitID{
+	sourceInfo2 := identifier.OrbitID{
 		ProtocolID:     protocolID,
 		CounterpartyID: "channel-2",
 	}
-	destinationInfo := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_CCTP,
+	destinationInfo := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
 
@@ -239,12 +239,12 @@ func TestDispatchedAmountEmptyStates(t *testing.T) {
 	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
-	sourceInfo := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_IBC,
+	sourceInfo := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_IBC,
 		CounterpartyID: "channel-1",
 	}
-	destinationInfo := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_CCTP,
+	destinationInfo := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
 
@@ -258,7 +258,7 @@ func TestDispatchedAmountEmptyStates(t *testing.T) {
 	hasDispatched := dispatcher.HasDispatchedAmount(ctx, sourceInfo, destinationInfo, UsdcDenom)
 	require.False(t, hasDispatched)
 
-	totalDispatched := dispatcher.GetDispatchedAmountsByProtocolID(ctx, types.PROTOCOL_IBC)
+	totalDispatched := dispatcher.GetDispatchedAmountsByProtocolID(ctx, identifier.PROTOCOL_IBC)
 	require.NotNil(t, totalDispatched.ChainsAmount())
 	require.Empty(t, totalDispatched.ChainsAmount())
 
@@ -266,7 +266,7 @@ func TestDispatchedAmountEmptyStates(t *testing.T) {
 	called := false
 	dispatcher.IterateDispatchedAmountsByProtocolID(
 		ctx,
-		types.PROTOCOL_IBC,
+		identifier.PROTOCOL_IBC,
 		func(sourceCounterpartyId string, dispatchedInfo dispatchertypes.ChainAmountDispatched) bool {
 			called = true
 
@@ -282,18 +282,18 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 
 	// Test with multiple protocols and chains
 	testCases := []struct {
-		sourceInfo      types.OrbitID
-		destinationInfo types.OrbitID
+		sourceInfo      identifier.OrbitID
+		destinationInfo identifier.OrbitID
 		denom           string
 		amount          dispatchertypes.AmountDispatched
 	}{
 		{
-			sourceInfo: types.OrbitID{
-				ProtocolID:     types.PROTOCOL_IBC,
+			sourceInfo: identifier.OrbitID{
+				ProtocolID:     identifier.PROTOCOL_IBC,
 				CounterpartyID: "channel-1",
 			},
-			destinationInfo: types.OrbitID{
-				ProtocolID:     types.PROTOCOL_CCTP,
+			destinationInfo: identifier.OrbitID{
+				ProtocolID:     identifier.PROTOCOL_CCTP,
 				CounterpartyID: "0",
 			},
 			denom: "uusdc",
@@ -303,12 +303,12 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 			},
 		},
 		{
-			sourceInfo: types.OrbitID{
-				ProtocolID:     types.PROTOCOL_IBC,
+			sourceInfo: identifier.OrbitID{
+				ProtocolID:     identifier.PROTOCOL_IBC,
 				CounterpartyID: "channel-2",
 			},
-			destinationInfo: types.OrbitID{
-				ProtocolID:     types.PROTOCOL_CCTP,
+			destinationInfo: identifier.OrbitID{
+				ProtocolID:     identifier.PROTOCOL_CCTP,
 				CounterpartyID: "1",
 			},
 			denom: "uusdc",
@@ -318,12 +318,12 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 			},
 		},
 		{
-			sourceInfo: types.OrbitID{
-				ProtocolID:     types.PROTOCOL_CCTP,
+			sourceInfo: identifier.OrbitID{
+				ProtocolID:     identifier.PROTOCOL_CCTP,
 				CounterpartyID: "0",
 			},
-			destinationInfo: types.OrbitID{
-				ProtocolID:     types.PROTOCOL_IBC,
+			destinationInfo: identifier.OrbitID{
+				ProtocolID:     identifier.PROTOCOL_IBC,
 				CounterpartyID: "channel-3",
 			},
 			denom: "uusdc",
@@ -361,10 +361,10 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 	}
 
 	// Test protocol-specific queries
-	ibcTotal := dispatcher.GetDispatchedAmountsByProtocolID(ctx, types.PROTOCOL_IBC)
+	ibcTotal := dispatcher.GetDispatchedAmountsByProtocolID(ctx, identifier.PROTOCOL_IBC)
 	require.Len(t, ibcTotal.ChainsAmount(), 2) // channel-1 and channel-2
 
-	cctpTotal := dispatcher.GetDispatchedAmountsByProtocolID(ctx, types.PROTOCOL_CCTP)
+	cctpTotal := dispatcher.GetDispatchedAmountsByProtocolID(ctx, identifier.PROTOCOL_CCTP)
 	require.Len(t, cctpTotal.ChainsAmount(), 1) // only counterparty "0"
 }
 
@@ -373,12 +373,12 @@ func TestSetAndGetDispatchedCounts(t *testing.T) {
 	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
-	sourceOrbitID := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_IBC,
+	sourceOrbitID := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_IBC,
 		CounterpartyID: "channel-1",
 	}
-	destinationOrbitID := types.OrbitID{
-		ProtocolID:     types.PROTOCOL_CCTP,
+	destinationOrbitID := identifier.OrbitID{
+		ProtocolID:     identifier.PROTOCOL_CCTP,
 		CounterpartyID: "0",
 	}
 
@@ -404,7 +404,7 @@ func TestSetAndGetDispatchedCounts(t *testing.T) {
 	require.Equal(t, uint32(10), result)
 
 	// ARRANGE: set a dispatched counts with an invalid destination protocol ID
-	invalidDestOrbitID := types.OrbitID{
+	invalidDestOrbitID := identifier.OrbitID{
 		ProtocolID:     0,
 		CounterpartyID: "ethereum",
 	}
@@ -423,9 +423,9 @@ func TestGetDispatchedAmountByDestinationProtocolID(t *testing.T) {
 	dispatcher, deps := mocks.NewDispatcherComponent(t)
 	ctx := deps.SdkCtx
 
-	protocolSource1 := types.PROTOCOL_IBC
-	protocolSource2 := types.PROTOCOL_HYPERLANE
-	protocolDestination := types.PROTOCOL_CCTP
+	protocolSource1 := identifier.PROTOCOL_IBC
+	protocolSource2 := identifier.PROTOCOL_HYPERLANE
+	protocolDestination := identifier.PROTOCOL_CCTP
 
 	// ACT: Test empty protocol (no dispatch records)
 	result := dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolSource1)
@@ -435,19 +435,19 @@ func TestGetDispatchedAmountByDestinationProtocolID(t *testing.T) {
 	require.Empty(t, result.ChainsAmount())
 
 	// ARRANGE: Set up test data
-	sourceOrbitID1 := types.OrbitID{
+	sourceOrbitID1 := identifier.OrbitID{
 		ProtocolID:     protocolSource1,
 		CounterpartyID: "channel-1",
 	}
-	sourceOrbitID2 := types.OrbitID{
+	sourceOrbitID2 := identifier.OrbitID{
 		ProtocolID:     protocolSource1,
 		CounterpartyID: "channel-2",
 	}
-	sourceOrbitID3 := types.OrbitID{
+	sourceOrbitID3 := identifier.OrbitID{
 		ProtocolID:     protocolSource2,
 		CounterpartyID: "ethereum",
 	}
-	destOrbitID := types.OrbitID{
+	destOrbitID := identifier.OrbitID{
 		ProtocolID:     protocolDestination,
 		CounterpartyID: "0",
 	}

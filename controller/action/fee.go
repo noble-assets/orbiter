@@ -33,6 +33,7 @@ import (
 	"orbiter.dev/controller"
 	"orbiter.dev/types"
 	actiontypes "orbiter.dev/types/controller/action"
+	"orbiter.dev/types/identifier"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -41,7 +42,7 @@ var _ interfaces.ControllerAction = &FeeController{}
 // FeeController is the controller to execute
 // fee payment action.
 type FeeController struct {
-	*controller.BaseController[types.ActionID]
+	*controller.BaseController[identifier.ActionID]
 
 	logger     log.Logger
 	BankKeeper actiontypes.BankKeeperFee
@@ -57,7 +58,7 @@ func NewFeeController(
 		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	id := types.ACTION_FEE
+	id := identifier.ACTION_FEE
 	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err

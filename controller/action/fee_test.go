@@ -34,6 +34,7 @@ import (
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
 	"orbiter.dev/types/controller/action"
+	"orbiter.dev/types/identifier"
 )
 
 func TestGetAttributesFeeController(t *testing.T) {
@@ -56,7 +57,7 @@ func TestGetAttributesFeeController(t *testing.T) {
 			name: "error - invalid attributes type",
 			action: func() *types.Action {
 				action, err := types.NewAction(
-					types.ACTION_FEE,
+					identifier.ACTION_FEE,
 					&testdata.TestActionAttr{Whatever: "works"},
 				)
 				require.NoError(t, err)
@@ -69,7 +70,7 @@ func TestGetAttributesFeeController(t *testing.T) {
 			name: "error - nil attributes",
 			action: func() *types.Action {
 				action := types.Action{
-					Id:         types.ACTION_FEE,
+					Id:         identifier.ACTION_FEE,
 					Attributes: nil,
 				}
 
@@ -81,7 +82,7 @@ func TestGetAttributesFeeController(t *testing.T) {
 			name: "success - valid attributes",
 			action: func() *types.Action {
 				action, err := types.NewAction(
-					types.ACTION_FEE,
+					identifier.ACTION_FEE,
 					&action.FeeAttributes{
 						FeesInfo: []*action.FeeInfo{
 							{
@@ -544,7 +545,7 @@ func TestValidateFee(t *testing.T) {
 func TestHandlePacketFeeController(t *testing.T) {
 	recipient := sdk.AccAddress(testutil.AddressBytes())
 	validAction, err := types.NewAction(
-		types.ACTION_FEE,
+		identifier.ACTION_FEE,
 		&action.FeeAttributes{
 			FeesInfo: []*action.FeeInfo{
 				{
@@ -556,7 +557,7 @@ func TestHandlePacketFeeController(t *testing.T) {
 	)
 	require.NoError(t, err)
 	transferAttr, err := types.NewTransferAttributes(
-		types.PROTOCOL_CCTP,
+		identifier.PROTOCOL_CCTP,
 		"1",
 		"uusdc",
 		sdkmath.NewInt(1_000_000),
@@ -576,7 +577,7 @@ func TestHandlePacketFeeController(t *testing.T) {
 			name: "error - invalid attributes",
 			action: func() *types.Action {
 				action, err := types.NewAction(
-					types.ACTION_FEE,
+					identifier.ACTION_FEE,
 					&testdata.TestActionAttr{Whatever: "works"},
 				)
 				require.NoError(t, err)

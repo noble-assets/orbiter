@@ -29,6 +29,7 @@ import (
 
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
+	"orbiter.dev/types/identifier"
 )
 
 // CreateValidIBCPacketData creates a valid IBC FungibleTokenPacketData with given parameters.
@@ -63,7 +64,7 @@ func CreatePayloadWrapperJSON(t *testing.T) (*types.Payload, string) {
 
 	forwardingAttributes := testdata.TestForwardingAttr{Planet: "venus"}
 	forwarding, err := types.NewForwarding(
-		types.PROTOCOL_IBC,
+		identifier.PROTOCOL_IBC,
 		&forwardingAttributes,
 		[]byte("payload"),
 	)
@@ -91,18 +92,18 @@ func CreatePayloadWrapperWithActionJSON(t *testing.T) (*types.Payload, string) {
 
 	forwardingAttributes := testdata.TestForwardingAttr{Planet: "venus"}
 	forwarding, err := types.NewForwarding(
-		types.PROTOCOL_IBC,
+		identifier.PROTOCOL_IBC,
 		&forwardingAttributes,
 		[]byte("payload"),
 	)
 	require.NoError(t, err)
 
 	actionAttributes1 := testdata.TestActionAttr{Whatever: "it takes"}
-	action1, err := types.NewAction(types.ACTION_FEE, &actionAttributes1)
+	action1, err := types.NewAction(identifier.ACTION_FEE, &actionAttributes1)
 	require.NoError(t, err)
 
 	actionAttributes2 := testdata.TestActionAttr{Whatever: "whatever"}
-	action2, err := types.NewAction(types.ACTION_FEE, &actionAttributes2)
+	action2, err := types.NewAction(identifier.ACTION_FEE, &actionAttributes2)
 	require.NoError(t, err)
 
 	payloadWrapper, err := types.NewPayloadWrapper(forwarding, []*types.Action{

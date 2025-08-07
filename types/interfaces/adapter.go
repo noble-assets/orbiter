@@ -24,6 +24,7 @@ import (
 	"context"
 
 	"orbiter.dev/types"
+	"orbiter.dev/types/identifier"
 )
 
 // PayloadAdapter defines the behavior expected by the adapter to handle
@@ -31,15 +32,15 @@ import (
 type PayloadAdapter interface {
 	// ParsePayload allows to parse and validate if the
 	// input bytes represent an orbiter payload.
-	ParsePayload(types.ProtocolID, []byte) (bool, *types.Payload, error)
+	ParsePayload(identifier.ProtocolID, []byte) (bool, *types.Payload, error)
 	// BeforeTransferHook allows to execute logic BEFORE completing
 	// the cross-chain transfer.
-	BeforeTransferHook(context.Context, types.OrbitID, *types.Payload) error
+	BeforeTransferHook(context.Context, identifier.OrbitID, *types.Payload) error
 	// AfterTransferHook allows to execute logic AFTER completing
 	// the cross-chain transfer.
 	AfterTransferHook(
 		context.Context,
-		types.OrbitID,
+		identifier.OrbitID,
 		*types.Payload,
 	) (*types.TransferAttributes, error)
 	// ProcessPayload processes the parsed payload.

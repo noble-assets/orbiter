@@ -30,11 +30,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"orbiter.dev/types"
+	"orbiter.dev/types/identifier"
 	"orbiter.dev/types/interfaces"
 	"orbiter.dev/types/router"
 )
 
-type ActionRouter = interfaces.Router[types.ActionID, interfaces.ControllerAction]
+type ActionRouter = interfaces.Router[identifier.ActionID, interfaces.ControllerAction]
 
 var _ interfaces.Executor = &Executor{}
 
@@ -54,7 +55,7 @@ func NewExecutor(
 ) (*Executor, error) {
 	executor := Executor{
 		logger: logger.With(types.ComponentPrefix, types.ActionComponentName),
-		router: router.New[types.ActionID, interfaces.ControllerAction](),
+		router: router.New[identifier.ActionID, interfaces.ControllerAction](),
 		PausedControllers: collections.NewKeySet(
 			sb,
 			types.PausedActionControllersPrefix,
@@ -102,7 +103,7 @@ func (e *Executor) SetRouter(r ActionRouter) error {
 }
 
 // Pause allows to pause an action controller.
-func (e *Executor) Pause(ctx context.Context, actionID types.ActionID) error {
+func (e *Executor) Pause(ctx context.Context, actionID identifier.ActionID) error {
 	if err := e.SetPausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error pausing action %s: %w",
@@ -115,7 +116,7 @@ func (e *Executor) Pause(ctx context.Context, actionID types.ActionID) error {
 }
 
 // Unpause allows to unpause an action controller.
-func (e *Executor) Unpause(ctx context.Context, actionID types.ActionID) error {
+func (e *Executor) Unpause(ctx context.Context, actionID identifier.ActionID) error {
 	if err := e.SetUnpausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error unpausing action %s: %w",
@@ -161,7 +162,7 @@ func (e *Executor) validatePacket(ctx context.Context, packet *types.ActionPacke
 // the action ID is not valid.
 func (e *Executor) validateController(
 	ctx context.Context,
-	id types.ActionID,
+	id identifier.ActionID,
 ) error {
 	isPaused, err := e.IsControllerPaused(ctx, id)
 	if err != nil {

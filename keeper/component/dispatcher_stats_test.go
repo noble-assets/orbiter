@@ -33,6 +33,7 @@ import (
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
+	"orbiter.dev/types/identifier"
 )
 
 func TestUpdateStats(t *testing.T) {
@@ -191,12 +192,12 @@ func TestUpdateStats(t *testing.T) {
 		{
 			name: "success - different denom and previous stored stats",
 			setup: func(ctx context.Context, d *component.Dispatcher) {
-				sourceOrbitID := types.OrbitID{
+				sourceOrbitID := identifier.OrbitID{
 					ProtocolID:     1,
 					CounterpartyID: "hyperliquid",
 				}
 
-				destOrbitID := types.OrbitID{
+				destOrbitID := identifier.OrbitID{
 					ProtocolID:     1,
 					CounterpartyID: "ethereum",
 				}
@@ -265,12 +266,12 @@ func TestUpdateStats(t *testing.T) {
 				require.NoError(t, err)
 
 				// Create expected source and destination info
-				sourceOrbitID := types.OrbitID{
+				sourceOrbitID := identifier.OrbitID{
 					ProtocolID:     transferAttr.SourceProtocolID(),
 					CounterpartyID: transferAttr.SourceCounterpartyID(),
 				}
 				attr, _ := forwarding.CachedAttributes()
-				destOrbitID := types.OrbitID{
+				destOrbitID := identifier.OrbitID{
 					ProtocolID:     forwarding.ProtocolID(),
 					CounterpartyID: attr.CounterpartyID(),
 				}

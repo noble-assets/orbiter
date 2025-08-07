@@ -23,7 +23,7 @@ package dispatcher
 import (
 	"cosmossdk.io/math"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/identifier"
 )
 
 func NewAmountDispatched(
@@ -37,12 +37,12 @@ func NewAmountDispatched(
 }
 
 type ChainAmountDispatched struct {
-	orbitID          types.OrbitID
+	orbitID          identifier.OrbitID
 	amountDispatched AmountDispatched
 }
 
 func NewChainAmountDispatched(
-	orbitID types.OrbitID,
+	orbitID identifier.OrbitID,
 	amountDispatched AmountDispatched,
 ) *ChainAmountDispatched {
 	return &ChainAmountDispatched{
@@ -51,7 +51,7 @@ func NewChainAmountDispatched(
 	}
 }
 
-func (cad *ChainAmountDispatched) OrbitID() types.OrbitID {
+func (cad *ChainAmountDispatched) OrbitID() identifier.OrbitID {
 	return cad.orbitID
 }
 

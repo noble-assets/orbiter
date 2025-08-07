@@ -32,11 +32,12 @@ import (
 
 	"orbiter.dev/types"
 	adaptertypes "orbiter.dev/types/component/adapter"
+	"orbiter.dev/types/identifier"
 	"orbiter.dev/types/interfaces"
 	"orbiter.dev/types/router"
 )
 
-type AdapterRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerAdapter]
+type AdapterRouter = interfaces.Router[identifier.ProtocolID, interfaces.ControllerAdapter]
 
 var _ interfaces.Adapter = &Adapter{}
 
@@ -68,7 +69,7 @@ func NewAdapter(
 
 	adaptersKeeper := Adapter{
 		logger:     logger.With(types.ComponentPrefix, types.AdaptersComponentName),
-		router:     router.New[types.ProtocolID, interfaces.ControllerAdapter](),
+		router:     router.New[identifier.ProtocolID, interfaces.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
 		params: collections.NewItem(
@@ -125,7 +126,7 @@ func (a *Adapter) SetRouter(r AdapterRouter) error {
 
 // ParsePayload implements types.PayloadAdapter.
 func (a *Adapter) ParsePayload(
-	id types.ProtocolID,
+	id identifier.ProtocolID,
 	payloadBz []byte,
 ) (bool, *types.Payload, error) {
 	adapter, found := a.router.Route(id)
@@ -139,7 +140,7 @@ func (a *Adapter) ParsePayload(
 // BeforeTransferHook implements types.PayloadAdapter.
 func (a *Adapter) BeforeTransferHook(
 	ctx context.Context,
-	sourceOrbitID types.OrbitID,
+	sourceOrbitID identifier.OrbitID,
 	payload *types.Payload,
 ) error {
 	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)
@@ -161,7 +162,7 @@ func (a *Adapter) BeforeTransferHook(
 // AfterTransferHook implements types.PayloadAdapter.
 func (a *Adapter) AfterTransferHook(
 	ctx context.Context,
-	sourceOrbitID types.OrbitID,
+	sourceOrbitID identifier.OrbitID,
 	payload *types.Payload,
 ) (*types.TransferAttributes, error) {
 	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)

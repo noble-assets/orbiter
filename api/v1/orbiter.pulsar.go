@@ -3,35 +3,41 @@ package orbiterv1
 
 import (
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
+	_ "github.com/cosmos/gogoproto/gogoproto"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoiface "google.golang.org/protobuf/runtime/protoiface"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	anypb "google.golang.org/protobuf/types/known/anypb"
 	io "io"
+	v1 "orbiter.dev/api/identifier/v1"
 	reflect "reflect"
 	sync "sync"
 )
 
 var (
-	md_PayloadWrapper         protoreflect.MessageDescriptor
-	fd_PayloadWrapper_orbiter protoreflect.FieldDescriptor
+	md_Action            protoreflect.MessageDescriptor
+	fd_Action_id         protoreflect.FieldDescriptor
+	fd_Action_attributes protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_v1_orbiter_proto_init()
-	md_PayloadWrapper = File_noble_orbiter_v1_orbiter_proto.Messages().ByName("PayloadWrapper")
-	fd_PayloadWrapper_orbiter = md_PayloadWrapper.Fields().ByName("orbiter")
+	md_Action = File_noble_orbiter_v1_orbiter_proto.Messages().ByName("Action")
+	fd_Action_id = md_Action.Fields().ByName("id")
+	fd_Action_attributes = md_Action.Fields().ByName("attributes")
 }
 
-var _ protoreflect.Message = (*fastReflection_PayloadWrapper)(nil)
+var _ protoreflect.Message = (*fastReflection_Action)(nil)
 
-type fastReflection_PayloadWrapper PayloadWrapper
+type fastReflection_Action Action
 
-func (x *PayloadWrapper) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_PayloadWrapper)(x)
+func (x *Action) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_Action)(x)
 }
 
-func (x *PayloadWrapper) slowProtoReflect() protoreflect.Message {
+func (x *Action) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -43,43 +49,43 @@ func (x *PayloadWrapper) slowProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_PayloadWrapper_messageType fastReflection_PayloadWrapper_messageType
-var _ protoreflect.MessageType = fastReflection_PayloadWrapper_messageType{}
+var _fastReflection_Action_messageType fastReflection_Action_messageType
+var _ protoreflect.MessageType = fastReflection_Action_messageType{}
 
-type fastReflection_PayloadWrapper_messageType struct{}
+type fastReflection_Action_messageType struct{}
 
-func (x fastReflection_PayloadWrapper_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_PayloadWrapper)(nil)
+func (x fastReflection_Action_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_Action)(nil)
 }
-func (x fastReflection_PayloadWrapper_messageType) New() protoreflect.Message {
-	return new(fastReflection_PayloadWrapper)
+func (x fastReflection_Action_messageType) New() protoreflect.Message {
+	return new(fastReflection_Action)
 }
-func (x fastReflection_PayloadWrapper_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_PayloadWrapper
+func (x fastReflection_Action_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_Action
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_PayloadWrapper) Descriptor() protoreflect.MessageDescriptor {
-	return md_PayloadWrapper
+func (x *fastReflection_Action) Descriptor() protoreflect.MessageDescriptor {
+	return md_Action
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_PayloadWrapper) Type() protoreflect.MessageType {
-	return _fastReflection_PayloadWrapper_messageType
+func (x *fastReflection_Action) Type() protoreflect.MessageType {
+	return _fastReflection_Action_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_PayloadWrapper) New() protoreflect.Message {
-	return new(fastReflection_PayloadWrapper)
+func (x *fastReflection_Action) New() protoreflect.Message {
+	return new(fastReflection_Action)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_PayloadWrapper) Interface() protoreflect.ProtoMessage {
-	return (*PayloadWrapper)(x)
+func (x *fastReflection_Action) Interface() protoreflect.ProtoMessage {
+	return (*Action)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -87,10 +93,16 @@ func (x *fastReflection_PayloadWrapper) Interface() protoreflect.ProtoMessage {
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_PayloadWrapper) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if x.Orbiter != nil {
-		value := protoreflect.ValueOfMessage(x.Orbiter.ProtoReflect())
-		if !f(fd_PayloadWrapper_orbiter, value) {
+func (x *fastReflection_Action) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Id != 0 {
+		value := protoreflect.ValueOfEnum((protoreflect.EnumNumber)(x.Id))
+		if !f(fd_Action_id, value) {
+			return
+		}
+	}
+	if x.Attributes != nil {
+		value := protoreflect.ValueOfMessage(x.Attributes.ProtoReflect())
+		if !f(fd_Action_attributes, value) {
 			return
 		}
 	}
@@ -107,15 +119,17 @@ func (x *fastReflection_PayloadWrapper) Range(f func(protoreflect.FieldDescripto
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_PayloadWrapper) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_Action) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "noble.orbiter.v1.PayloadWrapper.orbiter":
-		return x.Orbiter != nil
+	case "noble.orbiter.v1.Action.id":
+		return x.Id != 0
+	case "noble.orbiter.v1.Action.attributes":
+		return x.Attributes != nil
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Action"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.v1.Action does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -125,15 +139,17 @@ func (x *fastReflection_PayloadWrapper) Has(fd protoreflect.FieldDescriptor) boo
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_PayloadWrapper) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_Action) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "noble.orbiter.v1.PayloadWrapper.orbiter":
-		x.Orbiter = nil
+	case "noble.orbiter.v1.Action.id":
+		x.Id = 0
+	case "noble.orbiter.v1.Action.attributes":
+		x.Attributes = nil
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Action"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.v1.Action does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -143,16 +159,19 @@ func (x *fastReflection_PayloadWrapper) Clear(fd protoreflect.FieldDescriptor) {
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_PayloadWrapper) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_Action) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "noble.orbiter.v1.PayloadWrapper.orbiter":
-		value := x.Orbiter
+	case "noble.orbiter.v1.Action.id":
+		value := x.Id
+		return protoreflect.ValueOfEnum((protoreflect.EnumNumber)(value))
+	case "noble.orbiter.v1.Action.attributes":
+		value := x.Attributes
 		return protoreflect.ValueOfMessage(value.ProtoReflect())
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Action"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.v1.Action does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -166,15 +185,17 @@ func (x *fastReflection_PayloadWrapper) Get(descriptor protoreflect.FieldDescrip
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_PayloadWrapper) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_Action) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "noble.orbiter.v1.PayloadWrapper.orbiter":
-		x.Orbiter = value.Message().Interface().(*Payload)
+	case "noble.orbiter.v1.Action.id":
+		x.Id = (v1.ActionID)(value.Enum())
+	case "noble.orbiter.v1.Action.attributes":
+		x.Attributes = value.Message().Interface().(*anypb.Any)
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Action"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.v1.Action does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -188,44 +209,48 @@ func (x *fastReflection_PayloadWrapper) Set(fd protoreflect.FieldDescriptor, val
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_PayloadWrapper) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_Action) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.v1.PayloadWrapper.orbiter":
-		if x.Orbiter == nil {
-			x.Orbiter = new(Payload)
+	case "noble.orbiter.v1.Action.attributes":
+		if x.Attributes == nil {
+			x.Attributes = new(anypb.Any)
 		}
-		return protoreflect.ValueOfMessage(x.Orbiter.ProtoReflect())
+		return protoreflect.ValueOfMessage(x.Attributes.ProtoReflect())
+	case "noble.orbiter.v1.Action.id":
+		panic(fmt.Errorf("field id of message noble.orbiter.v1.Action is not mutable"))
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Action"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.v1.Action does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_PayloadWrapper) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_Action) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.v1.PayloadWrapper.orbiter":
-		m := new(Payload)
+	case "noble.orbiter.v1.Action.id":
+		return protoreflect.ValueOfEnum(0)
+	case "noble.orbiter.v1.Action.attributes":
+		m := new(anypb.Any)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Action"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.v1.Action does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_PayloadWrapper) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_Action) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.v1.PayloadWrapper", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.v1.Action", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -233,7 +258,7 @@ func (x *fastReflection_PayloadWrapper) WhichOneof(d protoreflect.OneofDescripto
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_PayloadWrapper) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_Action) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -244,7 +269,7 @@ func (x *fastReflection_PayloadWrapper) GetUnknown() protoreflect.RawFields {
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_PayloadWrapper) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_Action) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -256,7 +281,7 @@ func (x *fastReflection_PayloadWrapper) SetUnknown(fields protoreflect.RawFields
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_PayloadWrapper) IsValid() bool {
+func (x *fastReflection_Action) IsValid() bool {
 	return x != nil
 }
 
@@ -266,9 +291,9 @@ func (x *fastReflection_PayloadWrapper) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_PayloadWrapper) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_Action) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*PayloadWrapper)
+		x := input.Message.Interface().(*Action)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -280,8 +305,11 @@ func (x *fastReflection_PayloadWrapper) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
-		if x.Orbiter != nil {
-			l = options.Size(x.Orbiter)
+		if x.Id != 0 {
+			n += 1 + runtime.Sov(uint64(x.Id))
+		}
+		if x.Attributes != nil {
+			l = options.Size(x.Attributes)
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
 		if x.unknownFields != nil {
@@ -294,7 +322,7 @@ func (x *fastReflection_PayloadWrapper) ProtoMethods() *protoiface.Methods {
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*PayloadWrapper)
+		x := input.Message.Interface().(*Action)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -313,8 +341,8 @@ func (x *fastReflection_PayloadWrapper) ProtoMethods() *protoiface.Methods {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if x.Orbiter != nil {
-			encoded, err := options.Marshal(x.Orbiter)
+		if x.Attributes != nil {
+			encoded, err := options.Marshal(x.Attributes)
 			if err != nil {
 				return protoiface.MarshalOutput{
 					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -325,7 +353,12 @@ func (x *fastReflection_PayloadWrapper) ProtoMethods() *protoiface.Methods {
 			copy(dAtA[i:], encoded)
 			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
 			i--
-			dAtA[i] = 0xa
+			dAtA[i] = 0x12
+		}
+		if x.Id != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Id))
+			i--
+			dAtA[i] = 0x8
 		}
 		if input.Buf != nil {
 			input.Buf = append(input.Buf, dAtA...)
@@ -338,7 +371,7 @@ func (x *fastReflection_PayloadWrapper) ProtoMethods() *protoiface.Methods {
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*PayloadWrapper)
+		x := input.Message.Interface().(*Action)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -370,15 +403,34 @@ func (x *fastReflection_PayloadWrapper) ProtoMethods() *protoiface.Methods {
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: PayloadWrapper: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: Action: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: PayloadWrapper: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: Action: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+				}
+				x.Id = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.Id |= v1.ActionID(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
 				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Orbiter", wireType)
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Attributes", wireType)
 				}
 				var msglen int
 				for shift := uint(0); ; shift += 7 {
@@ -405,11 +457,560 @@ func (x *fastReflection_PayloadWrapper) ProtoMethods() *protoiface.Methods {
 				if postIndex > l {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
-				if x.Orbiter == nil {
-					x.Orbiter = &Payload{}
+				if x.Attributes == nil {
+					x.Attributes = &anypb.Any{}
 				}
-				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Orbiter); err != nil {
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Attributes); err != nil {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_Forwarding                     protoreflect.MessageDescriptor
+	fd_Forwarding_protocol_id         protoreflect.FieldDescriptor
+	fd_Forwarding_attributes          protoreflect.FieldDescriptor
+	fd_Forwarding_passthrough_payload protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_noble_orbiter_v1_orbiter_proto_init()
+	md_Forwarding = File_noble_orbiter_v1_orbiter_proto.Messages().ByName("Forwarding")
+	fd_Forwarding_protocol_id = md_Forwarding.Fields().ByName("protocol_id")
+	fd_Forwarding_attributes = md_Forwarding.Fields().ByName("attributes")
+	fd_Forwarding_passthrough_payload = md_Forwarding.Fields().ByName("passthrough_payload")
+}
+
+var _ protoreflect.Message = (*fastReflection_Forwarding)(nil)
+
+type fastReflection_Forwarding Forwarding
+
+func (x *Forwarding) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_Forwarding)(x)
+}
+
+func (x *Forwarding) slowProtoReflect() protoreflect.Message {
+	mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_Forwarding_messageType fastReflection_Forwarding_messageType
+var _ protoreflect.MessageType = fastReflection_Forwarding_messageType{}
+
+type fastReflection_Forwarding_messageType struct{}
+
+func (x fastReflection_Forwarding_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_Forwarding)(nil)
+}
+func (x fastReflection_Forwarding_messageType) New() protoreflect.Message {
+	return new(fastReflection_Forwarding)
+}
+func (x fastReflection_Forwarding_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_Forwarding
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_Forwarding) Descriptor() protoreflect.MessageDescriptor {
+	return md_Forwarding
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_Forwarding) Type() protoreflect.MessageType {
+	return _fastReflection_Forwarding_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_Forwarding) New() protoreflect.Message {
+	return new(fastReflection_Forwarding)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_Forwarding) Interface() protoreflect.ProtoMessage {
+	return (*Forwarding)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_Forwarding) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.ProtocolId != 0 {
+		value := protoreflect.ValueOfEnum((protoreflect.EnumNumber)(x.ProtocolId))
+		if !f(fd_Forwarding_protocol_id, value) {
+			return
+		}
+	}
+	if x.Attributes != nil {
+		value := protoreflect.ValueOfMessage(x.Attributes.ProtoReflect())
+		if !f(fd_Forwarding_attributes, value) {
+			return
+		}
+	}
+	if len(x.PassthroughPayload) != 0 {
+		value := protoreflect.ValueOfBytes(x.PassthroughPayload)
+		if !f(fd_Forwarding_passthrough_payload, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_Forwarding) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.Forwarding.protocol_id":
+		return x.ProtocolId != 0
+	case "noble.orbiter.v1.Forwarding.attributes":
+		return x.Attributes != nil
+	case "noble.orbiter.v1.Forwarding.passthrough_payload":
+		return len(x.PassthroughPayload) != 0
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Forwarding"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.Forwarding does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_Forwarding) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.Forwarding.protocol_id":
+		x.ProtocolId = 0
+	case "noble.orbiter.v1.Forwarding.attributes":
+		x.Attributes = nil
+	case "noble.orbiter.v1.Forwarding.passthrough_payload":
+		x.PassthroughPayload = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Forwarding"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.Forwarding does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_Forwarding) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "noble.orbiter.v1.Forwarding.protocol_id":
+		value := x.ProtocolId
+		return protoreflect.ValueOfEnum((protoreflect.EnumNumber)(value))
+	case "noble.orbiter.v1.Forwarding.attributes":
+		value := x.Attributes
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "noble.orbiter.v1.Forwarding.passthrough_payload":
+		value := x.PassthroughPayload
+		return protoreflect.ValueOfBytes(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Forwarding"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.Forwarding does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_Forwarding) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.Forwarding.protocol_id":
+		x.ProtocolId = (v1.ProtocolID)(value.Enum())
+	case "noble.orbiter.v1.Forwarding.attributes":
+		x.Attributes = value.Message().Interface().(*anypb.Any)
+	case "noble.orbiter.v1.Forwarding.passthrough_payload":
+		x.PassthroughPayload = value.Bytes()
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Forwarding"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.Forwarding does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_Forwarding) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.Forwarding.attributes":
+		if x.Attributes == nil {
+			x.Attributes = new(anypb.Any)
+		}
+		return protoreflect.ValueOfMessage(x.Attributes.ProtoReflect())
+	case "noble.orbiter.v1.Forwarding.protocol_id":
+		panic(fmt.Errorf("field protocol_id of message noble.orbiter.v1.Forwarding is not mutable"))
+	case "noble.orbiter.v1.Forwarding.passthrough_payload":
+		panic(fmt.Errorf("field passthrough_payload of message noble.orbiter.v1.Forwarding is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Forwarding"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.Forwarding does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_Forwarding) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.Forwarding.protocol_id":
+		return protoreflect.ValueOfEnum(0)
+	case "noble.orbiter.v1.Forwarding.attributes":
+		m := new(anypb.Any)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "noble.orbiter.v1.Forwarding.passthrough_payload":
+		return protoreflect.ValueOfBytes(nil)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.Forwarding"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.Forwarding does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_Forwarding) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.v1.Forwarding", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_Forwarding) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_Forwarding) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_Forwarding) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_Forwarding) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*Forwarding)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.ProtocolId != 0 {
+			n += 1 + runtime.Sov(uint64(x.ProtocolId))
+		}
+		if x.Attributes != nil {
+			l = options.Size(x.Attributes)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.PassthroughPayload)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*Forwarding)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.PassthroughPayload) > 0 {
+			i -= len(x.PassthroughPayload)
+			copy(dAtA[i:], x.PassthroughPayload)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.PassthroughPayload)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if x.Attributes != nil {
+			encoded, err := options.Marshal(x.Attributes)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if x.ProtocolId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ProtocolId))
+			i--
+			dAtA[i] = 0x8
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*Forwarding)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: Forwarding: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: Forwarding: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ProtocolId", wireType)
+				}
+				x.ProtocolId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ProtocolId |= v1.ProtocolID(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Attributes", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Attributes == nil {
+					x.Attributes = &anypb.Any{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Attributes); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field PassthroughPayload", wireType)
+				}
+				var byteLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					byteLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if byteLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + byteLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.PassthroughPayload = append(x.PassthroughPayload[:0], dAtA[iNdEx:postIndex]...)
+				if x.PassthroughPayload == nil {
+					x.PassthroughPayload = []byte{}
 				}
 				iNdEx = postIndex
 			default:
@@ -520,7 +1121,7 @@ func (x *Payload) ProtoReflect() protoreflect.Message {
 }
 
 func (x *Payload) slowProtoReflect() protoreflect.Message {
-	mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[1]
+	mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1020,6 +1621,441 @@ func (x *fastReflection_Payload) ProtoMethods() *protoiface.Methods {
 	}
 }
 
+var (
+	md_PayloadWrapper         protoreflect.MessageDescriptor
+	fd_PayloadWrapper_orbiter protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_noble_orbiter_v1_orbiter_proto_init()
+	md_PayloadWrapper = File_noble_orbiter_v1_orbiter_proto.Messages().ByName("PayloadWrapper")
+	fd_PayloadWrapper_orbiter = md_PayloadWrapper.Fields().ByName("orbiter")
+}
+
+var _ protoreflect.Message = (*fastReflection_PayloadWrapper)(nil)
+
+type fastReflection_PayloadWrapper PayloadWrapper
+
+func (x *PayloadWrapper) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_PayloadWrapper)(x)
+}
+
+func (x *PayloadWrapper) slowProtoReflect() protoreflect.Message {
+	mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_PayloadWrapper_messageType fastReflection_PayloadWrapper_messageType
+var _ protoreflect.MessageType = fastReflection_PayloadWrapper_messageType{}
+
+type fastReflection_PayloadWrapper_messageType struct{}
+
+func (x fastReflection_PayloadWrapper_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_PayloadWrapper)(nil)
+}
+func (x fastReflection_PayloadWrapper_messageType) New() protoreflect.Message {
+	return new(fastReflection_PayloadWrapper)
+}
+func (x fastReflection_PayloadWrapper_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_PayloadWrapper
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_PayloadWrapper) Descriptor() protoreflect.MessageDescriptor {
+	return md_PayloadWrapper
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_PayloadWrapper) Type() protoreflect.MessageType {
+	return _fastReflection_PayloadWrapper_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_PayloadWrapper) New() protoreflect.Message {
+	return new(fastReflection_PayloadWrapper)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_PayloadWrapper) Interface() protoreflect.ProtoMessage {
+	return (*PayloadWrapper)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_PayloadWrapper) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Orbiter != nil {
+		value := protoreflect.ValueOfMessage(x.Orbiter.ProtoReflect())
+		if !f(fd_PayloadWrapper_orbiter, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_PayloadWrapper) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.PayloadWrapper.orbiter":
+		return x.Orbiter != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_PayloadWrapper) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.PayloadWrapper.orbiter":
+		x.Orbiter = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_PayloadWrapper) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "noble.orbiter.v1.PayloadWrapper.orbiter":
+		value := x.Orbiter
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_PayloadWrapper) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.PayloadWrapper.orbiter":
+		x.Orbiter = value.Message().Interface().(*Payload)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_PayloadWrapper) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.PayloadWrapper.orbiter":
+		if x.Orbiter == nil {
+			x.Orbiter = new(Payload)
+		}
+		return protoreflect.ValueOfMessage(x.Orbiter.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_PayloadWrapper) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "noble.orbiter.v1.PayloadWrapper.orbiter":
+		m := new(Payload)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.PayloadWrapper"))
+		}
+		panic(fmt.Errorf("message noble.orbiter.v1.PayloadWrapper does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_PayloadWrapper) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.v1.PayloadWrapper", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_PayloadWrapper) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_PayloadWrapper) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_PayloadWrapper) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_PayloadWrapper) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*PayloadWrapper)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.Orbiter != nil {
+			l = options.Size(x.Orbiter)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*PayloadWrapper)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Orbiter != nil {
+			encoded, err := options.Marshal(x.Orbiter)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*PayloadWrapper)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: PayloadWrapper: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: PayloadWrapper: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Orbiter", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Orbiter == nil {
+					x.Orbiter = &Payload{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Orbiter); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -1033,21 +2069,29 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// PayloadWrapper defines the expected JSON structure the module expect when receiving
-// the payload from protocols encoding metadata as string. This wrapper is used to
-// easily identify if the metadata containing the payload is correctly defined.
-type PayloadWrapper struct {
+// Action represents a pre-processing step to be executed on a transfer
+// before routing to the destination counterparty.
+//
+// Actions contain an ID that specifies the type of action and attributes
+// that provide action-specific configuration. The attributes field uses
+// the Any type to allow for different action implementations while
+// maintaining type safety through interface constraints.
+type Action struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// orbiter represents the orbiter payload containing cross-chain
-	// routing info and possibly pre routing actions.
-	Orbiter *Payload `protobuf:"bytes,1,opt,name=orbiter,proto3" json:"orbiter,omitempty"`
+	// id specifies the type of action to be performed.
+	// This determines how the attributes field should be interpreted.
+	Id v1.ActionID `protobuf:"varint,1,opt,name=id,proto3,enum=noble.orbiter.identifier.v1.ActionID" json:"id,omitempty"`
+	// attributes contains the action-specific configuration data.
+	// The actual type depends on the action ID and must implement
+	// the `ActionAttributes` interface.
+	Attributes *anypb.Any `protobuf:"bytes,2,opt,name=attributes,proto3" json:"attributes,omitempty"`
 }
 
-func (x *PayloadWrapper) Reset() {
-	*x = PayloadWrapper{}
+func (x *Action) Reset() {
+	*x = Action{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1055,20 +2099,87 @@ func (x *PayloadWrapper) Reset() {
 	}
 }
 
-func (x *PayloadWrapper) String() string {
+func (x *Action) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PayloadWrapper) ProtoMessage() {}
+func (*Action) ProtoMessage() {}
 
-// Deprecated: Use PayloadWrapper.ProtoReflect.Descriptor instead.
-func (*PayloadWrapper) Descriptor() ([]byte, []int) {
+// Deprecated: Use Action.ProtoReflect.Descriptor instead.
+func (*Action) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_v1_orbiter_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PayloadWrapper) GetOrbiter() *Payload {
+func (x *Action) GetId() v1.ActionID {
 	if x != nil {
-		return x.Orbiter
+		return x.Id
+	}
+	return v1.ActionID(0)
+}
+
+func (x *Action) GetAttributes() *anypb.Any {
+	if x != nil {
+		return x.Attributes
+	}
+	return nil
+}
+
+// Forwarding contains the information for a cross-chain forwarding.
+type Forwarding struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// protocol_id specifies the bridging protocol type to use
+	// to route incoming funds to a destination chain.
+	ProtocolId v1.ProtocolID `protobuf:"varint,1,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.identifier.v1.ProtocolID" json:"protocol_id,omitempty"`
+	// attributes contains protocol-specific configuration data.
+	// The actual type depends on the protocol ID and must implement
+	// the `ForwardingAttributes` interface.
+	Attributes *anypb.Any `protobuf:"bytes,2,opt,name=attributes,proto3" json:"attributes,omitempty"`
+	// passthrough_payload allows to pass additional metadata
+	// to the destination chain. This field is not interpreted by
+	// the orbiter module.
+	PassthroughPayload []byte `protobuf:"bytes,3,opt,name=passthrough_payload,json=passthroughPayload,proto3" json:"passthrough_payload,omitempty"`
+}
+
+func (x *Forwarding) Reset() {
+	*x = Forwarding{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Forwarding) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Forwarding) ProtoMessage() {}
+
+// Deprecated: Use Forwarding.ProtoReflect.Descriptor instead.
+func (*Forwarding) Descriptor() ([]byte, []int) {
+	return file_noble_orbiter_v1_orbiter_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Forwarding) GetProtocolId() v1.ProtocolID {
+	if x != nil {
+		return x.ProtocolId
+	}
+	return v1.ProtocolID(0)
+}
+
+func (x *Forwarding) GetAttributes() *anypb.Any {
+	if x != nil {
+		return x.Attributes
+	}
+	return nil
+}
+
+func (x *Forwarding) GetPassthroughPayload() []byte {
+	if x != nil {
+		return x.PassthroughPayload
 	}
 	return nil
 }
@@ -1091,7 +2202,7 @@ type Payload struct {
 func (x *Payload) Reset() {
 	*x = Payload{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[1]
+		mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1105,7 +2216,7 @@ func (*Payload) ProtoMessage() {}
 
 // Deprecated: Use Payload.ProtoReflect.Descriptor instead.
 func (*Payload) Descriptor() ([]byte, []int) {
-	return file_noble_orbiter_v1_orbiter_proto_rawDescGZIP(), []int{1}
+	return file_noble_orbiter_v1_orbiter_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Payload) GetPreActions() []*Action {
@@ -1122,41 +2233,113 @@ func (x *Payload) GetForwarding() *Forwarding {
 	return nil
 }
 
+// PayloadWrapper defines the expected JSON structure the module expect when receiving
+// the payload from protocols encoding metadata as string. This wrapper is used to
+// easily identify if the metadata containing the payload is correctly defined.
+type PayloadWrapper struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// orbiter represents the orbiter payload containing cross-chain
+	// routing info and possibly pre routing actions.
+	Orbiter *Payload `protobuf:"bytes,1,opt,name=orbiter,proto3" json:"orbiter,omitempty"`
+}
+
+func (x *PayloadWrapper) Reset() {
+	*x = PayloadWrapper{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_noble_orbiter_v1_orbiter_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PayloadWrapper) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PayloadWrapper) ProtoMessage() {}
+
+// Deprecated: Use PayloadWrapper.ProtoReflect.Descriptor instead.
+func (*PayloadWrapper) Descriptor() ([]byte, []int) {
+	return file_noble_orbiter_v1_orbiter_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *PayloadWrapper) GetOrbiter() *Payload {
+	if x != nil {
+		return x.Orbiter
+	}
+	return nil
+}
+
 var File_noble_orbiter_v1_orbiter_proto protoreflect.FileDescriptor
 
 var file_noble_orbiter_v1_orbiter_proto_rawDesc = []byte{
 	0x0a, 0x1e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f,
 	0x76, 0x31, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x12, 0x10, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e,
-	0x76, 0x31, 0x1a, 0x1d, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
-	0x72, 0x2f, 0x76, 0x31, 0x2f, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x1a, 0x21, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
-	0x2f, 0x76, 0x31, 0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x69, 0x6e, 0x67, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x45, 0x0a, 0x0e, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x57,
-	0x72, 0x61, 0x70, 0x70, 0x65, 0x72, 0x12, 0x33, 0x0a, 0x07, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
-	0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e,
-	0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x61, 0x79, 0x6c, 0x6f,
-	0x61, 0x64, 0x52, 0x07, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x22, 0x82, 0x01, 0x0a, 0x07,
-	0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x39, 0x0a, 0x0b, 0x70, 0x72, 0x65, 0x5f, 0x61,
-	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6e,
-	0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e,
-	0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x0a, 0x70, 0x72, 0x65, 0x41, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0x12, 0x3c, 0x0a, 0x0a, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x69, 0x6e, 0x67,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1c, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f,
-	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x46, 0x6f, 0x72, 0x77, 0x61, 0x72,
-	0x64, 0x69, 0x6e, 0x67, 0x52, 0x0a, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x69, 0x6e, 0x67,
-	0x42, 0xb2, 0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f,
-	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x42, 0x0c, 0x4f, 0x72, 0x62, 0x69, 0x74,
-	0x65, 0x72, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x2a, 0x6f, 0x72, 0x62, 0x69, 0x74,
-	0x65, 0x72, 0x2e, 0x64, 0x65, 0x76, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65,
-	0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x3b, 0x6f, 0x72, 0x62, 0x69,
-	0x74, 0x65, 0x72, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x4e, 0x4f, 0x58, 0xaa, 0x02, 0x10, 0x4e, 0x6f,
-	0x62, 0x6c, 0x65, 0x2e, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x56, 0x31, 0xca, 0x02,
-	0x10, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c, 0x56,
-	0x31, 0xe2, 0x02, 0x1c, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65,
-	0x72, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61,
-	0xea, 0x02, 0x12, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x3a, 0x3a, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65,
-	0x72, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x76, 0x31, 0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f,
+	0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x19, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x61, 0x6e, 0x79, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x1a, 0x19, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x2a,
+	0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x69, 0x64,
+	0x65, 0x6e, 0x74, 0x69, 0x66, 0x69, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x28, 0x6e, 0x6f, 0x62, 0x6c,
+	0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x69, 0x64, 0x65, 0x6e, 0x74, 0x69,
+	0x66, 0x69, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x22, 0xa2, 0x01, 0x0a, 0x06, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12,
+	0x35, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x25, 0x2e, 0x6e, 0x6f,
+	0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x69, 0x64, 0x65, 0x6e,
+	0x74, 0x69, 0x66, 0x69, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x49, 0x44, 0x52, 0x02, 0x69, 0x64, 0x12, 0x5b, 0x0a, 0x0a, 0x61, 0x74, 0x74, 0x72, 0x69, 0x62,
+	0x75, 0x74, 0x65, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x67, 0x6f, 0x6f,
+	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x41, 0x6e, 0x79,
+	0x42, 0x25, 0xca, 0xb4, 0x2d, 0x21, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69,
+	0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x41, 0x74, 0x74,
+	0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x73, 0x52, 0x0a, 0x61, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75,
+	0x74, 0x65, 0x73, 0x3a, 0x04, 0x88, 0xa0, 0x1f, 0x00, 0x22, 0xee, 0x01, 0x0a, 0x0a, 0x46, 0x6f,
+	0x72, 0x77, 0x61, 0x72, 0x64, 0x69, 0x6e, 0x67, 0x12, 0x48, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x27, 0x2e,
+	0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x69, 0x64,
+	0x65, 0x6e, 0x74, 0x69, 0x66, 0x69, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x49, 0x64, 0x12, 0x5f, 0x0a, 0x0a, 0x61, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x73,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x41, 0x6e, 0x79, 0x42, 0x29, 0xca, 0xb4,
+	0x2d, 0x25, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e,
+	0x76, 0x31, 0x2e, 0x46, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x69, 0x6e, 0x67, 0x41, 0x74, 0x74,
+	0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x73, 0x52, 0x0a, 0x61, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75,
+	0x74, 0x65, 0x73, 0x12, 0x2f, 0x0a, 0x13, 0x70, 0x61, 0x73, 0x73, 0x74, 0x68, 0x72, 0x6f, 0x75,
+	0x67, 0x68, 0x5f, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c,
+	0x52, 0x12, 0x70, 0x61, 0x73, 0x73, 0x74, 0x68, 0x72, 0x6f, 0x75, 0x67, 0x68, 0x50, 0x61, 0x79,
+	0x6c, 0x6f, 0x61, 0x64, 0x3a, 0x04, 0x88, 0xa0, 0x1f, 0x00, 0x22, 0x82, 0x01, 0x0a, 0x07, 0x50,
+	0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x39, 0x0a, 0x0b, 0x70, 0x72, 0x65, 0x5f, 0x61, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6e, 0x6f,
+	0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x41,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x0a, 0x70, 0x72, 0x65, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x73, 0x12, 0x3c, 0x0a, 0x0a, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x69, 0x6e, 0x67, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1c, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72,
+	0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x46, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64,
+	0x69, 0x6e, 0x67, 0x52, 0x0a, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x69, 0x6e, 0x67, 0x22,
+	0x45, 0x0a, 0x0e, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x57, 0x72, 0x61, 0x70, 0x70, 0x65,
+	0x72, 0x12, 0x33, 0x0a, 0x07, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x19, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74,
+	0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x07, 0x6f,
+	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x42, 0xb2, 0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x6e,
+	0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x42,
+	0x0c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a,
+	0x2a, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x64, 0x65, 0x76, 0x2f, 0x61, 0x70, 0x69,
+	0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x76,
+	0x31, 0x3b, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x4e, 0x4f,
+	0x58, 0xaa, 0x02, 0x10, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65,
+	0x72, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x10, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62,
+	0x69, 0x74, 0x65, 0x72, 0x5c, 0x56, 0x31, 0xe2, 0x02, 0x1c, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c,
+	0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65,
+	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x12, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x3a, 0x3a,
+	0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1171,22 +2354,29 @@ func file_noble_orbiter_v1_orbiter_proto_rawDescGZIP() []byte {
 	return file_noble_orbiter_v1_orbiter_proto_rawDescData
 }
 
-var file_noble_orbiter_v1_orbiter_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_noble_orbiter_v1_orbiter_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_noble_orbiter_v1_orbiter_proto_goTypes = []interface{}{
-	(*PayloadWrapper)(nil), // 0: noble.orbiter.v1.PayloadWrapper
-	(*Payload)(nil),        // 1: noble.orbiter.v1.Payload
-	(*Action)(nil),         // 2: noble.orbiter.v1.Action
-	(*Forwarding)(nil),     // 3: noble.orbiter.v1.Forwarding
+	(*Action)(nil),         // 0: noble.orbiter.v1.Action
+	(*Forwarding)(nil),     // 1: noble.orbiter.v1.Forwarding
+	(*Payload)(nil),        // 2: noble.orbiter.v1.Payload
+	(*PayloadWrapper)(nil), // 3: noble.orbiter.v1.PayloadWrapper
+	(v1.ActionID)(0),       // 4: noble.orbiter.identifier.v1.ActionID
+	(*anypb.Any)(nil),      // 5: google.protobuf.Any
+	(v1.ProtocolID)(0),     // 6: noble.orbiter.identifier.v1.ProtocolID
 }
 var file_noble_orbiter_v1_orbiter_proto_depIdxs = []int32{
-	1, // 0: noble.orbiter.v1.PayloadWrapper.orbiter:type_name -> noble.orbiter.v1.Payload
-	2, // 1: noble.orbiter.v1.Payload.pre_actions:type_name -> noble.orbiter.v1.Action
-	3, // 2: noble.orbiter.v1.Payload.forwarding:type_name -> noble.orbiter.v1.Forwarding
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	4, // 0: noble.orbiter.v1.Action.id:type_name -> noble.orbiter.identifier.v1.ActionID
+	5, // 1: noble.orbiter.v1.Action.attributes:type_name -> google.protobuf.Any
+	6, // 2: noble.orbiter.v1.Forwarding.protocol_id:type_name -> noble.orbiter.identifier.v1.ProtocolID
+	5, // 3: noble.orbiter.v1.Forwarding.attributes:type_name -> google.protobuf.Any
+	0, // 4: noble.orbiter.v1.Payload.pre_actions:type_name -> noble.orbiter.v1.Action
+	1, // 5: noble.orbiter.v1.Payload.forwarding:type_name -> noble.orbiter.v1.Forwarding
+	2, // 6: noble.orbiter.v1.PayloadWrapper.orbiter:type_name -> noble.orbiter.v1.Payload
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_noble_orbiter_v1_orbiter_proto_init() }
@@ -1194,11 +2384,9 @@ func file_noble_orbiter_v1_orbiter_proto_init() {
 	if File_noble_orbiter_v1_orbiter_proto != nil {
 		return
 	}
-	file_noble_orbiter_v1_action_proto_init()
-	file_noble_orbiter_v1_forwarding_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_noble_orbiter_v1_orbiter_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PayloadWrapper); i {
+			switch v := v.(*Action); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1210,7 +2398,31 @@ func file_noble_orbiter_v1_orbiter_proto_init() {
 			}
 		}
 		file_noble_orbiter_v1_orbiter_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Forwarding); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_noble_orbiter_v1_orbiter_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Payload); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_noble_orbiter_v1_orbiter_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PayloadWrapper); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1228,7 +2440,7 @@ func file_noble_orbiter_v1_orbiter_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_noble_orbiter_v1_orbiter_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -22,7 +22,242 @@ package types
 
 import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/gogoproto/proto"
+
+	"orbiter.dev/types/identifier"
 )
+
+// ====================================================================================================
+// Action
+// ====================================================================================================
+
+// ActionAttributes is the interface defining the expected behavior
+// for a type to be used to perform actions on the orbiter module.
+type ActionAttributes interface {
+	proto.Message
+}
+
+var _ cdctypes.UnpackInterfacesMessage = &Action{}
+
+// NewAction returns a reference to a validated action. This utility
+// function automatically set the attributes in the Any type of the
+// return action.
+func NewAction(id identifier.ActionID, attr ActionAttributes) (*Action, error) {
+	a := Action{
+		Id: id,
+	}
+	err := a.SetAttributes(attr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &a, a.Validate()
+}
+
+// Validate returns an error if the action is not valid.
+func (a *Action) Validate() error {
+	if a == nil {
+		return ErrNilPointer.Wrap("action is a nil pointer")
+	}
+	if err := a.Id.Validate(); err != nil {
+		return err
+	}
+
+	if a.Attributes == nil {
+		return ErrNilPointer.Wrap("action attributes are not set")
+	}
+
+	return nil
+}
+
+// ID returns the ID. If the ID is not set,
+// the default value is returned.
+func (a *Action) ID() identifier.ActionID {
+	if a != nil {
+		return a.Id
+	}
+
+	return identifier.ACTION_UNSUPPORTED
+}
+
+// CachedAttributes returns the attributes interface from the
+// codec Any type. Returns nil if the action does not have
+// attributes set.
+func (a *Action) CachedAttributes() (ActionAttributes, error) {
+	if a == nil {
+		return nil, ErrNilPointer.Wrap("action is a nil pointer")
+	}
+
+	if a.Attributes == nil {
+		return nil, ErrNilPointer.Wrap("action attributes are not set")
+	}
+	av := a.Attributes.GetCachedValue()
+	attr, ok := av.(ActionAttributes)
+	if !ok {
+		return nil, sdkerrors.ErrInvalidType.Wrapf(
+			"expected %T, got %T",
+			(ActionAttributes)(nil),
+			av,
+		)
+	}
+
+	return attr, nil
+}
+
+// SetAttributes sets the action attributes into the action as codec Any type.
+func (a *Action) SetAttributes(attr ActionAttributes) error {
+	if a == nil {
+		return ErrNilPointer.Wrap("action is a nil pointer")
+	}
+
+	m, ok := attr.(proto.Message)
+	if !ok {
+		return sdkerrors.ErrPackAny.Wrapf("can't proto marshal %T", m)
+	}
+
+	anyValue, err := cdctypes.NewAnyWithValue(m)
+	if err != nil {
+		return err
+	}
+	a.Attributes = anyValue
+
+	return nil
+}
+
+// UnpackInterfaces is the method required to correctly unpack
+// an Any type into an interface registered in the codec.
+func (a *Action) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
+	if a == nil {
+		return ErrNilPointer.Wrap("action is a nil pointer")
+	}
+	var attributes ActionAttributes
+
+	return unpacker.UnpackAny(a.Attributes, &attributes)
+}
+
+// ====================================================================================================
+// Forwarding
+// ====================================================================================================
+
+// ForwardingAttributes is the interface every protocol forwarding
+// attribute type has to implement.
+type ForwardingAttributes interface {
+	proto.Message
+	// Returns the destination chain identifier.
+	CounterpartyID() string
+}
+
+var _ cdctypes.UnpackInterfacesMessage = &Forwarding{}
+
+// NewForwarding returns a reference to a validated forwarding. The
+// function automatically sets the attributes in the Any type of the
+// return instance.
+//
+// NOTE: passthroughPayload is currently ignored.
+func NewForwarding(
+	id identifier.ProtocolID,
+	a ForwardingAttributes,
+	passthroughPayload []byte,
+) (*Forwarding, error) {
+	o := Forwarding{
+		ProtocolId:         id,
+		PassthroughPayload: passthroughPayload,
+	}
+	err := o.SetAttributes(a)
+	if err != nil {
+		return nil, err
+	}
+
+	return &o, o.Validate()
+}
+
+// Validate returns an error if the forwarding is not valid.
+func (f *Forwarding) Validate() error {
+	if f == nil {
+		return ErrNilPointer.Wrap("forwarding is a nil pointer")
+	}
+	if err := f.ProtocolId.Validate(); err != nil {
+		return err
+	}
+	if f.Attributes == nil {
+		return ErrNilPointer.Wrap("forwarding attributes are not set")
+	}
+
+	return nil
+}
+
+// ProtocolID returns the protocol ID associated with the forwarding. If
+// the id is not set, the default value is returned.
+func (f *Forwarding) ProtocolID() identifier.ProtocolID {
+	if f != nil {
+		return f.ProtocolId
+	}
+
+	return identifier.PROTOCOL_UNSUPPORTED
+}
+
+// CachedAttributes returns the attributes interface from the
+// codec Any type. Returns nil if the forwarding does not have
+// attributes set.
+func (f *Forwarding) CachedAttributes() (ForwardingAttributes, error) {
+	if f == nil {
+		return nil, ErrNilPointer.Wrap("forwarding is a nil pointer")
+	}
+	if f.Attributes == nil {
+		return nil, ErrNilPointer.Wrap("forwarding attributes are not set")
+	}
+	av := f.Attributes.GetCachedValue()
+	a, ok := av.(ForwardingAttributes)
+	if !ok {
+		return nil, sdkerrors.ErrInvalidType.Wrapf(
+			"expected %T, got %T",
+			(ForwardingAttributes)(nil),
+			av,
+		)
+	}
+
+	return a, nil
+}
+
+// SetAttributes sets the attributes as codec Any type.
+func (f *Forwarding) SetAttributes(a ForwardingAttributes) error {
+	if f == nil {
+		return ErrNilPointer.Wrap("forwarding is a nil pointer")
+	}
+	// The interface we want to pack as any must
+	// implement the proto Message interface.
+	m, ok := a.(proto.Message)
+	if !ok {
+		return sdkerrors.ErrPackAny.Wrapf("can't proto marshal %T", m)
+	}
+	// Now we set the anyValue type with cache. The cache value
+	// is the proto message itself before being converted into
+	// an anyValue.
+	anyValue, err := cdctypes.NewAnyWithValue(m)
+	if err != nil {
+		return err
+	}
+	f.Attributes = anyValue
+
+	return nil
+}
+
+// UnpackInterfaces is the method required to correctly unpack
+// an Any type into an interface registered in the codec.
+func (f *Forwarding) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
+	if f == nil {
+		return ErrNilPointer.Wrap("forwarding is a nil pointer")
+	}
+
+	var attributes ForwardingAttributes
+
+	return unpacker.UnpackAny(f.Attributes, &attributes)
+}
+
+// ====================================================================================================
+// Payload
+// ====================================================================================================
 
 // NewPayload returns a validated instance reference of
 // an orbiter payload. Empty preActions slice is normalized to nil.

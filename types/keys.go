@@ -30,8 +30,7 @@ import (
 const ModuleName = "orbiter"
 
 const (
-	ComponentPrefix  = "component"
-	orbitIDSeparator = ":"
+	ComponentPrefix = "component"
 )
 
 var (

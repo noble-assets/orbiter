@@ -25,7 +25,7 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/identifier"
 )
 
 // ====================================================================================================
@@ -34,7 +34,7 @@ import (
 
 func (f *Forwarder) IsControllerPaused(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID identifier.ProtocolID,
 ) (bool, error) {
 	paused, err := f.PausedControllers.Has(ctx, int32(protocolID))
 
@@ -42,7 +42,7 @@ func (f *Forwarder) IsControllerPaused(
 }
 
 func (f *Forwarder) SetPausedController(ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID identifier.ProtocolID,
 ) error {
 	paused, err := f.IsControllerPaused(ctx, protocolID)
 	if err != nil {
@@ -57,7 +57,7 @@ func (f *Forwarder) SetPausedController(ctx context.Context,
 
 func (f *Forwarder) SetUnpausedController(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID identifier.ProtocolID,
 ) error {
 	paused, err := f.IsControllerPaused(ctx, protocolID)
 	if err != nil {
@@ -76,7 +76,7 @@ func (f *Forwarder) SetUnpausedController(
 
 func (f *Forwarder) IsOrbitPaused(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID identifier.ProtocolID,
 	counterpartyID string,
 ) (bool, error) {
 	paused, err := f.PausedForwardings.Has(ctx, collections.Join(int32(protocolID), counterpartyID))
@@ -85,7 +85,7 @@ func (f *Forwarder) IsOrbitPaused(
 }
 
 func (f *Forwarder) SetPausedOrbit(ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID identifier.ProtocolID,
 	counterpartyID string,
 ) error {
 	paused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)
@@ -101,7 +101,7 @@ func (f *Forwarder) SetPausedOrbit(ctx context.Context,
 
 func (f *Forwarder) SetUnpausedOrbit(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID identifier.ProtocolID,
 	counterpartyID string,
 ) error {
 	paused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)

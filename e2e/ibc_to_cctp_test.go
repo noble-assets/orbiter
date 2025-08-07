@@ -35,6 +35,7 @@ import (
 	"orbiter.dev/types"
 	"orbiter.dev/types/controller/action"
 	"orbiter.dev/types/controller/forwarding"
+	"orbiter.dev/types/identifier"
 )
 
 const OrbiterModuleAddr = "noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d"
@@ -112,7 +113,7 @@ func TestIbc(t *testing.T) {
 	}
 
 	action := types.Action{
-		Id: types.ACTION_FEE,
+		Id: identifier.ACTION_FEE,
 	}
 	err = action.SetAttributes(&feeAttr)
 	require.NoError(t, err)

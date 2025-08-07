@@ -28,6 +28,7 @@ import (
 
 	"orbiter.dev/types"
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
+	"orbiter.dev/types/identifier"
 )
 
 // UpdateStats updates all the statistics the module keep track of.
@@ -48,13 +49,13 @@ func (d *Dispatcher) UpdateStats(
 		return err
 	}
 
-	var sourceOrbitID types.OrbitID
-	if sourceOrbitID, err = types.NewOrbitID(transferAttr.SourceProtocolID(), transferAttr.SourceCounterpartyID()); err != nil {
+	var sourceOrbitID identifier.OrbitID
+	if sourceOrbitID, err = identifier.NewOrbitID(transferAttr.SourceProtocolID(), transferAttr.SourceCounterpartyID()); err != nil {
 		return err
 	}
 
-	var destOrbitID types.OrbitID
-	if destOrbitID, err = types.NewOrbitID(forwarding.ProtocolID(), attr.CounterpartyID()); err != nil {
+	var destOrbitID identifier.OrbitID
+	if destOrbitID, err = identifier.NewOrbitID(forwarding.ProtocolID(), attr.CounterpartyID()); err != nil {
 		return err
 	}
 
@@ -90,8 +91,8 @@ func (d *Dispatcher) UpdateStats(
 // the coins delivered to the destination chain.
 func (d *Dispatcher) updateDispatchedAmountStats(
 	ctx context.Context,
-	sourceOrbitID *types.OrbitID,
-	destinationOrbitID *types.OrbitID,
+	sourceOrbitID *identifier.OrbitID,
+	destinationOrbitID *identifier.OrbitID,
 	denom string,
 	newAmountDispatched dispatchertypes.AmountDispatched,
 ) error {
@@ -122,20 +123,20 @@ func (d *Dispatcher) updateDispatchedAmountStats(
 // number of dispatches executed.
 func (d *Dispatcher) updateDispatchedCountsStats(
 	ctx context.Context,
-	sourceInfo *types.OrbitID,
-	destinationInfo *types.OrbitID,
+	sourceOrbitID *identifier.OrbitID,
+	destOrbitID *identifier.OrbitID,
 ) error {
 	countDispatches := d.GetDispatchedCounts(
 		ctx,
-		*sourceInfo,
-		*destinationInfo,
+		*sourceOrbitID,
+		*destOrbitID,
 	)
 	countDispatches++
 
 	return d.SetDispatchedCounts(
 		ctx,
-		*sourceInfo,
-		*destinationInfo,
+		*sourceOrbitID,
+		*destOrbitID,
 		countDispatches,
 	)
 }

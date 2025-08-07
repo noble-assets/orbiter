@@ -28,7 +28,7 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/identifier"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -77,7 +77,7 @@ func (i IBCMiddleware) OnRecvPacket(
 	relayer sdk.AccAddress,
 ) ibcexported.Acknowledgement {
 	isOrbiterPayload, orbiterPayload, err := i.payloadAdapter.ParsePayload(
-		types.PROTOCOL_IBC,
+		identifier.PROTOCOL_IBC,
 		packet.GetData(),
 	)
 	if err != nil {
@@ -88,7 +88,7 @@ func (i IBCMiddleware) OnRecvPacket(
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
 
-	orbitID, err := types.NewOrbitID(types.PROTOCOL_IBC, packet.SourceChannel)
+	orbitID, err := identifier.NewOrbitID(identifier.PROTOCOL_IBC, packet.SourceChannel)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
 	}
