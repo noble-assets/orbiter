@@ -23,10 +23,10 @@ package testdata
 import "orbiter.dev/types"
 
 var (
-	_ types.OrbitAttributes  = &TestOrbitAttr{}
-	_ types.ActionAttributes = &TestActionAttr{}
+	_ types.ForwardingAttributes = &TestForwardingAttr{}
+	_ types.ActionAttributes     = &TestActionAttr{}
 )
 
-func (a *TestOrbitAttr) CounterpartyID() string {
+func (a *TestForwardingAttr) CounterpartyID() string {
 	return a.Planet
 }

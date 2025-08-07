@@ -33,8 +33,8 @@ import (
 	"orbiter.dev"
 	"orbiter.dev/testutil"
 	"orbiter.dev/types"
-	"orbiter.dev/types/controllers/actions"
-	"orbiter.dev/types/controllers/orbits"
+	"orbiter.dev/types/controller/action"
+	"orbiter.dev/types/controller/forwarding"
 )
 
 const OrbiterModuleAddr = "noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d"
@@ -93,7 +93,7 @@ func TestIbc(t *testing.T) {
 	destinationCaller := testutil.RandomBytes(32)
 	passthroughPayload := []byte("")
 
-	orbit, err := orbits.NewCCTPOrbit(
+	forwarding, err := forwarding.NewCCTPForwarding(
 		destinationDomain,
 		mintRecipient,
 		destinationCaller,
@@ -102,8 +102,8 @@ func TestIbc(t *testing.T) {
 	require.NoError(t, err)
 
 	feeRecipientAddr := testutil.NewNobleAddress()
-	feeAttr := actions.FeeAttributes{
-		FeesInfo: []*actions.FeeInfo{
+	feeAttr := action.FeeAttributes{
+		FeesInfo: []*action.FeeInfo{
 			{
 				Recipient:   feeRecipientAddr,
 				BasisPoints: 100,
@@ -117,7 +117,7 @@ func TestIbc(t *testing.T) {
 	err = action.SetAttributes(&feeAttr)
 	require.NoError(t, err)
 
-	payload, err := types.NewPayloadWrapper(orbit, []*types.Action{&action})
+	payload, err := types.NewPayloadWrapper(forwarding, []*types.Action{&action})
 	require.NoError(t, err)
 
 	encCfg := testutil.MakeTestEncodingConfig("noble")

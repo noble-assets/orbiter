@@ -35,6 +35,8 @@ import (
 
 	"orbiter.dev/keeper"
 	"orbiter.dev/types"
+	"orbiter.dev/types/component/executor"
+	"orbiter.dev/types/component/forwarder"
 )
 
 const ConsensusVersion = 1
@@ -82,13 +84,16 @@ func NewAppModule(keeper *keeper.Keeper) AppModule {
 	}
 }
 
-func (a AppModule) RegisterServices(module.Configurator) {}
+func (m AppModule) RegisterServices(cfg module.Configurator) {
+	forwarder.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerForwarder(m.keeper))
+	executor.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerExecutor(m.keeper))
+}
 
-func (a AppModule) IsAppModule() {}
+func (m AppModule) IsAppModule() {}
 
-func (a AppModule) IsOnePerModuleType() {}
+func (m AppModule) IsOnePerModuleType() {}
 
-func (a AppModule) ConsensusVersion() uint64 {
+func (m AppModule) ConsensusVersion() uint64 {
 	return ConsensusVersion
 }
 
@@ -109,15 +114,15 @@ func (AppModuleBasic) ValidateGenesis(
 	return genesis.Validate()
 }
 
-func (a AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, bz json.RawMessage) {
+func (m AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, bz json.RawMessage) {
 	var genesis types.GenesisState
 	cdc.MustUnmarshalJSON(bz, &genesis)
 
-	a.keeper.InitGenesis(ctx, genesis)
+	m.keeper.InitGenesis(ctx, genesis)
 }
 
-func (a AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-	genesis := a.keeper.ExportGenesis(ctx)
+func (m AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
+	genesis := m.keeper.ExportGenesis(ctx)
 
 	return cdc.MustMarshalJSON(genesis)
 }

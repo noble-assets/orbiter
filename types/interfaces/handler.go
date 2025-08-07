@@ -29,7 +29,7 @@ import (
 // PacketConstraint defines the packet types supported
 // by the module.
 type PacketConstraint interface {
-	*types.OrbitPacket | *types.ActionPacket
+	*types.ForwardingPacket | *types.ActionPacket
 }
 
 // PacketHandler defines the behavior expected by a type

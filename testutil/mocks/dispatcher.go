@@ -29,24 +29,27 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"orbiter.dev/keeper/components"
+	"orbiter.dev/keeper/component"
 	"orbiter.dev/types"
 	"orbiter.dev/types/interfaces"
 )
 
 var (
-	_ interfaces.PacketHandler[*types.ActionPacket] = &ActionsHandler{}
-	_ interfaces.PacketHandler[*types.OrbitPacket]  = &OrbitsHandler{}
+	_ interfaces.PacketHandler[*types.ActionPacket]     = &ActionsHandler{}
+	_ interfaces.PacketHandler[*types.ForwardingPacket] = &ForwardingHandler{}
 )
 
 type (
-	ActionsHandler struct{}
-	OrbitsHandler  struct{}
+	ActionsHandler    struct{}
+	ForwardingHandler struct{}
 )
 
-func (o *OrbitsHandler) HandlePacket(ctx context.Context, packet *types.OrbitPacket) error {
+func (o *ForwardingHandler) HandlePacket(
+	ctx context.Context,
+	packet *types.ForwardingPacket,
+) error {
 	if CheckIfFailing(ctx) {
-		return errors.New("error dispatching the orbit packet")
+		return errors.New("error dispatching the forwarding packet")
 	}
 
 	return nil
@@ -63,17 +66,17 @@ func (a *ActionsHandler) HandlePacket(
 	return nil
 }
 
-func NewDispatcherComponent(tb testing.TB) (*components.DispatcherComponent, *Dependencies) {
+func NewDispatcherComponent(tb testing.TB) (*component.Dispatcher, *Dependencies) {
 	tb.Helper()
 
 	deps := NewDependencies(tb)
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
-	dispatcher, err := components.NewDispatcherComponent(
+	dispatcher, err := component.NewDispatcher(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
-		&OrbitsHandler{},
+		&ForwardingHandler{},
 		&ActionsHandler{},
 	)
 	require.NoError(tb, err)

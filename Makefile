@@ -1,10 +1,11 @@
-.PHONY: proto-format proto-lint proto-gen license build
-all: proto-all format lint license test-unit build
+.PHONY: all
+all: proto-all tool-all test-unit build
 
 #=============================================================================#
 #                                  Build                                      #
 #=============================================================================#
 
+.PHONY: build
 build:
 	@echo "==================================================================="
 	@echo "Building simd..."
@@ -18,6 +19,7 @@ build:
 BUF_VERSION=1.50
 BUILDER_VERSION=0.15.3
 
+.PHONY: proto-all proto-format proto-lint proto-gen
 proto-all: proto-format proto-lint proto-gen proto-testutil-gen
 
 proto-format:
@@ -51,6 +53,8 @@ proto-testutil-gen:
 #=============================================================================#
 #                                 Tooling                                     #
 #=============================================================================#
+.PHONY: tool-all license form lint vulncheck
+tool-all : license format lint vulncheck
 
 FILES := $(shell find . -name "*.go" -not -path "./simapp/*" -not -name "*.pb.go" -not -name "*.pb.gw.go" -not -name "*.pulsar.go")
 license:
@@ -86,8 +90,8 @@ test-unit:
 	@echo "==================================================================="
 	@echo "Running unit tests for keeper package..."
 	@go test -v ./keeper/...
-	@echo "Running unit tests for controllers package..."
-	@go test -v ./controllers/...
+	@echo "Running unit tests for controller package..."
+	@go test -v ./controller/...
 	@echo "Running unit tests for types package..."
 	@go test -v ./types/...
 
@@ -96,9 +100,9 @@ test-unit-viz:
 	@echo "Running unit tests for keeper package..."
 	@go test -cover -coverpkg=./keeper/... -coverprofile=coverage_keeper.out -race -v ./keeper/...
 	@go tool cover -html=coverage_keeper.out && go tool cover -func=coverage_keeper.out
-	@echo "Running unit tests for controllers package..."
-	@go test -cover -coverpkg=./controllers/... -coverprofile=coverage_controllers.out -race -v ./controllers/...
-	@go tool cover -html=coverage_controllers.out && go tool cover -func=coverage_controllers.out
+	@echo "Running unit tests for controller package..."
+	@go test -cover -coverpkg=./controller/... -coverprofile=coverage_controller.out -race -v ./controller/...
+	@go tool cover -html=coverage_controller.out && go tool cover -func=coverage_controller.out
 	@echo "Running unit tests for types package..."
 	@go test -v ./types/...
 

@@ -6,10 +6,10 @@ import "cosmos_proto/cosmos.proto";
 
 option go_package = "testutil/testdata";
 
-// TestOrbitAttr is a type created to test the proto marshaling/unmarshaling
-// for the orbit attributes.
-message TestOrbitAttr {
-  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.OrbitAttributes";
+// TestForwardingAttr is a type created to test the proto marshaling/unmarshaling
+// for the forwarding attributes.
+message TestForwardingAttr {
+  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ForwardingAttributes";
   string planet = 1;
 }
 

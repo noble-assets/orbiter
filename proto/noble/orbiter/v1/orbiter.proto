@@ -3,7 +3,7 @@ syntax = "proto3";
 package noble.orbiter.v1;
 
 import "noble/orbiter/v1/action.proto";
-import "noble/orbiter/v1/orbit.proto";
+import "noble/orbiter/v1/forwarding.proto";
 
 option go_package = "orbiter.dev/types";
 
@@ -23,7 +23,7 @@ message Payload {
   // and executes before completing the cross-chain routing.
   repeated Action pre_actions = 1;
 
-  // orbit contains the required information to complete a cross-chain
+  // forwarding contains the required information to complete a cross-chain
   // routing through an orbiter-supported protocol.
-  Orbit orbit = 2;
+  Forwarding forwarding = 2;
 }

@@ -27,7 +27,7 @@ import (
 // NewPayload returns a validated instance reference of
 // an orbiter payload. Empty preActions slice is normalized to nil.
 func NewPayload(
-	orbit *Orbit,
+	forwarding *Forwarding,
 	preActions []*Action,
 ) (*Payload, error) {
 	if len(preActions) == 0 {
@@ -35,7 +35,7 @@ func NewPayload(
 	}
 
 	payload := Payload{
-		Orbit:      orbit,
+		Forwarding: forwarding,
 		PreActions: preActions,
 	}
 
@@ -55,7 +55,7 @@ func (p *Payload) Validate() error {
 		}
 	}
 
-	return p.Orbit.Validate()
+	return p.Forwarding.Validate()
 }
 
 var _ cdctypes.UnpackInterfacesMessage = &Payload{}
@@ -75,8 +75,8 @@ func (p *Payload) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 		}
 	}
 
-	if p.Orbit != nil {
-		if err := p.Orbit.UnpackInterfaces(unpacker); err != nil {
+	if p.Forwarding != nil {
+		if err := p.Forwarding.UnpackInterfaces(unpacker); err != nil {
 			return err
 		}
 	}
@@ -87,10 +87,10 @@ func (p *Payload) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 // NewPayloadWrapper returns a validated instance reference
 // to a payload wrapper.
 func NewPayloadWrapper(
-	orbit *Orbit,
+	forwarding *Forwarding,
 	preActions []*Action,
 ) (*PayloadWrapper, error) {
-	payload, err := NewPayload(orbit, preActions)
+	payload, err := NewPayload(forwarding, preActions)
 	if err != nil {
 		return nil, err
 	}

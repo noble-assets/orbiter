@@ -42,24 +42,24 @@ var (
 )
 
 // ====================================================================================================
-// Orbits
+// Forwarding
 // ====================================================================================================.
 const (
-	OrbitComponentName  = "orbit"
-	OrbitControllerName = "orbit_controller"
+	ForwardingComponentName  = "forwarding"
+	ForwardingControllerName = "forwarding_controller"
 
 	// Maps names.
-	PausedOrbitsName           = "paused_orbits"
-	PausedOrbitControllersName = "paused_orbit_controllers"
+	PausedForwardingName            = "paused_forwardings"
+	PausedForwardingControllersName = "paused_forwarding_controllers"
 )
 
 var (
-	PausedOrbitPrefix            = collections.NewPrefix(10)
-	PausedOrbitControllersPrefix = collections.NewPrefix(11)
+	PausedForwardingPrefix            = collections.NewPrefix(10)
+	PausedForwardingControllersPrefix = collections.NewPrefix(11)
 )
 
 // ====================================================================================================
-// Actions
+// Action
 // ====================================================================================================.
 const (
 	ActionComponentName  = "action"
@@ -98,7 +98,7 @@ var (
 )
 
 // ====================================================================================================
-// Adapters
+// Adapter
 // ====================================================================================================.
 const (
 	AdaptersComponentName = "adapter"

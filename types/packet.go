@@ -23,10 +23,84 @@ package types
 import (
 	"errors"
 	fmt "fmt"
+	"strconv"
+	"strings"
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
+
+// OrbitID is an internal type used to uniquely
+// represent a source or a destination of a cross-chain
+// transfer and the bridge protocol used.
+type OrbitID struct {
+	ProtocolID ProtocolID
+	// Protocol specific identifier of a counterparty.
+	CounterpartyID string
+}
+
+// NewOrbitID returns a validated orbit identifier instance.
+func NewOrbitID(
+	protocolID ProtocolID,
+	counterpartyID string,
+) (OrbitID, error) {
+	attr := OrbitID{
+		ProtocolID:     protocolID,
+		CounterpartyID: counterpartyID,
+	}
+
+	return attr, attr.Validate()
+}
+
+// Validate returns an error if any of the orbit id field
+// is not valid.
+func (i OrbitID) Validate() error {
+	if err := i.ProtocolID.Validate(); err != nil {
+		return err
+	}
+	if i.CounterpartyID == "" {
+		return errors.New("counterparty id cannot be empty string")
+	}
+
+	return nil
+}
+
+// ID generates an internal identifier for a tuple (bridge protocol, chain).
+// The identifier allows to recover the protocol Id and the chain Id from its value.
+func (i OrbitID) ID() string {
+	return fmt.Sprintf("%d%s%s", i.ProtocolID.Uint32(), orbitIDSeparator, i.CounterpartyID)
+}
+
+// String returns the string representation of the id.
+func (i OrbitID) String() string {
+	return i.ID()
+}
+
+// ParseOrbitID returns a new orbit id instance from the string.
+// Returns an error if the string is not a valid orbit
+// id string.
+func ParseOrbitID(str string) (OrbitID, error) {
+	sepIndex := strings.Index(str, orbitIDSeparator)
+	if sepIndex == -1 {
+		return OrbitID{}, fmt.Errorf("invalid orbit ID format: missing separator in %s", str)
+	}
+
+	protocolIDStr := str[:sepIndex]
+	counterpartyID := str[sepIndex+1:]
+
+	id, err := strconv.ParseInt(protocolIDStr, 10, 32)
+	if err != nil {
+		return OrbitID{}, fmt.Errorf("invalid protocol ID: %w", err)
+	}
+
+	protocolID := ProtocolID(int32(id))
+	orbitID, err := NewOrbitID(protocolID, counterpartyID)
+	if err != nil {
+		return OrbitID{}, fmt.Errorf("invalid orbit ID string %s: %w", str, err)
+	}
+
+	return orbitID, nil
+}
 
 // TransferAttributes defines the cross-chain transfer information
 // passed down the orbiter to handle actions and routing.
@@ -144,7 +218,7 @@ func (a *TransferAttributes) DestinationDenom() string {
 // nil defensively for robustness.
 func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 	if a == nil {
-		fmt.Println("Warning: SetDestinaitonAmount() called on nil TransferAttributes")
+		fmt.Println("Warning: SetDestinationAmount() called on nil TransferAttributes")
 
 		return
 	}
@@ -164,38 +238,41 @@ func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 // nil defensively for robustness.
 func (a *TransferAttributes) SetDestinationDenom(denom string) {
 	if a == nil {
-		fmt.Println("Warning: SetDestinaitonDenom() called on nil TransferAttributes")
+		fmt.Println("Warning: SetDestinationDenom() called on nil TransferAttributes")
 
 		return
 	}
 	a.destinationCoin.Denom = denom
 }
 
-// OrbitPacket defines the data structure used to handle a routing packet. The routing info
-// are extended with the cross chain transfer attributes.
-type OrbitPacket struct {
+// ForwardingPacket defines the data structure used to handle a forwarding. The
+// forwarding info are extended with the cross chain transfer attributes.
+type ForwardingPacket struct {
 	TransferAttributes *TransferAttributes
-	Orbit              *Orbit
+	Forwarding         *Forwarding
 }
 
-// NewOrbitPacket returns a pointer to a validated instance of the
-// orbit packet.
-func NewOrbitPacket(transferAttr *TransferAttributes, orbit *Orbit) (*OrbitPacket, error) {
-	orbitPacket := OrbitPacket{
+// NewForwardingPacket returns a pointer to a validated instance of the
+// forwarding packet.
+func NewForwardingPacket(
+	transferAttr *TransferAttributes,
+	forwarding *Forwarding,
+) (*ForwardingPacket, error) {
+	forwardingPacket := ForwardingPacket{
 		TransferAttributes: transferAttr,
-		Orbit:              orbit,
+		Forwarding:         forwarding,
 	}
 
-	return &orbitPacket, orbitPacket.Validate()
+	return &forwardingPacket, forwardingPacket.Validate()
 }
 
 // Validate returns an error if the instance is not valid.
-func (p *OrbitPacket) Validate() error {
+func (p *ForwardingPacket) Validate() error {
 	if p == nil {
-		return ErrNilPointer.Wrap("orbit packet is not set")
+		return ErrNilPointer.Wrap("forwarding packet is not set")
 	}
 
-	err := p.Orbit.Validate()
+	err := p.Forwarding.Validate()
 	if err != nil {
 		return err
 	}

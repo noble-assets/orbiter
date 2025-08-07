@@ -28,26 +28,26 @@ import (
 	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.ControllerOrbit = &OrbitController{}
+var _ interfaces.ControllerForwarding = &ForwardingController{}
 
-type OrbitController struct {
+type ForwardingController struct {
 	Id types.ProtocolID
 }
 
-// ID implements types.OrbitController.
-func (o *OrbitController) ID() types.ProtocolID {
+// ID implements types.ForwardingController.
+func (o *ForwardingController) ID() types.ProtocolID {
 	return o.Id
 }
 
-// Name implements types.OrbitController.
-func (o *OrbitController) Name() string {
+// Name implements types.ForwardingController.
+func (o *ForwardingController) Name() string {
 	return o.Id.String()
 }
 
-// HandlePacket implements types.OrbitController.
-func (o *OrbitController) HandlePacket(ctx context.Context, _ *types.OrbitPacket) error {
+// HandlePacket implements types.ForwardingController.
+func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.ForwardingPacket) error {
 	if CheckIfFailing(ctx) {
-		return errors.New("error dispatching the orbit packet")
+		return errors.New("error dispatching the forwarding packet")
 	}
 
 	return nil
