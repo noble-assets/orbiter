@@ -223,43 +223,6 @@ func (a *Adapter) CheckPassthroughPayloadSize(
 // commonBeforeTransferHook groups all the logic that must be executed
 // before completing the cross-chain transfer, regardless the incoming
 // protocol used.
-func (a *Adapter) commonBeforeTransferHook(
-	ctx context.Context,
-	passthroughPayload []byte,
-) error {
-	if err := a.CheckPassthroughPayloadSize(ctx, passthroughPayload); err != nil {
-		return err
-	}
-
-	if err := a.clearOrbiterBalances(ctx); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// CheckPassthroughPayloadSize checks that the passthrough payload
-// size is not higher than the maximum allowed.
-func (c *Adapter) CheckPassthroughPayloadSize(
-	ctx context.Context,
-	passthroughPayload []byte,
-) error {
-	params := c.GetParams(ctx)
-
-	if len(passthroughPayload) > int(params.MaxPassthroughPayloadSize) {
-		return fmt.Errorf(
-			"passthrough payload size %d > max allowed %d bytes",
-			len(passthroughPayload),
-			params.MaxPassthroughPayloadSize,
-		)
-	}
-
-	return nil
-}
-
-// commonBeforeTransferHook groups all the logic that must be executed
-// before completing the cross-chain transfer, regardless the incoming
-// protocol used.
 func (c *Adapter) commonBeforeTransferHook(
 	ctx context.Context,
 	passthroughPayload []byte,

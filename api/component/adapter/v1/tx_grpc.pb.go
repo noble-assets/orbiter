@@ -26,9 +26,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Msg defines the RPC methods for the Orbiter module.
+// Msg defines the RPC methods for the Adapter component.
 type MsgClient interface {
-	// UpdateParams defines a method to update the adapter component params.
+	// UpdateParams updates the Adapter component params.
+	// TODO: remove request from name
 	UpdateParams(ctx context.Context, in *MsgUpdateParamsRequest, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 }
 
@@ -54,9 +55,10 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParamsRequest
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility.
 //
-// Msg defines the RPC methods for the Orbiter module.
+// Msg defines the RPC methods for the Adapter component.
 type MsgServer interface {
-	// UpdateParams defines a method to update the adapter component params.
+	// UpdateParams updates the Adapter component params.
+	// TODO: remove request from name
 	UpdateParams(context.Context, *MsgUpdateParamsRequest) (*MsgUpdateParamsResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }

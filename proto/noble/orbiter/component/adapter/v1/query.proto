@@ -3,14 +3,14 @@ syntax = "proto3";
 package noble.orbiter.component.adapter.v1;
 
 import "amino/amino.proto";
-import "gogoproto/gogo.proto";
 import "cosmos/query/v1/query.proto";
-import "noble/orbiter/component/adapter/v1/adapter.proto";
+import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "noble/orbiter/component/adapter/v1/adapter.proto";
 
 option go_package = "orbiter.dev/types/component/adapter";
 
-// Query defines the gRPC query service for the Orbiter 
+// Query defines the gRPC query service for the Orbiter
 // adapter component.
 service Query {
   // Params retrieves the adapter component parameters.

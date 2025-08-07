@@ -44,10 +44,10 @@ type Keeper struct {
 	authority string
 
 	// Components.
-	executor   interfaces.Executor
-	forwarder  interfaces.Forwarder
-	dispatcher interfaces.Dispatcher
-	adapter    interfaces.Adapter
+	executor   *component.Executor
+	forwarder  *component.Forwarder
+	dispatcher *component.Dispatcher
+	adapter    *component.Adapter
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -140,19 +140,19 @@ func (k *Keeper) Authority() string {
 	return k.authority
 }
 
-func (k *Keeper) Executor() interfaces.Executor {
+func (k *Keeper) Executor() *component.Executor {
 	return k.executor
 }
 
-func (k *Keeper) Forwarder() interfaces.Forwarder {
+func (k *Keeper) Forwarder() *component.Forwarder {
 	return k.forwarder
 }
 
-func (k *Keeper) Dispatcher() interfaces.PayloadDispatcher {
+func (k *Keeper) Dispatcher() *component.Dispatcher {
 	return k.dispatcher
 }
 
-func (k *Keeper) Adapter() interfaces.Adapter {
+func (k *Keeper) Adapter() *component.Adapter {
 	return k.adapter
 }
 

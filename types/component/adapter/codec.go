@@ -18,38 +18,23 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package keeper
+package adapter
 
 import (
-	"context"
-
-	"orbiter.dev/types/component/adapter"
+	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-var _ adapter.MsgServer = &msgServerAdapter{}
-
-type msgServerAdapter struct {
-	// Keeper is the main Orbiter keeper.
-	*Keeper
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgUpdateParamsRequest{}, "orbiter/adapter/UpdateParams", nil)
 }
 
-func NewMsgServerAdapter(keeper *Keeper) msgServerAdapter {
-	return msgServerAdapter{Keeper: keeper}
-}
+func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgUpdateParamsRequest{},
+	)
 
-// UpdateParams implements adapter.MsgServer.
-func (s msgServerAdapter) UpdateParams(
-	ctx context.Context,
-	msg *adapter.MsgUpdateParamsRequest,
-) (*adapter.MsgUpdateParamsResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
-		return nil, err
-	}
-
-	a := s.Adapter()
-	if err := a.SetParams(ctx, msg.Params); err != nil {
-		return nil, err
-	}
-
-	return &adapter.MsgUpdateParamsResponse{}, nil
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
