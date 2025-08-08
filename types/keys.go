@@ -104,7 +104,7 @@ const (
 	AdaptersComponentName = "adapter"
 	AdapterControllerName = "adapter_controller"
 
-	AdapterParamsName = "max_passthrough_payload_size"
+	AdapterParamsName = "adapter_params"
 
 	// CCTPNobleDomain is the identifier of the Noble domain
 	// in the CCTP protocol.
