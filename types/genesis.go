@@ -20,14 +20,25 @@
 
 package types
 
-import adapter "orbiter.dev/types/component/adapter"
+import (
+	"fmt"
 
+	adapter "orbiter.dev/types/component/adapter"
+)
+
+// DefaultGenesisState returns the default values for the Orbiter module
+// initial state.
 func DefaultGenesisState() *GenesisState {
 	return &GenesisState{
-		AdapterGenesis: &adapter.GenesisState{},
+		AdapterGenesis: adapter.DefaultGenesisState(),
 	}
 }
 
-func (genesis *GenesisState) Validate() error {
+// Validate retusn an error if any of the genesis field is not valid.
+func (g *GenesisState) Validate() error {
+	if err := g.AdapterGenesis.Validate(); err != nil {
+		return fmt.Errorf("error validating adapter component genesis state: %w", err)
+	}
+
 	return nil
 }

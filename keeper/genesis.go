@@ -22,12 +22,44 @@ package keeper
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"orbiter.dev/types"
+	"orbiter.dev/types/component/adapter"
 )
 
-func (k *Keeper) InitGenesis(_ context.Context, _ types.GenesisState) {}
+// InitGenesis initialize the state of the Orbiter module with
+// a genesis state.
+func (k *Keeper) InitGenesis(ctx context.Context, g types.GenesisState) {
+	if g.AdapterGenesis == nil {
+		panic(errors.New("nil pointer: missing adapter genesis state"))
+	}
+	if err := k.initAdapterGenesis(ctx, g.AdapterGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize adapter genesis state %w", err))
+	}
+}
 
-func (k *Keeper) ExportGenesis(_ context.Context) *types.GenesisState {
-	return types.DefaultGenesisState()
+// initAdapterGenesis initializes the adapter component state with the
+// provided genesis state.
+func (k *Keeper) initAdapterGenesis(ctx context.Context, g *adapter.GenesisState) error {
+	a := k.Adapter()
+
+	if err := a.SetParams(ctx, g.Params); err != nil {
+		return fmt.Errorf("error setting genesis params: %w", err)
+	}
+
+	return nil
+}
+
+// ExportGenesis returns the current state of the Orbiter module
+// into a genesis state.
+func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
+	a := k.Adapter()
+
+	return &types.GenesisState{
+		AdapterGenesis: &adapter.GenesisState{
+			Params: a.GetParams(ctx),
+		},
+	}
 }

@@ -27,10 +27,6 @@ import (
 	"orbiter.dev/types/core"
 )
 
-// TODO: use this instead of the concrete
-// Move this to core package.
-type AttributesTransferer any
-
 // PayloadAdapter defines the behavior expected by the adapter to handle
 // a generic orbiter payload.
 type PayloadAdapter interface {
