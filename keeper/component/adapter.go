@@ -203,11 +203,12 @@ func (a *Adapter) CheckPassthroughPayloadSize(
 ) error {
 	params := a.GetParams(ctx)
 
-	if len(passthroughPayload) > int(params.MaxPassthroughPayloadSize) {
-		return fmt.Errorf(
+	maxSize := params.MaxPassthroughPayloadSize
+	if uint64(len(passthroughPayload)) > uint64(maxSize) {
+		return types.ErrValidation.Wrapf(
 			"passthrough payload size %d > max allowed %d bytes",
 			len(passthroughPayload),
-			params.MaxPassthroughPayloadSize,
+			maxSize,
 		)
 	}
 
