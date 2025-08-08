@@ -31,13 +31,12 @@ import (
 
 	"orbiter.dev/types"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 	router "orbiter.dev/types/router"
 )
 
-type ForwardingRouter = *router.Router[core.ProtocolID, interfaces.ControllerForwarding]
+type ForwardingRouter = *router.Router[core.ProtocolID, types.ControllerForwarding]
 
-var _ interfaces.Forwarder = &Forwarder{}
+var _ types.Forwarder = &Forwarder{}
 
 type Forwarder struct {
 	logger     log.Logger
@@ -65,7 +64,7 @@ func NewForwarder(
 		logger:     logger.With(core.ComponentPrefix, core.ForwardingComponentName),
 		bankKeeper: bankKeeper,
 
-		router: router.New[core.ProtocolID, interfaces.ControllerForwarding](),
+		router: router.New[core.ProtocolID, types.ControllerForwarding](),
 		PausedForwardings: collections.NewKeySet(
 			sb,
 			core.PausedForwardingPrefix,

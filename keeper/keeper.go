@@ -33,7 +33,6 @@ import (
 	"orbiter.dev/keeper/component"
 	"orbiter.dev/types"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 )
 
 // Keeper is the main module keeper.
@@ -157,7 +156,7 @@ func (k *Keeper) Adapter() *component.Adapter {
 	return k.adapter
 }
 
-func (k *Keeper) SetForwardingControllers(controllers ...interfaces.ControllerForwarding) {
+func (k *Keeper) SetForwardingControllers(controllers ...types.ControllerForwarding) {
 	router := k.forwarder.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -169,7 +168,7 @@ func (k *Keeper) SetForwardingControllers(controllers ...interfaces.ControllerFo
 	}
 }
 
-func (k *Keeper) SetActionControllers(controllers ...interfaces.ControllerAction) {
+func (k *Keeper) SetActionControllers(controllers ...types.ControllerAction) {
 	router := k.executor.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -181,7 +180,7 @@ func (k *Keeper) SetActionControllers(controllers ...interfaces.ControllerAction
 	}
 }
 
-func (k *Keeper) SetAdapterControllers(controllers ...interfaces.ControllerAdapter) {
+func (k *Keeper) SetAdapterControllers(controllers ...types.ControllerAdapter) {
 	router := k.adapter.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {

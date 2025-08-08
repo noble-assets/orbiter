@@ -31,13 +31,12 @@ import (
 
 	"orbiter.dev/types"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 	"orbiter.dev/types/router"
 )
 
-type ActionRouter = *router.Router[core.ActionID, interfaces.ControllerAction]
+type ActionRouter = *router.Router[core.ActionID, types.ControllerAction]
 
-var _ interfaces.Executor = &Executor{}
+var _ types.Executor = &Executor{}
 
 type Executor struct {
 	logger log.Logger
@@ -55,7 +54,7 @@ func NewExecutor(
 ) (*Executor, error) {
 	executor := Executor{
 		logger: logger.With(core.ComponentPrefix, core.ActionComponentName),
-		router: router.New[core.ActionID, interfaces.ControllerAction](),
+		router: router.New[core.ActionID, types.ControllerAction](),
 		PausedControllers: collections.NewKeySet(
 			sb,
 			core.PausedActionControllersPrefix,

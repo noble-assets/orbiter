@@ -18,31 +18,17 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package interfaces
+package types
 
 import (
 	"context"
 
-	"orbiter.dev/types"
 	"orbiter.dev/types/core"
 )
 
-// PayloadAdapter defines the behavior expected by the adapter to handle
-// a generic orbiter payload.
-type PayloadAdapter interface {
-	// ParsePayload allows to parse and validate if the
-	// input bytes represent an orbiter payload.
-	ParsePayload(core.ProtocolID, []byte) (bool, *core.Payload, error)
-	// BeforeTransferHook allows to execute logic BEFORE completing
-	// the cross-chain transfer.
-	BeforeTransferHook(context.Context, core.OrbitID, *core.Payload) error
-	// AfterTransferHook allows to execute logic AFTER completing
-	// the cross-chain transfer.
-	AfterTransferHook(
-		context.Context,
-		core.OrbitID,
-		*core.Payload,
-	) (*types.TransferAttributes, error)
-	// ProcessPayload processes the parsed payload.
-	ProcessPayload(context.Context, *types.TransferAttributes, *core.Payload) error
+// PayloadDispatcher defines the expected behavior from a type
+// to be used as a payload dispatcher.
+type PayloadDispatcher interface {
+	// Dispatch the payload component to the proper handler.
+	DispatchPayload(context.Context, *TransferAttributes, *core.Payload) error
 }

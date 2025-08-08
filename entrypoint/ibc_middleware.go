@@ -28,8 +28,8 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 
+	"orbiter.dev/types"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 )
 
 var _ porttypes.Middleware = &IBCMiddleware{}
@@ -39,13 +39,13 @@ type IBCMiddleware struct {
 	porttypes.IBCModule
 	porttypes.ICS4Wrapper
 
-	payloadAdapter interfaces.PayloadAdapter
+	payloadAdapter types.PayloadAdapter
 }
 
 func NewIBCMiddleware(
 	app porttypes.IBCModule,
 	ics4Wrapper porttypes.ICS4Wrapper,
-	payloadAdapter interfaces.PayloadAdapter,
+	payloadAdapter types.PayloadAdapter,
 ) IBCMiddleware {
 	if app == nil {
 		panic(errors.New("IBC module cannot be nil"))

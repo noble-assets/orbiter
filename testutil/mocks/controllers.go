@@ -26,10 +26,9 @@ import (
 
 	"orbiter.dev/types"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.ControllerForwarding = &ForwardingController{}
+var _ types.ControllerForwarding = &ForwardingController{}
 
 type ForwardingController struct {
 	Id core.ProtocolID
@@ -54,7 +53,7 @@ func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.Forwar
 	return nil
 }
 
-var _ interfaces.ControllerAction = &NoOpActionController{}
+var _ types.ControllerAction = &NoOpActionController{}
 
 type NoOpActionController struct {
 	Id core.ActionID
@@ -79,7 +78,7 @@ func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.Action
 	return nil
 }
 
-var _ interfaces.ControllerAdapter = &NoOpAdapterController{}
+var _ types.ControllerAdapter = &NoOpAdapterController{}
 
 type NoOpAdapterController struct {
 	Id core.ProtocolID

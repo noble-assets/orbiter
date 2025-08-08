@@ -34,10 +34,9 @@ import (
 	"orbiter.dev/types"
 	actiontypes "orbiter.dev/types/controller/action"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.ControllerAction = &FeeController{}
+var _ types.ControllerAction = &FeeController{}
 
 // FeeController is the controller to execute
 // fee payment action.

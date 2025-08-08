@@ -29,11 +29,11 @@ import (
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
 	"orbiter.dev/controller"
+	"orbiter.dev/types"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.ControllerAdapter = &IBCAdapter{}
+var _ types.ControllerAdapter = &IBCAdapter{}
 
 // IBCAdapter is the type component in charge of adapting the
 // memo of an IBC ICS20 transfer to the common payload type
@@ -86,7 +86,7 @@ func (a *IBCAdapter) AfterTransferHook(context.Context, *core.Payload) error {
 	return nil
 }
 
-var _ interfaces.PayloadParser = &IBCParser{}
+var _ types.PayloadParser = &IBCParser{}
 
 type IBCParser struct {
 	JSONParser

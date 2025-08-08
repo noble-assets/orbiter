@@ -18,14 +18,13 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package interfaces
+package types
 
 import (
 	"context"
 
 	"cosmossdk.io/log"
 
-	"orbiter.dev/types"
 	"orbiter.dev/types/core"
 	"orbiter.dev/types/router"
 )
@@ -38,7 +37,7 @@ type Loggable interface {
 // have to process forwardings.
 type Forwarder interface {
 	Loggable
-	PacketHandler[*types.ForwardingPacket]
+	PacketHandler[*ForwardingPacket]
 	router.RouterProvider[core.ProtocolID, ControllerForwarding]
 	Pause(context.Context, core.ProtocolID, []string) error
 	Unpause(context.Context, core.ProtocolID, []string) error
@@ -48,7 +47,7 @@ type Forwarder interface {
 // have to process pre-actios.
 type Executor interface {
 	Loggable
-	PacketHandler[*types.ActionPacket]
+	PacketHandler[*ActionPacket]
 	router.RouterProvider[core.ActionID, ControllerAction]
 	Pause(context.Context, core.ActionID) error
 	Unpause(context.Context, core.ActionID) error

@@ -32,10 +32,9 @@ import (
 	"orbiter.dev/types"
 	forwardingtypes "orbiter.dev/types/controller/forwarding"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.ControllerForwarding = &CCTPController{}
+var _ types.ControllerForwarding = &CCTPController{}
 
 // CCTPController is the forwarding controller to perform
 // a CCTP transfer.

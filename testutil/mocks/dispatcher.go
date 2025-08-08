@@ -31,12 +31,11 @@ import (
 
 	"orbiter.dev/keeper/component"
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
 )
 
 var (
-	_ interfaces.PacketHandler[*types.ActionPacket]     = &ActionsHandler{}
-	_ interfaces.PacketHandler[*types.ForwardingPacket] = &ForwardingHandler{}
+	_ types.PacketHandler[*types.ActionPacket]     = &ActionsHandler{}
+	_ types.PacketHandler[*types.ForwardingPacket] = &ForwardingHandler{}
 )
 
 type (

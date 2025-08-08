@@ -33,20 +33,19 @@ import (
 	"orbiter.dev/types"
 	adaptertypes "orbiter.dev/types/component/adapter"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 	"orbiter.dev/types/router"
 )
 
-type AdapterRouter = *router.Router[core.ProtocolID, interfaces.ControllerAdapter]
+type AdapterRouter = *router.Router[core.ProtocolID, types.ControllerAdapter]
 
-var _ interfaces.Adapter = &Adapter{}
+var _ types.Adapter = &Adapter{}
 
 type Adapter struct {
 	logger log.Logger
 	// router is an adapter controllers router.
 	router     AdapterRouter
 	bankKeeper types.BankKeeperAdapter
-	dispatcher interfaces.PayloadDispatcher
+	dispatcher types.PayloadDispatcher
 	params     collections.Item[adaptertypes.Params]
 }
 
@@ -55,7 +54,7 @@ func NewAdapter(
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
 	bankKeeper types.BankKeeperAdapter,
-	dispatcher interfaces.PayloadDispatcher,
+	dispatcher types.PayloadDispatcher,
 ) (*Adapter, error) {
 	if cdc == nil {
 		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
@@ -69,7 +68,7 @@ func NewAdapter(
 
 	adaptersKeeper := Adapter{
 		logger:     logger.With(core.ComponentPrefix, core.AdaptersComponentName),
-		router:     router.New[core.ProtocolID, interfaces.ControllerAdapter](),
+		router:     router.New[core.ProtocolID, types.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
 		params: collections.NewItem(

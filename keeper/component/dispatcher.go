@@ -31,10 +31,9 @@ import (
 	"orbiter.dev/types"
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
 	"orbiter.dev/types/core"
-	"orbiter.dev/types/interfaces"
 )
 
-var _ interfaces.PayloadDispatcher = &Dispatcher{}
+var _ types.PayloadDispatcher = &Dispatcher{}
 
 // Dispatcher is a component used to orchestrate the
 // dispatch of an incoming orbiter packet. The dispatcher
@@ -42,8 +41,8 @@ var _ interfaces.PayloadDispatcher = &Dispatcher{}
 type Dispatcher struct {
 	logger log.Logger
 	// Packet elements handlers
-	ForwardingHandler interfaces.PacketHandler[*types.ForwardingPacket]
-	ActionHandler     interfaces.PacketHandler[*types.ActionPacket]
+	ForwardingHandler types.PacketHandler[*types.ForwardingPacket]
+	ActionHandler     types.PacketHandler[*types.ActionPacket]
 	// Stats
 	DispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, dispatchertypes.AmountDispatched, DispatchedAmountsIndexes]
 	DispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
@@ -55,8 +54,8 @@ func NewDispatcher(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-	forwardingHandler interfaces.PacketHandler[*types.ForwardingPacket],
-	actionHandler interfaces.PacketHandler[*types.ActionPacket],
+	forwardingHandler types.PacketHandler[*types.ForwardingPacket],
+	actionHandler types.PacketHandler[*types.ActionPacket],
 ) (*Dispatcher, error) {
 	if cdc == nil {
 		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
