@@ -26,12 +26,12 @@ import (
 	"orbiter.dev/types"
 )
 
-func (c *Executor) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
-	return c.PausedControllers.Has(ctx, int32(id))
+func (e *Executor) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
+	return e.PausedControllers.Has(ctx, int32(id))
 }
 
-func (c *Executor) SetPausedController(ctx context.Context, id types.ActionID) error {
-	paused, err := c.IsControllerPaused(ctx, id)
+func (e *Executor) SetPausedController(ctx context.Context, id types.ActionID) error {
+	paused, err := e.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -39,11 +39,11 @@ func (c *Executor) SetPausedController(ctx context.Context, id types.ActionID) e
 		return nil
 	}
 
-	return c.PausedControllers.Set(ctx, int32(id))
+	return e.PausedControllers.Set(ctx, int32(id))
 }
 
-func (c *Executor) SetUnpausedController(ctx context.Context, id types.ActionID) error {
-	paused, err := c.IsControllerPaused(ctx, id)
+func (e *Executor) SetUnpausedController(ctx context.Context, id types.ActionID) error {
+	paused, err := e.IsControllerPaused(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -51,5 +51,5 @@ func (c *Executor) SetUnpausedController(ctx context.Context, id types.ActionID)
 		return nil
 	}
 
-	return c.PausedControllers.Remove(ctx, int32(id))
+	return e.PausedControllers.Remove(ctx, int32(id))
 }

@@ -107,12 +107,16 @@ func (a *Adapter) Router() AdapterRouter {
 	return a.router
 }
 
-func (a *Adapter) SetRouter(ar AdapterRouter) error {
+func (a *Adapter) SetRouter(r AdapterRouter) error {
+	if r == nil {
+		return types.ErrNilPointer.Wrap("router cannot be nil")
+	}
+
 	if a.router != nil && a.router.Sealed() {
 		return errors.New("cannot reset a sealed router")
 	}
 
-	a.router = ar
+	a.router = r
 	a.router.Seal()
 
 	return nil
