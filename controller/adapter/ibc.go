@@ -29,7 +29,6 @@ import (
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
 	"orbiter.dev/controller"
-	"orbiter.dev/types"
 	"orbiter.dev/types/core"
 	"orbiter.dev/types/interfaces"
 )
@@ -49,7 +48,7 @@ type IBCAdapter struct {
 // NewIBCAdapter returns a reference to a new IBCAdapter instance.
 func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	id := core.PROTOCOL_IBC
@@ -64,7 +63,7 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	}
 
 	return &IBCAdapter{
-		logger:         logger.With(types.AdapterControllerName, baseController.Name()),
+		logger:         logger.With(core.AdapterControllerName, baseController.Name()),
 		BaseController: baseController,
 		parser:         parser,
 	}, nil
@@ -96,7 +95,7 @@ type IBCParser struct {
 // NewIBCParser returns a new instance of an IBC parser.
 func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 	if cdc == nil {
-		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 
 	jsonParser, err := NewJSONParser(cdc)
@@ -123,7 +122,7 @@ func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *core.Payload, error) 
 		return false, nil, nil //nolint:nilerr
 	}
 
-	if data.GetReceiver() != types.ModuleAddress.String() {
+	if data.GetReceiver() != core.ModuleAddress.String() {
 		return false, nil, nil
 	}
 

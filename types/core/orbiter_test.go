@@ -28,7 +28,6 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
 	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types"
 	"orbiter.dev/types/core"
 )
 
@@ -73,7 +72,7 @@ func TestNewForwarding(t *testing.T) {
 			id:                 core.PROTOCOL_UNSUPPORTED,
 			attributes:         &testdata.TestForwardingAttr{Planet: "earth"},
 			passthroughPayload: []byte("test"),
-			expErr:             types.ErrIDNotSupported.Error(),
+			expErr:             core.ErrIDNotSupported.Error(),
 		},
 	}
 
@@ -108,7 +107,7 @@ func TestValidateForwading(t *testing.T) {
 			forwarding: &core.Forwarding{
 				ProtocolId: core.PROTOCOL_UNSUPPORTED,
 			},
-			expErr: types.ErrIDNotSupported.Error(),
+			expErr: core.ErrIDNotSupported.Error(),
 		},
 		{
 			name:       "error - with nil forwarding",

@@ -55,7 +55,7 @@ func NewFeeController(
 	bankKeeper actiontypes.BankKeeperFee,
 ) (*FeeController, error) {
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	id := core.ACTION_FEE
@@ -76,10 +76,10 @@ func NewFeeController(
 // Validate performs basic validation for the fee controller.
 func (c *FeeController) Validate() error {
 	if c.BaseController == nil {
-		return types.ErrNilPointer.Wrap("base controller cannot be nil")
+		return core.ErrNilPointer.Wrap("base controller cannot be nil")
 	}
 	if c.BankKeeper == nil {
-		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
+		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
 
 	return nil
@@ -106,12 +106,12 @@ func (c *FeeController) HandlePacket(
 		return err
 	}
 	if feesToDistribute.Total.GTE(transferAttr.DestinationAmount()) {
-		return types.ErrInvalidAttributes.Wrap("total fees equal or exceed transfer amount")
+		return core.ErrInvalidAttributes.Wrap("total fees equal or exceed transfer amount")
 	}
 
 	err = c.executeAction(ctx, feesToDistribute.Values)
 	if err != nil {
-		return types.ErrControllerExecution.Wrapf(
+		return core.ErrControllerExecution.Wrapf(
 			"an error occurred executing the action %s",
 			err.Error(),
 		)
@@ -129,11 +129,11 @@ func (c *FeeController) HandlePacket(
 func (c *FeeController) GetAttributes(action *core.Action) (*actiontypes.FeeAttributes, error) {
 	attr, err := c.extractAttributes(action)
 	if err != nil {
-		return nil, types.ErrInvalidAttributes.Wrap(err.Error())
+		return nil, core.ErrInvalidAttributes.Wrap(err.Error())
 	}
 	err = c.ValidateAttributes(attr)
 	if err != nil {
-		return nil, types.ErrValidation.Wrap(err.Error())
+		return nil, core.ErrValidation.Wrap(err.Error())
 	}
 
 	return attr, nil
@@ -143,7 +143,7 @@ func (c *FeeController) GetAttributes(action *core.Action) (*actiontypes.FeeAttr
 // not valid.
 func (c *FeeController) ValidateAttributes(attr *actiontypes.FeeAttributes) error {
 	if attr == nil {
-		return types.ErrNilPointer.Wrap("fee attributes")
+		return core.ErrNilPointer.Wrap("fee attributes")
 	}
 	for _, feeInfo := range attr.FeesInfo {
 		if err := c.ValidateFee(feeInfo); err != nil {
@@ -158,13 +158,13 @@ func (c *FeeController) ValidateAttributes(attr *actiontypes.FeeAttributes) erro
 // not valid.
 func (c *FeeController) ValidateFee(feeInfo *actiontypes.FeeInfo) error {
 	if feeInfo == nil {
-		return types.ErrNilPointer.Wrap("fee info")
+		return core.ErrNilPointer.Wrap("fee info")
 	}
 	if feeInfo.BasisPoints == 0 {
 		return errors.New("fee basis point must be greater than zero")
 	}
-	if feeInfo.BasisPoints > types.BPSNormalizer {
-		return fmt.Errorf("fee basis point cannot be higher than %d", types.BPSNormalizer)
+	if feeInfo.BasisPoints > core.BPSNormalizer {
+		return fmt.Errorf("fee basis point cannot be higher than %d", core.BPSNormalizer)
 	}
 
 	_, err := sdk.AccAddressFromBech32(feeInfo.Recipient)
@@ -211,7 +211,7 @@ func (c *FeeController) executeAction(
 	fees []actiontypes.RecipientAmount,
 ) error {
 	for _, fee := range fees {
-		err := c.BankKeeper.SendCoins(ctx, types.ModuleAddress, fee.Recipient, fee.Amount)
+		err := c.BankKeeper.SendCoins(ctx, core.ModuleAddress, fee.Recipient, fee.Amount)
 		if err != nil {
 			return err
 		}
@@ -226,7 +226,7 @@ func (c *FeeController) extractAttributes(
 	action *core.Action,
 ) (*actiontypes.FeeAttributes, error) {
 	if action == nil {
-		return nil, types.ErrNilPointer.Wrap("received nil fee attributes")
+		return nil, core.ErrNilPointer.Wrap("received nil fee attributes")
 	}
 	attr, err := action.CachedAttributes()
 	if err != nil {
@@ -254,5 +254,5 @@ func ComputeFeeAmount(amount math.Int, basisPoints uint64) (math.Int, error) {
 		return math.ZeroInt(), err
 	}
 
-	return fee.QuoRaw(types.BPSNormalizer), nil
+	return fee.QuoRaw(core.BPSNormalizer), nil
 }

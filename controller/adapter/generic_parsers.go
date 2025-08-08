@@ -54,27 +54,27 @@ func (p *JSONParser) Parse(jsonString string) (*core.Payload, error) {
 	var jsonData map[string]any
 	err := json.Unmarshal([]byte(jsonString), &jsonData)
 	if err != nil {
-		return nil, types.ErrParsingPayload.Wrapf("not a valid json string: %s", err.Error())
+		return nil, core.ErrParsingPayload.Wrapf("not a valid json string: %s", err.Error())
 	}
 
 	if len(jsonData) != 1 {
-		return nil, types.ErrParsingPayload.Wrapf(
+		return nil, core.ErrParsingPayload.Wrapf(
 			"json data contains multiple root level keys, accepted only %s",
-			types.OrbiterPrefix,
+			core.OrbiterPrefix,
 		)
 	}
 
-	if jsonData[types.OrbiterPrefix] == nil {
-		return nil, types.ErrParsingPayload.Wrapf(
+	if jsonData[core.OrbiterPrefix] == nil {
+		return nil, core.ErrParsingPayload.Wrapf(
 			"json does not contain orbiter prefix: %s",
-			types.OrbiterPrefix,
+			core.OrbiterPrefix,
 		)
 	}
 
 	pw := core.PayloadWrapper{}
 	err = types.UnmarshalJSON(p.cdc, []byte(jsonString), &pw)
 	if err != nil {
-		return nil, types.ErrParsingPayload.Wrapf(
+		return nil, core.ErrParsingPayload.Wrapf(
 			"failed to cast json string into Payload: %s",
 			err.Error(),
 		)

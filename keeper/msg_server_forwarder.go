@@ -29,7 +29,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"orbiter.dev/controller/forwarding"
-	"orbiter.dev/types"
 	"orbiter.dev/types/component/forwarder"
 	"orbiter.dev/types/core"
 )
@@ -59,7 +58,7 @@ func (s msgServerForwarder) PauseProtocol(
 	f := s.Forwarder()
 
 	if err := f.Pause(ctx, msg.ProtocolId, nil); err != nil {
-		return nil, types.ErrUnableToPause.Wrapf(
+		return nil, core.ErrUnableToPause.Wrapf(
 			"protocol: %s", err.Error(),
 		)
 	}
@@ -79,7 +78,7 @@ func (s msgServerForwarder) UnpauseProtocol(
 	f := s.Forwarder()
 
 	if err := f.Unpause(ctx, msg.ProtocolId, nil); err != nil {
-		return nil, types.ErrUnableToUnpause.Wrapf(
+		return nil, core.ErrUnableToUnpause.Wrapf(
 			"protocol: %s", err.Error(),
 		)
 	}
@@ -99,7 +98,7 @@ func (s msgServerForwarder) PauseCounterparties(
 	f := s.Forwarder()
 
 	if err := f.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
-		return nil, types.ErrUnableToPause.Wrapf(
+		return nil, core.ErrUnableToPause.Wrapf(
 			"counterparties: %s", err.Error(),
 		)
 	}
@@ -119,7 +118,7 @@ func (s msgServerForwarder) UnpauseCounterparties(
 	f := s.Forwarder()
 
 	if err := f.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
-		return nil, types.ErrUnableToUnpause.Wrapf(
+		return nil, core.ErrUnableToUnpause.Wrapf(
 			"counterparties: %s", err.Error(),
 		)
 	}
@@ -153,7 +152,7 @@ func (s msgServerForwarder) ReplaceDepositForBurn(
 	handler := cctpController.GetHandler()
 
 	msgReplace := cctptypes.MsgReplaceDepositForBurn{
-		From:                 types.ModuleAddress.String(),
+		From:                 core.ModuleAddress.String(),
 		OriginalMessage:      msg.OriginalMessage,
 		OriginalAttestation:  msg.OriginalAttestation,
 		NewDestinationCaller: msg.NewDestinationCaller,

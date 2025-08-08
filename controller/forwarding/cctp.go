@@ -53,7 +53,7 @@ func NewCCTPController(
 	msgServer forwardingtypes.CCTPMsgServer,
 ) (*CCTPController, error) {
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	id := core.PROTOCOL_CCTP
@@ -68,7 +68,7 @@ func NewCCTPController(
 	}
 
 	cctpController := CCTPController{
-		logger:         logger.With(types.ForwardingControllerName, baseController.Name()),
+		logger:         logger.With(core.ForwardingControllerName, baseController.Name()),
 		BaseController: baseController,
 		handler:        handler,
 	}
@@ -80,13 +80,13 @@ func NewCCTPController(
 // is not valid.
 func (c *CCTPController) Validate() error {
 	if c.logger == nil {
-		return types.ErrNilPointer.Wrap("logger")
+		return core.ErrNilPointer.Wrap("logger")
 	}
 	if c.BaseController == nil {
-		return types.ErrNilPointer.Wrap("base controller")
+		return core.ErrNilPointer.Wrap("base controller")
 	}
 	if c.handler == nil {
-		return types.ErrNilPointer.Wrap("CCTP handler")
+		return core.ErrNilPointer.Wrap("CCTP handler")
 	}
 
 	return nil
@@ -96,17 +96,17 @@ func (c *CCTPController) Validate() error {
 func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.ForwardingPacket) error {
 	attr, err := c.ExtractAttributes(packet.Forwarding)
 	if err != nil {
-		return types.ErrInvalidAttributes.Wrap(err.Error())
+		return core.ErrInvalidAttributes.Wrap(err.Error())
 	}
 
 	err = c.ValidateAttributes(attr)
 	if err != nil {
-		return types.ErrValidation.Wrap(err.Error())
+		return core.ErrValidation.Wrap(err.Error())
 	}
 
 	err = c.executeForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
-		return types.ErrControllerExecution.Wrapf(
+		return core.ErrControllerExecution.Wrapf(
 			"an error occurred executing the forwarding: %s",
 			err.Error(),
 		)
@@ -156,7 +156,7 @@ func (c *CCTPController) executeForwarding(
 	cctpAttr *forwardingtypes.CCTPAttributes,
 ) error {
 	msg := cctptypes.MsgDepositForBurnWithCaller{
-		From:              types.ModuleAddress.String(),
+		From:              core.ModuleAddress.String(),
 		Amount:            transferAttr.DestinationAmount(),
 		DestinationDomain: cctpAttr.DestinationDomain,
 		MintRecipient:     cctpAttr.MintRecipient,
@@ -192,7 +192,7 @@ func NewCCTPHandler(
 // validate returns an error if the CCTP handler instance is not valid.
 func (h *cctpHandler) validate() error {
 	if h.CCTPMsgServer == nil {
-		return types.ErrNilPointer.Wrap("CCTP message server cannot be nil")
+		return core.ErrNilPointer.Wrap("CCTP message server cannot be nil")
 	}
 
 	return nil

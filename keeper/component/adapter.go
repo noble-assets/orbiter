@@ -58,24 +58,24 @@ func NewAdapter(
 	dispatcher interfaces.PayloadDispatcher,
 ) (*Adapter, error) {
 	if cdc == nil {
-		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 	if sb == nil {
-		return nil, types.ErrNilPointer.Wrap("schema builder cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("schema builder cannot be nil")
 	}
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	adaptersKeeper := Adapter{
-		logger:     logger.With(types.ComponentPrefix, types.AdaptersComponentName),
+		logger:     logger.With(core.ComponentPrefix, core.AdaptersComponentName),
 		router:     router.New[core.ProtocolID, interfaces.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
 		params: collections.NewItem(
 			sb,
-			types.AdapterParamsPrefix,
-			types.AdapterParamsName,
+			core.AdapterParamsPrefix,
+			core.AdapterParamsName,
 			codec.CollValue[adaptertypes.Params](cdc),
 		),
 	}
@@ -86,16 +86,16 @@ func NewAdapter(
 // Validate returns an error if the component instance is not valid.
 func (a *Adapter) Validate() error {
 	if a.logger == nil {
-		return types.ErrNilPointer.Wrap("logger cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if a.bankKeeper == nil {
-		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
+		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
 	if a.dispatcher == nil {
-		return types.ErrNilPointer.Wrap("dispatcher cannot be nil")
+		return core.ErrNilPointer.Wrap("dispatcher cannot be nil")
 	}
 	if a.router == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	return nil
@@ -111,7 +111,7 @@ func (a *Adapter) Router() AdapterRouter {
 
 func (a *Adapter) SetRouter(r AdapterRouter) error {
 	if r == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	if a.router != nil && a.router.Sealed() {
@@ -174,9 +174,9 @@ func (a *Adapter) AfterTransferHook(
 		return nil, fmt.Errorf("after transfer hook failed: %w", err)
 	}
 
-	balances := a.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
+	balances := a.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
 	if err := a.validateModuleBalance(balances); err != nil {
-		return nil, types.ErrValidation.Wrap(err.Error())
+		return nil, core.ErrValidation.Wrap(err.Error())
 	}
 
 	transferAttr, err := types.NewTransferAttributes(
@@ -211,7 +211,7 @@ func (a *Adapter) CheckPassthroughPayloadSize(
 
 	maxSize := params.MaxPassthroughPayloadSize
 	if uint64(len(passthroughPayload)) > uint64(maxSize) {
-		return types.ErrValidation.Wrapf(
+		return core.ErrValidation.Wrapf(
 			"passthrough payload size %d > max allowed %d bytes",
 			len(passthroughPayload),
 			maxSize,
@@ -243,12 +243,12 @@ func (a *Adapter) commonBeforeTransferHook(
 // a sub-account. This method allows to start a forwarding with the module holding
 // only the coins the received transaction is transferring.
 func (a *Adapter) clearOrbiterBalances(ctx context.Context) error {
-	coins := a.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
+	coins := a.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
 	if coins.IsZero() {
 		return nil
 	}
 
-	return a.bankKeeper.SendCoins(ctx, types.ModuleAddress, types.DustCollectorAddress, coins)
+	return a.bankKeeper.SendCoins(ctx, core.ModuleAddress, core.DustCollectorAddress, coins)
 }
 
 func (a *Adapter) validateModuleBalance(coins sdk.Coins) error {

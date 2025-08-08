@@ -56,7 +56,7 @@ func TestNewCCTPController(t *testing.T) {
 		{
 			name:     "error - when no CCTP server is provided",
 			logger:   log.NewNopLogger(),
-			expError: types.ErrNilPointer.Error(),
+			expError: core.ErrNilPointer.Error(),
 		},
 	}
 
@@ -128,7 +128,7 @@ func TestHandlePacket(t *testing.T) {
 					TransferAttributes: transferAttr,
 				}
 			},
-			expError: types.ErrControllerExecution.Error(),
+			expError: core.ErrControllerExecution.Error(),
 		},
 	}
 

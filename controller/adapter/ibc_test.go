@@ -32,7 +32,6 @@ import (
 	"orbiter.dev/testutil"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types"
 	"orbiter.dev/types/core"
 )
 
@@ -87,7 +86,7 @@ func TestParsePayload(t *testing.T) {
 			name: "error - when memo is not a valid json",
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
-				types.ModuleAddress.String(),
+				core.ModuleAddress.String(),
 				"not json memo",
 			),
 			expectIsOrbiter: true,
@@ -98,7 +97,7 @@ func TestParsePayload(t *testing.T) {
 			name: "error - orbiter payload with nil orbit attributes",
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
-				types.ModuleAddress.String(),
+				core.ModuleAddress.String(),
 				`{"orbiter": {"forwarding": {"protocol_id": 1, "attributes": null}}}`,
 			),
 			expectIsOrbiter: true,
@@ -117,7 +116,7 @@ func TestParsePayload(t *testing.T) {
 			},
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
-				types.ModuleAddress.String(),
+				core.ModuleAddress.String(),
 				testutil.CreateValidOrbiterPayload(),
 			),
 			expectIsOrbiter: true,
@@ -145,7 +144,7 @@ func TestParsePayload(t *testing.T) {
 			},
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
-				types.ModuleAddress.String(),
+				core.ModuleAddress.String(),
 				testutil.CreateValidOrbiterPayloadWithActions(),
 			),
 			expectIsOrbiter: true,

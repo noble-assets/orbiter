@@ -31,7 +31,6 @@ import (
 	adapterctrl "orbiter.dev/controller/adapter"
 	"orbiter.dev/testutil"
 	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types"
 	"orbiter.dev/types/core"
 )
 
@@ -66,35 +65,35 @@ func TestJSONParser_Parse(t *testing.T) {
 		{
 			name: "error - when orbiter prefix exists but is null",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": null}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%s": null}`, core.OrbiterPrefix)
 			},
 			expErr: "json does not contain orbiter prefix",
 		},
 		{
 			name: "error - when orbiter prefix is not a map",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": "string_value"}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%s": "string_value"}`, core.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
 			name: "error - when orbiter prefix is an array",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": ["array", "value"]}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%s": ["array", "value"]}`, core.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
 			name: "error - when orbiter prefix is a number",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": 123}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%s": 123}`, core.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
 		{
 			name: "error - when orbiter prefix is a boolean",
 			orbiterPayload: func() string {
-				return fmt.Sprintf(`{"%s": true}`, types.OrbiterPrefix)
+				return fmt.Sprintf(`{"%s": true}`, core.OrbiterPrefix)
 			},
 			expErr: "failed to cast json string into Payload",
 		},
@@ -103,7 +102,7 @@ func TestJSONParser_Parse(t *testing.T) {
 			orbiterPayload: func() string {
 				return fmt.Sprintf(
 					`{"%s": {"invalid_field": "invalid_value"}}`,
-					types.OrbiterPrefix,
+					core.OrbiterPrefix,
 				)
 			},
 			expErr: "failed to cast json string into Payload",

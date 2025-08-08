@@ -220,7 +220,7 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			feesInfo: []*action.FeeInfo{
 				{
 					Recipient:   recipient1.String(),
-					BasisPoints: types.BPSNormalizer, // 100%
+					BasisPoints: core.BPSNormalizer, // 100%
 				},
 			},
 			expFeeToDistribute: &action.FeesToDistribute{
@@ -322,7 +322,7 @@ func TestValidateAttributesFeeController(t *testing.T) {
 		{
 			name:       "error - nil attributes",
 			attributes: nil,
-			expErr:     types.ErrNilPointer.Error(),
+			expErr:     core.ErrNilPointer.Error(),
 		},
 		{
 			name: "success - empty fee info slice",
@@ -370,7 +370,7 @@ func TestValidateAttributesFeeController(t *testing.T) {
 					nil,
 				},
 			},
-			expErr: types.ErrNilPointer.Error(),
+			expErr: core.ErrNilPointer.Error(),
 		},
 		{
 			name: "error - zero basis points",
@@ -390,7 +390,7 @@ func TestValidateAttributesFeeController(t *testing.T) {
 				FeesInfo: []*action.FeeInfo{
 					{
 						Recipient:   recipient.String(),
-						BasisPoints: types.BPSNormalizer + 1,
+						BasisPoints: core.BPSNormalizer + 1,
 					},
 				},
 			},
@@ -446,7 +446,7 @@ func TestValidateAttributesFeeController(t *testing.T) {
 				FeesInfo: []*action.FeeInfo{
 					{
 						Recipient:   recipient.String(),
-						BasisPoints: types.BPSNormalizer,
+						BasisPoints: core.BPSNormalizer,
 					},
 				},
 			},
@@ -480,7 +480,7 @@ func TestValidateFee(t *testing.T) {
 	}{
 		{
 			name:   "error - nil fee info",
-			expErr: types.ErrNilPointer.Error(),
+			expErr: core.ErrNilPointer.Error(),
 		},
 		{
 			name: "error - zero basis points",
@@ -494,7 +494,7 @@ func TestValidateFee(t *testing.T) {
 			name: "error - over maximum basis points",
 			feeInfo: &action.FeeInfo{
 				Recipient:   "",
-				BasisPoints: types.BPSNormalizer + 1,
+				BasisPoints: core.BPSNormalizer + 1,
 			},
 			expErr: "cannot be higher",
 		},
@@ -592,7 +592,7 @@ func TestHandlePacketFeeController(t *testing.T) {
 		{
 			name: "success - valid packet",
 			setup: func(m *mocks.Mocks) {
-				m.BankKeeper.Balances[types.ModuleAddress.String()] = sdk.NewCoins(
+				m.BankKeeper.Balances[core.ModuleAddress.String()] = sdk.NewCoins(
 					sdk.NewInt64Coin("uusdc", 1_000_000_000),
 				)
 			},

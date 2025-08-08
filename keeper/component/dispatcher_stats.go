@@ -38,10 +38,10 @@ func (d *Dispatcher) UpdateStats(
 	forwarding *core.Forwarding,
 ) error {
 	if transferAttr == nil {
-		return types.ErrNilPointer.Wrap("received nil transfer attributes")
+		return core.ErrNilPointer.Wrap("received nil transfer attributes")
 	}
 	if forwarding == nil {
-		return types.ErrNilPointer.Wrap("received nil forwarding")
+		return core.ErrNilPointer.Wrap("received nil forwarding")
 	}
 
 	attr, err := forwarding.CachedAttributes()
@@ -159,7 +159,7 @@ func (d *Dispatcher) BuildDenomDispatchedAmounts(
 	transferAttributes *types.TransferAttributes,
 ) ([]denomDispatchedAmount, error) {
 	if transferAttributes == nil {
-		return nil, types.ErrNilPointer.Wrap("received nil transfer attributes")
+		return nil, core.ErrNilPointer.Wrap("received nil transfer attributes")
 	}
 	sourceDenom := transferAttributes.SourceDenom()
 	sourceAmount := transferAttributes.SourceAmount()

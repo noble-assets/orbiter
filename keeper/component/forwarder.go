@@ -58,24 +58,24 @@ func NewForwarder(
 	bankKeeper types.BankKeeperForwarder,
 ) (*Forwarder, error) {
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	forwarder := Forwarder{
-		logger:     logger.With(types.ComponentPrefix, types.ForwardingComponentName),
+		logger:     logger.With(core.ComponentPrefix, core.ForwardingComponentName),
 		bankKeeper: bankKeeper,
 
 		router: router.New[core.ProtocolID, interfaces.ControllerForwarding](),
 		PausedForwardings: collections.NewKeySet(
 			sb,
-			types.PausedForwardingPrefix,
-			types.PausedForwardingName,
+			core.PausedForwardingPrefix,
+			core.PausedForwardingName,
 			collections.PairKeyCodec(collections.Int32Key, collections.StringKey),
 		),
 		PausedControllers: collections.NewKeySet(
 			sb,
-			types.PausedForwardingControllersPrefix,
-			types.PausedForwardingControllersName,
+			core.PausedForwardingControllersPrefix,
+			core.PausedForwardingControllersName,
 			collections.Int32Key,
 		),
 	}
@@ -85,13 +85,13 @@ func NewForwarder(
 
 func (f *Forwarder) Validate() error {
 	if f.logger == nil {
-		return types.ErrNilPointer.Wrap("logger cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if f.bankKeeper == nil {
-		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
+		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
 	if f.router == nil {
-		return types.ErrNilPointer.Wrap("controllers router cannot be nil")
+		return core.ErrNilPointer.Wrap("controllers router cannot be nil")
 	}
 
 	return nil
@@ -107,7 +107,7 @@ func (f *Forwarder) Router() ForwardingRouter {
 
 func (f *Forwarder) SetRouter(r ForwardingRouter) error {
 	if r == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	if f.router != nil && f.router.Sealed() {
@@ -150,7 +150,7 @@ func (f *Forwarder) HandlePacket(
 	packet *types.ForwardingPacket,
 ) error {
 	if err := f.validatePacket(ctx, packet); err != nil {
-		return types.ErrValidation.Wrap(err.Error())
+		return core.ErrValidation.Wrap(err.Error())
 	}
 
 	controller, found := f.router.Route(packet.Forwarding.ProtocolID())
@@ -243,7 +243,7 @@ func (f *Forwarder) validateInitialConditions(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
-	balances := f.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
+	balances := f.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
 
 	if balances.Len() != 1 {
 		return fmt.Errorf("expected exactly 1 balance, got %d", balances.Len())

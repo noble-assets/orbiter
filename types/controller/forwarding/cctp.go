@@ -24,7 +24,6 @@ import (
 	"errors"
 	"fmt"
 
-	"orbiter.dev/types"
 	"orbiter.dev/types/core"
 )
 
@@ -53,10 +52,10 @@ func NewCCTPAttributes(
 // Validate returns an error if the CCTP attributes are not valid.
 func (a *CCTPAttributes) Validate() error {
 	if a == nil {
-		return types.ErrNilPointer.Wrap("cctp attributes")
+		return core.ErrNilPointer.Wrap("cctp attributes")
 	}
 
-	if a.DestinationDomain == types.CCTPNobleDomain {
+	if a.DestinationDomain == core.CCTPNobleDomain {
 		return errors.New("destination domain cannot be Noble")
 	}
 	if len(a.MintRecipient) == 0 {

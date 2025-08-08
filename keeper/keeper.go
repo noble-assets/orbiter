@@ -32,6 +32,7 @@ import (
 
 	"orbiter.dev/keeper/component"
 	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/interfaces"
 )
 
@@ -68,7 +69,7 @@ func NewKeeper(
 
 	k := Keeper{
 		cdc:       cdc,
-		logger:    logger.With("module", fmt.Sprintf("x/%s", types.ModuleName)),
+		logger:    logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
 		authority: authority,
 	}
 
@@ -196,7 +197,7 @@ func (k *Keeper) SetAdapterControllers(controllers ...interfaces.ControllerAdapt
 // keeper authority.
 func (k *Keeper) CheckIsAuthority(signer string) error {
 	if k.Authority() != signer {
-		return types.ErrUnauthorized
+		return core.ErrUnauthorized
 	}
 
 	return nil

@@ -70,7 +70,7 @@ func NewTransferAttributes(
 // Validate returns an error if any of the fields is not valid.
 func (a *TransferAttributes) Validate() error {
 	if a == nil {
-		return ErrNilPointer.Wrap("transfer attributes is a nil pointer")
+		return core.ErrNilPointer.Wrap("transfer attributes is a nil pointer")
 	}
 	if err := a.sourceOrbitID.Validate(); err != nil {
 		return err
@@ -197,7 +197,7 @@ func NewForwardingPacket(
 // Validate returns an error if the instance is not valid.
 func (p *ForwardingPacket) Validate() error {
 	if p == nil {
-		return ErrNilPointer.Wrap("forwarding packet is not set")
+		return core.ErrNilPointer.Wrap("forwarding packet is not set")
 	}
 
 	err := p.Forwarding.Validate()
@@ -230,7 +230,7 @@ func NewActionPacket(transferAttr *TransferAttributes, action *core.Action) (*Ac
 // not valid.
 func (p *ActionPacket) Validate() error {
 	if p == nil {
-		return ErrNilPointer.Wrap("packet is not set")
+		return core.ErrNilPointer.Wrap("packet is not set")
 	}
 
 	err := p.Action.Validate()

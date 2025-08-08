@@ -28,7 +28,6 @@ import (
 	"cosmossdk.io/collections/indexes"
 	"cosmossdk.io/math"
 
-	"orbiter.dev/types"
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
 	"orbiter.dev/types/core"
 )
@@ -62,8 +61,8 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 	return DispatchedAmountsIndexes{
 		ByDestinationProtocolID: indexes.NewMulti(
 			sb,
-			types.DispatchedAmountsPrefixByDestinationProtocolID,
-			types.DispatchedAmountsName+"_by_destination_protocol_id",
+			core.DispatchedAmountsPrefixByDestinationProtocolID,
+			core.DispatchedAmountsName+"_by_destination_protocol_id",
 			collections.Uint32Key,
 			primaryKeyCodec,
 			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (uint32, error) {
@@ -77,8 +76,8 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 		),
 		ByDestinationOrbitID: indexes.NewMulti(
 			sb,
-			types.DispatchedAmountsPrefixByDestinationOrbitID,
-			types.DispatchedAmountsName+"_by_destination_orbit_id",
+			core.DispatchedAmountsPrefixByDestinationOrbitID,
+			core.DispatchedAmountsName+"_by_destination_orbit_id",
 			collections.TripleKeyCodec(
 				collections.Uint32Key,
 				collections.StringKey,
@@ -120,8 +119,8 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 	return DispatchedCountsIndexes{
 		ByDestinationProtocolID: indexes.NewMulti(
 			sb,
-			types.DispatchedCountsPrefixByDestinationProtocolID,
-			types.DispatchedCountsName+"_by_destination_protocol_id",
+			core.DispatchedCountsPrefixByDestinationProtocolID,
+			core.DispatchedCountsName+"_by_destination_protocol_id",
 			collections.Uint32Key,
 			primaryKeyCodec,
 			func(pk DispatchedCountsKey, _ uint32) (uint32, error) {

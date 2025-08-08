@@ -28,7 +28,6 @@ import (
 	"orbiter.dev/keeper"
 	"orbiter.dev/testutil"
 	mockorbiter "orbiter.dev/testutil/mocks/orbiter"
-	"orbiter.dev/types"
 	"orbiter.dev/types/component/executor"
 	"orbiter.dev/types/core"
 )
@@ -45,7 +44,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 				Signer:   "noble1invalid",
 				ActionId: core.ACTION_FEE,
 			},
-			expErr: types.ErrUnauthorized.Error(),
+			expErr: core.ErrUnauthorized.Error(),
 		},
 		{
 			name: "success - already paused action",
@@ -95,7 +94,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 				Signer:   "noble1invalid",
 				ActionId: core.ACTION_FEE,
 			},
-			expErr: types.ErrUnauthorized.Error(),
+			expErr: core.ErrUnauthorized.Error(),
 		},
 		{
 			name: "success - already unpaused action",

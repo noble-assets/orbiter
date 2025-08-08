@@ -54,12 +54,12 @@ func NewExecutor(
 	logger log.Logger,
 ) (*Executor, error) {
 	executor := Executor{
-		logger: logger.With(types.ComponentPrefix, types.ActionComponentName),
+		logger: logger.With(core.ComponentPrefix, core.ActionComponentName),
 		router: router.New[core.ActionID, interfaces.ControllerAction](),
 		PausedControllers: collections.NewKeySet(
 			sb,
-			types.PausedActionControllersPrefix,
-			types.PausedActionControllersName,
+			core.PausedActionControllersPrefix,
+			core.PausedActionControllersName,
 			collections.Int32Key,
 		),
 	}
@@ -70,10 +70,10 @@ func NewExecutor(
 // Validate returns an error if the component instance is not valid.
 func (e *Executor) Validate() error {
 	if e.logger == nil {
-		return types.ErrNilPointer.Wrap("logger cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if e.router == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	return nil
@@ -89,7 +89,7 @@ func (e *Executor) Router() ActionRouter {
 
 func (e *Executor) SetRouter(r ActionRouter) error {
 	if r == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	if e.router != nil && e.router.Sealed() {
@@ -133,7 +133,7 @@ func (e *Executor) HandlePacket(
 	packet *types.ActionPacket,
 ) error {
 	if err := e.validatePacket(ctx, packet); err != nil {
-		return types.ErrValidation.Wrap(err.Error())
+		return core.ErrValidation.Wrap(err.Error())
 	}
 
 	controller, found := e.router.Route(packet.Action.ID())

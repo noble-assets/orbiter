@@ -59,23 +59,23 @@ func NewDispatcher(
 	actionHandler interfaces.PacketHandler[*types.ActionPacket],
 ) (*Dispatcher, error) {
 	if cdc == nil {
-		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 	if sb == nil {
-		return nil, types.ErrNilPointer.Wrap("schema builder cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("schema builder cannot be nil")
 	}
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	dispatcherComponent := Dispatcher{
-		logger:            logger.With(types.ComponentPrefix, types.DispatcherComponentName),
+		logger:            logger.With(core.ComponentPrefix, core.DispatcherComponentName),
 		ForwardingHandler: forwardingHandler,
 		ActionHandler:     actionHandler,
 		DispatchedAmounts: collections.NewIndexedMap(
 			sb,
-			types.DispatchedAmountsPrefix,
-			types.DispatchedAmountsName,
+			core.DispatchedAmountsPrefix,
+			core.DispatchedAmountsName,
 			collections.QuadKeyCodec(
 				collections.Uint32Key,
 				collections.StringKey,
@@ -87,8 +87,8 @@ func NewDispatcher(
 		),
 		DispatchCounts: collections.NewIndexedMap(
 			sb,
-			types.DispatchedCountsPrefix,
-			types.DispatchedCountsName,
+			core.DispatchedCountsPrefix,
+			core.DispatchedCountsName,
 			collections.TripleKeyCodec(
 				collections.Uint32Key,
 				collections.StringKey,
@@ -105,10 +105,10 @@ func NewDispatcher(
 // Validate checks that the fields of the dispatcher component are valid.
 func (d *Dispatcher) Validate() error {
 	if d.ForwardingHandler == nil {
-		return types.ErrNilPointer.Wrap("forwarding handler cannot be nil")
+		return core.ErrNilPointer.Wrap("forwarding handler cannot be nil")
 	}
 	if d.ActionHandler == nil {
-		return types.ErrNilPointer.Wrap("actions handler cannot be nil")
+		return core.ErrNilPointer.Wrap("actions handler cannot be nil")
 	}
 
 	return nil
@@ -126,7 +126,7 @@ func (d *Dispatcher) DispatchPayload(
 	payload *core.Payload,
 ) error {
 	if err := d.validatePayload(payload); err != nil {
-		return types.ErrValidation.Wrap(err.Error())
+		return core.ErrValidation.Wrap(err.Error())
 	}
 
 	if err := d.dispatchActions(ctx, transferAttr, payload.PreActions); err != nil {
@@ -148,7 +148,7 @@ func (d *Dispatcher) DispatchPayload(
 // its validation method.
 func (d *Dispatcher) validatePayload(payload *core.Payload) error {
 	if payload == nil {
-		return types.ErrNilPointer.Wrap("payload cannot be nil")
+		return core.ErrNilPointer.Wrap("payload cannot be nil")
 	}
 
 	return payload.Validate()

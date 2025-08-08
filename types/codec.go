@@ -25,10 +25,14 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 
+	"orbiter.dev/types/component"
+	"orbiter.dev/types/controller"
 	"orbiter.dev/types/core"
 )
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	component.RegisterLegacyAminoCodec(cdc)
+}
 
 // RegisterInterfaces is used to register in the chain codec
 // all interfaces and associated implementations defined in
@@ -45,4 +49,7 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+
+	component.RegisterInterfaces(registry)
+	controller.RegisterInterfaces(registry)
 }
