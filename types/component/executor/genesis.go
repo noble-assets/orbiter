@@ -26,16 +26,17 @@ import core "orbiter.dev/types/core"
 // component initial state.
 func DefaultGenesisState() *GenesisState {
 	return &GenesisState{
-		ActionId: []core.ActionID{},
+		PausedActionIds: []core.ActionID{},
 	}
 }
 
 // Validate retusn an error if any of the genesis field is not valid.
 func (g *GenesisState) Validate() error {
-	for _, id := range g.ActionId {
+	for _, id := range g.PausedActionIds {
 		if err := id.Validate(); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }

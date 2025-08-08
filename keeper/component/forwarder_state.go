@@ -42,9 +42,7 @@ func (f *Forwarder) IsProtocolPaused(
 	return paused, err
 }
 
-func (f *Forwarder) SetPausedProtocol(ctx context.Context,
-	protocolID core.ProtocolID,
-) error {
+func (f *Forwarder) SetPausedProtocol(ctx context.Context, protocolID core.ProtocolID) error {
 	paused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
@@ -101,15 +99,18 @@ func (f *Forwarder) GetPausedProtocols(
 // Paused protocol-counterparties
 // ====================================================================================================
 
-func (f *Forwarder) IsOrbitPaused(ctx context.Context, orbitID core.OrbitID) (bool, error) {
-	return f.PausedOrbits.Has(
+func (f *Forwarder) IsProtocolCounterpartyPaused(
+	ctx context.Context,
+	orbitID core.OrbitID,
+) (bool, error) {
+	return f.PausedProtocolCounterparties.Has(
 		ctx,
-		collections.Join(int32(orbitID.ProtocolID), orbitID.CounterpartyID),
+		collections.Join(int32(orbitID.GetProtocolId()), orbitID.GetCounterpartyId()),
 	)
 }
 
-func (f *Forwarder) SetPausedOrbit(ctx context.Context, orbitID core.OrbitID) error {
-	paused, err := f.IsOrbitPaused(ctx, orbitID)
+func (f *Forwarder) SetPausedProtocolCounterparty(ctx context.Context, orbitID core.OrbitID) error {
+	paused, err := f.IsProtocolCounterpartyPaused(ctx, orbitID)
 	if err != nil {
 		return err
 	}
@@ -117,14 +118,17 @@ func (f *Forwarder) SetPausedOrbit(ctx context.Context, orbitID core.OrbitID) er
 		return nil
 	}
 
-	return f.PausedOrbits.Set(
+	return f.PausedProtocolCounterparties.Set(
 		ctx,
-		collections.Join(int32(orbitID.ProtocolID), orbitID.CounterpartyID),
+		collections.Join(int32(orbitID.GetProtocolId()), orbitID.GetCounterpartyId()),
 	)
 }
 
-func (f *Forwarder) SetUnpausedOrbit(ctx context.Context, orbitID core.OrbitID) error {
-	paused, err := f.IsOrbitPaused(ctx, orbitID)
+func (f *Forwarder) SetUnpausedProtocolCounterparty(
+	ctx context.Context,
+	orbitID core.OrbitID,
+) error {
+	paused, err := f.IsProtocolCounterpartyPaused(ctx, orbitID)
 	if err != nil {
 		return err
 	}
@@ -132,9 +136,9 @@ func (f *Forwarder) SetUnpausedOrbit(ctx context.Context, orbitID core.OrbitID) 
 		return nil
 	}
 
-	return f.PausedOrbits.Remove(
+	return f.PausedProtocolCounterparties.Remove(
 		ctx,
-		collections.Join(int32(orbitID.ProtocolID), orbitID.CounterpartyID),
+		collections.Join(int32(orbitID.GetProtocolId()), orbitID.GetCounterpartyId()),
 	)
 }
 
@@ -144,7 +148,7 @@ func (f *Forwarder) GetPausedOrbits(
 ) ([]string, error) {
 	rng := collections.NewPrefixedPairRange[int32, string](int32(protocolID))
 
-	iter, err := f.PausedOrbits.Iterate(ctx, rng)
+	iter, err := f.PausedProtocolCounterparties.Iterate(ctx, rng)
 	if err != nil {
 		return nil, err
 	}

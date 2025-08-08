@@ -193,13 +193,13 @@ func TestUpdateStats(t *testing.T) {
 			name: "success - different denom and previous stored stats",
 			setup: func(ctx context.Context, d *component.Dispatcher) {
 				sourceOrbitID := core.OrbitID{
-					ProtocolID:     1,
-					CounterpartyID: "hyperliquid",
+					ProtocolId:     1,
+					CounterpartyId: "hyperliquid",
 				}
 
 				destOrbitID := core.OrbitID{
-					ProtocolID:     1,
-					CounterpartyID: "ethereum",
+					ProtocolId:     1,
+					CounterpartyId: "ethereum",
 				}
 
 				err := d.SetDispatchedCounts(ctx, sourceOrbitID, destOrbitID, 10)
@@ -267,13 +267,13 @@ func TestUpdateStats(t *testing.T) {
 
 				// Create expected source and destination info
 				sourceOrbitID := core.OrbitID{
-					ProtocolID:     transferAttr.SourceProtocolID(),
-					CounterpartyID: transferAttr.SourceCounterpartyID(),
+					ProtocolId:     transferAttr.SourceProtocolID(),
+					CounterpartyId: transferAttr.SourceCounterpartyID(),
 				}
 				attr, _ := forwarding.CachedAttributes()
 				destOrbitID := core.OrbitID{
-					ProtocolID:     forwarding.ProtocolID(),
-					CounterpartyID: attr.CounterpartyID(),
+					ProtocolId:     forwarding.ProtocolID(),
+					CounterpartyId: attr.CounterpartyID(),
 				}
 
 				// Verify amount stats

@@ -18,38 +18,44 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package dispatcher
 
-import (
-	"fmt"
+import "errors"
 
-	adapter "orbiter.dev/types/component/adapter"
-)
-
-// DefaultGenesisState returns the default values for the Orbiter module
-// initial state.
+// DefaultGenesisState returns the default values for the adapter
+// component initial state.
 func DefaultGenesisState() *GenesisState {
 	return &GenesisState{
-		AdapterGenesis: adapter.DefaultGenesisState(),
+		DispatchedAmounts: []DispatchedAmountEntry{},
+		DispatchedCounts:  []DispatchCountEntry{},
 	}
 }
 
 // Validate retusn an error if any of the genesis field is not valid.
 func (g *GenesisState) Validate() error {
-	if err := g.AdapterGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating adapter component genesis state: %w", err)
+	for _, a := range g.DispatchedAmounts {
+		if err := a.SourceId.Validate(); err != nil {
+			return err
+		}
+		if err := a.DestinationId.Validate(); err != nil {
+			return err
+		}
+		if a.Denom == "" {
+			return errors.New("dispatch amount denom cannot be empty string")
+		}
 	}
 
-	if err := g.DispatcherGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating dispatcher component genesis state: %w", err)
-	}
-
-	if err := g.ForwarderGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating forwarder component genesis state: %w", err)
-	}
-
-	if err := g.ExecutorGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating executor component genesis state: %w", err)
+	for _, c := range g.DispatchedCounts {
+		if err := c.SourceId.Validate(); err != nil {
+			return err
+		}
+		if err := c.DestinationId.Validate(); err != nil {
+			return err
+		}
+		// TODO: validate it's uint32
+		if c.Count == 0 {
+			return errors.New("dispatch counts cannot be zero")
+		}
 	}
 
 	return nil

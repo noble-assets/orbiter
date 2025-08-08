@@ -68,7 +68,7 @@ func NewDispatcher(
 	}
 
 	dispatcherComponent := Dispatcher{
-		logger:            logger.With(core.ComponentPrefix, core.DispatcherComponentName),
+		logger:            logger.With(core.ComponentPrefix, core.DispatcherName),
 		ForwardingHandler: forwardingHandler,
 		ActionHandler:     actionHandler,
 		DispatchedAmounts: collections.NewIndexedMap(

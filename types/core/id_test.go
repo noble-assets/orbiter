@@ -38,24 +38,24 @@ func TestOrbitID(t *testing.T) {
 		{
 			name: "IBC orbit ID",
 			orbitID: core.OrbitID{
-				ProtocolID:     core.PROTOCOL_IBC,
-				CounterpartyID: "channel-1",
+				ProtocolId:     core.PROTOCOL_IBC,
+				CounterpartyId: "channel-1",
 			},
 			expectedID: fmt.Sprintf("%d:channel-1", core.PROTOCOL_IBC),
 		},
 		{
 			name: "CCTP orbit ID",
 			orbitID: core.OrbitID{
-				ProtocolID:     core.PROTOCOL_CCTP,
-				CounterpartyID: "0",
+				ProtocolId:     core.PROTOCOL_CCTP,
+				CounterpartyId: "0",
 			},
 			expectedID: fmt.Sprintf("%d:0", core.PROTOCOL_CCTP),
 		},
 		{
 			name: "Hyperlane orbit ID",
 			orbitID: core.OrbitID{
-				ProtocolID:     core.PROTOCOL_HYPERLANE,
-				CounterpartyID: "ethereum",
+				ProtocolId:     core.PROTOCOL_HYPERLANE,
+				CounterpartyId: "ethereum",
 			},
 			expectedID: fmt.Sprintf("%d:ethereum", core.PROTOCOL_HYPERLANE),
 		},
@@ -120,8 +120,8 @@ func TestParseOrbitID(t *testing.T) {
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tC.expProtocolID, orbitID.ProtocolID)
-				require.Equal(t, tC.expCounterpartyID, orbitID.CounterpartyID)
+				require.Equal(t, tC.expProtocolID, orbitID.GetProtocolId())
+				require.Equal(t, tC.expCounterpartyID, orbitID.GetCounterpartyId())
 			}
 		})
 	}

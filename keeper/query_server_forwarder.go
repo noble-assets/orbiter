@@ -45,7 +45,7 @@ func (s *queryServerForwarder) IsProtocolPaused(
 ) (*forwarder.QueryIsProtocolPausedResponse, error) {
 	f := s.Forwarder()
 
-	paused, err := f.IsControllerPaused(ctx, req.ProtocolId)
+	paused, err := f.IsProtocolPaused(ctx, req.ProtocolId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query protocol paused status: %w", err)
 	}
@@ -62,7 +62,7 @@ func (s *queryServerForwarder) PausedProtocols(
 ) (*forwarder.QueryPausedProtocolsResponse, error) {
 	f := s.Forwarder()
 
-	paused, err := f.GetPausedControllers(ctx)
+	paused, err := f.GetPausedProtocols(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query paused protocols: %w", err)
 	}
@@ -84,7 +84,7 @@ func (s *queryServerForwarder) IsCounterpartyPaused(
 		return nil, fmt.Errorf("unable to query counterparty paused status: %w", err)
 	}
 
-	paused, err := f.IsOrbitPaused(ctx, orbitID)
+	paused, err := f.IsProtocolCounterpartyPaused(ctx, orbitID)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query counterparty paused status: %w", err)
 	}

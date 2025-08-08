@@ -67,7 +67,7 @@ func NewAdapter(
 	}
 
 	adaptersKeeper := Adapter{
-		logger:     logger.With(core.ComponentPrefix, core.AdaptersComponentName),
+		logger:     logger.With(core.ComponentPrefix, core.AdapterName),
 		router:     router.New[core.ProtocolID, types.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
@@ -139,12 +139,12 @@ func (a *Adapter) ParsePayload(
 // BeforeTransferHook implements types.PayloadAdapter.
 func (a *Adapter) BeforeTransferHook(
 	ctx context.Context,
-	sourceOrbitID core.OrbitID,
+	sourceID core.OrbitID,
 	payload *core.Payload,
 ) error {
-	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)
+	adapter, found := a.router.Route(sourceID.GetProtocolId())
 	if !found {
-		return fmt.Errorf("adapter not found for protocol ID: %s", sourceOrbitID.ProtocolID)
+		return fmt.Errorf("adapter not found for protocol ID: %s", sourceID.GetProtocolId())
 	}
 
 	if err := adapter.BeforeTransferHook(ctx, payload); err != nil {
@@ -161,12 +161,12 @@ func (a *Adapter) BeforeTransferHook(
 // AfterTransferHook implements types.PayloadAdapter.
 func (a *Adapter) AfterTransferHook(
 	ctx context.Context,
-	sourceOrbitID core.OrbitID,
+	sourceID core.OrbitID,
 	payload *core.Payload,
 ) (*types.TransferAttributes, error) {
-	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)
+	adapter, found := a.router.Route(sourceID.GetProtocolId())
 	if !found {
-		return nil, fmt.Errorf("adapter not found for protocol ID: %s", sourceOrbitID.ProtocolID)
+		return nil, fmt.Errorf("adapter not found for protocol ID: %s", sourceID.GetProtocolId())
 	}
 
 	if err := adapter.AfterTransferHook(ctx, payload); err != nil {
@@ -179,8 +179,8 @@ func (a *Adapter) AfterTransferHook(
 	}
 
 	transferAttr, err := types.NewTransferAttributes(
-		sourceOrbitID.ProtocolID,
-		sourceOrbitID.CounterpartyID,
+		sourceID.GetProtocolId(),
+		sourceID.GetCounterpartyId(),
 		balances[0].GetDenom(),
 		balances[0].Amount,
 	)

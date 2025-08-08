@@ -92,19 +92,11 @@ func (a *TransferAttributes) Validate() error {
 }
 
 func (a *TransferAttributes) SourceProtocolID() core.ProtocolID {
-	if a != nil {
-		return a.sourceOrbitID.ProtocolID
-	}
-
-	return core.PROTOCOL_UNSUPPORTED
+	return a.sourceOrbitID.GetProtocolId()
 }
 
 func (a *TransferAttributes) SourceCounterpartyID() string {
-	if a == nil {
-		return ""
-	}
-
-	return a.sourceOrbitID.CounterpartyID
+	return a.sourceOrbitID.GetCounterpartyId()
 }
 
 func (a *TransferAttributes) SourceAmount() math.Int {

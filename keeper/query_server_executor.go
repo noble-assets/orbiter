@@ -44,7 +44,7 @@ func (s queryServerExecutor) IsActionPaused(
 ) (*executor.QueryIsActionPausedResponse, error) {
 	e := s.Executor()
 
-	paused, err := e.IsControllerPaused(ctx, req.ActionId)
+	paused, err := e.IsActionPaused(ctx, req.ActionId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query action paused status: %w", err)
 	}
@@ -61,7 +61,7 @@ func (s queryServerExecutor) PausedActions(
 ) (*executor.QueryPausedActionsResponse, error) {
 	e := s.Executor()
 
-	paused, err := e.GetPausedControllers(ctx)
+	paused, err := e.GetPausedActions(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query paused actions: %w", err)
 	}

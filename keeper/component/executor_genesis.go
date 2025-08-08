@@ -18,39 +18,34 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package component
 
 import (
+	"context"
 	"fmt"
 
-	adapter "orbiter.dev/types/component/adapter"
+	"orbiter.dev/types/component/executor"
 )
 
-// DefaultGenesisState returns the default values for the Orbiter module
-// initial state.
-func DefaultGenesisState() *GenesisState {
-	return &GenesisState{
-		AdapterGenesis: adapter.DefaultGenesisState(),
-	}
-}
-
-// Validate retusn an error if any of the genesis field is not valid.
-func (g *GenesisState) Validate() error {
-	if err := g.AdapterGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating adapter component genesis state: %w", err)
-	}
-
-	if err := g.DispatcherGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating dispatcher component genesis state: %w", err)
-	}
-
-	if err := g.ForwarderGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating forwarder component genesis state: %w", err)
-	}
-
-	if err := g.ExecutorGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating executor component genesis state: %w", err)
+// InitGenesis initialize the state of the component with a genesis state.
+func (e *Executor) InitGenesis(ctx context.Context, g *executor.GenesisState) error {
+	for _, id := range g.PausedActionIds {
+		if err := e.SetPausedAction(ctx, id); err != nil {
+			return fmt.Errorf("error setting genesis paused action id: %w", err)
+		}
 	}
 
 	return nil
+}
+
+// ExportGenesis returns the current state of the component into a genesis state.
+func (e *Executor) ExportGenesis(ctx context.Context) *executor.GenesisState {
+	paused, err := e.GetPausedActions(ctx)
+	if err != nil {
+		e.logger.Error("error exporting paused actions", "err", err.Error())
+	}
+
+	return &executor.GenesisState{
+		PausedActionIds: paused,
+	}
 }

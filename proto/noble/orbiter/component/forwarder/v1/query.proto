@@ -4,7 +4,6 @@ package noble.orbiter.component.forwarder.v1;
 
 import "amino/amino.proto";
 import "cosmos/query/v1/query.proto";
-import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "noble/orbiter/core/v1/id.proto";
 
@@ -43,17 +42,13 @@ message QueryPausedProtocolsRequest {}
 
 // QueryPausedProtocolsResponse is the response type for the Query/PausedProtocol RPC method.
 message QueryPausedProtocolsResponse {
-  repeated noble.orbiter.core.v1.ProtocolID protocol_id = 1 [
-    (amino.dont_omitempty) = true
-  ];
+  repeated noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
 }
 
 // QueryPausedCounterpartiesRequest is the request type for the Query/PausedCounterparties RPC method.
 message QueryPausedCounterpartiesRequest {
   // protocol_id is the protocol to query paused counterparties for.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [
-    (amino.dont_omitempty) = true
-  ];
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
 }
 
 // QueryPausedCounterpartiesResponse is the response type for the Query/PausedCounterparties RPC method.
@@ -65,9 +60,7 @@ message QueryPausedCounterpartiesResponse {
 // QueryIsProtocolPausedRequest is the request type for the Query/IsProtocolPaused RPC method.
 message QueryIsProtocolPausedRequest {
   // protocol_id is the protocol to check.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [
-    (amino.dont_omitempty) = true
-  ];
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
 }
 
 // QueryIsProtocolPausedResponse is the response type for the Query/IsProtocolPaused RPC method.
@@ -79,9 +72,7 @@ message QueryIsProtocolPausedResponse {
 // QueryIsCounterpartyPausedRequest is the request type for the Query/IsCounterpartyPaused RPC method.
 message QueryIsCounterpartyPausedRequest {
   // protocol_id is the protocol to check.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [
-    (amino.dont_omitempty) = true
-  ];
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
   // counterparty_id is the counterparty identifier to check.
   string counterparty_id = 2;
 }

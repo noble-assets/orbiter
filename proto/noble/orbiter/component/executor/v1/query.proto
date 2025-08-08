@@ -4,7 +4,6 @@ package noble.orbiter.component.executor.v1;
 
 import "amino/amino.proto";
 import "cosmos/query/v1/query.proto";
-import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "noble/orbiter/core/v1/id.proto";
 
@@ -26,15 +25,11 @@ service Query {
 message QueryPausedActionsRequest {}
 
 message QueryPausedActionsResponse {
-  repeated noble.orbiter.core.v1.ActionID action_id = 1 [
-    (amino.dont_omitempty) = true
-  ];
+  repeated noble.orbiter.core.v1.ActionID action_id = 1 [(amino.dont_omitempty) = true];
 }
 
 message QueryIsActionPausedRequest {
-  noble.orbiter.core.v1.ActionID action_id = 1 [
-    (amino.dont_omitempty) = true
-  ];
+  noble.orbiter.core.v1.ActionID action_id = 1 [(amino.dont_omitempty) = true];
 }
 
 message QueryIsActionPausedResponse {

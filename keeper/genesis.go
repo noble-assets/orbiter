@@ -26,40 +26,51 @@ import (
 	"fmt"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/component/adapter"
 )
 
 // InitGenesis initialize the state of the Orbiter module with
 // a genesis state.
 func (k *Keeper) InitGenesis(ctx context.Context, g types.GenesisState) {
+	a := k.Adapter()
 	if g.AdapterGenesis == nil {
 		panic(errors.New("nil pointer: missing adapter genesis state"))
 	}
-	if err := k.initAdapterGenesis(ctx, g.AdapterGenesis); err != nil {
+	if err := a.InitGenesis(ctx, g.AdapterGenesis); err != nil {
 		panic(fmt.Errorf("unable to initialize adapter genesis state %w", err))
 	}
-}
 
-// initAdapterGenesis initializes the adapter component state with the
-// provided genesis state.
-func (k *Keeper) initAdapterGenesis(ctx context.Context, g *adapter.GenesisState) error {
-	a := k.Adapter()
-
-	if err := a.SetParams(ctx, g.Params); err != nil {
-		return fmt.Errorf("error setting genesis params: %w", err)
+	d := k.Dispatcher()
+	if g.DispatcherGenesis == nil {
+		panic(errors.New("nil pointer: missing dispatcher genesis state"))
+	}
+	if err := d.InitGenesis(ctx, g.DispatcherGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize dispatcher genesis state %w", err))
 	}
 
-	return nil
+	f := k.Forwarder()
+	if g.ForwarderGenesis == nil {
+		panic(errors.New("nil pointer: missing forwarder genesis state"))
+	}
+	if err := f.InitGenesis(ctx, g.ForwarderGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize forwarder genesis state %w", err))
+	}
+
+	e := k.Executor()
+	if g.ExecutorGenesis == nil {
+		panic(errors.New("nil pointer: missing forwarder genesis state"))
+	}
+	if err := e.InitGenesis(ctx, g.ExecutorGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize executor genesis state %w", err))
+	}
 }
 
 // ExportGenesis returns the current state of the Orbiter module
 // into a genesis state.
 func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
-	a := k.Adapter()
-
 	return &types.GenesisState{
-		AdapterGenesis: &adapter.GenesisState{
-			Params: a.GetParams(ctx),
-		},
+		AdapterGenesis:    k.Adapter().ExportGenesis(ctx),
+		DispatcherGenesis: k.Dispatcher().ExportGenesis(ctx),
+		ForwarderGenesis:  k.Forwarder().ExportGenesis(ctx),
+		ExecutorGenesis:   k.Executor().ExportGenesis(ctx),
 	}
 }

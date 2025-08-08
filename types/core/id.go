@@ -85,23 +85,14 @@ func (id ProtocolID) Uint32() uint32 {
 	return uint32(id) //nolint:gosec
 }
 
-// OrbitID is an internal type used to uniquely
-// represent a source or a destination of a cross-chain
-// transfer and the bridge protocol used.
-type OrbitID struct {
-	ProtocolID ProtocolID
-	// Protocol specific identifier of a counterparty.
-	CounterpartyID string
-}
-
 // NewOrbitID returns a validated orbit identifier instance.
 func NewOrbitID(
 	protocolID ProtocolID,
 	counterpartyID string,
 ) (OrbitID, error) {
 	attr := OrbitID{
-		ProtocolID:     protocolID,
-		CounterpartyID: counterpartyID,
+		ProtocolId:     protocolID,
+		CounterpartyId: counterpartyID,
 	}
 
 	return attr, attr.Validate()
@@ -110,10 +101,10 @@ func NewOrbitID(
 // Validate returns an error if any of the orbit id field
 // is not valid.
 func (i OrbitID) Validate() error {
-	if err := i.ProtocolID.Validate(); err != nil {
+	if err := i.ProtocolId.Validate(); err != nil {
 		return err
 	}
-	if i.CounterpartyID == "" {
+	if i.CounterpartyId == "" {
 		return errors.New("counterparty id cannot be empty string")
 	}
 
@@ -123,7 +114,7 @@ func (i OrbitID) Validate() error {
 // ID generates an internal identifier for a tuple (bridge protocol, chain).
 // The identifier allows to recover the protocol Id and the chain Id from its value.
 func (i OrbitID) ID() string {
-	return fmt.Sprintf("%d%s%s", i.ProtocolID.Uint32(), orbitIDSeparator, i.CounterpartyID)
+	return fmt.Sprintf("%d%s%s", i.ProtocolId.Uint32(), orbitIDSeparator, i.CounterpartyId)
 }
 
 // String returns the string representation of the id.

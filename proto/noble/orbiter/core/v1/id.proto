@@ -6,8 +6,9 @@ import "gogoproto/gogo.proto";
 
 option go_package = "orbiter.dev/types/core";
 
-// buf:lint:ignore ENUM_VALUE_PREFIX
 // ActionID identifies the type of action to be performed on a transfer.
+//
+// buf:lint:ignore ENUM_VALUE_PREFIX
 enum ActionID {
   option (gogoproto.goproto_enum_prefix) = false;
 
@@ -22,8 +23,9 @@ enum ActionID {
   ACTION_SWAP = 2;
 }
 
-// buf:lint:ignore ENUM_VALUE_PREFIX
 // ProtocolID represents the cross-chain communication protocols supported by the orbiter.
+//
+// buf:lint:ignore ENUM_VALUE_PREFIX
 enum ProtocolID {
   option (gogoproto.goproto_enum_prefix) = false;
 
@@ -41,9 +43,14 @@ enum ProtocolID {
   PROTOCOL_HYPERLANE = 3;
 }
 
-// OrbitID represents the identifier of a counterparty chain and
-// the communication protocol used.
+// OrbitID is an internal type used to uniquely
+// represent a source or a destination of a cross-chain
+// transfer and the bridge protocol used.
 message OrbitID {
+  option (gogoproto.goproto_stringer) = false;
+
   ProtocolID protocol_id = 1;
-  string counterparty_id = 2; 
+
+  // Protocol specific identifier of a counterparty.
+  string counterparty_id = 2;
 }

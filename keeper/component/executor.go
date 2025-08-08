@@ -103,7 +103,7 @@ func (e *Executor) SetRouter(r ActionRouter) error {
 
 // Pause allows to pause an action controller.
 func (e *Executor) Pause(ctx context.Context, actionID core.ActionID) error {
-	if err := e.SetPausedController(ctx, actionID); err != nil {
+	if err := e.SetPausedAction(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error pausing action %s: %w",
 			actionID,
@@ -116,7 +116,7 @@ func (e *Executor) Pause(ctx context.Context, actionID core.ActionID) error {
 
 // Unpause allows to unpause an action controller.
 func (e *Executor) Unpause(ctx context.Context, actionID core.ActionID) error {
-	if err := e.SetUnpausedController(ctx, actionID); err != nil {
+	if err := e.SetUnpausedAction(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error unpausing action %s: %w",
 			actionID,
@@ -163,7 +163,7 @@ func (e *Executor) validateController(
 	ctx context.Context,
 	id core.ActionID,
 ) error {
-	isPaused, err := e.IsControllerPaused(ctx, id)
+	isPaused, err := e.IsActionPaused(ctx, id)
 	if err != nil {
 		return err
 	}

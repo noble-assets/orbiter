@@ -28,23 +28,24 @@ import (
 // component initial state.
 func DefaultGenesisState() *GenesisState {
 	return &GenesisState{
-		ProtocolId: []core.ProtocolID{},
-		OrbitId:    []*core.OrbitID{},
+		PausedProtocolId: []core.ProtocolID{},
+		PausedOrbitId:    []*core.OrbitID{},
 	}
 }
 
 // Validate retusn an error if any of the genesis field is not valid.
 func (g *GenesisState) Validate() error {
-	for _, id := range g.ProtocolId {
+	for _, id := range g.PausedOrbitId {
 		if err := id.Validate(); err != nil {
 			return err
 		}
 	}
 
-	for _, id := range g.OrbitId {
+	for _, id := range g.PausedOrbitId {
 		if err := id.Validate(); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }

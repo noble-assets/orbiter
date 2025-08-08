@@ -9,7 +9,5 @@ option go_package = "orbiter.dev/types/component/executor";
 
 // GenesisState defines the executor component genesis state.
 message GenesisState {
-  repeated noble.orbiter.core.v1.ActionID action_id = 1 [
-    (amino.dont_omitempty) = true
-  ];
+  repeated noble.orbiter.core.v1.ActionID paused_action_ids = 1 [(amino.dont_omitempty) = true];
 }

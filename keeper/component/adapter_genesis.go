@@ -18,39 +18,27 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package component
 
 import (
+	"context"
 	"fmt"
 
-	adapter "orbiter.dev/types/component/adapter"
+	"orbiter.dev/types/component/adapter"
 )
 
-// DefaultGenesisState returns the default values for the Orbiter module
-// initial state.
-func DefaultGenesisState() *GenesisState {
-	return &GenesisState{
-		AdapterGenesis: adapter.DefaultGenesisState(),
-	}
-}
-
-// Validate retusn an error if any of the genesis field is not valid.
-func (g *GenesisState) Validate() error {
-	if err := g.AdapterGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating adapter component genesis state: %w", err)
-	}
-
-	if err := g.DispatcherGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating dispatcher component genesis state: %w", err)
-	}
-
-	if err := g.ForwarderGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating forwarder component genesis state: %w", err)
-	}
-
-	if err := g.ExecutorGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating executor component genesis state: %w", err)
+// InitGenesis initialize the state of the adapter component with a genesis state.
+func (a *Adapter) InitGenesis(ctx context.Context, g *adapter.GenesisState) error {
+	if err := a.SetParams(ctx, g.Params); err != nil {
+		return fmt.Errorf("error setting genesis params: %w", err)
 	}
 
 	return nil
+}
+
+// ExportGenesis returns the current state of the adapter component into a genesis state.
+func (a *Adapter) ExportGenesis(ctx context.Context) *adapter.GenesisState {
+	return &adapter.GenesisState{
+		Params: a.GetParams(ctx),
+	}
 }
