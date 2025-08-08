@@ -44,7 +44,6 @@ message QueryPausedProtocolsRequest {}
 // QueryPausedProtocolsResponse is the response type for the Query/PausedProtocol RPC method.
 message QueryPausedProtocolsResponse {
   repeated noble.orbiter.core.v1.ProtocolID protocol_id = 1 [
-    (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
 }
@@ -53,7 +52,6 @@ message QueryPausedProtocolsResponse {
 message QueryPausedCounterpartiesRequest {
   // protocol_id is the protocol to query paused counterparties for.
   noble.orbiter.core.v1.ProtocolID protocol_id = 1 [
-    (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
 }
@@ -68,7 +66,6 @@ message QueryPausedCounterpartiesResponse {
 message QueryIsProtocolPausedRequest {
   // protocol_id is the protocol to check.
   noble.orbiter.core.v1.ProtocolID protocol_id = 1 [
-    (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
 }
@@ -83,7 +80,6 @@ message QueryIsProtocolPausedResponse {
 message QueryIsCounterpartyPausedRequest {
   // protocol_id is the protocol to check.
   noble.orbiter.core.v1.ProtocolID protocol_id = 1 [
-    (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
   // counterparty_id is the counterparty identifier to check.

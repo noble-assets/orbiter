@@ -22,6 +22,7 @@ package component
 
 import (
 	"context"
+	"fmt"
 
 	"cosmossdk.io/collections"
 
@@ -70,25 +71,45 @@ func (f *Forwarder) SetUnpausedController(
 	return f.PausedControllers.Remove(ctx, int32(protocolID))
 }
 
-// ====================================================================================================
-// PausedOrbits
-// ====================================================================================================
-
-func (f *Forwarder) IsOrbitPaused(
+func (f *Forwarder) GetPausedControllers(
 	ctx context.Context,
-	protocolID core.ProtocolID,
-	counterpartyID string,
-) (bool, error) {
-	paused, err := f.PausedForwardings.Has(ctx, collections.Join(int32(protocolID), counterpartyID))
+) ([]core.ProtocolID, error) {
+	iter, err := f.PausedControllers.Iterate(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
 
-	return paused, err
+	var paused []core.ProtocolID
+	for ; iter.Valid(); iter.Next() {
+		k, err := iter.Key()
+		if err != nil {
+			return nil, err
+		}
+
+		id, err := core.NewProtocolID(k)
+		if err != nil {
+			return nil, fmt.Errorf("cannot create protocol ID from iterator key: %w", err)
+		}
+		paused = append(paused, id)
+	}
+
+	return paused, nil
 }
 
-func (f *Forwarder) SetPausedOrbit(ctx context.Context,
-	protocolID core.ProtocolID,
-	counterpartyID string,
-) error {
-	paused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)
+// ====================================================================================================
+// Paused forwardings
+// ====================================================================================================
+
+func (f *Forwarder) IsOrbitPaused(ctx context.Context, orbitID core.OrbitID) (bool, error) {
+	return f.PausedForwardings.Has(
+		ctx,
+		collections.Join(int32(orbitID.ProtocolID), orbitID.CounterpartyID),
+	)
+}
+
+func (f *Forwarder) SetPausedOrbit(ctx context.Context, orbitID core.OrbitID) error {
+	paused, err := f.IsOrbitPaused(ctx, orbitID)
 	if err != nil {
 		return err
 	}
@@ -96,15 +117,14 @@ func (f *Forwarder) SetPausedOrbit(ctx context.Context,
 		return nil
 	}
 
-	return f.PausedForwardings.Set(ctx, collections.Join(int32(protocolID), counterpartyID))
+	return f.PausedForwardings.Set(
+		ctx,
+		collections.Join(int32(orbitID.ProtocolID), orbitID.CounterpartyID),
+	)
 }
 
-func (f *Forwarder) SetUnpausedOrbit(
-	ctx context.Context,
-	protocolID core.ProtocolID,
-	counterpartyID string,
-) error {
-	paused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)
+func (f *Forwarder) SetUnpausedOrbit(ctx context.Context, orbitID core.OrbitID) error {
+	paused, err := f.IsOrbitPaused(ctx, orbitID)
 	if err != nil {
 		return err
 	}
@@ -112,5 +132,33 @@ func (f *Forwarder) SetUnpausedOrbit(
 		return nil
 	}
 
-	return f.PausedForwardings.Remove(ctx, collections.Join(int32(protocolID), counterpartyID))
+	return f.PausedForwardings.Remove(
+		ctx,
+		collections.Join(int32(orbitID.ProtocolID), orbitID.CounterpartyID),
+	)
+}
+
+func (f *Forwarder) GetPausedOrbits(
+	ctx context.Context,
+	protocolID core.ProtocolID,
+) ([]string, error) {
+	rng := collections.NewPrefixedPairRange[int32, string](int32(protocolID))
+
+	iter, err := f.PausedForwardings.Iterate(ctx, rng)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var paused []string
+	for ; iter.Valid(); iter.Next() {
+		k, err := iter.Key()
+		if err != nil {
+			return nil, err
+		}
+
+		paused = append(paused, k.K2())
+	}
+
+	return paused, nil
 }

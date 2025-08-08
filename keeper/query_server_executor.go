@@ -40,11 +40,11 @@ func NewQueryServerExecutor(keeper *Keeper) queryServerExecutor {
 // IsActionPaused implements executor.QueryServer.
 func (s queryServerExecutor) IsActionPaused(
 	ctx context.Context,
-	msg *executor.QueryIsActionPausedRequest,
+	req *executor.QueryIsActionPausedRequest,
 ) (*executor.QueryIsActionPausedResponse, error) {
 	e := s.Executor()
 
-	paused, err := e.IsControllerPaused(ctx, msg.ActionId)
+	paused, err := e.IsControllerPaused(ctx, req.ActionId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query action paused status: %w", err)
 	}
@@ -57,7 +57,7 @@ func (s queryServerExecutor) IsActionPaused(
 // PausedActions implements executor.QueryServer.
 func (s queryServerExecutor) PausedActions(
 	ctx context.Context,
-	msg *executor.QueryPausedActionsRequest,
+	req *executor.QueryPausedActionsRequest,
 ) (*executor.QueryPausedActionsResponse, error) {
 	e := s.Executor()
 

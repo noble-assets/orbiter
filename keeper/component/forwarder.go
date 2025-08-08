@@ -223,7 +223,11 @@ func (f *Forwarder) validateForwarding(
 	protocolID core.ProtocolID,
 	counterpartyID string,
 ) error {
-	isPaused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)
+	orbitID, err := core.NewOrbitID(protocolID, counterpartyID)
+	if err != nil {
+		return err
+	}
+	isPaused, err := f.IsOrbitPaused(ctx, orbitID)
 	if err != nil {
 		return err
 	}
@@ -281,7 +285,16 @@ func (f *Forwarder) pauseProtocolDestinations(
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		if err := f.SetPausedOrbit(ctx, protocolID, ID); err != nil {
+		orbitID, err := core.NewOrbitID(protocolID, ID)
+		if err != nil {
+			return fmt.Errorf(
+				"error pausing forwarding for protocol %s and counterparty %s: %w",
+				protocolID,
+				ID,
+				err,
+			)
+		}
+		if err := f.SetPausedOrbit(ctx, orbitID); err != nil {
 			return fmt.Errorf(
 				"error pausing forwarding for protocol %s and counterparty %s: %w",
 				protocolID,
@@ -315,7 +328,16 @@ func (f *Forwarder) unpauseProtocolDestinations(
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		if err := f.SetUnpausedOrbit(ctx, protocolID, ID); err != nil {
+		orbitID, err := core.NewOrbitID(protocolID, ID)
+		if err != nil {
+			return fmt.Errorf(
+				"error unpausing forwarding for protocol %s and counterparty %s: %w",
+				protocolID,
+				ID,
+				err,
+			)
+		}
+		if err := f.SetUnpausedOrbit(ctx, orbitID); err != nil {
 			return fmt.Errorf(
 				"error unpausing forwarding for protocol %s and counterparty %s: %w",
 				protocolID,

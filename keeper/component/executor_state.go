@@ -24,8 +24,6 @@ import (
 	"context"
 	"fmt"
 
-	"cosmossdk.io/collections"
-
 	"orbiter.dev/types/core"
 )
 
@@ -38,6 +36,7 @@ func (e *Executor) SetPausedController(ctx context.Context, id core.ActionID) er
 	if err != nil {
 		return err
 	}
+	// Already paused, no-op
 	if paused {
 		return nil
 	}
@@ -50,6 +49,7 @@ func (e *Executor) SetUnpausedController(ctx context.Context, id core.ActionID) 
 	if err != nil {
 		return err
 	}
+	// Already unpaused, no-op
 	if !paused {
 		return nil
 	}
