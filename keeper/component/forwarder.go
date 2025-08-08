@@ -30,23 +30,24 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 	router "orbiter.dev/types/router"
 )
 
-type ForwardingRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerForwarding]
+type ForwardingRouter = *router.Router[core.ProtocolID, types.ControllerForwarding]
 
-var _ interfaces.Forwarder = &Forwarder{}
+var _ types.Forwarder = &Forwarder{}
 
 type Forwarder struct {
 	logger     log.Logger
 	bankKeeper types.BankKeeperForwarder
 	// router is a forwarding controllers router.
 	router ForwardingRouter
-	// PausedForwardings keeps track of the paused protocol id and counterparty id combinations.
-	PausedForwardings collections.KeySet[collections.Pair[int32, string]]
-	// PausedController keeps track of the paused protocol ids.
-	PausedControllers collections.KeySet[int32]
+	// PausedProtocols keeps track of the paused protocol ids.
+	PausedProtocols collections.KeySet[int32]
+	// PausedProtocolCounterparties keeps track of the paused protocol id and counterparty id
+	// combinations.
+	PausedProtocolCounterparties collections.KeySet[collections.Pair[int32, string]]
 }
 
 // NewForwarder returns a validated instance of an forwarding component.
@@ -57,24 +58,24 @@ func NewForwarder(
 	bankKeeper types.BankKeeperForwarder,
 ) (*Forwarder, error) {
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	forwarder := Forwarder{
-		logger:     logger.With(types.ComponentPrefix, types.ForwardingComponentName),
+		logger:     logger.With(core.ComponentPrefix, core.ForwarderName),
 		bankKeeper: bankKeeper,
 
-		router: router.New[types.ProtocolID, interfaces.ControllerForwarding](),
-		PausedForwardings: collections.NewKeySet(
+		router: router.New[core.ProtocolID, types.ControllerForwarding](),
+		PausedProtocolCounterparties: collections.NewKeySet(
 			sb,
-			types.PausedForwardingPrefix,
-			types.PausedForwardingName,
+			core.PausedProtocolCounterpartiesPrefix,
+			core.PausedProtocolCounterpartiesName,
 			collections.PairKeyCodec(collections.Int32Key, collections.StringKey),
 		),
-		PausedControllers: collections.NewKeySet(
+		PausedProtocols: collections.NewKeySet(
 			sb,
-			types.PausedForwardingControllersPrefix,
-			types.PausedForwardingControllersName,
+			core.PausedProtocolsPrefix,
+			core.PausedProtocolsName,
 			collections.Int32Key,
 		),
 	}
@@ -84,13 +85,13 @@ func NewForwarder(
 
 func (f *Forwarder) Validate() error {
 	if f.logger == nil {
-		return types.ErrNilPointer.Wrap("logger cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if f.bankKeeper == nil {
-		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
+		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
 	if f.router == nil {
-		return types.ErrNilPointer.Wrap("controllers router cannot be nil")
+		return core.ErrNilPointer.Wrap("controllers router cannot be nil")
 	}
 
 	return nil
@@ -106,7 +107,7 @@ func (f *Forwarder) Router() ForwardingRouter {
 
 func (f *Forwarder) SetRouter(r ForwardingRouter) error {
 	if r == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	if f.router != nil && f.router.Sealed() {
@@ -121,26 +122,26 @@ func (f *Forwarder) SetRouter(r ForwardingRouter) error {
 
 func (f *Forwarder) Pause(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	switch {
 	case len(counterpartyIDs) == 0:
 		return f.pauseProtocol(ctx, protocolID)
 	default:
-		return f.pauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
+		return f.pauseProtocolCounterparties(ctx, protocolID, counterpartyIDs)
 	}
 }
 
 func (f *Forwarder) Unpause(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	if len(counterpartyIDs) == 0 {
 		return f.unpauseProtocol(ctx, protocolID)
 	} else {
-		return f.unpauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
+		return f.unpauseProtocolCounterparties(ctx, protocolID, counterpartyIDs)
 	}
 }
 
@@ -149,7 +150,7 @@ func (f *Forwarder) HandlePacket(
 	packet *types.ForwardingPacket,
 ) error {
 	if err := f.validatePacket(ctx, packet); err != nil {
-		return types.ErrValidation.Wrap(err.Error())
+		return core.ErrValidation.Wrap(err.Error())
 	}
 
 	controller, found := f.router.Route(packet.Forwarding.ProtocolID())
@@ -165,14 +166,14 @@ func (f *Forwarder) HandlePacket(
 
 func (f *Forwarder) ValidateForwarding(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID core.ProtocolID,
 	counterpartyID string,
 ) error {
-	if err := f.validateController(ctx, protocolID); err != nil {
+	if err := f.validateProtocol(ctx, protocolID); err != nil {
 		return err
 	}
 
-	return f.validateForwarding(ctx, protocolID, counterpartyID)
+	return f.validateProtocolCounterparty(ctx, protocolID, counterpartyID)
 }
 
 func (f *Forwarder) validatePacket(
@@ -200,11 +201,11 @@ func (f *Forwarder) validatePacket(
 	return f.validateInitialConditions(ctx, packet)
 }
 
-func (f *Forwarder) validateController(
+func (f *Forwarder) validateProtocol(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID core.ProtocolID,
 ) error {
-	isPaused, err := f.IsControllerPaused(ctx, protocolID)
+	isPaused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -218,12 +219,16 @@ func (f *Forwarder) validateController(
 	return nil
 }
 
-func (f *Forwarder) validateForwarding(
+func (f *Forwarder) validateProtocolCounterparty(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID core.ProtocolID,
 	counterpartyID string,
 ) error {
-	isPaused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)
+	orbitID, err := core.NewOrbitID(protocolID, counterpartyID)
+	if err != nil {
+		return err
+	}
+	isPaused, err := f.IsProtocolCounterpartyPaused(ctx, orbitID)
 	if err != nil {
 		return err
 	}
@@ -242,7 +247,7 @@ func (f *Forwarder) validateInitialConditions(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
-	balances := f.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
+	balances := f.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
 
 	if balances.Len() != 1 {
 		return fmt.Errorf("expected exactly 1 balance, got %d", balances.Len())
@@ -262,9 +267,9 @@ func (f *Forwarder) validateInitialConditions(
 
 func (f *Forwarder) pauseProtocol(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID core.ProtocolID,
 ) error {
-	if err := f.SetPausedController(ctx, protocolID); err != nil {
+	if err := f.SetPausedProtocol(ctx, protocolID); err != nil {
 		return fmt.Errorf(
 			"error pausing all forwardings for protocol %s: %w",
 			protocolID,
@@ -275,13 +280,22 @@ func (f *Forwarder) pauseProtocol(
 	return nil
 }
 
-func (f *Forwarder) pauseProtocolDestinations(
+func (f *Forwarder) pauseProtocolCounterparties(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		if err := f.SetPausedOrbit(ctx, protocolID, ID); err != nil {
+		orbitID, err := core.NewOrbitID(protocolID, ID)
+		if err != nil {
+			return fmt.Errorf(
+				"error pausing forwarding for protocol %s and counterparty %s: %w",
+				protocolID,
+				ID,
+				err,
+			)
+		}
+		if err := f.SetPausedProtocolCounterparty(ctx, orbitID); err != nil {
 			return fmt.Errorf(
 				"error pausing forwarding for protocol %s and counterparty %s: %w",
 				protocolID,
@@ -296,9 +310,9 @@ func (f *Forwarder) pauseProtocolDestinations(
 
 func (f *Forwarder) unpauseProtocol(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID core.ProtocolID,
 ) error {
-	if err := f.SetUnpausedController(ctx, protocolID); err != nil {
+	if err := f.SetUnpausedProtocol(ctx, protocolID); err != nil {
 		return fmt.Errorf(
 			"error unpausing all forwardings for protocol %s: %w",
 			protocolID,
@@ -309,13 +323,22 @@ func (f *Forwarder) unpauseProtocol(
 	return nil
 }
 
-func (f *Forwarder) unpauseProtocolDestinations(
+func (f *Forwarder) unpauseProtocolCounterparties(
 	ctx context.Context,
-	protocolID types.ProtocolID,
+	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		if err := f.SetUnpausedOrbit(ctx, protocolID, ID); err != nil {
+		orbitID, err := core.NewOrbitID(protocolID, ID)
+		if err != nil {
+			return fmt.Errorf(
+				"error unpausing forwarding for protocol %s and counterparty %s: %w",
+				protocolID,
+				ID,
+				err,
+			)
+		}
+		if err := f.SetUnpausedProtocolCounterparty(ctx, orbitID); err != nil {
 			return fmt.Errorf(
 				"error unpausing forwarding for protocol %s and counterparty %s: %w",
 				protocolID,

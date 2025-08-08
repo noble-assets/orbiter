@@ -24,12 +24,12 @@ import (
 	"errors"
 	"fmt"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
-var _ types.ForwardingAttributes = &CCTPAttributes{}
+var _ core.ForwardingAttributes = &CCTPAttributes{}
 
-// CounterpartyID implements types.ForwardingAttributes.
+// CounterpartyID implements core.ForwardingAttributes.
 func (a *CCTPAttributes) CounterpartyID() string {
 	return fmt.Sprintf("%d", a.GetDestinationDomain())
 }
@@ -52,10 +52,10 @@ func NewCCTPAttributes(
 // Validate returns an error if the CCTP attributes are not valid.
 func (a *CCTPAttributes) Validate() error {
 	if a == nil {
-		return types.ErrNilPointer.Wrap("cctp attributes")
+		return core.ErrNilPointer.Wrap("cctp attributes")
 	}
 
-	if a.DestinationDomain == types.CCTPNobleDomain {
+	if a.DestinationDomain == core.CCTPNobleDomain {
 		return errors.New("destination domain cannot be Noble")
 	}
 	if len(a.MintRecipient) == 0 {
@@ -74,11 +74,11 @@ func NewCCTPForwarding(
 	mintRecipient []byte,
 	destinationCaller []byte,
 	passthroughPayload []byte,
-) (*types.Forwarding, error) {
+) (*core.Forwarding, error) {
 	attributes, err := NewCCTPAttributes(destinationDomain, mintRecipient, destinationCaller)
 	if err != nil {
 		return nil, err
 	}
 
-	return types.NewForwarding(types.PROTOCOL_CCTP, attributes, passthroughPayload)
+	return core.NewForwarding(core.PROTOCOL_CCTP, attributes, passthroughPayload)
 }

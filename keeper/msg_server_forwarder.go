@@ -29,8 +29,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"orbiter.dev/controller/forwarding"
-	"orbiter.dev/types"
 	"orbiter.dev/types/component/forwarder"
+	"orbiter.dev/types/core"
 )
 
 var _ forwarder.MsgServer = &msgServerForwarder{}
@@ -51,14 +51,14 @@ func (s msgServerForwarder) PauseProtocol(
 	ctx context.Context,
 	msg *forwarder.MsgPauseProtocol,
 ) (*forwarder.MsgPauseProtocolResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
 	f := s.Forwarder()
 
 	if err := f.Pause(ctx, msg.ProtocolId, nil); err != nil {
-		return nil, types.ErrUnableToPause.Wrapf(
+		return nil, core.ErrUnableToPause.Wrapf(
 			"protocol: %s", err.Error(),
 		)
 	}
@@ -71,14 +71,14 @@ func (s msgServerForwarder) UnpauseProtocol(
 	ctx context.Context,
 	msg *forwarder.MsgUnpauseProtocol,
 ) (*forwarder.MsgUnpauseProtocolResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
 	f := s.Forwarder()
 
 	if err := f.Unpause(ctx, msg.ProtocolId, nil); err != nil {
-		return nil, types.ErrUnableToUnpause.Wrapf(
+		return nil, core.ErrUnableToUnpause.Wrapf(
 			"protocol: %s", err.Error(),
 		)
 	}
@@ -91,14 +91,14 @@ func (s msgServerForwarder) PauseCounterparties(
 	ctx context.Context,
 	msg *forwarder.MsgPauseCounterparties,
 ) (*forwarder.MsgPauseCounterpartiesResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
 	f := s.Forwarder()
 
 	if err := f.Pause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
-		return nil, types.ErrUnableToPause.Wrapf(
+		return nil, core.ErrUnableToPause.Wrapf(
 			"counterparties: %s", err.Error(),
 		)
 	}
@@ -111,14 +111,14 @@ func (s msgServerForwarder) UnpauseCounterparties(
 	ctx context.Context,
 	msg *forwarder.MsgUnpauseCounterparties,
 ) (*forwarder.MsgUnpauseCounterpartiesResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
 	f := s.Forwarder()
 
 	if err := f.Unpause(ctx, msg.ProtocolId, msg.CounterpartyIds); err != nil {
-		return nil, types.ErrUnableToUnpause.Wrapf(
+		return nil, core.ErrUnableToUnpause.Wrapf(
 			"counterparties: %s", err.Error(),
 		)
 	}
@@ -131,11 +131,11 @@ func (s msgServerForwarder) ReplaceDepositForBurn(
 	ctx context.Context,
 	msg *forwarder.MsgReplaceDepositForBurn,
 ) (*forwarder.MsgReplaceDepositForBurnResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
-	controller, found := s.Forwarder().Router().Route(types.PROTOCOL_CCTP)
+	controller, found := s.Forwarder().Router().Route(core.PROTOCOL_CCTP)
 	if !found {
 		return nil, errors.New("cctp controller not found")
 	}
@@ -152,7 +152,7 @@ func (s msgServerForwarder) ReplaceDepositForBurn(
 	handler := cctpController.GetHandler()
 
 	msgReplace := cctptypes.MsgReplaceDepositForBurn{
-		From:                 types.ModuleAddress.String(),
+		From:                 core.ModuleAddress.String(),
 		OriginalMessage:      msg.OriginalMessage,
 		OriginalAttestation:  msg.OriginalAttestation,
 		NewDestinationCaller: msg.NewDestinationCaller,

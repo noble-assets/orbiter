@@ -6,7 +6,7 @@ import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
-import "noble/orbiter/v1/protocol.proto";
+import "noble/orbiter/core/v1/id.proto";
 
 option go_package = "orbiter.dev/types/component/forwarder";
 
@@ -38,7 +38,7 @@ message MsgPauseProtocol {
   // Address of the signer who is requesting to pause the protocol.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Bridge protocol to pause.
-  noble.orbiter.v1.ProtocolID protocol_id = 2;
+  noble.orbiter.core.v1.ProtocolID protocol_id = 2;
 }
 
 // MsgPauseProtocolResponse is the response type from a MsgPauseProtocol request.
@@ -55,7 +55,7 @@ message MsgPauseCounterparties {
   // Address of the signer who is requesting to pause the counterparty pairs.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Bridge protocol to pause.
-  noble.orbiter.v1.ProtocolID protocol_id = 2;
+  noble.orbiter.core.v1.ProtocolID protocol_id = 2;
   // List of identifiers of destinations that must be paused.
   repeated string counterparty_ids = 3;
 }
@@ -75,7 +75,7 @@ message MsgUnpauseProtocol {
   // Address of the signer who is requesting to unpause the protocol.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Bridge protocol to unpause.
-  noble.orbiter.v1.ProtocolID protocol_id = 2;
+  noble.orbiter.core.v1.ProtocolID protocol_id = 2;
 }
 
 // MsgUnpauseProtocolResponse is the response type from a MsgUnpauseProtocol request.
@@ -92,7 +92,7 @@ message MsgUnpauseCounterparties {
   // Address of the signer who is requesting to unpause the counterparty pairs.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Bridge protocol to unpause.
-  noble.orbiter.v1.ProtocolID protocol_id = 2;
+  noble.orbiter.core.v1.ProtocolID protocol_id = 2;
   // List of identifiers of destinations that must be unpaused.
   repeated string counterparty_ids = 3;
 }

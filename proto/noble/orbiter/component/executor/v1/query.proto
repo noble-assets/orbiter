@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package noble.orbiter.component.executor.v1;
+
+import "amino/amino.proto";
+import "cosmos/query/v1/query.proto";
+import "google/api/annotations.proto";
+import "noble/orbiter/core/v1/id.proto";
+
+option go_package = "orbiter.dev/types/component/executor";
+
+// Query defines the gRPC query service for the Orbiter
+// executor component.
+service Query {
+  rpc PausedActions(QueryPausedActionsRequest) returns (QueryPausedActionsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/executor/v1/paused/actions";
+  }
+  rpc IsActionPaused(QueryIsActionPausedRequest) returns (QueryIsActionPausedResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/executor/v1/paused/actions/{action_id}";
+  }
+}
+
+message QueryPausedActionsRequest {}
+
+message QueryPausedActionsResponse {
+  repeated noble.orbiter.core.v1.ActionID action_id = 1 [(amino.dont_omitempty) = true];
+}
+
+message QueryIsActionPausedRequest {
+  noble.orbiter.core.v1.ActionID action_id = 1 [(amino.dont_omitempty) = true];
+}
+
+message QueryIsActionPausedResponse {
+  bool is_paused = 1;
+}

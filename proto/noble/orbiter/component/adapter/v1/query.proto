@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package noble.orbiter.component.adapter.v1;
+
+import "amino/amino.proto";
+import "cosmos/query/v1/query.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "noble/orbiter/component/adapter/v1/adapter.proto";
+
+option go_package = "orbiter.dev/types/component/adapter";
+
+// Query defines the gRPC query service for the Orbiter
+// adapter component.
+service Query {
+  // Params retrieves the adapter component parameters.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/adapter/v1/params";
+  }
+}
+
+// QueryParamsRequest is the request type for the Params query.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Params query.
+message QueryParamsResponse {
+  // params holds all the parameters of the adapter module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}

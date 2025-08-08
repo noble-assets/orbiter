@@ -9,6 +9,10 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
+	adapter "orbiter.dev/types/component/adapter"
+	dispatcher "orbiter.dev/types/component/dispatcher"
+	executor "orbiter.dev/types/component/executor"
+	forwarder "orbiter.dev/types/component/forwarder"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -24,6 +28,10 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState represents the genesis state for the Orbiter module.
 type GenesisState struct {
+	AdapterGenesis    *adapter.GenesisState    `protobuf:"bytes,1,opt,name=adapter_genesis,json=adapterGenesis,proto3" json:"adapter_genesis,omitempty"`
+	DispatcherGenesis *dispatcher.GenesisState `protobuf:"bytes,2,opt,name=dispatcher_genesis,json=dispatcherGenesis,proto3" json:"dispatcher_genesis,omitempty"`
+	ForwarderGenesis  *forwarder.GenesisState  `protobuf:"bytes,3,opt,name=forwarder_genesis,json=forwarderGenesis,proto3" json:"forwarder_genesis,omitempty"`
+	ExecutorGenesis   *executor.GenesisState   `protobuf:"bytes,4,opt,name=executor_genesis,json=executorGenesis,proto3" json:"executor_genesis,omitempty"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -59,6 +67,34 @@ func (m *GenesisState) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisState proto.InternalMessageInfo
 
+func (m *GenesisState) GetAdapterGenesis() *adapter.GenesisState {
+	if m != nil {
+		return m.AdapterGenesis
+	}
+	return nil
+}
+
+func (m *GenesisState) GetDispatcherGenesis() *dispatcher.GenesisState {
+	if m != nil {
+		return m.DispatcherGenesis
+	}
+	return nil
+}
+
+func (m *GenesisState) GetForwarderGenesis() *forwarder.GenesisState {
+	if m != nil {
+		return m.ForwarderGenesis
+	}
+	return nil
+}
+
+func (m *GenesisState) GetExecutorGenesis() *executor.GenesisState {
+	if m != nil {
+		return m.ExecutorGenesis
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*GenesisState)(nil), "noble.orbiter.v1.GenesisState")
 }
@@ -66,15 +102,26 @@ func init() {
 func init() { proto.RegisterFile("noble/orbiter/v1/genesis.proto", fileDescriptor_ebd5453f563ff393) }
 
 var fileDescriptor_ebd5453f563ff393 = []byte{
-	// 123 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0xcb, 0xcb, 0x4f, 0xca,
-	0x49, 0xd5, 0xcf, 0x2f, 0x4a, 0xca, 0x2c, 0x49, 0x2d, 0xd2, 0x2f, 0x33, 0xd4, 0x4f, 0x4f, 0xcd,
-	0x4b, 0x2d, 0xce, 0x2c, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x00, 0xcb, 0xeb, 0x41,
-	0xe5, 0xf5, 0xca, 0x0c, 0x95, 0xf8, 0xb8, 0x78, 0xdc, 0x21, 0x4a, 0x82, 0x4b, 0x12, 0x4b, 0x52,
-	0x9d, 0xb4, 0x4f, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48, 0x8e, 0xf1, 0xc1, 0x23, 0x39, 0xc6, 0x09,
-	0x8f, 0xe5, 0x18, 0x2e, 0x3c, 0x96, 0x63, 0xb8, 0xf1, 0x58, 0x8e, 0x21, 0x4a, 0x10, 0xa6, 0x2b,
-	0x25, 0xb5, 0x4c, 0xbf, 0xa4, 0xb2, 0x20, 0xb5, 0x38, 0x89, 0x0d, 0x6c, 0xaa, 0x31, 0x20, 0x00,
-	0x00, 0xff, 0xff, 0xc0, 0x7a, 0x6c, 0x03, 0x77, 0x00, 0x00, 0x00,
+	// 290 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0xc1, 0x4a, 0xec, 0x30,
+	0x14, 0x86, 0xdb, 0x3b, 0x17, 0x17, 0x51, 0x9c, 0xb6, 0x2b, 0x99, 0x45, 0x10, 0x57, 0x82, 0x90,
+	0x4e, 0xda, 0x37, 0x70, 0xe3, 0x5e, 0x57, 0x8a, 0x30, 0xa4, 0xed, 0x51, 0x0b, 0xda, 0x84, 0x34,
+	0x56, 0x7d, 0x07, 0x17, 0x3e, 0x96, 0xcb, 0x59, 0xba, 0x94, 0xf6, 0x45, 0x84, 0x98, 0xa4, 0x0e,
+	0x6d, 0xb6, 0xe7, 0xcf, 0xf7, 0xfd, 0x9c, 0x1c, 0x84, 0x1b, 0x5e, 0x3c, 0x42, 0xca, 0x65, 0x51,
+	0x2b, 0x90, 0x69, 0x47, 0xd3, 0x7b, 0x68, 0xa0, 0xad, 0x5b, 0x22, 0x24, 0x57, 0x3c, 0x89, 0x74,
+	0x4e, 0x4c, 0x4e, 0x3a, 0xba, 0x5a, 0xef, 0x12, 0x25, 0x7f, 0x12, 0xbc, 0x81, 0x46, 0xa5, 0xac,
+	0x62, 0x62, 0xce, 0xb1, 0xca, 0x7d, 0x44, 0x55, 0xb7, 0x82, 0xa9, 0xf2, 0x61, 0x0e, 0xa2, 0x3e,
+	0x08, 0x5e, 0xa1, 0x7c, 0x56, 0x7c, 0x06, 0xc9, 0x7c, 0xc8, 0x1d, 0x97, 0x2f, 0x4c, 0x56, 0x33,
+	0x35, 0x27, 0xef, 0x0b, 0x74, 0x70, 0xf1, 0x3b, 0xb9, 0x52, 0x4c, 0x41, 0x72, 0x8d, 0x96, 0x66,
+	0x91, 0x8d, 0x79, 0x79, 0x14, 0x1e, 0x87, 0xa7, 0xfb, 0xd9, 0x9a, 0xec, 0x7e, 0x85, 0xd3, 0x13,
+	0xf3, 0x9e, 0x74, 0x94, 0xfc, 0x55, 0x5d, 0x1e, 0x9a, 0xc0, 0x0c, 0x93, 0x02, 0x25, 0xe3, 0xc6,
+	0xce, 0xfe, 0x4f, 0xdb, 0x73, 0xaf, 0x7d, 0x44, 0x26, 0x05, 0xf1, 0x98, 0xd9, 0x8e, 0x0d, 0x8a,
+	0xdd, 0xb6, 0xae, 0x62, 0xa1, 0x2b, 0x32, 0x6f, 0x85, 0x23, 0x26, 0x0d, 0x91, 0x8b, 0x6c, 0xc1,
+	0x2d, 0x8a, 0xec, 0x05, 0x9c, 0xff, 0xbf, 0xf6, 0x53, 0xaf, 0xdf, 0x02, 0x13, 0xfd, 0xd2, 0x26,
+	0x66, 0x7a, 0x7e, 0xf6, 0xd9, 0xe3, 0x70, 0xdb, 0xe3, 0xf0, 0xbb, 0xc7, 0xe1, 0xc7, 0x80, 0x83,
+	0xed, 0x80, 0x83, 0xaf, 0x01, 0x07, 0x37, 0xb1, 0xd5, 0x56, 0xd0, 0xa5, 0xea, 0x4d, 0x40, 0x5b,
+	0xec, 0xe9, 0x13, 0xe6, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xbe, 0x0b, 0x6a, 0x40, 0xc4, 0x02,
+	0x00, 0x00,
 }
 
 func (m *GenesisState) Marshal() (dAtA []byte, err error) {
@@ -97,6 +144,54 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.ExecutorGenesis != nil {
+		{
+			size, err := m.ExecutorGenesis.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.ForwarderGenesis != nil {
+		{
+			size, err := m.ForwarderGenesis.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.DispatcherGenesis != nil {
+		{
+			size, err := m.DispatcherGenesis.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.AdapterGenesis != nil {
+		{
+			size, err := m.AdapterGenesis.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
 	return len(dAtA) - i, nil
 }
 
@@ -117,6 +212,22 @@ func (m *GenesisState) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if m.AdapterGenesis != nil {
+		l = m.AdapterGenesis.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if m.DispatcherGenesis != nil {
+		l = m.DispatcherGenesis.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if m.ForwarderGenesis != nil {
+		l = m.ForwarderGenesis.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if m.ExecutorGenesis != nil {
+		l = m.ExecutorGenesis.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
 	return n
 }
 
@@ -155,6 +266,150 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: GenesisState: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdapterGenesis", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AdapterGenesis == nil {
+				m.AdapterGenesis = &adapter.GenesisState{}
+			}
+			if err := m.AdapterGenesis.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DispatcherGenesis", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.DispatcherGenesis == nil {
+				m.DispatcherGenesis = &dispatcher.GenesisState{}
+			}
+			if err := m.DispatcherGenesis.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ForwarderGenesis", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ForwarderGenesis == nil {
+				m.ForwarderGenesis = &forwarder.GenesisState{}
+			}
+			if err := m.ForwarderGenesis.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExecutorGenesis", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ExecutorGenesis == nil {
+				m.ExecutorGenesis = &executor.GenesisState{}
+			}
+			if err := m.ExecutorGenesis.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenesis(dAtA[iNdEx:])

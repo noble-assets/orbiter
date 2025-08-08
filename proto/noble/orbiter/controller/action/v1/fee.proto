@@ -9,7 +9,7 @@ option go_package = "orbiter.dev/types/controller/action";
 // FeeAttributes defines the concrete implementation of the
 // ActionAttributes interface to execute a fee payment.
 message FeeAttributes {
-  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ActionAttributes";
+  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ActionAttributes";
 
   // fees_info defines the fees to be applied.
   repeated FeeInfo fees_info = 1;

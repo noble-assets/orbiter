@@ -22,16 +22,16 @@ package controller
 
 import (
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 )
 
 var (
-	_ interfaces.Controller[types.ActionID]   = &BaseController[types.ActionID]{}
-	_ interfaces.Controller[types.ProtocolID] = &BaseController[types.ProtocolID]{}
+	_ types.Controller[core.ActionID]   = &BaseController[core.ActionID]{}
+	_ types.Controller[core.ProtocolID] = &BaseController[core.ProtocolID]{}
 )
 
 // NewBase returns a new instance of a validated BaseController.
-func NewBase[ID interfaces.IdentifierConstraint](id ID) (*BaseController[ID], error) {
+func NewBase[ID core.IdentifierConstraint](id ID) (*BaseController[ID], error) {
 	if err := id.Validate(); err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func NewBase[ID interfaces.IdentifierConstraint](id ID) (*BaseController[ID], er
 }
 
 // BaseController is a generic controller that implements interfaces.Controller.
-type BaseController[ID interfaces.IdentifierConstraint] struct {
+type BaseController[ID core.IdentifierConstraint] struct {
 	id ID
 }
 

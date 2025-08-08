@@ -9,13 +9,13 @@ option go_package = "testutil/testdata";
 // TestForwardingAttr is a type created to test the proto marshaling/unmarshaling
 // for the forwarding attributes.
 message TestForwardingAttr {
-  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ForwardingAttributes";
+  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ForwardingAttributes";
   string planet = 1;
 }
 
 // TestActionAttr is a type created to test the proto marshaling/unmarshaling
 // for the action attributes.
 message TestActionAttr {
-  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ActionAttributes";
+  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ActionAttributes";
   string whatever = 1;
 }

@@ -20,11 +20,11 @@
 
 package testdata
 
-import "orbiter.dev/types"
+import "orbiter.dev/types/core"
 
 var (
-	_ types.ForwardingAttributes = &TestForwardingAttr{}
-	_ types.ActionAttributes     = &TestActionAttr{}
+	_ core.ForwardingAttributes = &TestForwardingAttr{}
+	_ core.ActionAttributes     = &TestActionAttr{}
 )
 
 func (a *TestForwardingAttr) CounterpartyID() string {

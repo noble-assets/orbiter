@@ -6,7 +6,7 @@ import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
-import "noble/orbiter/v1/action.proto";
+import "noble/orbiter/core/v1/id.proto";
 
 option go_package = "orbiter.dev/types/component/executor";
 
@@ -31,7 +31,7 @@ message MsgPauseAction {
   // Address of the signer who is requesting to pause the action.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Action to pause.
-  noble.orbiter.v1.ActionID action_id = 2;
+  noble.orbiter.core.v1.ActionID action_id = 2;
 }
 
 // MsgPauseActionResponse is the response type from a MsgPauseAction request.
@@ -48,7 +48,7 @@ message MsgUnpauseAction {
   // Address of the signer who is requesting to unpause the action.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Action to unpause.
-  noble.orbiter.v1.ActionID action_id = 2;
+  noble.orbiter.core.v1.ActionID action_id = 2;
 }
 
 // MsgUnpauseActionResponse is the response from a MsgUnpauseAction request.

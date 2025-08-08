@@ -23,16 +23,30 @@ package router
 import (
 	"errors"
 
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 )
 
+// Routable defines the behavior required from a component
+// to be used in a router.
+type Routable[ID core.IdentifierConstraint] interface {
+	// Returns the component's identifier.
+	ID() ID
+}
+
+// RouterProvider defines the behavior required from a component
+// to manage accesses to a router.
+type RouterProvider[ID core.IdentifierConstraint, T Routable[ID]] interface {
+	Router() *Router[ID, T]
+	SetRouter(*Router[ID, T]) error
+}
+
 // Router defines a generic router implementing the Router interface.
-type Router[ID interfaces.IdentifierConstraint, T interfaces.Routable[ID]] struct {
+type Router[ID core.IdentifierConstraint, T Routable[ID]] struct {
 	routes map[ID]T
 	sealed bool
 }
 
-func New[ID interfaces.IdentifierConstraint, T interfaces.Routable[ID]]() *Router[ID, T] {
+func New[ID core.IdentifierConstraint, T Routable[ID]]() *Router[ID, T] {
 	return &Router[ID, T]{
 		routes: make(map[ID]T),
 	}

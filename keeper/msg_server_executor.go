@@ -23,8 +23,8 @@ package keeper
 import (
 	"context"
 
-	"orbiter.dev/types"
 	"orbiter.dev/types/component/executor"
+	"orbiter.dev/types/core"
 )
 
 var _ executor.MsgServer = &msgServerExecutor{}
@@ -45,14 +45,14 @@ func (s msgServerExecutor) PauseAction(
 	ctx context.Context,
 	msg *executor.MsgPauseAction,
 ) (*executor.MsgPauseActionResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
 	e := s.Executor()
 
 	if err := e.Pause(ctx, msg.ActionId); err != nil {
-		return nil, types.ErrUnableToPause.Wrapf(
+		return nil, core.ErrUnableToPause.Wrapf(
 			"action: %s", err.Error(),
 		)
 	}
@@ -65,14 +65,14 @@ func (s msgServerExecutor) UnpauseAction(
 	ctx context.Context,
 	msg *executor.MsgUnpauseAction,
 ) (*executor.MsgUnpauseActionResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
 	e := s.Executor()
 
 	if err := e.Unpause(ctx, msg.ActionId); err != nil {
-		return nil, types.ErrUnableToUnpause.Wrapf(
+		return nil, core.ErrUnableToUnpause.Wrapf(
 			"action: %s", err.Error(),
 		)
 	}

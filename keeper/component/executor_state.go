@@ -22,34 +22,63 @@ package component
 
 import (
 	"context"
+	"fmt"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
-func (e *Executor) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
-	return e.PausedControllers.Has(ctx, int32(id))
+func (e *Executor) IsActionPaused(ctx context.Context, id core.ActionID) (bool, error) {
+	return e.PausedActions.Has(ctx, int32(id))
 }
 
-func (e *Executor) SetPausedController(ctx context.Context, id types.ActionID) error {
-	paused, err := e.IsControllerPaused(ctx, id)
+func (e *Executor) SetPausedAction(ctx context.Context, id core.ActionID) error {
+	paused, err := e.IsActionPaused(ctx, id)
 	if err != nil {
 		return err
 	}
+	// Already paused, no-op
 	if paused {
 		return nil
 	}
 
-	return e.PausedControllers.Set(ctx, int32(id))
+	return e.PausedActions.Set(ctx, int32(id))
 }
 
-func (e *Executor) SetUnpausedController(ctx context.Context, id types.ActionID) error {
-	paused, err := e.IsControllerPaused(ctx, id)
+func (e *Executor) SetUnpausedAction(ctx context.Context, id core.ActionID) error {
+	paused, err := e.IsActionPaused(ctx, id)
 	if err != nil {
 		return err
 	}
+	// Already unpaused, no-op
 	if !paused {
 		return nil
 	}
 
-	return e.PausedControllers.Remove(ctx, int32(id))
+	return e.PausedActions.Remove(ctx, int32(id))
+}
+
+func (e *Executor) GetPausedActions(
+	ctx context.Context,
+) ([]core.ActionID, error) {
+	iter, err := e.PausedActions.Iterate(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var paused []core.ActionID
+	for ; iter.Valid(); iter.Next() {
+		k, err := iter.Key()
+		if err != nil {
+			return nil, err
+		}
+
+		id, err := core.NewActionID(k)
+		if err != nil {
+			return nil, fmt.Errorf("cannot create action ID from iterator key: %w", err)
+		}
+		paused = append(paused, id)
+	}
+
+	return paused, nil
 }

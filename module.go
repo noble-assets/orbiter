@@ -35,8 +35,10 @@ import (
 
 	"orbiter.dev/keeper"
 	"orbiter.dev/types"
+	"orbiter.dev/types/component/adapter"
 	"orbiter.dev/types/component/executor"
 	"orbiter.dev/types/component/forwarder"
+	"orbiter.dev/types/core"
 )
 
 const ConsensusVersion = 1
@@ -58,7 +60,7 @@ func NewAppModuleBasic() AppModuleBasic {
 }
 
 func (a AppModuleBasic) Name() string {
-	return types.ModuleName
+	return core.ModuleName
 }
 
 func (a AppModuleBasic) RegisterGRPCGatewayRoutes(client.Context, *runtime.ServeMux) {}
@@ -87,6 +89,11 @@ func NewAppModule(keeper *keeper.Keeper) AppModule {
 func (m AppModule) RegisterServices(cfg module.Configurator) {
 	forwarder.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerForwarder(m.keeper))
 	executor.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerExecutor(m.keeper))
+	adapter.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerAdapter(m.keeper))
+
+	adapter.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerAdapter(m.keeper))
+	forwarder.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerForwarder(m.keeper))
+	executor.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerExecutor(m.keeper))
 }
 
 func (m AppModule) IsAppModule() {}
@@ -108,7 +115,7 @@ func (AppModuleBasic) ValidateGenesis(
 ) error {
 	var genesis types.GenesisState
 	if err := cdc.UnmarshalJSON(bz, &genesis); err != nil {
-		return fmt.Errorf("failed to unmarshal x/%s genesis state: %w", types.ModuleName, err)
+		return fmt.Errorf("failed to unmarshal x/%s genesis state: %w", core.ModuleName, err)
 	}
 
 	return genesis.Validate()
