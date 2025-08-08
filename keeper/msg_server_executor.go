@@ -45,7 +45,7 @@ func (s msgServerExecutor) PauseAction(
 	ctx context.Context,
 	msg *executor.MsgPauseAction,
 ) (*executor.MsgPauseActionResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
@@ -65,7 +65,7 @@ func (s msgServerExecutor) UnpauseAction(
 	ctx context.Context,
 	msg *executor.MsgUnpauseAction,
 ) (*executor.MsgUnpauseActionResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 

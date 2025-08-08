@@ -192,9 +192,9 @@ func (k *Keeper) SetAdapterControllers(controllers ...types.ControllerAdapter) {
 	}
 }
 
-// CheckIsAuthority returns an error is the signer is not the
+// RequireAuthority returns an error is the signer is not the
 // keeper authority.
-func (k *Keeper) CheckIsAuthority(signer string) error {
+func (k *Keeper) RequireAuthority(signer string) error {
 	if k.Authority() != signer {
 		return core.ErrUnauthorized
 	}

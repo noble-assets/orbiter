@@ -27,14 +27,12 @@ message QueryPausedActionsRequest {}
 
 message QueryPausedActionsResponse {
   repeated noble.orbiter.core.v1.ActionID action_id = 1 [
-    (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
 }
 
 message QueryIsActionPausedRequest {
   noble.orbiter.core.v1.ActionID action_id = 1 [
-    (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
 }

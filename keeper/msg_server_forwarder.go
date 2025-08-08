@@ -51,7 +51,7 @@ func (s msgServerForwarder) PauseProtocol(
 	ctx context.Context,
 	msg *forwarder.MsgPauseProtocol,
 ) (*forwarder.MsgPauseProtocolResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
@@ -71,7 +71,7 @@ func (s msgServerForwarder) UnpauseProtocol(
 	ctx context.Context,
 	msg *forwarder.MsgUnpauseProtocol,
 ) (*forwarder.MsgUnpauseProtocolResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
@@ -91,7 +91,7 @@ func (s msgServerForwarder) PauseCounterparties(
 	ctx context.Context,
 	msg *forwarder.MsgPauseCounterparties,
 ) (*forwarder.MsgPauseCounterpartiesResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
@@ -111,7 +111,7 @@ func (s msgServerForwarder) UnpauseCounterparties(
 	ctx context.Context,
 	msg *forwarder.MsgUnpauseCounterparties,
 ) (*forwarder.MsgUnpauseCounterpartiesResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
@@ -131,7 +131,7 @@ func (s msgServerForwarder) ReplaceDepositForBurn(
 	ctx context.Context,
 	msg *forwarder.MsgReplaceDepositForBurn,
 ) (*forwarder.MsgReplaceDepositForBurnResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 

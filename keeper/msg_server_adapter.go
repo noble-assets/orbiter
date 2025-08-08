@@ -42,7 +42,7 @@ func (s msgServerAdapter) UpdateParams(
 	ctx context.Context,
 	msg *adapter.MsgUpdateParams,
 ) (*adapter.MsgUpdateParamsResponse, error) {
-	if err := s.CheckIsAuthority(msg.Signer); err != nil {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
 
