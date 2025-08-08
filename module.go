@@ -92,6 +92,8 @@ func (m AppModule) RegisterServices(cfg module.Configurator) {
 	adapter.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerAdapter(m.keeper))
 
 	adapter.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerAdapter(m.keeper))
+	forwarder.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerForwarder(m.keeper))
+	executor.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerExecutor(m.keeper))
 }
 
 func (m AppModule) IsAppModule() {}

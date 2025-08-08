@@ -39,7 +39,7 @@ func NewQueryServerForwarder(keeper *Keeper) queryServerForwarder {
 }
 
 // IsProtocolPaused implements forwarder.QueryServer.
-func (s *queryServerForwarder) IsProtocolPaused(
+func (s queryServerForwarder) IsProtocolPaused(
 	ctx context.Context,
 	req *forwarder.QueryIsProtocolPausedRequest,
 ) (*forwarder.QueryIsProtocolPausedResponse, error) {
@@ -56,7 +56,7 @@ func (s *queryServerForwarder) IsProtocolPaused(
 }
 
 // PausedProtocols implements forwarder.QueryServer.
-func (s *queryServerForwarder) PausedProtocols(
+func (s queryServerForwarder) PausedProtocols(
 	ctx context.Context,
 	req *forwarder.QueryPausedProtocolsRequest,
 ) (*forwarder.QueryPausedProtocolsResponse, error) {
@@ -73,7 +73,7 @@ func (s *queryServerForwarder) PausedProtocols(
 }
 
 // IsCounterpartyPaused implements forwarder.QueryServer.
-func (s *queryServerForwarder) IsCounterpartyPaused(
+func (s queryServerForwarder) IsCounterpartyPaused(
 	ctx context.Context,
 	req *forwarder.QueryIsCounterpartyPausedRequest,
 ) (*forwarder.QueryIsCounterpartyPausedResponse, error) {
@@ -95,7 +95,7 @@ func (s *queryServerForwarder) IsCounterpartyPaused(
 }
 
 // PausedCounterparties implements forwarder.QueryServer.
-func (s *queryServerForwarder) PausedCounterparties(
+func (s queryServerForwarder) PausedCounterparties(
 	ctx context.Context,
 	req *forwarder.QueryPausedCounterpartiesRequest,
 ) (*forwarder.QueryPausedCounterpartiesResponse, error) {

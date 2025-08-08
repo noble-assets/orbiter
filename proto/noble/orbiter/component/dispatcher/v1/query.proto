@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package noble.orbiter.component.dispatcher.v1;
+
+import "amino/amino.proto";
+import "cosmos/query/v1/query.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "noble/orbiter/component/dispatcher/v1/dispatcher.proto";
+import "noble/orbiter/core/v1/id.proto";
+
+option go_package = "orbiter.dev/types/component/dispatcher";
+
+// Query defines the gRPC query service for the Orbiter
+// dispatcher component.
+service Query {
+  // DispatchedAmount retrieves the dispatched amounts for a specific route and denom.
+  rpc DispatchedAmount(QueryDispatchedAmountRequest) returns (QueryDispatchedAmountResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/amount/{source_protocol_id}/{source_counterparty_id}/{destination_orbit_id}/{denom}";
+  }
+
+  // DispatchedAmountsBySourceProtocol retrieves all dispatched amounts for a source protocol.
+  rpc DispatchedAmountsBySourceProtocol(QueryDispatchedAmountsBySourceProtocolRequest) returns (QueryDispatchedAmountsBySourceProtocolResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/amounts/source-protocol/{protocol_id}";
+  }
+
+  // DispatchedAmountsByDestinationProtocol retrieves all dispatched amounts for a destination protocol.
+  rpc DispatchedAmountsByDestinationProtocol(QueryDispatchedAmountsByDestinationProtocolRequest) returns (QueryDispatchedAmountsByDestinationProtocolResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/amounts/destination-protocol/{protocol_id}";
+  }
+
+  // DispatchedCounts retrieves the dispatch counts for a specific route.
+  rpc DispatchedCounts(QueryDispatchedCountsRequest) returns (QueryDispatchedCountsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/{source_protocol_id}/{source_counterparty_id}/{destination_orbit_id}";
+  }
+}
+
+// QueryDispatchedAmountRequest is the request type for the Query/DispatchedAmount RPC method.
+message QueryDispatchedAmountRequest {
+  // source_protocol_id is the source protocol identifier.
+  noble.orbiter.core.v1.ProtocolID source_protocol_id = 1 [(amino.dont_omitempty) = true];
+  // source_counterparty_id is the source counterparty identifier.
+  string source_counterparty_id = 2;
+  // destination_orbit_id is the destination orbit identifier in string format.
+  string destination_orbit_id = 3;
+  // denom is the denomination to query.
+  string denom = 4;
+}
+
+// QueryDispatchedAmountResponse is the response type for the Query/DispatchedAmount RPC method.
+message QueryDispatchedAmountResponse {
+  // amount_dispatched contains the incoming and outgoing amounts.
+  noble.orbiter.component.dispatcher.v1.AmountDispatched amount_dispatched = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryDispatchedAmountsBySourceProtocolRequest is the request type for the Query/DispatchedAmountsBySourceProtocol RPC method.
+message QueryDispatchedAmountsBySourceProtocolRequest {
+  // protocol_id is the source protocol to query dispatched amounts for.
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+}
+
+// QueryDispatchedAmountsBySourceProtocolResponse is the response type for the Query/DispatchedAmountsBySourceProtocol RPC method.
+message QueryDispatchedAmountsBySourceProtocolResponse {
+  // entries is the list of dispatched amount entries.
+  repeated noble.orbiter.component.dispatcher.v1.DispatchedAmountEntry entries = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryDispatchedAmountsByDestinationProtocolRequest is the request type for the Query/DispatchedAmountsByDestinationProtocol RPC method.
+message QueryDispatchedAmountsByDestinationProtocolRequest {
+  // protocol_id is the destination protocol to query dispatched amounts for.
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+}
+
+// QueryDispatchedAmountsByDestinationProtocolResponse is the response type for the Query/DispatchedAmountsByDestinationProtocol RPC method.
+message QueryDispatchedAmountsByDestinationProtocolResponse {
+  // entries is the list of dispatched amount entries.
+  repeated noble.orbiter.component.dispatcher.v1.DispatchedAmountEntry entries = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryDispatchedCountsRequest is the request type for the Query/DispatchedCounts RPC method.
+message QueryDispatchedCountsRequest {
+  // source_protocol_id is the source protocol identifier.
+  noble.orbiter.core.v1.ProtocolID source_protocol_id = 1 [(amino.dont_omitempty) = true];
+  // source_counterparty_id is the source counterparty identifier.
+  string source_counterparty_id = 2;
+  // destination_orbit_id is the destination orbit identifier in string format.
+  string destination_orbit_id = 3;
+}
+
+// QueryDispatchedCountsResponse is the response type for the Query/DispatchedCounts RPC method.
+message QueryDispatchedCountsResponse {
+  // count is the number of dispatches for the specified route.
+  uint32 count = 1;
+}
