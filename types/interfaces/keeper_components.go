@@ -27,6 +27,7 @@ import (
 
 	"orbiter.dev/types"
 	"orbiter.dev/types/core"
+	"orbiter.dev/types/router"
 )
 
 type Loggable interface {
@@ -38,7 +39,7 @@ type Loggable interface {
 type Forwarder interface {
 	Loggable
 	PacketHandler[*types.ForwardingPacket]
-	RouterProvider[core.ProtocolID, ControllerForwarding]
+	router.RouterProvider[core.ProtocolID, ControllerForwarding]
 	Pause(context.Context, core.ProtocolID, []string) error
 	Unpause(context.Context, core.ProtocolID, []string) error
 }
@@ -48,7 +49,7 @@ type Forwarder interface {
 type Executor interface {
 	Loggable
 	PacketHandler[*types.ActionPacket]
-	RouterProvider[core.ActionID, ControllerAction]
+	router.RouterProvider[core.ActionID, ControllerAction]
 	Pause(context.Context, core.ActionID) error
 	Unpause(context.Context, core.ActionID) error
 }
@@ -65,5 +66,5 @@ type Dispatcher interface {
 type Adapter interface {
 	Loggable
 	PayloadAdapter
-	RouterProvider[core.ProtocolID, ControllerAdapter]
+	router.RouterProvider[core.ProtocolID, ControllerAdapter]
 }

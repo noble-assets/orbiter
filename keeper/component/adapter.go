@@ -37,7 +37,7 @@ import (
 	"orbiter.dev/types/router"
 )
 
-type AdapterRouter = interfaces.Router[core.ProtocolID, interfaces.ControllerAdapter]
+type AdapterRouter = *router.Router[core.ProtocolID, interfaces.ControllerAdapter]
 
 var _ interfaces.Adapter = &Adapter{}
 
@@ -125,11 +125,11 @@ func (a *Adapter) SetRouter(r AdapterRouter) error {
 }
 
 // ParsePayload implements core.PayloadAdapter.
-func (c *Adapter) ParsePayload(
+func (a *Adapter) ParsePayload(
 	id core.ProtocolID,
 	payloadBz []byte,
 ) (bool, *core.Payload, error) {
-	adapter, found := c.router.Route(id)
+	adapter, found := a.router.Route(id)
 	if !found {
 		return false, nil, fmt.Errorf("adapter not found for protocol ID: %s", id)
 	}

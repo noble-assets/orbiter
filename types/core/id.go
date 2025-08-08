@@ -27,7 +27,11 @@ import (
 	"strings"
 )
 
-const orbitIDSeparator = ":"
+type IdentifierConstraint interface {
+	ProtocolID | ActionID
+	Validate() error
+	String() string
+}
 
 // NewActionID returns a validated action ID from an int32. If
 // the validation fails, the returned value signals an unsupported

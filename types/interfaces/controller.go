@@ -25,6 +25,7 @@ import (
 
 	"orbiter.dev/types"
 	"orbiter.dev/types/core"
+	"orbiter.dev/types/router"
 )
 
 // ControllerForwarding defines the behavior a forwarding packet
@@ -56,7 +57,7 @@ type ControllerAdapter interface {
 
 // Controller defines the behavior common to
 // all controllers.
-type Controller[ID IdentifierConstraint] interface {
-	Routable[ID]
+type Controller[ID core.IdentifierConstraint] interface {
+	router.Routable[ID]
 	Name() string
 }

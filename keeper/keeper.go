@@ -44,7 +44,7 @@ type Keeper struct {
 	// authority represents the module manager.
 	authority string
 
-	// Components.
+	// Each component manages its own state.
 	executor   *component.Executor
 	forwarder  *component.Forwarder
 	dispatcher *component.Dispatcher

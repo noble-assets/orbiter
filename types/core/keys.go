@@ -110,6 +110,8 @@ const (
 	CCTPNobleDomain = 4
 )
 
+const orbitIDSeparator = ":"
+
 var AdapterParamsPrefix = collections.NewPrefix(40)
 
 var OrbiterPrefix = ModuleName

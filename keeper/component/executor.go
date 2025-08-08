@@ -35,7 +35,7 @@ import (
 	"orbiter.dev/types/router"
 )
 
-type ActionRouter = interfaces.Router[core.ActionID, interfaces.ControllerAction]
+type ActionRouter = *router.Router[core.ActionID, interfaces.ControllerAction]
 
 var _ interfaces.Executor = &Executor{}
 

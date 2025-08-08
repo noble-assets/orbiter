@@ -35,7 +35,7 @@ import (
 	router "orbiter.dev/types/router"
 )
 
-type ForwardingRouter = interfaces.Router[core.ProtocolID, interfaces.ControllerForwarding]
+type ForwardingRouter = *router.Router[core.ProtocolID, interfaces.ControllerForwarding]
 
 var _ interfaces.Forwarder = &Forwarder{}
 
