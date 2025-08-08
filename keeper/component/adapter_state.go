@@ -26,30 +26,24 @@ import (
 	"orbiter.dev/types"
 )
 
-func (e *Executor) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
-	return e.PausedControllers.Has(ctx, int32(id))
+// GetParams returns the adapter params from state. In case of an error,
+// it returns default values and logs the error.
+//
+// NOTE: Returning the default is safe here since it returns zero
+// bytes allowed, which is the restrictive condition.
+func (a *Adapter) GetParams(ctx context.Context) types.AdapterParams {
+	params, err := a.params.Get(ctx)
+	if err != nil {
+		a.logger.Error("error getting params", "err", err.Error())
+
+		return types.AdapterParams{
+			MaxPassthroughPayloadSize: 0,
+		}
+	}
+
+	return params
 }
 
-func (e *Executor) SetPausedController(ctx context.Context, id types.ActionID) error {
-	paused, err := e.IsControllerPaused(ctx, id)
-	if err != nil {
-		return err
-	}
-	if paused {
-		return nil
-	}
-
-	return e.PausedControllers.Set(ctx, int32(id))
-}
-
-func (e *Executor) SetUnpausedController(ctx context.Context, id types.ActionID) error {
-	paused, err := e.IsControllerPaused(ctx, id)
-	if err != nil {
-		return err
-	}
-	if !paused {
-		return nil
-	}
-
-	return e.PausedControllers.Remove(ctx, int32(id))
+func (a *Adapter) SetParams(ctx context.Context, params types.AdapterParams) error {
+	return a.params.Set(ctx, params)
 }

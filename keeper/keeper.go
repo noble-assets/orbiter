@@ -230,7 +230,7 @@ func (k *Keeper) setComponents(
 		return fmt.Errorf("error creating a new dispatcher component: %w", err)
 	}
 
-	adapter, err := component.NewAdapter(logger, bankKeeper, dispatcher)
+	adapter, err := component.NewAdapter(cdc, sb, logger, bankKeeper, dispatcher)
 	if err != nil {
 		return fmt.Errorf("error creating a new adapter component: %w", err)
 	}

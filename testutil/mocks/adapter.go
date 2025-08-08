@@ -18,38 +18,45 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component
+package mocks
 
 import (
-	"context"
+	"testing"
 
-	"orbiter.dev/types"
+	"github.com/stretchr/testify/require"
+
+	"cosmossdk.io/collections"
+
+	"orbiter.dev/keeper/component"
 )
 
-func (e *Executor) IsControllerPaused(ctx context.Context, id types.ActionID) (bool, error) {
-	return e.PausedControllers.Has(ctx, int32(id))
-}
+func NewAdapterComponent(tb testing.TB) (*component.Adapter, *Dependencies) {
+	tb.Helper()
 
-func (e *Executor) SetPausedController(ctx context.Context, id types.ActionID) error {
-	paused, err := e.IsControllerPaused(ctx, id)
-	if err != nil {
-		return err
-	}
-	if paused {
-		return nil
-	}
+	deps := NewDependencies(tb)
 
-	return e.PausedControllers.Set(ctx, int32(id))
-}
+	sb := collections.NewSchemaBuilder(deps.StoreService)
 
-func (e *Executor) SetUnpausedController(ctx context.Context, id types.ActionID) error {
-	paused, err := e.IsControllerPaused(ctx, id)
-	if err != nil {
-		return err
-	}
-	if !paused {
-		return nil
-	}
+	dispatcher, err := component.NewDispatcher(
+		deps.EncCfg.Codec,
+		sb,
+		deps.Logger,
+		&ForwardingHandler{},
+		&ActionsHandler{},
+	)
+	require.NoError(tb, err)
 
-	return e.PausedControllers.Remove(ctx, int32(id))
+	adapter, err := component.NewAdapter(
+		deps.EncCfg.Codec,
+		sb,
+		deps.Logger,
+		BankKeeper{},
+		dispatcher,
+	)
+	require.NoError(tb, err)
+
+	_, err = sb.Build()
+	require.NoError(tb, err)
+
+	return adapter, &deps
 }
