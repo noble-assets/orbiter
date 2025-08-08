@@ -9,6 +9,6 @@ option go_package = "orbiter.dev/types";
 // AdapterParams represents the adapter components parameters.
 message AdapterParams {
   // max_passthrough_payload_size is the maximum size of the passthrough
-  // payload that can be send in a forwarding.
+  // payload that can be sent in a forwarding.
   uint32 max_passthrough_payload_size = 1 [(amino.dont_omitempty) = true];
 }

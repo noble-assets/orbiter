@@ -26,11 +26,11 @@ import (
 	"orbiter.dev/types"
 )
 
-// GetParams returns the adapter params from the state. In case of an error
-// returns default values and log the error.
+// GetParams returns the adapter params from state. In case of an error,
+// it returns default values and logs the error.
 //
-// NOTE: Returning the default is safe here since return zero
-// bytes allowed, which is the restrictive condition..
+// NOTE: Returning the default is safe here since it returns zero
+// bytes allowed, which is the restrictive condition.
 func (a *Adapter) GetParams(ctx context.Context) types.AdapterParams {
 	params, err := a.params.Get(ctx)
 	if err != nil {

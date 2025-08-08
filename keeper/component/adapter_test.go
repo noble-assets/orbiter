@@ -68,7 +68,7 @@ func TestCheckPassthroughPayloadSize(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	// ACT: Payload exceeds maximum size
+	// ACT: Payload equals maximum size
 	err = adapter.CheckPassthroughPayloadSize(ctx, payload)
 
 	// ASSERT: Works with equal bytes size
