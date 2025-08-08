@@ -27,26 +27,26 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"orbiter.dev/keeper/components"
+	"orbiter.dev/keeper/component"
 )
 
-func NewAdapterComponent(tb testing.TB) (*components.AdapterComponent, *Dependencies) {
+func NewAdapterComponent(tb testing.TB) (*component.Adapter, *Dependencies) {
 	tb.Helper()
 
 	deps := NewDependencies(tb)
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
 
-	dispatcher, err := components.NewDispatcherComponent(
+	dispatcher, err := component.NewDispatcher(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
-		&OrbitsHandler{},
+		&ForwardingHandler{},
 		&ActionsHandler{},
 	)
 	require.NoError(tb, err)
 
-	adapter, err := components.NewAdapterComponent(
+	adapter, err := component.NewAdapter(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,

@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package components
+package component
 
 import (
 	"context"
@@ -31,7 +31,7 @@ import (
 //
 // NOTE: Returning the default is safe here since return zero
 // bytes allowed, which is the restrictive condition..
-func (a *AdapterComponent) GetParams(ctx context.Context) types.AdapterParams {
+func (a *Adapter) GetParams(ctx context.Context) types.AdapterParams {
 	params, err := a.params.Get(ctx)
 	if err != nil {
 		a.logger.Error("error getting params", "err", err.Error())
@@ -44,6 +44,6 @@ func (a *AdapterComponent) GetParams(ctx context.Context) types.AdapterParams {
 	return params
 }
 
-func (a *AdapterComponent) SetParams(ctx context.Context, params types.AdapterParams) error {
+func (a *Adapter) SetParams(ctx context.Context, params types.AdapterParams) error {
 	return a.params.Set(ctx, params)
 }
