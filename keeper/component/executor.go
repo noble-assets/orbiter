@@ -42,8 +42,8 @@ type Executor struct {
 	logger log.Logger
 	// router is an action controllers router.
 	router ActionRouter
-	// PausedControllers keeps track of the ids of paused actions.
-	PausedControllers collections.KeySet[int32]
+	// PausedActions keeps track of the ids of paused actions.
+	PausedActions collections.KeySet[int32]
 }
 
 // NewExecutor returns a validated instance of an executor component.
@@ -53,12 +53,12 @@ func NewExecutor(
 	logger log.Logger,
 ) (*Executor, error) {
 	executor := Executor{
-		logger: logger.With(core.ComponentPrefix, core.ActionComponentName),
+		logger: logger.With(core.ComponentPrefix, core.ExecutorName),
 		router: router.New[core.ActionID, types.ControllerAction](),
-		PausedControllers: collections.NewKeySet(
+		PausedActions: collections.NewKeySet(
 			sb,
-			core.PausedActionControllersPrefix,
-			core.PausedActionControllersName,
+			core.PausedActionsPrefix,
+			core.PausedActionsName,
 			collections.Int32Key,
 		),
 	}

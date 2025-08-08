@@ -44,28 +44,28 @@ var (
 // Forwarding
 // ====================================================================================================.
 const (
-	ForwardingComponentName  = "forwarding"
+	ForwarderName            = "forwarder"
 	ForwardingControllerName = "forwarding_controller"
 
 	// Maps names.
-	PausedForwardingName            = "paused_forwardings"
-	PausedForwardingControllersName = "paused_forwarding_controllers"
+	PausedProtocolCounterpartiesName = "paused_protocol_counterparties"
+	PausedProtocolsName              = "paused_protocols"
 )
 
 var (
-	PausedForwardingPrefix            = collections.NewPrefix(10)
-	PausedForwardingControllersPrefix = collections.NewPrefix(11)
+	PausedProtocolCounterpartiesPrefix = collections.NewPrefix(10)
+	PausedProtocolsPrefix              = collections.NewPrefix(11)
 )
 
 // ====================================================================================================
 // Action
 // ====================================================================================================.
 const (
-	ActionComponentName  = "action"
+	ExecutorName         = "executor"
 	ActionControllerName = "action_controller"
 
 	// Maps names.
-	PausedActionControllersName = "paused_action_controllers"
+	PausedActionsName = "paused_action_controllers"
 
 	// Controllers constants.
 
@@ -74,13 +74,13 @@ const (
 	BPSNormalizer = 10_000
 )
 
-var PausedActionControllersPrefix = collections.NewPrefix(20)
+var PausedActionsPrefix = collections.NewPrefix(20)
 
 // ====================================================================================================
 // Dispatcher
 // ====================================================================================================.
 const (
-	DispatcherComponentName = "dispatcher"
+	DispatcherName = "dispatcher"
 
 	// Maps names.
 	DispatchedAmountsName = "dispatched_amounts"
@@ -100,7 +100,7 @@ var (
 // Adapter
 // ====================================================================================================.
 const (
-	AdaptersComponentName = "adapter"
+	AdapterName           = "adapter"
 	AdapterControllerName = "adapter_controller"
 
 	AdapterParamsName = "adapter_params"
@@ -108,10 +108,10 @@ const (
 	// CCTPNobleDomain is the identifier of the Noble domain
 	// in the CCTP protocol.
 	CCTPNobleDomain = 4
+
+	orbitIDSeparator = ":"
 )
 
-const orbitIDSeparator = ":"
+var OrbiterPrefix = ModuleName
 
 var AdapterParamsPrefix = collections.NewPrefix(40)
-
-var OrbiterPrefix = ModuleName

@@ -40,3 +40,10 @@ enum ProtocolID {
   // PROTOCOL_HYPERLANE represents the Hyperlane protocol identifier.
   PROTOCOL_HYPERLANE = 3;
 }
+
+// OrbitID represents the identifier of a counterparty chain and
+// the communication protocol used.
+message OrbitID {
+  ProtocolID protocol_id = 1;
+  string counterparty_id = 2; 
+}

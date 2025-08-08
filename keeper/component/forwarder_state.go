@@ -30,22 +30,22 @@ import (
 )
 
 // ====================================================================================================
-// PausedControllers
+// Paused protocols
 // ====================================================================================================
 
-func (f *Forwarder) IsControllerPaused(
+func (f *Forwarder) IsProtocolPaused(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) (bool, error) {
-	paused, err := f.PausedControllers.Has(ctx, int32(protocolID))
+	paused, err := f.PausedProtocols.Has(ctx, int32(protocolID))
 
 	return paused, err
 }
 
-func (f *Forwarder) SetPausedController(ctx context.Context,
+func (f *Forwarder) SetPausedProtocol(ctx context.Context,
 	protocolID core.ProtocolID,
 ) error {
-	paused, err := f.IsControllerPaused(ctx, protocolID)
+	paused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -53,14 +53,14 @@ func (f *Forwarder) SetPausedController(ctx context.Context,
 		return nil
 	}
 
-	return f.PausedControllers.Set(ctx, int32(protocolID))
+	return f.PausedProtocols.Set(ctx, int32(protocolID))
 }
 
-func (f *Forwarder) SetUnpausedController(
+func (f *Forwarder) SetUnpausedProtocol(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) error {
-	paused, err := f.IsControllerPaused(ctx, protocolID)
+	paused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -68,13 +68,13 @@ func (f *Forwarder) SetUnpausedController(
 		return nil
 	}
 
-	return f.PausedControllers.Remove(ctx, int32(protocolID))
+	return f.PausedProtocols.Remove(ctx, int32(protocolID))
 }
 
-func (f *Forwarder) GetPausedControllers(
+func (f *Forwarder) GetPausedProtocols(
 	ctx context.Context,
 ) ([]core.ProtocolID, error) {
-	iter, err := f.PausedControllers.Iterate(ctx, nil)
+	iter, err := f.PausedProtocols.Iterate(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -98,11 +98,11 @@ func (f *Forwarder) GetPausedControllers(
 }
 
 // ====================================================================================================
-// Paused forwardings
+// Paused protocol-counterparties
 // ====================================================================================================
 
 func (f *Forwarder) IsOrbitPaused(ctx context.Context, orbitID core.OrbitID) (bool, error) {
-	return f.PausedForwardings.Has(
+	return f.PausedOrbits.Has(
 		ctx,
 		collections.Join(int32(orbitID.ProtocolID), orbitID.CounterpartyID),
 	)
@@ -117,7 +117,7 @@ func (f *Forwarder) SetPausedOrbit(ctx context.Context, orbitID core.OrbitID) er
 		return nil
 	}
 
-	return f.PausedForwardings.Set(
+	return f.PausedOrbits.Set(
 		ctx,
 		collections.Join(int32(orbitID.ProtocolID), orbitID.CounterpartyID),
 	)
@@ -132,7 +132,7 @@ func (f *Forwarder) SetUnpausedOrbit(ctx context.Context, orbitID core.OrbitID) 
 		return nil
 	}
 
-	return f.PausedForwardings.Remove(
+	return f.PausedOrbits.Remove(
 		ctx,
 		collections.Join(int32(orbitID.ProtocolID), orbitID.CounterpartyID),
 	)
@@ -144,7 +144,7 @@ func (f *Forwarder) GetPausedOrbits(
 ) ([]string, error) {
 	rng := collections.NewPrefixedPairRange[int32, string](int32(protocolID))
 
-	iter, err := f.PausedForwardings.Iterate(ctx, rng)
+	iter, err := f.PausedOrbits.Iterate(ctx, rng)
 	if err != nil {
 		return nil, err
 	}
