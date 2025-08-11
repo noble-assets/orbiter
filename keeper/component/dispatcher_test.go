@@ -32,7 +32,6 @@ import (
 	"orbiter.dev/keeper/component"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
 )
 
 func TestNewDispatcherComponent(t *testing.T) {
