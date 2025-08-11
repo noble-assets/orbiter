@@ -18,34 +18,22 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package interfaces
+package core
 
-import "orbiter.dev/types"
+import (
+	"github.com/cosmos/gogoproto/proto"
+)
 
-type IdentifierConstraint interface {
-	types.ProtocolID | types.ActionID
-	Validate() error
-	String() string
+// ActionAttributes is the interface defining the expected behavior
+// for a type to be used to perform actions on the orbiter module.
+type ActionAttributes interface {
+	proto.Message
 }
 
-// Routable defines the behavior required from a component
-// to be used in a router.
-type Routable[ID IdentifierConstraint] interface {
-	// Returns the component's identifier.
-	ID() ID
-}
-
-// RouterProvider defines the behavior required from a component
-// to manage accesses to a router.
-type RouterProvider[ID IdentifierConstraint, T Routable[ID]] interface {
-	Router() Router[ID, T]
-	SetRouter(Router[ID, T]) error
-}
-
-type Router[ID IdentifierConstraint, T Routable[ID]] interface {
-	Seal()
-	Sealed() bool
-	AddRoute(T) error
-	HasRoute(ID) bool
-	Route(ID) (T, bool)
+// ForwardingAttributes is the interface every protocol forwarding
+// attribute type has to implement.
+type ForwardingAttributes interface {
+	proto.Message
+	// Returns the destination chain identifier.
+	CounterpartyID() string
 }

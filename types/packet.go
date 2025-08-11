@@ -23,91 +23,19 @@ package types
 import (
 	"errors"
 	fmt "fmt"
-	"strconv"
-	"strings"
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"orbiter.dev/types/core"
 )
-
-// OrbitID is an internal type used to uniquely
-// represent a source or a destination of a cross-chain
-// transfer and the bridge protocol used.
-type OrbitID struct {
-	ProtocolID ProtocolID
-	// Protocol specific identifier of a counterparty.
-	CounterpartyID string
-}
-
-// NewOrbitID returns a validated orbit identifier instance.
-func NewOrbitID(
-	protocolID ProtocolID,
-	counterpartyID string,
-) (OrbitID, error) {
-	attr := OrbitID{
-		ProtocolID:     protocolID,
-		CounterpartyID: counterpartyID,
-	}
-
-	return attr, attr.Validate()
-}
-
-// Validate returns an error if any of the orbit id field
-// is not valid.
-func (i OrbitID) Validate() error {
-	if err := i.ProtocolID.Validate(); err != nil {
-		return err
-	}
-	if i.CounterpartyID == "" {
-		return errors.New("counterparty id cannot be empty string")
-	}
-
-	return nil
-}
-
-// ID generates an internal identifier for a tuple (bridge protocol, chain).
-// The identifier allows to recover the protocol Id and the chain Id from its value.
-func (i OrbitID) ID() string {
-	return fmt.Sprintf("%d%s%s", i.ProtocolID.Uint32(), orbitIDSeparator, i.CounterpartyID)
-}
-
-// String returns the string representation of the id.
-func (i OrbitID) String() string {
-	return i.ID()
-}
-
-// ParseOrbitID returns a new orbit id instance from the string.
-// Returns an error if the string is not a valid orbit
-// id string.
-func ParseOrbitID(str string) (OrbitID, error) {
-	sepIndex := strings.Index(str, orbitIDSeparator)
-	if sepIndex == -1 {
-		return OrbitID{}, fmt.Errorf("invalid orbit ID format: missing separator in %s", str)
-	}
-
-	protocolIDStr := str[:sepIndex]
-	counterpartyID := str[sepIndex+1:]
-
-	id, err := strconv.ParseInt(protocolIDStr, 10, 32)
-	if err != nil {
-		return OrbitID{}, fmt.Errorf("invalid protocol ID: %w", err)
-	}
-
-	protocolID := ProtocolID(int32(id))
-	orbitID, err := NewOrbitID(protocolID, counterpartyID)
-	if err != nil {
-		return OrbitID{}, fmt.Errorf("invalid orbit ID string %s: %w", str, err)
-	}
-
-	return orbitID, nil
-}
 
 // TransferAttributes defines the cross-chain transfer information
 // passed down the orbiter to handle actions and routing.
 type TransferAttributes struct {
 	// Source fields have only getter methods.
-	sourceOrbitID OrbitID
-	sourceCoin    sdk.Coin
+	sourceID   core.CrossChainID
+	sourceCoin sdk.Coin
 	// Destination field have both setters and getters
 	// because they can be mutated by actions.
 	destinationCoin sdk.Coin
@@ -116,12 +44,12 @@ type TransferAttributes struct {
 // NewTransferAttributes returns a validated reference to a
 // transfer attributes type.
 func NewTransferAttributes(
-	sourceProtocolID ProtocolID,
+	sourceProtocolID core.ProtocolID,
 	sourceCounterpartyID string,
 	denom string,
 	amount math.Int,
 ) (*TransferAttributes, error) {
-	sourceOrbitID, err := NewOrbitID(sourceProtocolID, sourceCounterpartyID)
+	sourceID, err := core.NewCrossChainID(sourceProtocolID, sourceCounterpartyID)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +59,7 @@ func NewTransferAttributes(
 	destinationCoin := sdk.Coin{Denom: denom, Amount: amount}
 
 	transferAttr := TransferAttributes{
-		sourceOrbitID:   sourceOrbitID,
+		sourceID:        sourceID,
 		sourceCoin:      sourceCoin,
 		destinationCoin: destinationCoin,
 	}
@@ -142,9 +70,9 @@ func NewTransferAttributes(
 // Validate returns an error if any of the fields is not valid.
 func (a *TransferAttributes) Validate() error {
 	if a == nil {
-		return ErrNilPointer.Wrap("transfer attributes is a nil pointer")
+		return core.ErrNilPointer.Wrap("transfer attributes is a nil pointer")
 	}
-	if err := a.sourceOrbitID.Validate(); err != nil {
+	if err := a.sourceID.Validate(); err != nil {
 		return err
 	}
 	if err := a.sourceCoin.Validate(); err != nil {
@@ -163,20 +91,12 @@ func (a *TransferAttributes) Validate() error {
 	return nil
 }
 
-func (a *TransferAttributes) SourceProtocolID() ProtocolID {
-	if a != nil {
-		return a.sourceOrbitID.ProtocolID
-	}
-
-	return PROTOCOL_UNSUPPORTED
+func (a *TransferAttributes) SourceProtocolID() core.ProtocolID {
+	return a.sourceID.GetProtocolId()
 }
 
 func (a *TransferAttributes) SourceCounterpartyID() string {
-	if a == nil {
-		return ""
-	}
-
-	return a.sourceOrbitID.CounterpartyID
+	return a.sourceID.GetCounterpartyId()
 }
 
 func (a *TransferAttributes) SourceAmount() math.Int {
@@ -249,14 +169,14 @@ func (a *TransferAttributes) SetDestinationDenom(denom string) {
 // forwarding info are extended with the cross chain transfer attributes.
 type ForwardingPacket struct {
 	TransferAttributes *TransferAttributes
-	Forwarding         *Forwarding
+	Forwarding         *core.Forwarding
 }
 
 // NewForwardingPacket returns a pointer to a validated instance of the
 // forwarding packet.
 func NewForwardingPacket(
 	transferAttr *TransferAttributes,
-	forwarding *Forwarding,
+	forwarding *core.Forwarding,
 ) (*ForwardingPacket, error) {
 	forwardingPacket := ForwardingPacket{
 		TransferAttributes: transferAttr,
@@ -269,7 +189,7 @@ func NewForwardingPacket(
 // Validate returns an error if the instance is not valid.
 func (p *ForwardingPacket) Validate() error {
 	if p == nil {
-		return ErrNilPointer.Wrap("forwarding packet is not set")
+		return core.ErrNilPointer.Wrap("forwarding packet is not set")
 	}
 
 	err := p.Forwarding.Validate()
@@ -284,12 +204,12 @@ func (p *ForwardingPacket) Validate() error {
 // attributes are extended with the cross chain transfer ones.
 type ActionPacket struct {
 	TransferAttributes *TransferAttributes
-	Action             *Action
+	Action             *core.Action
 }
 
 // NewActionPacket returns a pointer to a validated instance of the
 // action packet.
-func NewActionPacket(transferAttr *TransferAttributes, action *Action) (*ActionPacket, error) {
+func NewActionPacket(transferAttr *TransferAttributes, action *core.Action) (*ActionPacket, error) {
 	actionPacket := ActionPacket{
 		TransferAttributes: transferAttr,
 		Action:             action,
@@ -302,7 +222,7 @@ func NewActionPacket(transferAttr *TransferAttributes, action *Action) (*ActionP
 // not valid.
 func (p *ActionPacket) Validate() error {
 	if p == nil {
-		return ErrNilPointer.Wrap("packet is not set")
+		return core.ErrNilPointer.Wrap("packet is not set")
 	}
 
 	err := p.Action.Validate()

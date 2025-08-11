@@ -20,30 +20,32 @@
 
 package types
 
-// NewProtocolID returns a validated protocol ID from an int32. If
-// the validation fails, the returned ID is the default ID.
-func NewProtocolID(id int32) (ProtocolID, error) {
-	protocolID := ProtocolID(id)
-	if err := protocolID.Validate(); err != nil {
-		return PROTOCOL_UNSUPPORTED, err
-	}
+import (
+	"context"
 
-	return protocolID, nil
+	"orbiter.dev/types/core"
+)
+
+type TransferHookHandler interface {
+	// BeforeTransferHook allows to execute logic BEFORE completing
+	// the cross-chain transfer.
+	BeforeTransferHook(context.Context, core.CrossChainID, *core.Payload) error
+	// AfterTransferHook allows to execute logic AFTER completing
+	// the cross-chain transfer.
+	AfterTransferHook(
+		context.Context,
+		core.CrossChainID,
+		*core.Payload,
+	) (*TransferAttributes, error)
 }
 
-// Validate returns an error if the ID is not valid.
-func (id ProtocolID) Validate() error {
-	if id == PROTOCOL_UNSUPPORTED {
-		return ErrIDNotSupported.Wrapf("protocol id %s", id.String())
-	}
-	// Check if the protocol ID exists in the proto generated enum map
-	if _, found := ProtocolID_name[int32(id)]; !found {
-		return ErrIDNotSupported.Wrapf("unknown protocol id %d", int32(id))
-	}
-
-	return nil
-}
-
-func (id ProtocolID) Uint32() uint32 {
-	return uint32(id) //nolint:gosec
+// PayloadAdapter defines the behavior expected by the adapter to handle
+// a generic orbiter payload.
+type PayloadAdapter interface {
+	// ParsePayload allows to parse and validate if the
+	// input bytes represent an orbiter payload.
+	ParsePayload(core.ProtocolID, []byte) (bool, *core.Payload, error)
+	TransferHookHandler
+	// ProcessPayload processes the parsed payload.
+	ProcessPayload(context.Context, *TransferAttributes, *core.Payload) error
 }

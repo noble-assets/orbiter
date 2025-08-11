@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types_test
+package core_test
 
 import (
 	fmt "fmt"
@@ -26,61 +26,61 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
-func TestOrbitID(t *testing.T) {
+func TestCrossChainID(t *testing.T) {
 	testCases := []struct {
 		name       string
-		orbitID    types.OrbitID
+		id         core.CrossChainID
 		expectedID string
 	}{
 		{
-			name: "IBC orbit ID",
-			orbitID: types.OrbitID{
-				ProtocolID:     types.PROTOCOL_IBC,
-				CounterpartyID: "channel-1",
+			name: "IBC cross-chain ID",
+			id: core.CrossChainID{
+				ProtocolId:     core.PROTOCOL_IBC,
+				CounterpartyId: "channel-1",
 			},
-			expectedID: fmt.Sprintf("%d:channel-1", types.PROTOCOL_IBC),
+			expectedID: fmt.Sprintf("%d:channel-1", core.PROTOCOL_IBC),
 		},
 		{
-			name: "CCTP orbit ID",
-			orbitID: types.OrbitID{
-				ProtocolID:     types.PROTOCOL_CCTP,
-				CounterpartyID: "0",
+			name: "CCTP cross-chain ID",
+			id: core.CrossChainID{
+				ProtocolId:     core.PROTOCOL_CCTP,
+				CounterpartyId: "0",
 			},
-			expectedID: fmt.Sprintf("%d:0", types.PROTOCOL_CCTP),
+			expectedID: fmt.Sprintf("%d:0", core.PROTOCOL_CCTP),
 		},
 		{
-			name: "Hyperlane orbit ID",
-			orbitID: types.OrbitID{
-				ProtocolID:     types.PROTOCOL_HYPERLANE,
-				CounterpartyID: "ethereum",
+			name: "Hyperlane cross-chain ID",
+			id: core.CrossChainID{
+				ProtocolId:     core.PROTOCOL_HYPERLANE,
+				CounterpartyId: "ethereum",
 			},
-			expectedID: fmt.Sprintf("%d:ethereum", types.PROTOCOL_HYPERLANE),
+			expectedID: fmt.Sprintf("%d:ethereum", core.PROTOCOL_HYPERLANE),
 		},
 	}
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			id := tC.orbitID.ID()
+			id := tC.id.ID()
 			require.Equal(t, tC.expectedID, id)
 		})
 	}
 }
 
-func TestParseOrbitID(t *testing.T) {
+func TestParseCrossChainID(t *testing.T) {
 	testCases := []struct {
 		name              string
 		id                string
-		expProtocolID     types.ProtocolID
+		expProtocolID     core.ProtocolID
 		expCounterpartyID string
 		expErr            string
 	}{
 		{
 			name:   "error - when invalid format (no colon)",
 			id:     "1channel-1",
-			expErr: "invalid orbit",
+			expErr: "invalid cross-chain ID",
 		},
 		{
 			name:   "error - when non numeric protocol ID",
@@ -90,38 +90,38 @@ func TestParseOrbitID(t *testing.T) {
 		{
 			name:   "error - when empty string",
 			id:     "",
-			expErr: "invalid orbit",
+			expErr: "invalid cross-chain ID",
 		},
 		{
 			name:              "success - when the format is not valid (multiple colons)",
 			id:                "1:channel:1",
-			expProtocolID:     types.PROTOCOL_IBC,
+			expProtocolID:     core.PROTOCOL_IBC,
 			expCounterpartyID: "channel:1",
 		},
 		{
 			name:              "success - with valid IBC ID",
 			id:                "1:channel-1",
-			expProtocolID:     types.PROTOCOL_IBC,
+			expProtocolID:     core.PROTOCOL_IBC,
 			expCounterpartyID: "channel-1",
 		},
 		{
 			name:              "success - with valid CCTP ID",
 			id:                "2:0",
-			expProtocolID:     types.PROTOCOL_CCTP,
+			expProtocolID:     core.PROTOCOL_CCTP,
 			expCounterpartyID: "0",
 		},
 	}
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			orbitID, err := types.ParseOrbitID(tC.id)
+			ccID, err := core.ParseCrossChainID(tC.id)
 
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tC.expProtocolID, orbitID.ProtocolID)
-				require.Equal(t, tC.expCounterpartyID, orbitID.CounterpartyID)
+				require.Equal(t, tC.expProtocolID, ccID.GetProtocolId())
+				require.Equal(t, tC.expCounterpartyID, ccID.GetCounterpartyId())
 			}
 		})
 	}

@@ -77,8 +77,8 @@ actions field is composed of a **swap** and a **fee** payment actions, the fee p
 applied based on the amount and denomination of the coin resulting from the swap.
 
 The field is called `pre_actions` because all the requests specified are executed before performing
-the forwarding via the orbit specified. If any of them fails, the entire state transition defined by
-the execution of the Cosmos SDK transaction will be reverted.
+the forwarding. If any of them fails, the entire state transition defined by the execution of the
+Cosmos SDK transaction will be reverted.
 
 Actions supported by the Orbiter module are:
 
@@ -108,7 +108,7 @@ const (
 An orbit is a forwarding operation defined as a combination of:
 
 1. A bridge protocol.
-2. A counterparty chain. (defined in the attributes but required to define an orbit ID)
+2. A counterparty chain. (defined in the attributes but required to define an cross-chain ID)
 3. Attributes required to operate via the bridge protocol.
 4. A pass-through payload to forward with the outgoing transfer protocol. (TODO)
 
@@ -161,7 +161,7 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
  "orbiter.dev/testutil"
 ```
 
-2. Define the orbit attributes:
+2. Define the forwarding attributes:
 
 ```go
  destinationDomain := uint32(0)

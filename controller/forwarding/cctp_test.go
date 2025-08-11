@@ -18,6 +18,25 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
+//
+// Copyright (C) 2025, NASD Inc. All rights reserved.
+// Use of this software is governed by the Business Source License included
+// in the LICENSE file of this repository and at www.mariadb.com/bsl11.
+//
+// ANY USE OF THE LICENSED WORK IN VIOLATION OF THIS LICENSE WILL AUTOMATICALLY
+// TERMINATE YOUR RIGHTS UNDER THIS LICENSE FOR THE CURRENT AND ALL OTHER
+// VERSIONS OF THE LICENSED WORK.
+//
+// THIS LICENSE DOES NOT GRANT YOU ANY RIGHT IN ANY TRADEMARK OR LOGO OF
+// LICENSOR OR ITS AFFILIATES (PROVIDED THAT YOU MAY USE A TRADEMARK OR LOGO OF
+// LICENSOR AS EXPRESSLY REQUIRED BY THIS LICENSE).
+//
+// TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSED WORK IS PROVIDED ON
+// AN "AS IS" BASIS. LICENSOR HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS,
+// EXPRESS OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
+// TITLE.
+
 package forwarding_test
 
 import (
@@ -34,6 +53,7 @@ import (
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
 	forwardingtypes "orbiter.dev/types/controller/forwarding"
+	"orbiter.dev/types/core"
 )
 
 func TestNewCCTPController(t *testing.T) {
@@ -55,7 +75,7 @@ func TestNewCCTPController(t *testing.T) {
 		{
 			name:     "error - when no CCTP server is provided",
 			logger:   log.NewNopLogger(),
-			expError: types.ErrNilPointer.Error(),
+			expError: core.ErrNilPointer.Error(),
 		},
 	}
 
@@ -79,7 +99,7 @@ func TestNewCCTPController(t *testing.T) {
 
 func TestHandlePacket(t *testing.T) {
 	transferAttr, err := types.NewTransferAttributes(
-		types.PROTOCOL_IBC,
+		core.PROTOCOL_IBC,
 		"channel-01",
 		"uusdc",
 		math.NewInt(1_000_000),
@@ -127,7 +147,7 @@ func TestHandlePacket(t *testing.T) {
 					TransferAttributes: transferAttr,
 				}
 			},
-			expError: types.ErrControllerExecution.Error(),
+			expError: core.ErrControllerExecution.Error(),
 		},
 	}
 
@@ -159,21 +179,21 @@ func TestHandlePacket(t *testing.T) {
 func TestExtractAttributes(t *testing.T) {
 	testCases := []struct {
 		name          string
-		forwarding    func() *types.Forwarding
+		forwarding    func() *core.Forwarding
 		expAttributes *forwardingtypes.CCTPAttributes
 		expError      string
 	}{
 		{
 			name: "success - valid attributes",
-			forwarding: func() *types.Forwarding {
+			forwarding: func() *core.Forwarding {
 				attr, err := forwardingtypes.NewCCTPAttributes(
 					1,
 					[]byte("recipient"),
 					[]byte("caller"),
 				)
 				require.NoError(t, err)
-				forwarding := &types.Forwarding{
-					ProtocolId: types.PROTOCOL_CCTP,
+				forwarding := &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
 				}
 				err = forwarding.SetAttributes(attr)
 				require.NoError(t, err)
@@ -183,10 +203,10 @@ func TestExtractAttributes(t *testing.T) {
 		},
 		{
 			name: "error - wrong attributes",
-			forwarding: func() *types.Forwarding {
+			forwarding: func() *core.Forwarding {
 				invalidAttr := testdata.TestForwardingAttr{}
-				forwarding := &types.Forwarding{
-					ProtocolId: types.PROTOCOL_CCTP,
+				forwarding := &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
 				}
 				err := forwarding.SetAttributes(&invalidAttr)
 				require.NoError(t, err)
@@ -197,12 +217,12 @@ func TestExtractAttributes(t *testing.T) {
 		},
 		{
 			name: "error - empty attributes",
-			forwarding: func() *types.Forwarding {
-				return &types.Forwarding{
-					ProtocolId: types.PROTOCOL_CCTP,
+			forwarding: func() *core.Forwarding {
+				return &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
 				}
 			},
-			expError: types.ErrNilPointer.Error(),
+			expError: "nil pointer",
 		},
 	}
 

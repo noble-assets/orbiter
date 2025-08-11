@@ -10,7 +10,7 @@ option go_package = "orbiter.dev/types/controller/forwarding";
 // ForwardingAttributes interface to execute a cross-chain routing
 // via the CCTP protocol.
 message CCTPAttributes {
-  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ForwardingAttributes";
+  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ForwardingAttributes";
 
   // destination_domain represents the CCTP destination
   // domain identifier: https://developers.circle.com/cctp/supported-domains

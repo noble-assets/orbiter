@@ -29,7 +29,7 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 )
 
 var _ porttypes.Middleware = &IBCMiddleware{}
@@ -39,13 +39,13 @@ type IBCMiddleware struct {
 	porttypes.IBCModule
 	porttypes.ICS4Wrapper
 
-	payloadAdapter interfaces.PayloadAdapter
+	payloadAdapter types.PayloadAdapter
 }
 
 func NewIBCMiddleware(
 	app porttypes.IBCModule,
 	ics4Wrapper porttypes.ICS4Wrapper,
-	payloadAdapter interfaces.PayloadAdapter,
+	payloadAdapter types.PayloadAdapter,
 ) IBCMiddleware {
 	if app == nil {
 		panic(errors.New("IBC module cannot be nil"))
@@ -77,7 +77,7 @@ func (i IBCMiddleware) OnRecvPacket(
 	relayer sdk.AccAddress,
 ) ibcexported.Acknowledgement {
 	isOrbiterPayload, orbiterPayload, err := i.payloadAdapter.ParsePayload(
-		types.PROTOCOL_IBC,
+		core.PROTOCOL_IBC,
 		packet.GetData(),
 	)
 	if err != nil {
@@ -88,12 +88,12 @@ func (i IBCMiddleware) OnRecvPacket(
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
 
-	orbitID, err := types.NewOrbitID(types.PROTOCOL_IBC, packet.SourceChannel)
+	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.SourceChannel)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
 	}
 
-	err = i.payloadAdapter.BeforeTransferHook(ctx, orbitID, orbiterPayload)
+	err = i.payloadAdapter.BeforeTransferHook(ctx, ccID, orbiterPayload)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
 	}
@@ -103,7 +103,7 @@ func (i IBCMiddleware) OnRecvPacket(
 		return ack
 	}
 
-	transferAttr, err := i.payloadAdapter.AfterTransferHook(ctx, orbitID, orbiterPayload)
+	transferAttr, err := i.payloadAdapter.AfterTransferHook(ctx, ccID, orbiterPayload)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
 	}

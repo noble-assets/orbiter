@@ -437,7 +437,7 @@ type AdapterParams struct {
 	unknownFields protoimpl.UnknownFields
 
 	// max_passthrough_payload_size is the maximum size of the passthrough
-	// payload that can be send in a forwarding.
+	// payload that can be sent in a forwarding.
 	MaxPassthroughPayloadSize uint32 `protobuf:"varint,1,opt,name=max_passthrough_payload_size,json=maxPassthroughPayloadSize,proto3" json:"max_passthrough_payload_size,omitempty"`
 }
 

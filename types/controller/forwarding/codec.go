@@ -23,11 +23,11 @@ package forwarding
 import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
 // RegisterInterfaces registers the forwarding attributes
 // satisfying the ForwardingAttributes interface in the module codec.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*types.ForwardingAttributes)(nil), &CCTPAttributes{})
+	registry.RegisterImplementations((*core.ForwardingAttributes)(nil), &CCTPAttributes{})
 }

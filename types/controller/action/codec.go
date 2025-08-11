@@ -23,11 +23,11 @@ package action
 import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
 // RegisterInterfaces registers the actions attributes
 // satisfying the ActionAttributes interface in the module codec.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*types.ActionAttributes)(nil), &FeeAttributes{})
+	registry.RegisterImplementations((*core.ActionAttributes)(nil), &FeeAttributes{})
 }

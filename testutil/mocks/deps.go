@@ -39,7 +39,7 @@ import (
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
 	"orbiter.dev/testutil"
-	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
 type Dependencies struct {
@@ -52,8 +52,8 @@ type Dependencies struct {
 func NewDependencies(tb testing.TB) Dependencies {
 	tb.Helper()
 
-	key := storetypes.NewKVStoreKey(types.ModuleName)
-	tkey := storetypes.NewTransientStoreKey(fmt.Sprintf("transient_%s", types.ModuleName))
+	key := storetypes.NewKVStoreKey(core.ModuleName)
+	tkey := storetypes.NewTransientStoreKey(fmt.Sprintf("transient_%s", core.ModuleName))
 
 	db := dbm.NewMemDB()
 	cms := store.NewCommitMultiStore(db, log.NewNopLogger(), metrics.NewNoOpMetrics())

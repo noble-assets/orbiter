@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package noble.orbiter.core.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "orbiter.dev/types/core";
+
+// ActionID identifies the type of action to be performed on a transfer.
+//
+// buf:lint:ignore ENUM_VALUE_PREFIX
+enum ActionID {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // ACTION_UNSUPPORTED represents an unknown or unsupported action type.
+  // This is the default zero value and should not be used in production.
+  ACTION_UNSUPPORTED = 0;
+
+  // ACTION_FEE represents a fee collection action.
+  ACTION_FEE = 1;
+
+  // ACTION_SWAP represents a token swap action.
+  ACTION_SWAP = 2;
+}
+
+// ProtocolID represents the cross-chain communication protocols supported by the orbiter.
+//
+// buf:lint:ignore ENUM_VALUE_PREFIX
+enum ProtocolID {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // PROTOCOL_UNSUPPORTED represents an unknown or unsupported protocol type.
+  // This is the default zero value and should not be used in production.
+  PROTOCOL_UNSUPPORTED = 0;
+
+  // PROTOCOL_IBC represents the Inter-Blockchain Communication protocol identifier.
+  PROTOCOL_IBC = 1;
+
+  // PROTOCOL_CCTP represents the Cross-Chain Transmission Protocol identifier.
+  PROTOCOL_CCTP = 2;
+
+  // PROTOCOL_HYPERLANE represents the Hyperlane protocol identifier.
+  PROTOCOL_HYPERLANE = 3;
+}
+
+// CrossChainID is an internal type used to uniquely
+// identify a source or a destination of a cross-chain
+// transfer and the bridge protocol used.
+message CrossChainID {
+  option (gogoproto.goproto_stringer) = false;
+
+  ProtocolID protocol_id = 1;
+
+  // Protocol specific identifier of a counterparty.
+  string counterparty_id = 2;
+}

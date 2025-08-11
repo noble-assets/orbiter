@@ -32,7 +32,6 @@ import (
 	"orbiter.dev/keeper/component"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
 )
 
 func TestNewDispatcherComponent(t *testing.T) {
@@ -42,8 +41,8 @@ func TestNewDispatcherComponent(t *testing.T) {
 		name           string
 		codec          codec.Codec
 		logger         log.Logger
-		OrbitsHandler  interfaces.PacketHandler[*types.ForwardingPacket]
-		ActionsHandler interfaces.PacketHandler[*types.ActionPacket]
+		OrbitsHandler  types.PacketHandler[*types.ForwardingPacket]
+		ActionsHandler types.PacketHandler[*types.ActionPacket]
 		expError       string
 	}{
 		{
@@ -81,8 +80,8 @@ func TestNewDispatcherComponent(t *testing.T) {
 func TestValidate_DispatcherComponent(t *testing.T) {
 	testCases := []struct {
 		name              string
-		ForwardingHandler interfaces.PacketHandler[*types.ForwardingPacket]
-		ActionHandler     interfaces.PacketHandler[*types.ActionPacket]
+		ForwardingHandler types.PacketHandler[*types.ForwardingPacket]
+		ActionHandler     types.PacketHandler[*types.ActionPacket]
 		expError          string
 	}{
 		{

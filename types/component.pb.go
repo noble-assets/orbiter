@@ -26,7 +26,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // AdapterParams represents the adapter components parameters.
 type AdapterParams struct {
 	// max_passthrough_payload_size is the maximum size of the passthrough
-	// payload that can be send in a forwarding.
+	// payload that can be sent in a forwarding.
 	MaxPassthroughPayloadSize uint32 `protobuf:"varint,1,opt,name=max_passthrough_payload_size,json=maxPassthroughPayloadSize,proto3" json:"max_passthrough_payload_size,omitempty"`
 }
 

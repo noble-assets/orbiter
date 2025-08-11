@@ -18,17 +18,18 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package interfaces
+package core
 
-import (
-	"context"
+import "cosmossdk.io/errors"
 
-	"orbiter.dev/types"
+var (
+	ErrUnauthorized        = errors.Register(ModuleName, 1, "signer must be the authority")
+	ErrIDNotSupported      = errors.Register(ModuleName, 2, "id is not supported")
+	ErrNilPointer          = errors.Register(ModuleName, 3, "invalid nil pointer")
+	ErrControllerExecution = errors.Register(ModuleName, 4, "controller execution failed")
+	ErrInvalidAttributes   = errors.Register(ModuleName, 5, "invalid attributes")
+	ErrValidation          = errors.Register(ModuleName, 6, "validation failed")
+	ErrParsingPayload      = errors.Register(ModuleName, 7, "parsing payload failed")
+	ErrUnableToPause       = errors.Register(ModuleName, 8, "unable to pause")
+	ErrUnableToUnpause     = errors.Register(ModuleName, 9, "unable to unpause")
 )
-
-// PayloadDispatcher defines the expected behavior from a type
-// to be used as a payload dispatcher.
-type PayloadDispatcher interface {
-	// Dispatch the payload component to the proper handler.
-	DispatchPayload(context.Context, *types.TransferAttributes, *types.Payload) error
-}

@@ -32,7 +32,7 @@ import (
 
 	"orbiter.dev/keeper/component"
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 )
 
 // Keeper is the main module keeper.
@@ -43,11 +43,11 @@ type Keeper struct {
 	// authority represents the module manager.
 	authority string
 
-	// Components.
-	executor   interfaces.Executor
-	forwarder  interfaces.Forwarder
-	dispatcher interfaces.Dispatcher
-	adapter    interfaces.Adapter
+	// Each component manages its own state.
+	executor   *component.Executor
+	forwarder  *component.Forwarder
+	dispatcher *component.Dispatcher
+	adapter    *component.Adapter
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -68,7 +68,7 @@ func NewKeeper(
 
 	k := Keeper{
 		cdc:       cdc,
-		logger:    logger.With("module", fmt.Sprintf("x/%s", types.ModuleName)),
+		logger:    logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
 		authority: authority,
 	}
 
@@ -140,23 +140,23 @@ func (k *Keeper) Authority() string {
 	return k.authority
 }
 
-func (k *Keeper) Executor() interfaces.Executor {
+func (k *Keeper) Executor() *component.Executor {
 	return k.executor
 }
 
-func (k *Keeper) Forwarder() interfaces.Forwarder {
+func (k *Keeper) Forwarder() *component.Forwarder {
 	return k.forwarder
 }
 
-func (k *Keeper) Dispatcher() interfaces.PayloadDispatcher {
+func (k *Keeper) Dispatcher() *component.Dispatcher {
 	return k.dispatcher
 }
 
-func (k *Keeper) Adapter() interfaces.Adapter {
+func (k *Keeper) Adapter() *component.Adapter {
 	return k.adapter
 }
 
-func (k *Keeper) SetForwardingControllers(controllers ...interfaces.ControllerForwarding) {
+func (k *Keeper) SetForwardingControllers(controllers ...types.ControllerForwarding) {
 	router := k.forwarder.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -168,7 +168,7 @@ func (k *Keeper) SetForwardingControllers(controllers ...interfaces.ControllerFo
 	}
 }
 
-func (k *Keeper) SetActionControllers(controllers ...interfaces.ControllerAction) {
+func (k *Keeper) SetActionControllers(controllers ...types.ControllerAction) {
 	router := k.executor.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -180,7 +180,7 @@ func (k *Keeper) SetActionControllers(controllers ...interfaces.ControllerAction
 	}
 }
 
-func (k *Keeper) SetAdapterControllers(controllers ...interfaces.ControllerAdapter) {
+func (k *Keeper) SetAdapterControllers(controllers ...types.ControllerAdapter) {
 	router := k.adapter.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -192,11 +192,11 @@ func (k *Keeper) SetAdapterControllers(controllers ...interfaces.ControllerAdapt
 	}
 }
 
-// CheckIsAuthority returns an error is the signer is not the
+// RequireAuthority returns an error is the signer is not the
 // keeper authority.
-func (k *Keeper) CheckIsAuthority(signer string) error {
+func (k *Keeper) RequireAuthority(signer string) error {
 	if k.Authority() != signer {
-		return types.ErrUnauthorized
+		return core.ErrUnauthorized
 	}
 
 	return nil
