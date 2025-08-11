@@ -25,26 +25,26 @@ import (
 	"errors"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 )
 
-var _ interfaces.ControllerForwarding = &ForwardingController{}
+var _ types.ControllerForwarding = &ForwardingController{}
 
 type ForwardingController struct {
-	Id types.ProtocolID
+	Id core.ProtocolID
 }
 
-// ID implements types.ForwardingController.
-func (o *ForwardingController) ID() types.ProtocolID {
+// ID implements core.ForwardingController.
+func (o *ForwardingController) ID() core.ProtocolID {
 	return o.Id
 }
 
-// Name implements types.ForwardingController.
+// Name implements core.ForwardingController.
 func (o *ForwardingController) Name() string {
 	return o.Id.String()
 }
 
-// HandlePacket implements types.ForwardingController.
+// HandlePacket implements core.ForwardingController.
 func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.ForwardingPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the forwarding packet")
@@ -53,23 +53,23 @@ func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.Forwar
 	return nil
 }
 
-var _ interfaces.ControllerAction = &NoOpActionController{}
+var _ types.ControllerAction = &NoOpActionController{}
 
 type NoOpActionController struct {
-	Id types.ActionID
+	Id core.ActionID
 }
 
-// ID implements types.ActionController.
-func (a *NoOpActionController) ID() types.ActionID {
+// ID implements core.ActionController.
+func (a *NoOpActionController) ID() core.ActionID {
 	return a.Id
 }
 
-// Name implements types.ActionController.
+// Name implements core.ActionController.
 func (a *NoOpActionController) Name() string {
 	return a.Id.String()
 }
 
-// HandlePacket implements types.ActionController.
+// HandlePacket implements core.ActionController.
 func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.ActionPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the action packet")
@@ -78,13 +78,13 @@ func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.Action
 	return nil
 }
 
-var _ interfaces.ControllerAdapter = &NoOpAdapterController{}
+var _ types.ControllerAdapter = &NoOpAdapterController{}
 
 type NoOpAdapterController struct {
-	Id types.ProtocolID
+	Id core.ProtocolID
 }
 
-func (a *NoOpAdapterController) ID() types.ProtocolID {
+func (a *NoOpAdapterController) ID() core.ProtocolID {
 	return a.Id
 }
 
@@ -93,7 +93,7 @@ func (a *NoOpAdapterController) Name() string {
 }
 
 // AfterTransferHook implements types.AdapterProtocol.
-func (a *NoOpAdapterController) AfterTransferHook(ctx context.Context, _ *types.Payload) error {
+func (a *NoOpAdapterController) AfterTransferHook(ctx context.Context, _ *core.Payload) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error in after transfer hook")
 	}
@@ -102,7 +102,7 @@ func (a *NoOpAdapterController) AfterTransferHook(ctx context.Context, _ *types.
 }
 
 // BeforeTransferHook implements types.AdapterProtocol.
-func (a *NoOpAdapterController) BeforeTransferHook(ctx context.Context, _ *types.Payload) error {
+func (a *NoOpAdapterController) BeforeTransferHook(ctx context.Context, _ *core.Payload) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error in before transfer hook")
 	}
@@ -111,10 +111,10 @@ func (a *NoOpAdapterController) BeforeTransferHook(ctx context.Context, _ *types
 }
 
 // ParsePayload implements types.AdapterProtocol.
-func (a *NoOpAdapterController) ParsePayload(bz []byte) (bool, *types.Payload, error) {
+func (a *NoOpAdapterController) ParsePayload(bz []byte) (bool, *core.Payload, error) {
 	if string(bz) == "failing" {
 		return false, nil, errors.New("error parsing payload")
 	}
 
-	return true, &types.Payload{}, nil
+	return true, &core.Payload{}, nil
 }
