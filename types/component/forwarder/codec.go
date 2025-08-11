@@ -55,10 +55,3 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
-
-var amino = codec.NewLegacyAmino()
-
-func init() {
-	RegisterLegacyAminoCodec(amino)
-	amino.Seal()
-}

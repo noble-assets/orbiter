@@ -18,38 +18,25 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package executor
 
-import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
+import core "orbiter.dev/types/core"
 
-	"orbiter.dev/types/component"
-	"orbiter.dev/types/controller"
-	"orbiter.dev/types/core"
-)
-
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	component.RegisterLegacyAminoCodec(cdc)
+// DefaultGenesisState returns the default values for the adapter
+// component initial state.
+func DefaultGenesisState() *GenesisState {
+	return &GenesisState{
+		PausedActionIds: []core.ActionID{},
+	}
 }
 
-// RegisterInterfaces is used to register in the chain codec
-// all interfaces and associated implementations defined in
-// the Orbiter module.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterInterface(
-		"orbiter.core.v1.ForwardingAttributes",
-		(*core.ForwardingAttributes)(nil),
-	)
+// Validate retusn an error if any of the genesis field is not valid.
+func (g *GenesisState) Validate() error {
+	for _, id := range g.PausedActionIds {
+		if err := id.Validate(); err != nil {
+			return err
+		}
+	}
 
-	registry.RegisterInterface(
-		"orbiter.core.v1.ActionAttributes",
-		(*core.ActionAttributes)(nil),
-	)
-
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-
-	component.RegisterInterfaces(registry)
-	controller.RegisterInterfaces(registry)
+	return nil
 }

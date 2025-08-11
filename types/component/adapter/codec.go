@@ -18,38 +18,23 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package adapter
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
-
-	"orbiter.dev/types/component"
-	"orbiter.dev/types/controller"
-	"orbiter.dev/types/core"
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	component.RegisterLegacyAminoCodec(cdc)
+	cdc.RegisterConcrete(&MsgUpdateParams{}, "orbiter/adapter/UpdateParams", nil)
 }
 
-// RegisterInterfaces is used to register in the chain codec
-// all interfaces and associated implementations defined in
-// the Orbiter module.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterInterface(
-		"orbiter.core.v1.ForwardingAttributes",
-		(*core.ForwardingAttributes)(nil),
-	)
-
-	registry.RegisterInterface(
-		"orbiter.core.v1.ActionAttributes",
-		(*core.ActionAttributes)(nil),
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgUpdateParams{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-
-	component.RegisterInterfaces(registry)
-	controller.RegisterInterfaces(registry)
 }

@@ -28,7 +28,8 @@ import (
 	"orbiter.dev/types/controller/forwarding"
 )
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+}
 
 // RegisterInterfaces is used to register in the chain codec
 // all interfaces and associated implementations defined in

@@ -18,38 +18,34 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package forwarder
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
-
-	"orbiter.dev/types/component"
-	"orbiter.dev/types/controller"
-	"orbiter.dev/types/core"
+	core "orbiter.dev/types/core"
 )
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	component.RegisterLegacyAminoCodec(cdc)
+// DefaultGenesisState returns the default values for the adapter
+// component initial state.
+func DefaultGenesisState() *GenesisState {
+	return &GenesisState{
+		PausedProtocolIds:   []core.ProtocolID{},
+		PausedCrossChainIds: []*core.CrossChainID{},
+	}
 }
 
-// RegisterInterfaces is used to register in the chain codec
-// all interfaces and associated implementations defined in
-// the Orbiter module.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterInterface(
-		"orbiter.core.v1.ForwardingAttributes",
-		(*core.ForwardingAttributes)(nil),
-	)
+// Validate retusn an error if any of the genesis field is not valid.
+func (g *GenesisState) Validate() error {
+	for _, id := range g.PausedProtocolIds {
+		if err := id.Validate(); err != nil {
+			return err
+		}
+	}
 
-	registry.RegisterInterface(
-		"orbiter.core.v1.ActionAttributes",
-		(*core.ActionAttributes)(nil),
-	)
+	for _, id := range g.PausedCrossChainIds {
+		if err := id.Validate(); err != nil {
+			return err
+		}
+	}
 
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-
-	component.RegisterInterfaces(registry)
-	controller.RegisterInterfaces(registry)
+	return nil
 }

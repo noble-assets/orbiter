@@ -9,7 +9,7 @@ option go_package = "orbiter.dev/types/component/forwarder";
 
 // GenesisState defines the forwarder component genesis state.
 message GenesisState {
-  repeated noble.orbiter.core.v1.ProtocolID paused_protocol_id = 1 [(amino.dont_omitempty) = true];
+  repeated noble.orbiter.core.v1.ProtocolID paused_protocol_ids = 1 [(amino.dont_omitempty) = true];
 
-  repeated noble.orbiter.core.v1.CrossChainID paused_orbit_id = 2 [(amino.dont_omitempty) = true];
+  repeated noble.orbiter.core.v1.CrossChainID paused_cross_chain_ids = 2 [(amino.dont_omitempty) = true];
 }
