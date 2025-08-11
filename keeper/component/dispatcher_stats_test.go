@@ -33,6 +33,7 @@ import (
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
+	"orbiter.dev/types/core"
 )
 
 func TestUpdateStats(t *testing.T) {
@@ -40,7 +41,7 @@ func TestUpdateStats(t *testing.T) {
 		name           string
 		setup          func(context.Context, *component.Dispatcher)
 		transferAttr   func() *types.TransferAttributes
-		forwarding     func() *types.Forwarding
+		forwarding     func() *core.Forwarding
 		expErr         string
 		expAmounts     map[string]dispatchertypes.AmountDispatched
 		expectedCounts uint32
@@ -48,8 +49,8 @@ func TestUpdateStats(t *testing.T) {
 		{
 			name:         "error - nil transfer attributes",
 			transferAttr: func() *types.TransferAttributes { return nil },
-			forwarding: func() *types.Forwarding {
-				return &types.Forwarding{
+			forwarding: func() *core.Forwarding {
+				return &core.Forwarding{
 					ProtocolId: 2,
 					Attributes: nil,
 				}
@@ -64,7 +65,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *types.Forwarding { return nil },
+			forwarding: func() *core.Forwarding { return nil },
 			expErr:     "nil forwarding",
 		},
 		{
@@ -75,11 +76,11 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *types.Forwarding {
+			forwarding: func() *core.Forwarding {
 				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				forwarding := types.Forwarding{
+				forwarding := core.Forwarding{
 					ProtocolId:         0,
 					PassthroughPayload: []byte{},
 				}
@@ -98,8 +99,8 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *types.Forwarding {
-				return &types.Forwarding{
+			forwarding: func() *core.Forwarding {
+				return &core.Forwarding{
 					ProtocolId: 2,
 					Attributes: nil,
 				}
@@ -114,11 +115,11 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *types.Forwarding {
+			forwarding: func() *core.Forwarding {
 				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				orbit, err := types.NewForwarding(2, attr, []byte{})
+				orbit, err := core.NewForwarding(2, attr, []byte{})
 				require.NoError(t, err)
 
 				return orbit
@@ -140,11 +141,11 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *types.Forwarding {
+			forwarding: func() *core.Forwarding {
 				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				orbit, err := types.NewForwarding(1, attr, []byte{})
+				orbit, err := core.NewForwarding(1, attr, []byte{})
 				require.NoError(t, err)
 
 				return orbit
@@ -167,11 +168,11 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *types.Forwarding {
+			forwarding: func() *core.Forwarding {
 				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				orbit, err := types.NewForwarding(1, attr, []byte{})
+				orbit, err := core.NewForwarding(1, attr, []byte{})
 				require.NoError(t, err)
 
 				return orbit
@@ -191,14 +192,14 @@ func TestUpdateStats(t *testing.T) {
 		{
 			name: "success - different denom and previous stored stats",
 			setup: func(ctx context.Context, d *component.Dispatcher) {
-				sourceOrbitID := types.OrbitID{
-					ProtocolID:     1,
-					CounterpartyID: "hyperliquid",
+				sourceOrbitID := core.OrbitID{
+					ProtocolId:     1,
+					CounterpartyId: "hyperliquid",
 				}
 
-				destOrbitID := types.OrbitID{
-					ProtocolID:     1,
-					CounterpartyID: "ethereum",
+				destOrbitID := core.OrbitID{
+					ProtocolId:     1,
+					CounterpartyId: "ethereum",
 				}
 
 				err := d.SetDispatchedCounts(ctx, sourceOrbitID, destOrbitID, 10)
@@ -223,11 +224,11 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *types.Forwarding {
+			forwarding: func() *core.Forwarding {
 				attr := &testdata.TestForwardingAttr{
 					Planet: "ethereum",
 				}
-				forwarding, err := types.NewForwarding(1, attr, []byte{})
+				forwarding, err := core.NewForwarding(1, attr, []byte{})
 				require.NoError(t, err)
 
 				return forwarding
@@ -265,14 +266,14 @@ func TestUpdateStats(t *testing.T) {
 				require.NoError(t, err)
 
 				// Create expected source and destination info
-				sourceOrbitID := types.OrbitID{
-					ProtocolID:     transferAttr.SourceProtocolID(),
-					CounterpartyID: transferAttr.SourceCounterpartyID(),
+				sourceOrbitID := core.OrbitID{
+					ProtocolId:     transferAttr.SourceProtocolID(),
+					CounterpartyId: transferAttr.SourceCounterpartyID(),
 				}
 				attr, _ := forwarding.CachedAttributes()
-				destOrbitID := types.OrbitID{
-					ProtocolID:     forwarding.ProtocolID(),
-					CounterpartyID: attr.CounterpartyID(),
+				destOrbitID := core.OrbitID{
+					ProtocolId:     forwarding.ProtocolID(),
+					CounterpartyId: attr.CounterpartyID(),
 				}
 
 				// Verify amount stats

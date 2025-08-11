@@ -30,10 +30,10 @@ import (
 
 	"orbiter.dev/types"
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 )
 
-var _ interfaces.PayloadDispatcher = &Dispatcher{}
+var _ types.PayloadDispatcher = &Dispatcher{}
 
 // Dispatcher is a component used to orchestrate the
 // dispatch of an incoming orbiter packet. The dispatcher
@@ -41,8 +41,8 @@ var _ interfaces.PayloadDispatcher = &Dispatcher{}
 type Dispatcher struct {
 	logger log.Logger
 	// Packet elements handlers
-	ForwardingHandler interfaces.PacketHandler[*types.ForwardingPacket]
-	ActionHandler     interfaces.PacketHandler[*types.ActionPacket]
+	ForwardingHandler types.PacketHandler[*types.ForwardingPacket]
+	ActionHandler     types.PacketHandler[*types.ActionPacket]
 	// Stats
 	DispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, dispatchertypes.AmountDispatched, DispatchedAmountsIndexes]
 	DispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
@@ -54,27 +54,27 @@ func NewDispatcher(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
-	forwardingHandler interfaces.PacketHandler[*types.ForwardingPacket],
-	actionHandler interfaces.PacketHandler[*types.ActionPacket],
+	forwardingHandler types.PacketHandler[*types.ForwardingPacket],
+	actionHandler types.PacketHandler[*types.ActionPacket],
 ) (*Dispatcher, error) {
 	if cdc == nil {
-		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 	if sb == nil {
-		return nil, types.ErrNilPointer.Wrap("schema builder cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("schema builder cannot be nil")
 	}
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	dispatcherComponent := Dispatcher{
-		logger:            logger.With(types.ComponentPrefix, types.DispatcherComponentName),
+		logger:            logger.With(core.ComponentPrefix, core.DispatcherName),
 		ForwardingHandler: forwardingHandler,
 		ActionHandler:     actionHandler,
 		DispatchedAmounts: collections.NewIndexedMap(
 			sb,
-			types.DispatchedAmountsPrefix,
-			types.DispatchedAmountsName,
+			core.DispatchedAmountsPrefix,
+			core.DispatchedAmountsName,
 			collections.QuadKeyCodec(
 				collections.Uint32Key,
 				collections.StringKey,
@@ -86,8 +86,8 @@ func NewDispatcher(
 		),
 		DispatchCounts: collections.NewIndexedMap(
 			sb,
-			types.DispatchedCountsPrefix,
-			types.DispatchedCountsName,
+			core.DispatchedCountsPrefix,
+			core.DispatchedCountsName,
 			collections.TripleKeyCodec(
 				collections.Uint32Key,
 				collections.StringKey,
@@ -104,10 +104,10 @@ func NewDispatcher(
 // Validate checks that the fields of the dispatcher component are valid.
 func (d *Dispatcher) Validate() error {
 	if d.ForwardingHandler == nil {
-		return types.ErrNilPointer.Wrap("forwarding handler cannot be nil")
+		return core.ErrNilPointer.Wrap("forwarding handler cannot be nil")
 	}
 	if d.ActionHandler == nil {
-		return types.ErrNilPointer.Wrap("actions handler cannot be nil")
+		return core.ErrNilPointer.Wrap("actions handler cannot be nil")
 	}
 
 	return nil
@@ -122,10 +122,10 @@ func (d *Dispatcher) Logger() log.Logger {
 func (d *Dispatcher) DispatchPayload(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	payload *types.Payload,
+	payload *core.Payload,
 ) error {
 	if err := d.validatePayload(payload); err != nil {
-		return types.ErrValidation.Wrap(err.Error())
+		return core.ErrValidation.Wrap(err.Error())
 	}
 
 	if err := d.dispatchActions(ctx, transferAttr, payload.PreActions); err != nil {
@@ -145,9 +145,9 @@ func (d *Dispatcher) DispatchPayload(
 
 // validatePayload checks if the payload is not nil, and calls
 // its validation method.
-func (d *Dispatcher) validatePayload(payload *types.Payload) error {
+func (d *Dispatcher) validatePayload(payload *core.Payload) error {
 	if payload == nil {
-		return types.ErrNilPointer.Wrap("payload cannot be nil")
+		return core.ErrNilPointer.Wrap("payload cannot be nil")
 	}
 
 	return payload.Validate()
@@ -158,7 +158,7 @@ func (d *Dispatcher) validatePayload(payload *types.Payload) error {
 func (d *Dispatcher) dispatchActions(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	actions []*types.Action,
+	actions []*core.Action,
 ) error {
 	for _, action := range actions {
 		packet, err := types.NewActionPacket(transferAttr, action)
@@ -180,7 +180,7 @@ func (d *Dispatcher) dispatchActions(
 func (d *Dispatcher) dispatchForwarding(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	forwarding *types.Forwarding,
+	forwarding *core.Forwarding,
 ) error {
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {

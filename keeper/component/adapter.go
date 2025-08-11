@@ -31,20 +31,20 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/router"
 )
 
-type AdapterRouter = interfaces.Router[types.ProtocolID, interfaces.ControllerAdapter]
+type AdapterRouter = *router.Router[core.ProtocolID, types.ControllerAdapter]
 
-var _ interfaces.Adapter = &Adapter{}
+var _ types.Adapter = &Adapter{}
 
 type Adapter struct {
 	logger log.Logger
 	// router is an adapter controllers router.
 	router     AdapterRouter
 	bankKeeper types.BankKeeperAdapter
-	dispatcher interfaces.PayloadDispatcher
+	dispatcher types.PayloadDispatcher
 	params     collections.Item[types.AdapterParams]
 }
 
@@ -53,27 +53,27 @@ func NewAdapter(
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
 	bankKeeper types.BankKeeperAdapter,
-	dispatcher interfaces.PayloadDispatcher,
+	dispatcher types.PayloadDispatcher,
 ) (*Adapter, error) {
 	if cdc == nil {
-		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 	if sb == nil {
-		return nil, types.ErrNilPointer.Wrap("schema builder cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("schema builder cannot be nil")
 	}
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
 	adaptersKeeper := Adapter{
-		logger:     logger.With(types.ComponentPrefix, types.AdaptersComponentName),
-		router:     router.New[types.ProtocolID, interfaces.ControllerAdapter](),
+		logger:     logger.With(core.ComponentPrefix, core.AdapterName),
+		router:     router.New[core.ProtocolID, types.ControllerAdapter](),
 		bankKeeper: bankKeeper,
 		dispatcher: dispatcher,
 		params: collections.NewItem(
 			sb,
-			types.AdapterParamsPrefix,
-			types.AdapterParamsName,
+			core.AdapterParamsPrefix,
+			core.AdapterParamsName,
 			codec.CollValue[types.AdapterParams](cdc),
 		),
 	}
@@ -84,16 +84,16 @@ func NewAdapter(
 // Validate returns an error if the component instance is not valid.
 func (a *Adapter) Validate() error {
 	if a.logger == nil {
-		return types.ErrNilPointer.Wrap("logger cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if a.bankKeeper == nil {
-		return types.ErrNilPointer.Wrap("bank keeper cannot be nil")
+		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
 	if a.dispatcher == nil {
-		return types.ErrNilPointer.Wrap("dispatcher cannot be nil")
+		return core.ErrNilPointer.Wrap("dispatcher cannot be nil")
 	}
 	if a.router == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	return nil
@@ -109,7 +109,7 @@ func (a *Adapter) Router() AdapterRouter {
 
 func (a *Adapter) SetRouter(r AdapterRouter) error {
 	if r == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	if a.router != nil && a.router.Sealed() {
@@ -124,9 +124,9 @@ func (a *Adapter) SetRouter(r AdapterRouter) error {
 
 // ParsePayload implements types.PayloadAdapter.
 func (a *Adapter) ParsePayload(
-	id types.ProtocolID,
+	id core.ProtocolID,
 	payloadBz []byte,
-) (bool, *types.Payload, error) {
+) (bool, *core.Payload, error) {
 	adapter, found := a.router.Route(id)
 	if !found {
 		return false, nil, fmt.Errorf("adapter not found for protocol ID: %s", id)
@@ -138,12 +138,15 @@ func (a *Adapter) ParsePayload(
 // BeforeTransferHook implements types.PayloadAdapter.
 func (a *Adapter) BeforeTransferHook(
 	ctx context.Context,
-	sourceOrbitID types.OrbitID,
-	payload *types.Payload,
+	sourceOrbitID core.OrbitID,
+	payload *core.Payload,
 ) error {
-	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)
+	adapter, found := a.router.Route(sourceOrbitID.GetProtocolId())
 	if !found {
-		return fmt.Errorf("adapter not found for protocol ID: %s", sourceOrbitID.ProtocolID)
+		return fmt.Errorf(
+			"adapter not found for protocol ID: %s",
+			sourceOrbitID.GetProtocolId().String(),
+		)
 	}
 
 	if err := adapter.BeforeTransferHook(ctx, payload); err != nil {
@@ -160,26 +163,29 @@ func (a *Adapter) BeforeTransferHook(
 // AfterTransferHook implements types.PayloadAdapter.
 func (a *Adapter) AfterTransferHook(
 	ctx context.Context,
-	sourceOrbitID types.OrbitID,
-	payload *types.Payload,
+	sourceOrbitID core.OrbitID,
+	payload *core.Payload,
 ) (*types.TransferAttributes, error) {
-	adapter, found := a.router.Route(sourceOrbitID.ProtocolID)
+	adapter, found := a.router.Route(sourceOrbitID.GetProtocolId())
 	if !found {
-		return nil, fmt.Errorf("adapter not found for protocol ID: %s", sourceOrbitID.ProtocolID)
+		return nil, fmt.Errorf(
+			"adapter not found for protocol ID: %s",
+			sourceOrbitID.GetProtocolId().String(),
+		)
 	}
 
 	if err := adapter.AfterTransferHook(ctx, payload); err != nil {
 		return nil, fmt.Errorf("after transfer hook failed: %w", err)
 	}
 
-	balances := a.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
+	balances := a.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
 	if err := a.validateModuleBalance(balances); err != nil {
-		return nil, types.ErrValidation.Wrap(err.Error())
+		return nil, core.ErrValidation.Wrap(err.Error())
 	}
 
 	transferAttr, err := types.NewTransferAttributes(
-		sourceOrbitID.ProtocolID,
-		sourceOrbitID.CounterpartyID,
+		sourceOrbitID.GetProtocolId(),
+		sourceOrbitID.GetCounterpartyId(),
 		balances[0].GetDenom(),
 		balances[0].Amount,
 	)
@@ -194,7 +200,7 @@ func (a *Adapter) AfterTransferHook(
 func (a *Adapter) ProcessPayload(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	payload *types.Payload,
+	payload *core.Payload,
 ) error {
 	return a.dispatcher.DispatchPayload(ctx, transferAttr, payload)
 }
@@ -209,7 +215,7 @@ func (a *Adapter) CheckPassthroughPayloadSize(
 
 	maxSize := params.MaxPassthroughPayloadSize
 	if uint64(len(passthroughPayload)) > uint64(maxSize) {
-		return types.ErrValidation.Wrapf(
+		return core.ErrValidation.Wrapf(
 			"passthrough payload size %d > max allowed %d bytes",
 			len(passthroughPayload),
 			maxSize,
@@ -241,12 +247,12 @@ func (a *Adapter) commonBeforeTransferHook(
 // a sub-account. This method allows to start a forwarding with the module holding
 // only the coins the received transaction is transferring.
 func (a *Adapter) clearOrbiterBalances(ctx context.Context) error {
-	coins := a.bankKeeper.GetAllBalances(ctx, types.ModuleAddress)
+	coins := a.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
 	if coins.IsZero() {
 		return nil
 	}
 
-	return a.bankKeeper.SendCoins(ctx, types.ModuleAddress, types.DustCollectorAddress, coins)
+	return a.bankKeeper.SendCoins(ctx, core.ModuleAddress, core.DustCollectorAddress, coins)
 }
 
 func (a *Adapter) validateModuleBalance(coins sdk.Coins) error {

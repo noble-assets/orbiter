@@ -28,19 +28,20 @@ import (
 
 	"orbiter.dev/types"
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
+	"orbiter.dev/types/core"
 )
 
 // UpdateStats updates all the statistics the module keep track of.
 func (d *Dispatcher) UpdateStats(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
-	forwarding *types.Forwarding,
+	forwarding *core.Forwarding,
 ) error {
 	if transferAttr == nil {
-		return types.ErrNilPointer.Wrap("received nil transfer attributes")
+		return core.ErrNilPointer.Wrap("received nil transfer attributes")
 	}
 	if forwarding == nil {
-		return types.ErrNilPointer.Wrap("received nil forwarding")
+		return core.ErrNilPointer.Wrap("received nil forwarding")
 	}
 
 	attr, err := forwarding.CachedAttributes()
@@ -48,13 +49,13 @@ func (d *Dispatcher) UpdateStats(
 		return err
 	}
 
-	var sourceOrbitID types.OrbitID
-	if sourceOrbitID, err = types.NewOrbitID(transferAttr.SourceProtocolID(), transferAttr.SourceCounterpartyID()); err != nil {
+	var sourceOrbitID core.OrbitID
+	if sourceOrbitID, err = core.NewOrbitID(transferAttr.SourceProtocolID(), transferAttr.SourceCounterpartyID()); err != nil {
 		return err
 	}
 
-	var destOrbitID types.OrbitID
-	if destOrbitID, err = types.NewOrbitID(forwarding.ProtocolID(), attr.CounterpartyID()); err != nil {
+	var destOrbitID core.OrbitID
+	if destOrbitID, err = core.NewOrbitID(forwarding.ProtocolID(), attr.CounterpartyID()); err != nil {
 		return err
 	}
 
@@ -90,8 +91,8 @@ func (d *Dispatcher) UpdateStats(
 // the coins delivered to the destination chain.
 func (d *Dispatcher) updateDispatchedAmountStats(
 	ctx context.Context,
-	sourceOrbitID *types.OrbitID,
-	destinationOrbitID *types.OrbitID,
+	sourceOrbitID *core.OrbitID,
+	destinationOrbitID *core.OrbitID,
 	denom string,
 	newAmountDispatched dispatchertypes.AmountDispatched,
 ) error {
@@ -122,20 +123,20 @@ func (d *Dispatcher) updateDispatchedAmountStats(
 // number of dispatches executed.
 func (d *Dispatcher) updateDispatchedCountsStats(
 	ctx context.Context,
-	sourceInfo *types.OrbitID,
-	destinationInfo *types.OrbitID,
+	sourceID *core.OrbitID,
+	destID *core.OrbitID,
 ) error {
 	countDispatches := d.GetDispatchedCounts(
 		ctx,
-		*sourceInfo,
-		*destinationInfo,
+		*sourceID,
+		*destID,
 	)
 	countDispatches++
 
 	return d.SetDispatchedCounts(
 		ctx,
-		*sourceInfo,
-		*destinationInfo,
+		*sourceID,
+		*destID,
 		countDispatches,
 	)
 }
@@ -158,7 +159,7 @@ func (d *Dispatcher) BuildDenomDispatchedAmounts(
 	transferAttributes *types.TransferAttributes,
 ) ([]denomDispatchedAmount, error) {
 	if transferAttributes == nil {
-		return nil, types.ErrNilPointer.Wrap("received nil transfer attributes")
+		return nil, core.ErrNilPointer.Wrap("received nil transfer attributes")
 	}
 	sourceDenom := transferAttributes.SourceDenom()
 	sourceAmount := transferAttributes.SourceAmount()

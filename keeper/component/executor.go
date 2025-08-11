@@ -30,20 +30,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 	"orbiter.dev/types/router"
 )
 
-type ActionRouter = interfaces.Router[types.ActionID, interfaces.ControllerAction]
+type ActionRouter = *router.Router[core.ActionID, types.ControllerAction]
 
-var _ interfaces.Executor = &Executor{}
+var _ types.Executor = &Executor{}
 
 type Executor struct {
 	logger log.Logger
 	// router is an action controllers router.
 	router ActionRouter
-	// PausedControllers keeps track of the ids of paused actions.
-	PausedControllers collections.KeySet[int32]
+	// PausedActions keeps track of the ids of paused actions.
+	PausedActions collections.KeySet[int32]
 }
 
 // NewExecutor returns a validated instance of an executor component.
@@ -53,12 +53,12 @@ func NewExecutor(
 	logger log.Logger,
 ) (*Executor, error) {
 	executor := Executor{
-		logger: logger.With(types.ComponentPrefix, types.ActionComponentName),
-		router: router.New[types.ActionID, interfaces.ControllerAction](),
-		PausedControllers: collections.NewKeySet(
+		logger: logger.With(core.ComponentPrefix, core.ExecutorName),
+		router: router.New[core.ActionID, types.ControllerAction](),
+		PausedActions: collections.NewKeySet(
 			sb,
-			types.PausedActionControllersPrefix,
-			types.PausedActionControllersName,
+			core.PausedActionsPrefix,
+			core.PausedActionsName,
 			collections.Int32Key,
 		),
 	}
@@ -69,10 +69,10 @@ func NewExecutor(
 // Validate returns an error if the component instance is not valid.
 func (e *Executor) Validate() error {
 	if e.logger == nil {
-		return types.ErrNilPointer.Wrap("logger cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if e.router == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	return nil
@@ -88,7 +88,7 @@ func (e *Executor) Router() ActionRouter {
 
 func (e *Executor) SetRouter(r ActionRouter) error {
 	if r == nil {
-		return types.ErrNilPointer.Wrap("router cannot be nil")
+		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
 
 	if e.router != nil && e.router.Sealed() {
@@ -102,7 +102,7 @@ func (e *Executor) SetRouter(r ActionRouter) error {
 }
 
 // Pause allows to pause an action controller.
-func (e *Executor) Pause(ctx context.Context, actionID types.ActionID) error {
+func (e *Executor) Pause(ctx context.Context, actionID core.ActionID) error {
 	if err := e.SetPausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error pausing action %s: %w",
@@ -115,7 +115,7 @@ func (e *Executor) Pause(ctx context.Context, actionID types.ActionID) error {
 }
 
 // Unpause allows to unpause an action controller.
-func (e *Executor) Unpause(ctx context.Context, actionID types.ActionID) error {
+func (e *Executor) Unpause(ctx context.Context, actionID core.ActionID) error {
 	if err := e.SetUnpausedController(ctx, actionID); err != nil {
 		return fmt.Errorf(
 			"error unpausing action %s: %w",
@@ -132,7 +132,7 @@ func (e *Executor) HandlePacket(
 	packet *types.ActionPacket,
 ) error {
 	if err := e.validatePacket(ctx, packet); err != nil {
-		return types.ErrValidation.Wrap(err.Error())
+		return core.ErrValidation.Wrap(err.Error())
 	}
 
 	controller, found := e.router.Route(packet.Action.ID())
@@ -161,7 +161,7 @@ func (e *Executor) validatePacket(ctx context.Context, packet *types.ActionPacke
 // the action ID is not valid.
 func (e *Executor) validateController(
 	ctx context.Context,
-	id types.ActionID,
+	id core.ActionID,
 ) error {
 	isPaused, err := e.IsControllerPaused(ctx, id)
 	if err != nil {
