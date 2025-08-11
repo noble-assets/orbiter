@@ -85,12 +85,12 @@ func (id ProtocolID) Uint32() uint32 {
 	return uint32(id) //nolint:gosec
 }
 
-// NewOrbitID returns a validated orbit identifier instance.
-func NewOrbitID(
+// NewCrossChainID returns a validated cross-chain identifier instance.
+func NewCrossChainID(
 	protocolID ProtocolID,
 	counterpartyID string,
-) (OrbitID, error) {
-	attr := OrbitID{
+) (CrossChainID, error) {
+	attr := CrossChainID{
 		ProtocolId:     protocolID,
 		CounterpartyId: counterpartyID,
 	}
@@ -98,9 +98,9 @@ func NewOrbitID(
 	return attr, attr.Validate()
 }
 
-// Validate returns an error if any of the orbit id field
+// Validate returns an error if any of the cross-chain ID field
 // is not valid.
-func (i OrbitID) Validate() error {
+func (i CrossChainID) Validate() error {
 	if err := i.ProtocolId.Validate(); err != nil {
 		return err
 	}
@@ -113,22 +113,25 @@ func (i OrbitID) Validate() error {
 
 // ID generates an internal identifier for a tuple (bridge protocol, chain).
 // The identifier allows to recover the protocol Id and the chain Id from its value.
-func (i OrbitID) ID() string {
-	return fmt.Sprintf("%d%s%s", i.ProtocolId.Uint32(), orbitIDSeparator, i.CounterpartyId)
+func (i CrossChainID) ID() string {
+	return fmt.Sprintf("%d%s%s", i.ProtocolId.Uint32(), crosschainIDSeparator, i.CounterpartyId)
 }
 
 // String returns the string representation of the id.
-func (i OrbitID) String() string {
+func (i CrossChainID) String() string {
 	return i.ID()
 }
 
-// ParseOrbitID returns a new orbit id instance from the string.
+// ParseCrossChainID returns a new cross-chain ID instance from the string.
 // Returns an error if the string is not a valid orbit
 // id string.
-func ParseOrbitID(str string) (OrbitID, error) {
-	sepIndex := strings.Index(str, orbitIDSeparator)
+func ParseCrossChainID(str string) (CrossChainID, error) {
+	sepIndex := strings.Index(str, crosschainIDSeparator)
 	if sepIndex == -1 {
-		return OrbitID{}, fmt.Errorf("invalid orbit ID format: missing separator in %s", str)
+		return CrossChainID{}, fmt.Errorf(
+			"invalid cross-chain ID format: missing separator in %s",
+			str,
+		)
 	}
 
 	protocolIDStr := str[:sepIndex]
@@ -136,14 +139,14 @@ func ParseOrbitID(str string) (OrbitID, error) {
 
 	id, err := strconv.ParseInt(protocolIDStr, 10, 32)
 	if err != nil {
-		return OrbitID{}, fmt.Errorf("invalid protocol ID: %w", err)
+		return CrossChainID{}, fmt.Errorf("invalid protocol ID: %w", err)
 	}
 
 	protocolID := ProtocolID(int32(id))
-	orbitID, err := NewOrbitID(protocolID, counterpartyID)
+	ccID, err := NewCrossChainID(protocolID, counterpartyID)
 	if err != nil {
-		return OrbitID{}, fmt.Errorf("invalid orbit ID string %s: %w", str, err)
+		return CrossChainID{}, fmt.Errorf("invalid cross-chain ID string %s: %w", str, err)
 	}
 
-	return orbitID, nil
+	return ccID, nil
 }

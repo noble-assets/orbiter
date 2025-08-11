@@ -151,7 +151,7 @@ func TestProtocolID(t *testing.T) {
 		expectedID core.ProtocolID
 	}{
 		{
-			name: "return orbit ID when forwarding is valid",
+			name: "return cross-chain ID when forwarding is valid",
 			forwarding: &core.Forwarding{
 				ProtocolId: core.PROTOCOL_IBC,
 			},

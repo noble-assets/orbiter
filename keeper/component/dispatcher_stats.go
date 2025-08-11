@@ -49,13 +49,13 @@ func (d *Dispatcher) UpdateStats(
 		return err
 	}
 
-	var sourceOrbitID core.OrbitID
-	if sourceOrbitID, err = core.NewOrbitID(transferAttr.SourceProtocolID(), transferAttr.SourceCounterpartyID()); err != nil {
+	var sourceID core.CrossChainID
+	if sourceID, err = core.NewCrossChainID(transferAttr.SourceProtocolID(), transferAttr.SourceCounterpartyID()); err != nil {
 		return err
 	}
 
-	var destOrbitID core.OrbitID
-	if destOrbitID, err = core.NewOrbitID(forwarding.ProtocolID(), attr.CounterpartyID()); err != nil {
+	var destID core.CrossChainID
+	if destID, err = core.NewCrossChainID(forwarding.ProtocolID(), attr.CounterpartyID()); err != nil {
 		return err
 	}
 
@@ -71,12 +71,12 @@ func (d *Dispatcher) UpdateStats(
 	}
 
 	for _, dda := range denomDispatchedAmounts {
-		if err := d.updateDispatchedAmountStats(ctx, &sourceOrbitID, &destOrbitID, dda.Denom, dda.AmountDispatched); err != nil {
+		if err := d.updateDispatchedAmountStats(ctx, &sourceID, &destID, dda.Denom, dda.AmountDispatched); err != nil {
 			return fmt.Errorf("update dispatched amount stats failure: %w", err)
 		}
 	}
 
-	if err := d.updateDispatchedCountsStats(ctx, &sourceOrbitID, &destOrbitID); err != nil {
+	if err := d.updateDispatchedCountsStats(ctx, &sourceID, &destID); err != nil {
 		return fmt.Errorf("update dispatch counts stats failure: %w", err)
 	}
 
@@ -91,15 +91,15 @@ func (d *Dispatcher) UpdateStats(
 // the coins delivered to the destination chain.
 func (d *Dispatcher) updateDispatchedAmountStats(
 	ctx context.Context,
-	sourceOrbitID *core.OrbitID,
-	destinationOrbitID *core.OrbitID,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
 	denom string,
 	newAmountDispatched dispatchertypes.AmountDispatched,
 ) error {
 	amountDispatched := d.GetDispatchedAmount(
 		ctx,
-		*sourceOrbitID,
-		*destinationOrbitID,
+		*sourceID,
+		*destID,
 		denom,
 	)
 
@@ -112,8 +112,8 @@ func (d *Dispatcher) updateDispatchedAmountStats(
 
 	return d.SetDispatchedAmount(
 		ctx,
-		*sourceOrbitID,
-		*destinationOrbitID,
+		*sourceID,
+		*destID,
 		denom,
 		amountDispatched,
 	)
@@ -123,8 +123,8 @@ func (d *Dispatcher) updateDispatchedAmountStats(
 // number of dispatches executed.
 func (d *Dispatcher) updateDispatchedCountsStats(
 	ctx context.Context,
-	sourceID *core.OrbitID,
-	destID *core.OrbitID,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
 ) error {
 	countDispatches := d.GetDispatchedCounts(
 		ctx,

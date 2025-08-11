@@ -14,27 +14,27 @@ import (
 )
 
 var (
-	md_OrbitID                 protoreflect.MessageDescriptor
-	fd_OrbitID_protocol_id     protoreflect.FieldDescriptor
-	fd_OrbitID_counterparty_id protoreflect.FieldDescriptor
+	md_CrossChainID                 protoreflect.MessageDescriptor
+	fd_CrossChainID_protocol_id     protoreflect.FieldDescriptor
+	fd_CrossChainID_counterparty_id protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_core_v1_id_proto_init()
-	md_OrbitID = File_noble_orbiter_core_v1_id_proto.Messages().ByName("OrbitID")
-	fd_OrbitID_protocol_id = md_OrbitID.Fields().ByName("protocol_id")
-	fd_OrbitID_counterparty_id = md_OrbitID.Fields().ByName("counterparty_id")
+	md_CrossChainID = File_noble_orbiter_core_v1_id_proto.Messages().ByName("CrossChainID")
+	fd_CrossChainID_protocol_id = md_CrossChainID.Fields().ByName("protocol_id")
+	fd_CrossChainID_counterparty_id = md_CrossChainID.Fields().ByName("counterparty_id")
 }
 
-var _ protoreflect.Message = (*fastReflection_OrbitID)(nil)
+var _ protoreflect.Message = (*fastReflection_CrossChainID)(nil)
 
-type fastReflection_OrbitID OrbitID
+type fastReflection_CrossChainID CrossChainID
 
-func (x *OrbitID) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_OrbitID)(x)
+func (x *CrossChainID) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_CrossChainID)(x)
 }
 
-func (x *OrbitID) slowProtoReflect() protoreflect.Message {
+func (x *CrossChainID) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_core_v1_id_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -46,43 +46,43 @@ func (x *OrbitID) slowProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_OrbitID_messageType fastReflection_OrbitID_messageType
-var _ protoreflect.MessageType = fastReflection_OrbitID_messageType{}
+var _fastReflection_CrossChainID_messageType fastReflection_CrossChainID_messageType
+var _ protoreflect.MessageType = fastReflection_CrossChainID_messageType{}
 
-type fastReflection_OrbitID_messageType struct{}
+type fastReflection_CrossChainID_messageType struct{}
 
-func (x fastReflection_OrbitID_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_OrbitID)(nil)
+func (x fastReflection_CrossChainID_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_CrossChainID)(nil)
 }
-func (x fastReflection_OrbitID_messageType) New() protoreflect.Message {
-	return new(fastReflection_OrbitID)
+func (x fastReflection_CrossChainID_messageType) New() protoreflect.Message {
+	return new(fastReflection_CrossChainID)
 }
-func (x fastReflection_OrbitID_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_OrbitID
+func (x fastReflection_CrossChainID_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_CrossChainID
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_OrbitID) Descriptor() protoreflect.MessageDescriptor {
-	return md_OrbitID
+func (x *fastReflection_CrossChainID) Descriptor() protoreflect.MessageDescriptor {
+	return md_CrossChainID
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_OrbitID) Type() protoreflect.MessageType {
-	return _fastReflection_OrbitID_messageType
+func (x *fastReflection_CrossChainID) Type() protoreflect.MessageType {
+	return _fastReflection_CrossChainID_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_OrbitID) New() protoreflect.Message {
-	return new(fastReflection_OrbitID)
+func (x *fastReflection_CrossChainID) New() protoreflect.Message {
+	return new(fastReflection_CrossChainID)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_OrbitID) Interface() protoreflect.ProtoMessage {
-	return (*OrbitID)(x)
+func (x *fastReflection_CrossChainID) Interface() protoreflect.ProtoMessage {
+	return (*CrossChainID)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -90,16 +90,16 @@ func (x *fastReflection_OrbitID) Interface() protoreflect.ProtoMessage {
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_OrbitID) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_CrossChainID) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 	if x.ProtocolId != 0 {
 		value := protoreflect.ValueOfEnum((protoreflect.EnumNumber)(x.ProtocolId))
-		if !f(fd_OrbitID_protocol_id, value) {
+		if !f(fd_CrossChainID_protocol_id, value) {
 			return
 		}
 	}
 	if x.CounterpartyId != "" {
 		value := protoreflect.ValueOfString(x.CounterpartyId)
-		if !f(fd_OrbitID_counterparty_id, value) {
+		if !f(fd_CrossChainID_counterparty_id, value) {
 			return
 		}
 	}
@@ -116,17 +116,17 @@ func (x *fastReflection_OrbitID) Range(f func(protoreflect.FieldDescriptor, prot
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_OrbitID) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_CrossChainID) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "noble.orbiter.core.v1.OrbitID.protocol_id":
+	case "noble.orbiter.core.v1.CrossChainID.protocol_id":
 		return x.ProtocolId != 0
-	case "noble.orbiter.core.v1.OrbitID.counterparty_id":
+	case "noble.orbiter.core.v1.CrossChainID.counterparty_id":
 		return x.CounterpartyId != ""
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.OrbitID"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.CrossChainID"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.core.v1.OrbitID does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.core.v1.CrossChainID does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -136,17 +136,17 @@ func (x *fastReflection_OrbitID) Has(fd protoreflect.FieldDescriptor) bool {
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_OrbitID) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_CrossChainID) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "noble.orbiter.core.v1.OrbitID.protocol_id":
+	case "noble.orbiter.core.v1.CrossChainID.protocol_id":
 		x.ProtocolId = 0
-	case "noble.orbiter.core.v1.OrbitID.counterparty_id":
+	case "noble.orbiter.core.v1.CrossChainID.counterparty_id":
 		x.CounterpartyId = ""
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.OrbitID"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.CrossChainID"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.core.v1.OrbitID does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.core.v1.CrossChainID does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -156,19 +156,19 @@ func (x *fastReflection_OrbitID) Clear(fd protoreflect.FieldDescriptor) {
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_OrbitID) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_CrossChainID) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "noble.orbiter.core.v1.OrbitID.protocol_id":
+	case "noble.orbiter.core.v1.CrossChainID.protocol_id":
 		value := x.ProtocolId
 		return protoreflect.ValueOfEnum((protoreflect.EnumNumber)(value))
-	case "noble.orbiter.core.v1.OrbitID.counterparty_id":
+	case "noble.orbiter.core.v1.CrossChainID.counterparty_id":
 		value := x.CounterpartyId
 		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.OrbitID"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.CrossChainID"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.core.v1.OrbitID does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.core.v1.CrossChainID does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -182,17 +182,17 @@ func (x *fastReflection_OrbitID) Get(descriptor protoreflect.FieldDescriptor) pr
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_OrbitID) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_CrossChainID) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "noble.orbiter.core.v1.OrbitID.protocol_id":
+	case "noble.orbiter.core.v1.CrossChainID.protocol_id":
 		x.ProtocolId = (ProtocolID)(value.Enum())
-	case "noble.orbiter.core.v1.OrbitID.counterparty_id":
+	case "noble.orbiter.core.v1.CrossChainID.counterparty_id":
 		x.CounterpartyId = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.OrbitID"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.CrossChainID"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.core.v1.OrbitID does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.core.v1.CrossChainID does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -206,44 +206,44 @@ func (x *fastReflection_OrbitID) Set(fd protoreflect.FieldDescriptor, value prot
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_OrbitID) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_CrossChainID) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.core.v1.OrbitID.protocol_id":
-		panic(fmt.Errorf("field protocol_id of message noble.orbiter.core.v1.OrbitID is not mutable"))
-	case "noble.orbiter.core.v1.OrbitID.counterparty_id":
-		panic(fmt.Errorf("field counterparty_id of message noble.orbiter.core.v1.OrbitID is not mutable"))
+	case "noble.orbiter.core.v1.CrossChainID.protocol_id":
+		panic(fmt.Errorf("field protocol_id of message noble.orbiter.core.v1.CrossChainID is not mutable"))
+	case "noble.orbiter.core.v1.CrossChainID.counterparty_id":
+		panic(fmt.Errorf("field counterparty_id of message noble.orbiter.core.v1.CrossChainID is not mutable"))
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.OrbitID"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.CrossChainID"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.core.v1.OrbitID does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.core.v1.CrossChainID does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_OrbitID) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_CrossChainID) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.core.v1.OrbitID.protocol_id":
+	case "noble.orbiter.core.v1.CrossChainID.protocol_id":
 		return protoreflect.ValueOfEnum(0)
-	case "noble.orbiter.core.v1.OrbitID.counterparty_id":
+	case "noble.orbiter.core.v1.CrossChainID.counterparty_id":
 		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.OrbitID"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.core.v1.CrossChainID"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.core.v1.OrbitID does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.core.v1.CrossChainID does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_OrbitID) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_CrossChainID) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.core.v1.OrbitID", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.core.v1.CrossChainID", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -251,7 +251,7 @@ func (x *fastReflection_OrbitID) WhichOneof(d protoreflect.OneofDescriptor) prot
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_OrbitID) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_CrossChainID) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -262,7 +262,7 @@ func (x *fastReflection_OrbitID) GetUnknown() protoreflect.RawFields {
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_OrbitID) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_CrossChainID) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -274,7 +274,7 @@ func (x *fastReflection_OrbitID) SetUnknown(fields protoreflect.RawFields) {
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_OrbitID) IsValid() bool {
+func (x *fastReflection_CrossChainID) IsValid() bool {
 	return x != nil
 }
 
@@ -284,9 +284,9 @@ func (x *fastReflection_OrbitID) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_OrbitID) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_CrossChainID) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*OrbitID)
+		x := input.Message.Interface().(*CrossChainID)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -315,7 +315,7 @@ func (x *fastReflection_OrbitID) ProtoMethods() *protoiface.Methods {
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*OrbitID)
+		x := input.Message.Interface().(*CrossChainID)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -357,7 +357,7 @@ func (x *fastReflection_OrbitID) ProtoMethods() *protoiface.Methods {
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*OrbitID)
+		x := input.Message.Interface().(*CrossChainID)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -389,10 +389,10 @@ func (x *fastReflection_OrbitID) ProtoMethods() *protoiface.Methods {
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: OrbitID: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: CrossChainID: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: OrbitID: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: CrossChainID: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			case 1:
@@ -610,10 +610,10 @@ func (ProtocolID) EnumDescriptor() ([]byte, []int) {
 	return file_noble_orbiter_core_v1_id_proto_rawDescGZIP(), []int{1}
 }
 
-// OrbitID is an internal type used to uniquely
-// represent a source or a destination of a cross-chain
+// CrossChainID is an internal type used to uniquely
+// identify a source or a destination of a cross-chain
 // transfer and the bridge protocol used.
-type OrbitID struct {
+type CrossChainID struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -623,8 +623,8 @@ type OrbitID struct {
 	CounterpartyId string `protobuf:"bytes,2,opt,name=counterparty_id,json=counterpartyId,proto3" json:"counterparty_id,omitempty"`
 }
 
-func (x *OrbitID) Reset() {
-	*x = OrbitID{}
+func (x *CrossChainID) Reset() {
+	*x = CrossChainID{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_core_v1_id_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -632,25 +632,25 @@ func (x *OrbitID) Reset() {
 	}
 }
 
-func (x *OrbitID) String() string {
+func (x *CrossChainID) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrbitID) ProtoMessage() {}
+func (*CrossChainID) ProtoMessage() {}
 
-// Deprecated: Use OrbitID.ProtoReflect.Descriptor instead.
-func (*OrbitID) Descriptor() ([]byte, []int) {
+// Deprecated: Use CrossChainID.ProtoReflect.Descriptor instead.
+func (*CrossChainID) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_core_v1_id_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *OrbitID) GetProtocolId() ProtocolID {
+func (x *CrossChainID) GetProtocolId() ProtocolID {
 	if x != nil {
 		return x.ProtocolId
 	}
 	return ProtocolID_PROTOCOL_UNSUPPORTED
 }
 
-func (x *OrbitID) GetCounterpartyId() string {
+func (x *CrossChainID) GetCounterpartyId() string {
 	if x != nil {
 		return x.CounterpartyId
 	}
@@ -664,40 +664,40 @@ var file_noble_orbiter_core_v1_id_proto_rawDesc = []byte{
 	0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x2f, 0x69, 0x64, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x12, 0x15, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e,
 	0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x7c, 0x0a,
-	0x07, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x49, 0x44, 0x12, 0x42, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e,
+	0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x81, 0x01,
+	0x0a, 0x0c, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x49, 0x44, 0x12, 0x42,
+	0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69,
+	0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x49, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72,
+	0x74, 0x79, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x6f, 0x75,
+	0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x49, 0x64, 0x3a, 0x04, 0x98, 0xa0, 0x1f,
+	0x00, 0x2a, 0x49, 0x0a, 0x08, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x44, 0x12, 0x16, 0x0a,
+	0x12, 0x41, 0x43, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x55, 0x4e, 0x53, 0x55, 0x50, 0x50, 0x4f, 0x52,
+	0x54, 0x45, 0x44, 0x10, 0x00, 0x12, 0x0e, 0x0a, 0x0a, 0x41, 0x43, 0x54, 0x49, 0x4f, 0x4e, 0x5f,
+	0x46, 0x45, 0x45, 0x10, 0x01, 0x12, 0x0f, 0x0a, 0x0b, 0x41, 0x43, 0x54, 0x49, 0x4f, 0x4e, 0x5f,
+	0x53, 0x57, 0x41, 0x50, 0x10, 0x02, 0x1a, 0x04, 0x88, 0xa3, 0x1e, 0x00, 0x2a, 0x69, 0x0a, 0x0a,
+	0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x12, 0x18, 0x0a, 0x14, 0x50, 0x52,
+	0x4f, 0x54, 0x4f, 0x43, 0x4f, 0x4c, 0x5f, 0x55, 0x4e, 0x53, 0x55, 0x50, 0x50, 0x4f, 0x52, 0x54,
+	0x45, 0x44, 0x10, 0x00, 0x12, 0x10, 0x0a, 0x0c, 0x50, 0x52, 0x4f, 0x54, 0x4f, 0x43, 0x4f, 0x4c,
+	0x5f, 0x49, 0x42, 0x43, 0x10, 0x01, 0x12, 0x11, 0x0a, 0x0d, 0x50, 0x52, 0x4f, 0x54, 0x4f, 0x43,
+	0x4f, 0x4c, 0x5f, 0x43, 0x43, 0x54, 0x50, 0x10, 0x02, 0x12, 0x16, 0x0a, 0x12, 0x50, 0x52, 0x4f,
+	0x54, 0x4f, 0x43, 0x4f, 0x4c, 0x5f, 0x48, 0x59, 0x50, 0x45, 0x52, 0x4c, 0x41, 0x4e, 0x45, 0x10,
+	0x03, 0x1a, 0x04, 0x88, 0xa3, 0x1e, 0x00, 0x42, 0xc9, 0x01, 0x0a, 0x19, 0x63, 0x6f, 0x6d, 0x2e,
 	0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f,
-	0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44,
-	0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64, 0x12, 0x27, 0x0a, 0x0f,
-	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x5f, 0x69, 0x64, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61,
-	0x72, 0x74, 0x79, 0x49, 0x64, 0x3a, 0x04, 0x98, 0xa0, 0x1f, 0x00, 0x2a, 0x49, 0x0a, 0x08, 0x41,
-	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x44, 0x12, 0x16, 0x0a, 0x12, 0x41, 0x43, 0x54, 0x49, 0x4f,
-	0x4e, 0x5f, 0x55, 0x4e, 0x53, 0x55, 0x50, 0x50, 0x4f, 0x52, 0x54, 0x45, 0x44, 0x10, 0x00, 0x12,
-	0x0e, 0x0a, 0x0a, 0x41, 0x43, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x46, 0x45, 0x45, 0x10, 0x01, 0x12,
-	0x0f, 0x0a, 0x0b, 0x41, 0x43, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x53, 0x57, 0x41, 0x50, 0x10, 0x02,
-	0x1a, 0x04, 0x88, 0xa3, 0x1e, 0x00, 0x2a, 0x69, 0x0a, 0x0a, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x49, 0x44, 0x12, 0x18, 0x0a, 0x14, 0x50, 0x52, 0x4f, 0x54, 0x4f, 0x43, 0x4f, 0x4c,
-	0x5f, 0x55, 0x4e, 0x53, 0x55, 0x50, 0x50, 0x4f, 0x52, 0x54, 0x45, 0x44, 0x10, 0x00, 0x12, 0x10,
-	0x0a, 0x0c, 0x50, 0x52, 0x4f, 0x54, 0x4f, 0x43, 0x4f, 0x4c, 0x5f, 0x49, 0x42, 0x43, 0x10, 0x01,
-	0x12, 0x11, 0x0a, 0x0d, 0x50, 0x52, 0x4f, 0x54, 0x4f, 0x43, 0x4f, 0x4c, 0x5f, 0x43, 0x43, 0x54,
-	0x50, 0x10, 0x02, 0x12, 0x16, 0x0a, 0x12, 0x50, 0x52, 0x4f, 0x54, 0x4f, 0x43, 0x4f, 0x4c, 0x5f,
-	0x48, 0x59, 0x50, 0x45, 0x52, 0x4c, 0x41, 0x4e, 0x45, 0x10, 0x03, 0x1a, 0x04, 0x88, 0xa3, 0x1e,
-	0x00, 0x42, 0xc9, 0x01, 0x0a, 0x19, 0x63, 0x6f, 0x6d, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e,
-	0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x42,
-	0x07, 0x49, 0x64, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x2c, 0x6f, 0x72, 0x62, 0x69,
-	0x74, 0x65, 0x72, 0x2e, 0x64, 0x65, 0x76, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6e, 0x6f, 0x62, 0x6c,
-	0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76,
-	0x31, 0x3b, 0x63, 0x6f, 0x72, 0x65, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x4e, 0x4f, 0x43, 0xaa, 0x02,
-	0x15, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x43,
-	0x6f, 0x72, 0x65, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x15, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f,
-	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c, 0x43, 0x6f, 0x72, 0x65, 0x5c, 0x56, 0x31, 0xe2, 0x02,
-	0x21, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c, 0x43,
-	0x6f, 0x72, 0x65, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61,
-	0x74, 0x61, 0xea, 0x02, 0x18, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x3a, 0x3a, 0x4f, 0x72, 0x62, 0x69,
-	0x74, 0x65, 0x72, 0x3a, 0x3a, 0x43, 0x6f, 0x72, 0x65, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x65, 0x2e, 0x76, 0x31, 0x42, 0x07, 0x49, 0x64, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01,
+	0x5a, 0x2c, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x64, 0x65, 0x76, 0x2f, 0x61, 0x70,
+	0x69, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f,
+	0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x3b, 0x63, 0x6f, 0x72, 0x65, 0x76, 0x31, 0xa2, 0x02,
+	0x03, 0x4e, 0x4f, 0x43, 0xaa, 0x02, 0x15, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x4f, 0x72, 0x62,
+	0x69, 0x74, 0x65, 0x72, 0x2e, 0x43, 0x6f, 0x72, 0x65, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x15, 0x4e,
+	0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c, 0x43, 0x6f, 0x72,
+	0x65, 0x5c, 0x56, 0x31, 0xe2, 0x02, 0x21, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62,
+	0x69, 0x74, 0x65, 0x72, 0x5c, 0x43, 0x6f, 0x72, 0x65, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42,
+	0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x18, 0x4e, 0x6f, 0x62, 0x6c, 0x65,
+	0x3a, 0x3a, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x3a, 0x3a, 0x43, 0x6f, 0x72, 0x65, 0x3a,
+	0x3a, 0x56, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -715,12 +715,12 @@ func file_noble_orbiter_core_v1_id_proto_rawDescGZIP() []byte {
 var file_noble_orbiter_core_v1_id_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_noble_orbiter_core_v1_id_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_noble_orbiter_core_v1_id_proto_goTypes = []interface{}{
-	(ActionID)(0),   // 0: noble.orbiter.core.v1.ActionID
-	(ProtocolID)(0), // 1: noble.orbiter.core.v1.ProtocolID
-	(*OrbitID)(nil), // 2: noble.orbiter.core.v1.OrbitID
+	(ActionID)(0),        // 0: noble.orbiter.core.v1.ActionID
+	(ProtocolID)(0),      // 1: noble.orbiter.core.v1.ProtocolID
+	(*CrossChainID)(nil), // 2: noble.orbiter.core.v1.CrossChainID
 }
 var file_noble_orbiter_core_v1_id_proto_depIdxs = []int32{
-	1, // 0: noble.orbiter.core.v1.OrbitID.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
+	1, // 0: noble.orbiter.core.v1.CrossChainID.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -735,7 +735,7 @@ func file_noble_orbiter_core_v1_id_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_noble_orbiter_core_v1_id_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrbitID); i {
+			switch v := v.(*CrossChainID); i {
 			case 0:
 				return &v.state
 			case 1:

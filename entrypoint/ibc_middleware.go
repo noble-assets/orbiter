@@ -88,12 +88,12 @@ func (i IBCMiddleware) OnRecvPacket(
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
 
-	orbitID, err := core.NewOrbitID(core.PROTOCOL_IBC, packet.SourceChannel)
+	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.SourceChannel)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
 	}
 
-	err = i.payloadAdapter.BeforeTransferHook(ctx, orbitID, orbiterPayload)
+	err = i.payloadAdapter.BeforeTransferHook(ctx, ccID, orbiterPayload)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
 	}
@@ -103,7 +103,7 @@ func (i IBCMiddleware) OnRecvPacket(
 		return ack
 	}
 
-	transferAttr, err := i.payloadAdapter.AfterTransferHook(ctx, orbitID, orbiterPayload)
+	transferAttr, err := i.payloadAdapter.AfterTransferHook(ctx, ccID, orbiterPayload)
 	if err != nil {
 		return channeltypes.NewErrorAcknowledgement(err)
 	}

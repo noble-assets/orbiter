@@ -90,7 +90,7 @@ const (
 var (
 	DispatchedAmountsPrefix                        = collections.NewPrefix(30)
 	DispatchedAmountsPrefixByDestinationProtocolID = collections.NewPrefix(31)
-	DispatchedAmountsPrefixByDestinationOrbitID    = collections.NewPrefix(32)
+	DispatchedAmountsPrefixByDestinationCCID       = collections.NewPrefix(32)
 
 	DispatchedCountsPrefix                        = collections.NewPrefix(33)
 	DispatchedCountsPrefixByDestinationProtocolID = collections.NewPrefix(34)
@@ -109,7 +109,7 @@ const (
 	// in the CCTP protocol.
 	CCTPNobleDomain = 4
 
-	orbitIDSeparator = ":"
+	crosschainIDSeparator = ":"
 )
 
 var OrbiterPrefix = ModuleName

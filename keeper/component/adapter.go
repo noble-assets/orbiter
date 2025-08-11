@@ -138,14 +138,14 @@ func (a *Adapter) ParsePayload(
 // BeforeTransferHook implements types.PayloadAdapter.
 func (a *Adapter) BeforeTransferHook(
 	ctx context.Context,
-	sourceOrbitID core.OrbitID,
+	sourceID core.CrossChainID,
 	payload *core.Payload,
 ) error {
-	adapter, found := a.router.Route(sourceOrbitID.GetProtocolId())
+	adapter, found := a.router.Route(sourceID.GetProtocolId())
 	if !found {
 		return fmt.Errorf(
 			"adapter not found for protocol ID: %s",
-			sourceOrbitID.GetProtocolId().String(),
+			sourceID.GetProtocolId().String(),
 		)
 	}
 
@@ -163,14 +163,14 @@ func (a *Adapter) BeforeTransferHook(
 // AfterTransferHook implements types.PayloadAdapter.
 func (a *Adapter) AfterTransferHook(
 	ctx context.Context,
-	sourceOrbitID core.OrbitID,
+	sourceID core.CrossChainID,
 	payload *core.Payload,
 ) (*types.TransferAttributes, error) {
-	adapter, found := a.router.Route(sourceOrbitID.GetProtocolId())
+	adapter, found := a.router.Route(sourceID.GetProtocolId())
 	if !found {
 		return nil, fmt.Errorf(
 			"adapter not found for protocol ID: %s",
-			sourceOrbitID.GetProtocolId().String(),
+			sourceID.GetProtocolId().String(),
 		)
 	}
 
@@ -184,8 +184,8 @@ func (a *Adapter) AfterTransferHook(
 	}
 
 	transferAttr, err := types.NewTransferAttributes(
-		sourceOrbitID.GetProtocolId(),
-		sourceOrbitID.GetCounterpartyId(),
+		sourceID.GetProtocolId(),
+		sourceID.GetCounterpartyId(),
 		balances[0].GetDenom(),
 		balances[0].Amount,
 	)

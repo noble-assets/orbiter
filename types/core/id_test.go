@@ -29,31 +29,31 @@ import (
 	"orbiter.dev/types/core"
 )
 
-func TestOrbitID(t *testing.T) {
+func TestCrossChainID(t *testing.T) {
 	testCases := []struct {
 		name       string
-		orbitID    core.OrbitID
+		id         core.CrossChainID
 		expectedID string
 	}{
 		{
-			name: "IBC orbit ID",
-			orbitID: core.OrbitID{
+			name: "IBC cross-chain ID",
+			id: core.CrossChainID{
 				ProtocolId:     core.PROTOCOL_IBC,
 				CounterpartyId: "channel-1",
 			},
 			expectedID: fmt.Sprintf("%d:channel-1", core.PROTOCOL_IBC),
 		},
 		{
-			name: "CCTP orbit ID",
-			orbitID: core.OrbitID{
+			name: "CCTP cross-chain ID",
+			id: core.CrossChainID{
 				ProtocolId:     core.PROTOCOL_CCTP,
 				CounterpartyId: "0",
 			},
 			expectedID: fmt.Sprintf("%d:0", core.PROTOCOL_CCTP),
 		},
 		{
-			name: "Hyperlane orbit ID",
-			orbitID: core.OrbitID{
+			name: "Hyperlane cross-chain ID",
+			id: core.CrossChainID{
 				ProtocolId:     core.PROTOCOL_HYPERLANE,
 				CounterpartyId: "ethereum",
 			},
@@ -63,13 +63,13 @@ func TestOrbitID(t *testing.T) {
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			id := tC.orbitID.ID()
+			id := tC.id.ID()
 			require.Equal(t, tC.expectedID, id)
 		})
 	}
 }
 
-func TestParseOrbitID(t *testing.T) {
+func TestParseCrossChainID(t *testing.T) {
 	testCases := []struct {
 		name              string
 		id                string
@@ -114,14 +114,14 @@ func TestParseOrbitID(t *testing.T) {
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			orbitID, err := core.ParseOrbitID(tC.id)
+			ccID, err := core.ParseCrossChainID(tC.id)
 
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tC.expProtocolID, orbitID.GetProtocolId())
-				require.Equal(t, tC.expCounterpartyID, orbitID.GetCounterpartyId())
+				require.Equal(t, tC.expProtocolID, ccID.GetProtocolId())
+				require.Equal(t, tC.expCounterpartyID, ccID.GetCounterpartyId())
 			}
 		})
 	}

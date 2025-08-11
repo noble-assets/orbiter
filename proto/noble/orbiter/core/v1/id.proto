@@ -43,10 +43,10 @@ enum ProtocolID {
   PROTOCOL_HYPERLANE = 3;
 }
 
-// OrbitID is an internal type used to uniquely
-// represent a source or a destination of a cross-chain
+// CrossChainID is an internal type used to uniquely
+// identify a source or a destination of a cross-chain
 // transfer and the bridge protocol used.
-message OrbitID {
+message CrossChainID {
   option (gogoproto.goproto_stringer) = false;
 
   ProtocolID protocol_id = 1;

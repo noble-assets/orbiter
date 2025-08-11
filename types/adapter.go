@@ -29,10 +29,14 @@ import (
 type TransferHookHandler interface {
 	// BeforeTransferHook allows to execute logic BEFORE completing
 	// the cross-chain transfer.
-	BeforeTransferHook(context.Context, core.OrbitID, *core.Payload) error
+	BeforeTransferHook(context.Context, core.CrossChainID, *core.Payload) error
 	// AfterTransferHook allows to execute logic AFTER completing
 	// the cross-chain transfer.
-	AfterTransferHook(context.Context, core.OrbitID, *core.Payload) (*TransferAttributes, error)
+	AfterTransferHook(
+		context.Context,
+		core.CrossChainID,
+		*core.Payload,
+	) (*TransferAttributes, error)
 }
 
 // PayloadAdapter defines the behavior expected by the adapter to handle

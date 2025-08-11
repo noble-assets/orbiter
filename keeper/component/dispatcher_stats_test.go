@@ -92,7 +92,7 @@ func TestUpdateStats(t *testing.T) {
 			expErr: "id is not supported",
 		},
 		{
-			name: "error - invalid orbit attributes",
+			name: "error - invalid forwading attributes",
 			transferAttr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
@@ -192,27 +192,27 @@ func TestUpdateStats(t *testing.T) {
 		{
 			name: "success - different denom and previous stored stats",
 			setup: func(ctx context.Context, d *component.Dispatcher) {
-				sourceOrbitID := core.OrbitID{
+				sourceID := core.CrossChainID{
 					ProtocolId:     1,
 					CounterpartyId: "hyperliquid",
 				}
 
-				destOrbitID := core.OrbitID{
+				destID := core.CrossChainID{
 					ProtocolId:     1,
 					CounterpartyId: "ethereum",
 				}
 
-				err := d.SetDispatchedCounts(ctx, sourceOrbitID, destOrbitID, 10)
+				err := d.SetDispatchedCounts(ctx, sourceID, destID, 10)
 				require.NoError(t, err)
 
 				da := dispatchertypes.AmountDispatched{
 					Incoming: math.NewInt(1_000),
 					Outgoing: math.NewInt(1_000),
 				}
-				err = d.SetDispatchedAmount(ctx, sourceOrbitID, destOrbitID, "uusdc", da)
+				err = d.SetDispatchedAmount(ctx, sourceID, destID, "uusdc", da)
 				require.NoError(t, err)
 
-				err = d.SetDispatchedAmount(ctx, destOrbitID, sourceOrbitID, "uusdc", da)
+				err = d.SetDispatchedAmount(ctx, destID, sourceID, "uusdc", da)
 				require.NoError(t, err)
 			},
 			transferAttr: func() *types.TransferAttributes {
@@ -266,26 +266,26 @@ func TestUpdateStats(t *testing.T) {
 				require.NoError(t, err)
 
 				// Create expected source and destination info
-				sourceOrbitID := core.OrbitID{
+				sourceID := core.CrossChainID{
 					ProtocolId:     transferAttr.SourceProtocolID(),
 					CounterpartyId: transferAttr.SourceCounterpartyID(),
 				}
 				attr, _ := forwarding.CachedAttributes()
-				destOrbitID := core.OrbitID{
+				destID := core.CrossChainID{
 					ProtocolId:     forwarding.ProtocolID(),
 					CounterpartyId: attr.CounterpartyID(),
 				}
 
 				// Verify amount stats
 				for denom, expectedAmount := range tC.expAmounts {
-					actualAmount := dispatcher.GetDispatchedAmount(ctx, sourceOrbitID, destOrbitID, denom)
+					actualAmount := dispatcher.GetDispatchedAmount(ctx, sourceID, destID, denom)
 
 					require.Equal(t, expectedAmount.Incoming, actualAmount.Incoming)
 					require.Equal(t, expectedAmount.Outgoing, actualAmount.Outgoing)
 				}
 
 				// Verify count stats
-				actualCounts := dispatcher.GetDispatchedCounts(ctx, sourceOrbitID, destOrbitID)
+				actualCounts := dispatcher.GetDispatchedCounts(ctx, sourceID, destID)
 
 				require.Equal(t, tC.expectedCounts, actualCounts)
 			}

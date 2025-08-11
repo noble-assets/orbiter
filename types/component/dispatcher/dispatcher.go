@@ -37,22 +37,22 @@ func NewAmountDispatched(
 }
 
 type ChainAmountDispatched struct {
-	orbitID          core.OrbitID
+	ccID             core.CrossChainID
 	amountDispatched AmountDispatched
 }
 
 func NewChainAmountDispatched(
-	orbitID core.OrbitID,
+	ccID core.CrossChainID,
 	amountDispatched AmountDispatched,
 ) *ChainAmountDispatched {
 	return &ChainAmountDispatched{
-		orbitID:          orbitID,
+		ccID:             ccID,
 		amountDispatched: amountDispatched,
 	}
 }
 
-func (cad *ChainAmountDispatched) OrbitID() core.OrbitID {
-	return cad.orbitID
+func (cad *ChainAmountDispatched) CrossChainID() core.CrossChainID {
+	return cad.ccID
 }
 
 func (cad *ChainAmountDispatched) AmountDispatched() AmountDispatched {

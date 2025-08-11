@@ -34,8 +34,8 @@ import (
 // passed down the orbiter to handle actions and routing.
 type TransferAttributes struct {
 	// Source fields have only getter methods.
-	sourceOrbitID core.OrbitID
-	sourceCoin    sdk.Coin
+	sourceID   core.CrossChainID
+	sourceCoin sdk.Coin
 	// Destination field have both setters and getters
 	// because they can be mutated by actions.
 	destinationCoin sdk.Coin
@@ -49,7 +49,7 @@ func NewTransferAttributes(
 	denom string,
 	amount math.Int,
 ) (*TransferAttributes, error) {
-	sourceOrbitID, err := core.NewOrbitID(sourceProtocolID, sourceCounterpartyID)
+	sourceID, err := core.NewCrossChainID(sourceProtocolID, sourceCounterpartyID)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func NewTransferAttributes(
 	destinationCoin := sdk.Coin{Denom: denom, Amount: amount}
 
 	transferAttr := TransferAttributes{
-		sourceOrbitID:   sourceOrbitID,
+		sourceID:        sourceID,
 		sourceCoin:      sourceCoin,
 		destinationCoin: destinationCoin,
 	}
@@ -72,7 +72,7 @@ func (a *TransferAttributes) Validate() error {
 	if a == nil {
 		return core.ErrNilPointer.Wrap("transfer attributes is a nil pointer")
 	}
-	if err := a.sourceOrbitID.Validate(); err != nil {
+	if err := a.sourceID.Validate(); err != nil {
 		return err
 	}
 	if err := a.sourceCoin.Validate(); err != nil {
@@ -92,11 +92,11 @@ func (a *TransferAttributes) Validate() error {
 }
 
 func (a *TransferAttributes) SourceProtocolID() core.ProtocolID {
-	return a.sourceOrbitID.GetProtocolId()
+	return a.sourceID.GetProtocolId()
 }
 
 func (a *TransferAttributes) SourceCounterpartyID() string {
-	return a.sourceOrbitID.GetCounterpartyId()
+	return a.sourceID.GetCounterpartyId()
 }
 
 func (a *TransferAttributes) SourceAmount() math.Int {

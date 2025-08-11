@@ -45,9 +45,9 @@ type DispatchedAmountsIndexes struct {
 	// ByDestinationProtocolID keeps track of entries indexes associated
 	// with a single destination protocol ID.
 	ByDestinationProtocolID *indexes.Multi[uint32, DispatchedAmountsKey, dispatchertypes.AmountDispatched]
-	// ByDestinationOrbitID keeps track of entries indexes associated with a tuple:
+	// ByDestinationCCID keeps track of entries indexes associated with a tuple:
 	// (destination protocol Id, destination chain Id, denom).
-	ByDestinationOrbitID *indexes.Multi[collections.Triple[uint32, string, string], DispatchedAmountsKey, dispatchertypes.AmountDispatched]
+	ByDestinationCCID *indexes.Multi[collections.Triple[uint32, string, string], DispatchedAmountsKey, dispatchertypes.AmountDispatched]
 }
 
 func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmountsIndexes {
@@ -66,17 +66,17 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			collections.Uint32Key,
 			primaryKeyCodec,
 			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (uint32, error) {
-				orbitID, err := core.ParseOrbitID(pk.K3())
+				ccID, err := core.ParseCrossChainID(pk.K3())
 				if err != nil {
-					return 0, fmt.Errorf("error parsing destination orbit ID: %w", err)
+					return 0, fmt.Errorf("error parsing destination cross-chain ID: %w", err)
 				}
 
-				return orbitID.GetProtocolId().Uint32(), nil
+				return ccID.GetProtocolId().Uint32(), nil
 			},
 		),
-		ByDestinationOrbitID: indexes.NewMulti(
+		ByDestinationCCID: indexes.NewMulti(
 			sb,
-			core.DispatchedAmountsPrefixByDestinationOrbitID,
+			core.DispatchedAmountsPrefixByDestinationCCID,
 			core.DispatchedAmountsName+"_by_destination_orbit_id",
 			collections.TripleKeyCodec(
 				collections.Uint32Key,
@@ -85,17 +85,17 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			),
 			primaryKeyCodec,
 			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (collections.Triple[uint32, string, string], error) {
-				orbitID, err := core.ParseOrbitID(pk.K3())
+				ccID, err := core.ParseCrossChainID(pk.K3())
 				if err != nil {
 					return collections.Triple[uint32, string, string]{}, fmt.Errorf(
-						"error parsing destination orbit ID: %w",
+						"error parsing destination cross-chain ID: %w",
 						err,
 					)
 				}
 
 				return collections.Join3(
-					orbitID.GetProtocolId().Uint32(),
-					orbitID.GetCounterpartyId(),
+					ccID.GetProtocolId().Uint32(),
+					ccID.GetCounterpartyId(),
 					pk.K4(),
 				), nil
 			},
@@ -124,15 +124,15 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 			collections.Uint32Key,
 			primaryKeyCodec,
 			func(pk DispatchedCountsKey, _ uint32) (uint32, error) {
-				orbitID, err := core.ParseOrbitID(pk.K3())
+				ccID, err := core.ParseCrossChainID(pk.K3())
 				if err != nil {
 					return 0, fmt.Errorf(
-						"error parsing destination orbit ID: %w",
+						"error parsing destination cross-chain ID: %w",
 						err,
 					)
 				}
 
-				return orbitID.GetProtocolId().Uint32(), nil
+				return ccID.GetProtocolId().Uint32(), nil
 			},
 		),
 	}
@@ -144,14 +144,14 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 
 func (d *Dispatcher) GetDispatchedAmount(
 	ctx context.Context,
-	sourceOrbitID core.OrbitID,
-	destinationOrbitID core.OrbitID,
+	sourceID core.CrossChainID,
+	destID core.CrossChainID,
 	denom string,
 ) dispatchertypes.AmountDispatched {
 	key := collections.Join4(
-		sourceOrbitID.GetProtocolId().Uint32(),
-		sourceOrbitID.GetCounterpartyId(),
-		destinationOrbitID.ID(),
+		sourceID.GetProtocolId().Uint32(),
+		sourceID.GetCounterpartyId(),
+		destID.ID(),
 		denom,
 	)
 
@@ -168,11 +168,11 @@ func (d *Dispatcher) GetDispatchedAmount(
 
 func (d *Dispatcher) HasDispatchedAmount(
 	ctx context.Context,
-	sourceInfo core.OrbitID,
-	destinationInfo core.OrbitID,
+	sourceID core.CrossChainID,
+	destID core.CrossChainID,
 	denom string,
 ) bool {
-	amountDispatched := d.GetDispatchedAmount(ctx, sourceInfo, destinationInfo, denom)
+	amountDispatched := d.GetDispatchedAmount(ctx, sourceID, destID, denom)
 	if amountDispatched.Incoming.IsZero() && amountDispatched.Outgoing.IsZero() {
 		return false
 	}
@@ -182,15 +182,15 @@ func (d *Dispatcher) HasDispatchedAmount(
 
 func (d *Dispatcher) SetDispatchedAmount(
 	ctx context.Context,
-	sourceOrbitID core.OrbitID,
-	destOrbitID core.OrbitID,
+	sourceID core.CrossChainID,
+	destID core.CrossChainID,
 	denom string,
 	amountDispatched dispatchertypes.AmountDispatched,
 ) error {
 	key := collections.Join4(
-		sourceOrbitID.GetProtocolId().Uint32(),
-		sourceOrbitID.GetCounterpartyId(),
-		destOrbitID.ID(),
+		sourceID.GetProtocolId().Uint32(),
+		sourceID.GetCounterpartyId(),
+		destID.ID(),
 		denom,
 	)
 
@@ -231,11 +231,11 @@ func (d *Dispatcher) IterateDispatchedAmountsByProtocolID(
 		ctx,
 		prefix,
 		func(key DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (stop bool, err error) {
-			orbitID, err := core.ParseOrbitID(key.K3())
+			ccID, err := core.ParseCrossChainID(key.K3())
 			if err != nil {
 				return true, err
 			}
-			dispatchedInfo := dispatchertypes.NewChainAmountDispatched(orbitID, value)
+			dispatchedInfo := dispatchertypes.NewChainAmountDispatched(ccID, value)
 
 			return callback(key.K2(), *dispatchedInfo), nil
 		},
@@ -286,11 +286,11 @@ func (d *Dispatcher) IterateDispatchedAmountsByDestinationProtocolID(
 				return true, err
 			}
 
-			orbitID, err := core.ParseOrbitID(indexedKey.K3())
+			ccID, err := core.ParseCrossChainID(indexedKey.K3())
 			if err != nil {
 				return true, err
 			}
-			dispatchedInfo := dispatchertypes.NewChainAmountDispatched(orbitID, value)
+			dispatchedInfo := dispatchertypes.NewChainAmountDispatched(ccID, value)
 
 			return callback(indexedKey.K2(), *dispatchedInfo), nil
 		},
@@ -308,13 +308,13 @@ func (d *Dispatcher) IterateDispatchedAmountsByDestinationProtocolID(
 
 func (d *Dispatcher) GetDispatchedCounts(
 	ctx context.Context,
-	sourceOrbitID core.OrbitID,
-	destinationOrbitID core.OrbitID,
+	sourceID core.CrossChainID,
+	destID core.CrossChainID,
 ) uint32 {
 	key := collections.Join3(
-		sourceOrbitID.GetProtocolId().Uint32(),
-		sourceOrbitID.GetCounterpartyId(),
-		destinationOrbitID.ID(),
+		sourceID.GetProtocolId().Uint32(),
+		sourceID.GetCounterpartyId(),
+		destID.ID(),
 	)
 
 	countDispatches, err := d.DispatchCounts.Get(ctx, key)
@@ -327,24 +327,24 @@ func (d *Dispatcher) GetDispatchedCounts(
 
 func (d *Dispatcher) HasDispatchedCounts(
 	ctx context.Context,
-	sourceInfo core.OrbitID,
-	destinationInfo core.OrbitID,
+	sourceID core.CrossChainID,
+	destID core.CrossChainID,
 ) bool {
-	countDispatches := d.GetDispatchedCounts(ctx, sourceInfo, destinationInfo)
+	countDispatches := d.GetDispatchedCounts(ctx, sourceID, destID)
 
 	return countDispatches != 0
 }
 
 func (d *Dispatcher) SetDispatchedCounts(
 	ctx context.Context,
-	sourceOrbitID core.OrbitID,
-	destinationOrbitID core.OrbitID,
+	sourceID core.CrossChainID,
+	destID core.CrossChainID,
 	countDispatches uint32,
 ) error {
 	key := collections.Join3(
-		sourceOrbitID.GetProtocolId().Uint32(),
-		sourceOrbitID.GetCounterpartyId(),
-		destinationOrbitID.ID(),
+		sourceID.GetProtocolId().Uint32(),
+		sourceID.GetCounterpartyId(),
+		destID.ID(),
 	)
 
 	return d.DispatchCounts.Set(ctx, key, countDispatches)
