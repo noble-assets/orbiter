@@ -18,14 +18,15 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package interfaces
+package types
 
 import (
 	"context"
 
 	"cosmossdk.io/log"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/core"
+	"orbiter.dev/types/router"
 )
 
 type Loggable interface {
@@ -36,20 +37,20 @@ type Loggable interface {
 // have to process forwardings.
 type Forwarder interface {
 	Loggable
-	PacketHandler[*types.ForwardingPacket]
-	RouterProvider[types.ProtocolID, ControllerForwarding]
-	Pause(context.Context, types.ProtocolID, []string) error
-	Unpause(context.Context, types.ProtocolID, []string) error
+	PacketHandler[*ForwardingPacket]
+	router.RouterProvider[core.ProtocolID, ControllerForwarding]
+	Pause(context.Context, core.ProtocolID, []string) error
+	Unpause(context.Context, core.ProtocolID, []string) error
 }
 
 // Executor defines the behavior a components must
 // have to process pre-actios.
 type Executor interface {
 	Loggable
-	PacketHandler[*types.ActionPacket]
-	RouterProvider[types.ActionID, ControllerAction]
-	Pause(context.Context, types.ActionID) error
-	Unpause(context.Context, types.ActionID) error
+	PacketHandler[*ActionPacket]
+	router.RouterProvider[core.ActionID, ControllerAction]
+	Pause(context.Context, core.ActionID) error
+	Unpause(context.Context, core.ActionID) error
 }
 
 // Dispatcher defines the behavior a components must
@@ -64,5 +65,5 @@ type Dispatcher interface {
 type Adapter interface {
 	Loggable
 	PayloadAdapter
-	RouterProvider[types.ProtocolID, ControllerAdapter]
+	router.RouterProvider[core.ProtocolID, ControllerAdapter]
 }

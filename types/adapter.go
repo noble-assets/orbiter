@@ -18,44 +18,30 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package interfaces
+package types
 
 import (
 	"context"
 
-	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
-// ControllerForwarding defines the behavior a forwarding packet
-// controller has to implement.
-type ControllerForwarding interface {
-	Controller[types.ProtocolID]
-	PacketHandler[*types.ForwardingPacket]
-}
-
-// ControllerAction defines the behavior an action packet
-// controller has to implement.
-type ControllerAction interface {
-	Controller[types.ActionID]
-	PacketHandler[*types.ActionPacket]
-}
-
-// ControllerAdapter defines the behavior expected from a specific
-// protocol adapter.
-type ControllerAdapter interface {
-	Controller[types.ProtocolID]
-	PayloadParser
+type TransferHookHandler interface {
 	// BeforeTransferHook allows to execute logic BEFORE completing
 	// the cross-chain transfer.
-	BeforeTransferHook(context.Context, *types.Payload) error
+	BeforeTransferHook(context.Context, core.OrbitID, *core.Payload) error
 	// AfterTransferHook allows to execute logic AFTER completing
 	// the cross-chain transfer.
-	AfterTransferHook(context.Context, *types.Payload) error
+	AfterTransferHook(context.Context, core.OrbitID, *core.Payload) (*TransferAttributes, error)
 }
 
-// Controller defines the behavior common to
-// all controllers.
-type Controller[ID IdentifierConstraint] interface {
-	Routable[ID]
-	Name() string
+// PayloadAdapter defines the behavior expected by the adapter to handle
+// a generic orbiter payload.
+type PayloadAdapter interface {
+	// ParsePayload allows to parse and validate if the
+	// input bytes represent an orbiter payload.
+	ParsePayload(core.ProtocolID, []byte) (bool, *core.Payload, error)
+	TransferHookHandler
+	// ProcessPayload processes the parsed payload.
+	ProcessPayload(context.Context, *TransferAttributes, *core.Payload) error
 }

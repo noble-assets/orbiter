@@ -30,19 +30,20 @@ import (
 	"orbiter.dev/testutil"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
 func TestMarshalUnmarshalJSON(t *testing.T) {
 	testCases := []struct {
 		name    string
 		setup   func(codectypes.InterfaceRegistry)
-		payload func() *types.Payload
+		payload func() *core.Payload
 		expErr  string
 	}{
 		{
 			name: "success - payload with default values (resulting types are nil)",
-			payload: func() *types.Payload {
-				return &types.Payload{}
+			payload: func() *core.Payload {
+				return &core.Payload{}
 			},
 			expErr: "",
 		},
@@ -50,18 +51,18 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 			name: "success - payload with one forwarding and no actions",
 			setup: func(reg codectypes.InterfaceRegistry) {
 				reg.RegisterImplementations(
-					(*types.ForwardingAttributes)(nil),
+					(*core.ForwardingAttributes)(nil),
 					&testdata.TestForwardingAttr{},
 				)
 			},
-			payload: func() *types.Payload {
+			payload: func() *core.Payload {
 				attr := testdata.TestForwardingAttr{
 					Planet: "saturn",
 				}
-				forwarding, err := types.NewForwarding(types.PROTOCOL_IBC, &attr, []byte{})
+				forwarding, err := core.NewForwarding(core.PROTOCOL_IBC, &attr, []byte{})
 				require.NoError(t, err)
 
-				return &types.Payload{
+				return &core.Payload{
 					Forwarding: forwarding,
 				}
 			},
@@ -70,15 +71,15 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 		{
 			name:  "error - payload with action not registered",
 			setup: func(reg codectypes.InterfaceRegistry) {},
-			payload: func() *types.Payload {
+			payload: func() *core.Payload {
 				attr := testdata.TestActionAttr{
 					Whatever: "doesn't kill you makes you stronger",
 				}
-				action, err := types.NewAction(types.ACTION_FEE, &attr)
+				action, err := core.NewAction(core.ACTION_FEE, &attr)
 				require.NoError(t, err)
 
-				return &types.Payload{
-					PreActions: []*types.Action{action},
+				return &core.Payload{
+					PreActions: []*core.Action{action},
 				}
 			},
 			expErr: "unable to resolve",
@@ -87,21 +88,21 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 			name: "error - payload with forwarding not registered",
 			setup: func(reg codectypes.InterfaceRegistry) {
 				reg.RegisterImplementations(
-					(*types.ActionAttributes)(nil),
+					(*core.ActionAttributes)(nil),
 					&testdata.TestActionAttr{},
 				)
-			}, payload: func() *types.Payload {
+			}, payload: func() *core.Payload {
 				attrForwarding := testdata.TestForwardingAttr{
 					Planet: "saturn",
 				}
-				forwarding, err := types.NewForwarding(
-					types.PROTOCOL_IBC,
+				forwarding, err := core.NewForwarding(
+					core.PROTOCOL_IBC,
 					&attrForwarding,
 					[]byte{},
 				)
 				require.NoError(t, err)
 
-				return &types.Payload{
+				return &core.Payload{
 					Forwarding: forwarding,
 				}
 			},
@@ -111,19 +112,19 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 			name: "success - payload with forwarding and actions",
 			setup: func(reg codectypes.InterfaceRegistry) {
 				reg.RegisterImplementations(
-					(*types.ForwardingAttributes)(nil),
+					(*core.ForwardingAttributes)(nil),
 					&testdata.TestForwardingAttr{},
 				)
 				reg.RegisterImplementations(
-					(*types.ActionAttributes)(nil),
+					(*core.ActionAttributes)(nil),
 					&testdata.TestActionAttr{},
 				)
-			}, payload: func() *types.Payload {
+			}, payload: func() *core.Payload {
 				attrForwarding := testdata.TestForwardingAttr{
 					Planet: "saturn",
 				}
-				forwarding, err := types.NewForwarding(
-					types.PROTOCOL_IBC,
+				forwarding, err := core.NewForwarding(
+					core.PROTOCOL_IBC,
 					&attrForwarding,
 					[]byte{},
 				)
@@ -132,12 +133,12 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 				attrAction := testdata.TestActionAttr{
 					Whatever: "doesn't kill you makes you stronger",
 				}
-				action, err := types.NewAction(types.ACTION_FEE, &attrAction)
+				action, err := core.NewAction(core.ACTION_FEE, &attrAction)
 				require.NoError(t, err)
 
-				return &types.Payload{
+				return &core.Payload{
 					Forwarding: forwarding,
-					PreActions: []*types.Action{action},
+					PreActions: []*core.Action{action},
 				}
 			}, expErr: "",
 		},
@@ -157,7 +158,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 				require.NoError(t, err)
 
 				t.Run("Unmarshal", func(t *testing.T) {
-					payload := types.Payload{}
+					payload := core.Payload{}
 					err = types.UnmarshalJSON(encCfg.Codec, payloadBz, &payload)
 					require.NoError(t, err)
 					require.Equal(t, tC.payload().Forwarding, payload.Forwarding)
@@ -168,7 +169,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 
 		t.Run("Wrapper/"+tC.name, func(t *testing.T) {
 			payload := tC.payload()
-			wrapper := types.PayloadWrapper{
+			wrapper := core.PayloadWrapper{
 				Orbiter: payload,
 			}
 			payloadWrapperBz, err := types.MarshalJSON(encCfg.Codec, &wrapper)
@@ -178,7 +179,7 @@ func TestMarshalUnmarshalJSON(t *testing.T) {
 				require.NoError(t, err)
 
 				t.Run("Unmarshal", func(t *testing.T) {
-					payloadWrapper := types.PayloadWrapper{}
+					payloadWrapper := core.PayloadWrapper{}
 					err = types.UnmarshalJSON(encCfg.Codec, payloadWrapperBz, &payloadWrapper)
 					require.NoError(t, err)
 					require.Equal(t, tC.payload().Forwarding, payloadWrapper.Orbiter.Forwarding)

@@ -20,30 +20,15 @@
 
 package types
 
-// NewProtocolID returns a validated protocol ID from an int32. If
-// the validation fails, the returned ID is the default ID.
-func NewProtocolID(id int32) (ProtocolID, error) {
-	protocolID := ProtocolID(id)
-	if err := protocolID.Validate(); err != nil {
-		return PROTOCOL_UNSUPPORTED, err
-	}
+import (
+	"context"
 
-	return protocolID, nil
-}
+	"orbiter.dev/types/core"
+)
 
-// Validate returns an error if the ID is not valid.
-func (id ProtocolID) Validate() error {
-	if id == PROTOCOL_UNSUPPORTED {
-		return ErrIDNotSupported.Wrapf("protocol id %s", id.String())
-	}
-	// Check if the protocol ID exists in the proto generated enum map
-	if _, found := ProtocolID_name[int32(id)]; !found {
-		return ErrIDNotSupported.Wrapf("unknown protocol id %d", int32(id))
-	}
-
-	return nil
-}
-
-func (id ProtocolID) Uint32() uint32 {
-	return uint32(id) //nolint:gosec
+// PayloadDispatcher defines the expected behavior from a type
+// to be used as a payload dispatcher.
+type PayloadDispatcher interface {
+	// Dispatch the payload component to the proper handler.
+	DispatchPayload(context.Context, *TransferAttributes, *core.Payload) error
 }

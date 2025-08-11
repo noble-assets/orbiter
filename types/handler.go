@@ -18,18 +18,21 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package interfaces
+package types
 
 import (
-	"orbiter.dev/types"
+	"context"
 )
 
-// PayloadParser defines the behavior expected by a type capable of
-// parsing a payload from its bytes representation.
-type PayloadParser interface {
-	// ParsePayload handle bytes and parse them into the
-	// orbiter payload. It returns a boolean to inform if
-	// the bytes represent an orbiter payload or not. The
-	// parsing is executed only if the boolean is true.
-	ParsePayload([]byte) (bool, *types.Payload, error)
+// PacketConstraint defines the packet types supported
+// by the module.
+type PacketConstraint interface {
+	*ForwardingPacket | *ActionPacket
+}
+
+// PacketHandler defines the behavior expected by a type
+// capable of handling the information contained in a
+// supported packet type.
+type PacketHandler[T PacketConstraint] interface {
+	HandlePacket(context.Context, T) error
 }

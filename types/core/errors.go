@@ -18,23 +18,18 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package interfaces
+package core
 
-import (
-	"context"
+import "cosmossdk.io/errors"
 
-	"orbiter.dev/types"
+var (
+	ErrUnauthorized        = errors.Register(ModuleName, 1, "signer must be the authority")
+	ErrIDNotSupported      = errors.Register(ModuleName, 2, "id is not supported")
+	ErrNilPointer          = errors.Register(ModuleName, 3, "invalid nil pointer")
+	ErrControllerExecution = errors.Register(ModuleName, 4, "controller execution failed")
+	ErrInvalidAttributes   = errors.Register(ModuleName, 5, "invalid attributes")
+	ErrValidation          = errors.Register(ModuleName, 6, "validation failed")
+	ErrParsingPayload      = errors.Register(ModuleName, 7, "parsing payload failed")
+	ErrUnableToPause       = errors.Register(ModuleName, 8, "unable to pause")
+	ErrUnableToUnpause     = errors.Register(ModuleName, 9, "unable to unpause")
 )
-
-// PacketConstraint defines the packet types supported
-// by the module.
-type PacketConstraint interface {
-	*types.ForwardingPacket | *types.ActionPacket
-}
-
-// PacketHandler defines the behavior expected by a type
-// capable of handling the information contained in a
-// supported packet type.
-type PacketHandler[T PacketConstraint] interface {
-	HandlePacket(context.Context, T) error
-}

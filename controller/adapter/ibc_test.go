@@ -32,7 +32,7 @@ import (
 	"orbiter.dev/testutil"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
 func TestHooks(t *testing.T) {
@@ -40,10 +40,10 @@ func TestHooks(t *testing.T) {
 	adapter, err := adapterctrl.NewIBCAdapter(deps.EncCfg.Codec, deps.Logger)
 	require.NoError(t, err)
 
-	err = adapter.AfterTransferHook(context.Background(), &types.Payload{})
+	err = adapter.AfterTransferHook(context.Background(), &core.Payload{})
 	require.NoError(t, err)
 
-	err = adapter.BeforeTransferHook(context.Background(), &types.Payload{})
+	err = adapter.BeforeTransferHook(context.Background(), &core.Payload{})
 	require.NoError(t, err)
 }
 
@@ -61,7 +61,7 @@ func TestParsePayload(t *testing.T) {
 		setup           func(reg codectypes.InterfaceRegistry)
 		payloadBz       []byte
 		expectIsOrbiter bool
-		expectPayload   *types.Payload
+		expectPayload   *core.Payload
 		expectError     bool
 		errorContains   string
 	}{
@@ -86,7 +86,7 @@ func TestParsePayload(t *testing.T) {
 			name: "error - when memo is not a valid json",
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
-				types.ModuleAddress.String(),
+				core.ModuleAddress.String(),
 				"not json memo",
 			),
 			expectIsOrbiter: true,
@@ -97,7 +97,7 @@ func TestParsePayload(t *testing.T) {
 			name: "error - orbiter payload with nil orbit attributes",
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
-				types.ModuleAddress.String(),
+				core.ModuleAddress.String(),
 				`{"orbiter": {"forwarding": {"protocol_id": 1, "attributes": null}}}`,
 			),
 			expectIsOrbiter: true,
@@ -110,19 +110,19 @@ func TestParsePayload(t *testing.T) {
 				// Payload Any types must be registered in the interface registry
 				// to be valid.
 				reg.RegisterImplementations(
-					(*types.ForwardingAttributes)(nil),
+					(*core.ForwardingAttributes)(nil),
 					&testdata.TestForwardingAttr{},
 				)
 			},
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
-				types.ModuleAddress.String(),
+				core.ModuleAddress.String(),
 				testutil.CreateValidOrbiterPayload(),
 			),
 			expectIsOrbiter: true,
-			expectPayload: &types.Payload{
-				Forwarding: &types.Forwarding{
-					ProtocolId: types.PROTOCOL_CCTP,
+			expectPayload: &core.Payload{
+				Forwarding: &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
 					Attributes: &codectypes.Any{
 						TypeUrl: "/testpb.TestForwardingAttr",
 					},
@@ -134,28 +134,28 @@ func TestParsePayload(t *testing.T) {
 			name: "success - valid orbiter payload with actions",
 			setup: func(reg codectypes.InterfaceRegistry) {
 				reg.RegisterImplementations(
-					(*types.ForwardingAttributes)(nil),
+					(*core.ForwardingAttributes)(nil),
 					&testdata.TestForwardingAttr{},
 				)
 				reg.RegisterImplementations(
-					(*types.ActionAttributes)(nil),
+					(*core.ActionAttributes)(nil),
 					&testdata.TestActionAttr{},
 				)
 			},
 			payloadBz: testutil.CreateValidIBCPacketData(
 				sender,
-				types.ModuleAddress.String(),
+				core.ModuleAddress.String(),
 				testutil.CreateValidOrbiterPayloadWithActions(),
 			),
 			expectIsOrbiter: true,
-			expectPayload: &types.Payload{
-				Forwarding: &types.Forwarding{
-					ProtocolId: types.PROTOCOL_CCTP,
+			expectPayload: &core.Payload{
+				Forwarding: &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
 					Attributes: &codectypes.Any{TypeUrl: "/testpb.TestForwardingAttr"},
 				},
-				PreActions: []*types.Action{
+				PreActions: []*core.Action{
 					{
-						Id:         types.ACTION_FEE,
+						Id:         core.ACTION_FEE,
 						Attributes: &codectypes.Any{TypeUrl: "/testpb.TestActionAttr"},
 					},
 				},

@@ -30,16 +30,16 @@ import (
 
 	"orbiter.dev/controller"
 	"orbiter.dev/types"
-	"orbiter.dev/types/interfaces"
+	"orbiter.dev/types/core"
 )
 
-var _ interfaces.ControllerAdapter = &IBCAdapter{}
+var _ types.ControllerAdapter = &IBCAdapter{}
 
 // IBCAdapter is the type component in charge of adapting the
 // memo of an IBC ICS20 transfer to the common payload type
 // handled by the module.
 type IBCAdapter struct {
-	*controller.BaseController[types.ProtocolID]
+	*controller.BaseController[core.ProtocolID]
 
 	logger log.Logger
 	parser *IBCParser
@@ -48,10 +48,10 @@ type IBCAdapter struct {
 // NewIBCAdapter returns a reference to a new IBCAdapter instance.
 func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	if logger == nil {
-		return nil, types.ErrNilPointer.Wrap("logger cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	id := types.PROTOCOL_IBC
+	id := core.PROTOCOL_IBC
 	baseController, err := controller.NewBase(id)
 	if err != nil {
 		return nil, err
@@ -63,30 +63,30 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	}
 
 	return &IBCAdapter{
-		logger:         logger.With(types.AdapterControllerName, baseController.Name()),
+		logger:         logger.With(core.AdapterControllerName, baseController.Name()),
 		BaseController: baseController,
 		parser:         parser,
 	}, nil
 }
 
 // ParsePayload dispatches the payload parsing to the underlying IBC parser.
-func (a *IBCAdapter) ParsePayload(payloadBz []byte) (bool, *types.Payload, error) {
+func (a *IBCAdapter) ParsePayload(payloadBz []byte) (bool, *core.Payload, error) {
 	return a.parser.ParsePayload(payloadBz)
 }
 
 // BeforeTransferHook run logic before executing the IBC transfer to the
 // orbiter module.
-func (a *IBCAdapter) BeforeTransferHook(context.Context, *types.Payload) error {
+func (a *IBCAdapter) BeforeTransferHook(context.Context, *core.Payload) error {
 	return nil
 }
 
 // AfterTransferHook run logic after executing the IBC transfer to the orbiter
 // module.
-func (a *IBCAdapter) AfterTransferHook(context.Context, *types.Payload) error {
+func (a *IBCAdapter) AfterTransferHook(context.Context, *core.Payload) error {
 	return nil
 }
 
-var _ interfaces.PayloadParser = &IBCParser{}
+var _ types.PayloadParser = &IBCParser{}
 
 type IBCParser struct {
 	JSONParser
@@ -95,7 +95,7 @@ type IBCParser struct {
 // NewIBCParser returns a new instance of an IBC parser.
 func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 	if cdc == nil {
-		return nil, types.ErrNilPointer.Wrap("codec cannot be nil")
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 
 	jsonParser, err := NewJSONParser(cdc)
@@ -113,7 +113,7 @@ func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 // - bool: whether the payload is intended for the Orbiter module.
 // - Payload: the parsed payload.
 // - error: an error, if one occurred during parsing.
-func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *types.Payload, error) {
+func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *core.Payload, error) {
 	data, err := p.GetICS20PacketData(payloadBz)
 	if err != nil {
 		// Despite the error is not nil, we don't return it. We
@@ -122,7 +122,7 @@ func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *types.Payload, error)
 		return false, nil, nil //nolint:nilerr
 	}
 
-	if data.GetReceiver() != types.ModuleAddress.String() {
+	if data.GetReceiver() != core.ModuleAddress.String() {
 		return false, nil, nil
 	}
 
