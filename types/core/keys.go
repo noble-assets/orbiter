@@ -65,7 +65,7 @@ const (
 	ActionControllerName = "action_controller"
 
 	// Maps names.
-	PausedActionsName = "paused_action_controllers"
+	PausedActionsName = "paused_actions"
 
 	// Controllers constants.
 
@@ -88,9 +88,9 @@ const (
 )
 
 var (
-	DispatchedAmountsPrefix                        = collections.NewPrefix(30)
-	DispatchedAmountsPrefixByDestinationProtocolID = collections.NewPrefix(31)
-	DispatchedAmountsPrefixByDestinationCCID       = collections.NewPrefix(32)
+	DispatchedAmountsPrefix                          = collections.NewPrefix(30)
+	DispatchedAmountsPrefixByDestinationProtocolID   = collections.NewPrefix(31)
+	DispatchedAmountsPrefixByDestinationCrossChainID = collections.NewPrefix(32)
 
 	DispatchedCountsPrefix                        = collections.NewPrefix(33)
 	DispatchedCountsPrefixByDestinationProtocolID = collections.NewPrefix(34)

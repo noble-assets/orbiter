@@ -45,9 +45,9 @@ type DispatchedAmountsIndexes struct {
 	// ByDestinationProtocolID keeps track of entries indexes associated
 	// with a single destination protocol ID.
 	ByDestinationProtocolID *indexes.Multi[uint32, DispatchedAmountsKey, dispatchertypes.AmountDispatched]
-	// ByDestinationCCID keeps track of entries indexes associated with a tuple:
+	// ByDestinationCrossChainID keeps track of entries indexes associated with a tuple:
 	// (destination protocol Id, destination chain Id, denom).
-	ByDestinationCCID *indexes.Multi[collections.Triple[uint32, string, string], DispatchedAmountsKey, dispatchertypes.AmountDispatched]
+	ByDestinationCrossChainID *indexes.Multi[collections.Triple[uint32, string, string], DispatchedAmountsKey, dispatchertypes.AmountDispatched]
 }
 
 func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmountsIndexes {
@@ -74,9 +74,9 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 				return ccID.GetProtocolId().Uint32(), nil
 			},
 		),
-		ByDestinationCCID: indexes.NewMulti(
+		ByDestinationCrossChainID: indexes.NewMulti(
 			sb,
-			core.DispatchedAmountsPrefixByDestinationCCID,
+			core.DispatchedAmountsPrefixByDestinationCrossChainID,
 			core.DispatchedAmountsName+"_by_destination_orbit_id",
 			collections.TripleKeyCodec(
 				collections.Uint32Key,
