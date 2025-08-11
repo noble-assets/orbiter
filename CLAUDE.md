@@ -97,3 +97,21 @@ The module processes JSON payloads containing:
 - Circle CCTP integration
 - Buf for protobuf tooling
 - Docker required for protobuf generation and e2e tests
+
+## Design
+
+The brand-kit colors are defined as:
+
+- Blue50: #020418
+- Blue 100: #070B28
+- Blue 200: #0F1331
+- Blue 300: #1E2457
+- Blue 400: #3C4992
+- Blue 500 #4E5DBC
+- Blue 600: #6B7FFF
+- Blue 700: #909FFF
+- Blue 800: #BAC3FF
+- Blue 900: #E2E6FD
+
+- Grey 50: #101219
+- Grey 900: #F6F6FE
