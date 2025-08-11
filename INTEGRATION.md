@@ -161,7 +161,7 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
  "orbiter.dev/testutil"
 ```
 
-2. Define the forwading attributes:
+2. Define the forwarding attributes:
 
 ```go
  destinationDomain := uint32(0)

@@ -96,7 +96,7 @@ func TestNewForwarding(t *testing.T) {
 	}
 }
 
-func TestValidateForwading(t *testing.T) {
+func TestValidateForwarding(t *testing.T) {
 	testCases := []struct {
 		name       string
 		forwarding *core.Forwarding

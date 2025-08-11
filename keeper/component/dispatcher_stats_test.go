@@ -92,7 +92,7 @@ func TestUpdateStats(t *testing.T) {
 			expErr: "id is not supported",
 		},
 		{
-			name: "error - invalid forwading attributes",
+			name: "error - invalid forwarding attributes",
 			transferAttr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)

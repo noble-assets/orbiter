@@ -80,7 +80,7 @@ func TestParseCrossChainID(t *testing.T) {
 		{
 			name:   "error - when invalid format (no colon)",
 			id:     "1channel-1",
-			expErr: "invalid orbit",
+			expErr: "invalid cross-chain ID",
 		},
 		{
 			name:   "error - when non numeric protocol ID",
@@ -90,7 +90,7 @@ func TestParseCrossChainID(t *testing.T) {
 		{
 			name:   "error - when empty string",
 			id:     "",
-			expErr: "invalid orbit",
+			expErr: "invalid cross-chain ID",
 		},
 		{
 			name:              "success - when the format is not valid (multiple colons)",
