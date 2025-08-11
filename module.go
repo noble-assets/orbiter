@@ -37,6 +37,7 @@ import (
 	"orbiter.dev/types"
 	"orbiter.dev/types/component/executor"
 	"orbiter.dev/types/component/forwarder"
+	"orbiter.dev/types/core"
 )
 
 const ConsensusVersion = 1
@@ -58,7 +59,7 @@ func NewAppModuleBasic() AppModuleBasic {
 }
 
 func (a AppModuleBasic) Name() string {
-	return types.ModuleName
+	return core.ModuleName
 }
 
 func (a AppModuleBasic) RegisterGRPCGatewayRoutes(client.Context, *runtime.ServeMux) {}
@@ -108,7 +109,7 @@ func (AppModuleBasic) ValidateGenesis(
 ) error {
 	var genesis types.GenesisState
 	if err := cdc.UnmarshalJSON(bz, &genesis); err != nil {
-		return fmt.Errorf("failed to unmarshal x/%s genesis state: %w", types.ModuleName, err)
+		return fmt.Errorf("failed to unmarshal x/%s genesis state: %w", core.ModuleName, err)
 	}
 
 	return genesis.Validate()
