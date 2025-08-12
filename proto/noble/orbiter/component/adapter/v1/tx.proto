@@ -22,7 +22,7 @@ service Msg {
 // parameters.
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name) = "noble/orbiter/adapter/MsgUpdateParams";
+  option (amino.name) = "noble/orbiter/adapter/v1/MsgUpdateParams";
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   Params params = 2 [
     (gogoproto.nullable) = false,
