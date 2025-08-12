@@ -33,6 +33,10 @@ type Loggable interface {
 	Logger() log.Logger
 }
 
+type Authorizator interface {
+	RequireAuthority(string) error
+}
+
 // Forwarder defines the behavior a components must
 // have to process forwardings.
 type Forwarder interface {

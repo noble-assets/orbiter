@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component
+package adapter
 
 import (
 	"context"
@@ -31,6 +31,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"orbiter.dev/types"
+	adaptertypes "orbiter.dev/types/component/adapter"
 	"orbiter.dev/types/core"
 	"orbiter.dev/types/router"
 )
@@ -45,10 +46,10 @@ type Adapter struct {
 	router     AdapterRouter
 	bankKeeper types.BankKeeperAdapter
 	dispatcher types.PayloadDispatcher
-	params     collections.Item[types.AdapterParams]
+	params     collections.Item[adaptertypes.Params]
 }
 
-func NewAdapter(
+func New(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
@@ -74,7 +75,7 @@ func NewAdapter(
 			sb,
 			core.AdapterParamsPrefix,
 			core.AdapterParamsName,
-			codec.CollValue[types.AdapterParams](cdc),
+			codec.CollValue[adaptertypes.Params](cdc),
 		),
 	}
 

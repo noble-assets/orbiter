@@ -22,12 +22,48 @@ package keeper
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"orbiter.dev/types"
 )
 
-func (k *Keeper) InitGenesis(_ context.Context, _ types.GenesisState) {}
+// InitGenesis initialize the state of the Orbiter module with
+// a genesis state.
+func (k *Keeper) InitGenesis(ctx context.Context, g types.GenesisState) {
+	a := k.Adapter()
+	if g.AdapterGenesis == nil {
+		panic(errors.New("nil pointer: missing adapter genesis state"))
+	}
+	if err := a.InitGenesis(ctx, g.AdapterGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize adapter genesis state %w", err))
+	}
 
-func (k *Keeper) ExportGenesis(_ context.Context) *types.GenesisState {
-	return types.DefaultGenesisState()
+	// TODO: add dispatcher
+
+	f := k.Forwarder()
+	if g.ForwarderGenesis == nil {
+		panic(errors.New("nil pointer: missing forwarder genesis state"))
+	}
+	if err := f.InitGenesis(ctx, g.ForwarderGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize forwarder genesis state %w", err))
+	}
+
+	e := k.Executor()
+	if g.ExecutorGenesis == nil {
+		panic(errors.New("nil pointer: missing forwarder genesis state"))
+	}
+	if err := e.InitGenesis(ctx, g.ExecutorGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize executor genesis state %w", err))
+	}
+}
+
+// ExportGenesis returns the current state of the Orbiter module
+// into a genesis state.
+func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
+	return &types.GenesisState{
+		AdapterGenesis:   k.Adapter().ExportGenesis(ctx),
+		ForwarderGenesis: k.Forwarder().ExportGenesis(ctx),
+		ExecutorGenesis:  k.Executor().ExportGenesis(ctx),
+	}
 }

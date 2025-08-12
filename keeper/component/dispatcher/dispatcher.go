@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component
+package dispatcher
 
 import (
 	"context"
@@ -48,9 +48,9 @@ type Dispatcher struct {
 	DispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
 }
 
-// NewDispatcher creates a new validated instance of a the dispatcher
+// New creates a new validated instance of a the dispatcher
 // component.
-func NewDispatcher(
+func New(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,

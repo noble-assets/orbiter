@@ -18,29 +18,29 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package keeper_test
+package executor_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/keeper"
+	"orbiter.dev/keeper/component/executor"
 	"orbiter.dev/testutil"
 	mockorbiter "orbiter.dev/testutil/mocks/orbiter"
-	"orbiter.dev/types/component/executor"
+	executortypes "orbiter.dev/types/component/executor"
 	"orbiter.dev/types/core"
 )
 
 func TestMsgServerPauseAction(t *testing.T) {
 	testCases := []struct {
 		name   string
-		msg    *executor.MsgPauseAction
+		msg    *executortypes.MsgPauseAction
 		expErr string
 	}{
 		{
 			name: "error - unauthorized signer",
-			msg: &executor.MsgPauseAction{
+			msg: &executortypes.MsgPauseAction{
 				Signer:   "noble1invalid",
 				ActionId: core.ACTION_FEE,
 			},
@@ -48,7 +48,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 		},
 		{
 			name: "success - already paused action",
-			msg: &executor.MsgPauseAction{
+			msg: &executortypes.MsgPauseAction{
 				Signer:   testutil.Authority,
 				ActionId: core.ActionID(99),
 			},
@@ -56,7 +56,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 		},
 		{
 			name: "success - valid pause request",
-			msg: &executor.MsgPauseAction{
+			msg: &executortypes.MsgPauseAction{
 				Signer:   testutil.Authority,
 				ActionId: core.ACTION_FEE,
 			},
@@ -67,7 +67,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
-			msgServer := keeper.NewMsgServerExecutor(k)
+			msgServer := executor.NewMsgServer(k.Executor(), k)
 
 			resp, err := msgServer.PauseAction(ctx, tC.msg)
 
@@ -85,12 +85,12 @@ func TestMsgServerPauseAction(t *testing.T) {
 func TestMsgServerUnpauseAction(t *testing.T) {
 	testCases := []struct {
 		name   string
-		msg    *executor.MsgUnpauseAction
+		msg    *executortypes.MsgUnpauseAction
 		expErr string
 	}{
 		{
 			name: "error - unauthorized signer",
-			msg: &executor.MsgUnpauseAction{
+			msg: &executortypes.MsgUnpauseAction{
 				Signer:   "noble1invalid",
 				ActionId: core.ACTION_FEE,
 			},
@@ -98,7 +98,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 		},
 		{
 			name: "success - already unpaused action",
-			msg: &executor.MsgUnpauseAction{
+			msg: &executortypes.MsgUnpauseAction{
 				Signer:   testutil.Authority,
 				ActionId: core.ActionID(99),
 			},
@@ -106,7 +106,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 		},
 		{
 			name: "success - valid unpause request",
-			msg: &executor.MsgUnpauseAction{
+			msg: &executortypes.MsgUnpauseAction{
 				Signer:   testutil.Authority,
 				ActionId: core.ACTION_FEE,
 			},
@@ -117,7 +117,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
-			msgServer := keeper.NewMsgServerExecutor(k)
+			msgServer := executor.NewMsgServer(k.Executor(), k)
 
 			resp, err := msgServer.UnpauseAction(ctx, tc.msg)
 

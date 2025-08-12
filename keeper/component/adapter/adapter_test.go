@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component_test
+package adapter_test
 
 import (
 	"testing"
@@ -26,7 +26,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"orbiter.dev/testutil/mocks"
-	"orbiter.dev/types"
+	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
 func TestCheckPassthroughPayloadSize(t *testing.T) {
@@ -42,7 +42,7 @@ func TestCheckPassthroughPayloadSize(t *testing.T) {
 	require.NoError(t, err)
 
 	// ARRANGE
-	err = adapter.SetParams(ctx, types.AdapterParams{
+	err = adapter.SetParams(ctx, adaptertypes.Params{
 		MaxPassthroughPayloadSize: 0,
 	})
 	require.NoError(t, err)
@@ -63,12 +63,12 @@ func TestCheckPassthroughPayloadSize(t *testing.T) {
 	require.Error(t, err)
 
 	// ARRANGE
-	err = adapter.SetParams(ctx, types.AdapterParams{
+	err = adapter.SetParams(ctx, adaptertypes.Params{
 		MaxPassthroughPayloadSize: 10,
 	})
 	require.NoError(t, err)
 
-	// ACT: Payload equals maximum size
+	// ACT: Payload exceeds maximum size
 	err = adapter.CheckPassthroughPayloadSize(ctx, payload)
 
 	// ASSERT: Works with equal bytes size

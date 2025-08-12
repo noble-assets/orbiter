@@ -18,38 +18,32 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component
+package adapter
 
 import (
 	"context"
 
-	"orbiter.dev/types/core"
+	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
-func (e *Executor) IsControllerPaused(ctx context.Context, id core.ActionID) (bool, error) {
-	return e.PausedActions.Has(ctx, int32(id))
+// GetParams returns the adapter params from state. In case of an error,
+// it returns default values and logs the error.
+//
+// NOTE: Returning the default is safe here since it returns zero
+// bytes allowed, which is the restrictive condition.
+func (a *Adapter) GetParams(ctx context.Context) adaptertypes.Params {
+	params, err := a.params.Get(ctx)
+	if err != nil {
+		a.logger.Error("error getting params", "err", err.Error())
+
+		return adaptertypes.Params{
+			MaxPassthroughPayloadSize: 0,
+		}
+	}
+
+	return params
 }
 
-func (e *Executor) SetPausedController(ctx context.Context, id core.ActionID) error {
-	paused, err := e.IsControllerPaused(ctx, id)
-	if err != nil {
-		return err
-	}
-	if paused {
-		return nil
-	}
-
-	return e.PausedActions.Set(ctx, int32(id))
-}
-
-func (e *Executor) SetUnpausedController(ctx context.Context, id core.ActionID) error {
-	paused, err := e.IsControllerPaused(ctx, id)
-	if err != nil {
-		return err
-	}
-	if !paused {
-		return nil
-	}
-
-	return e.PausedActions.Remove(ctx, int32(id))
+func (a *Adapter) SetParams(ctx context.Context, params adaptertypes.Params) error {
+	return a.params.Set(ctx, params)
 }

@@ -18,46 +18,40 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package mocks
+package adapter
 
 import (
-	"testing"
+	"context"
 
-	"github.com/stretchr/testify/require"
-
-	"cosmossdk.io/collections"
-
-	"orbiter.dev/keeper/component/adapter"
-	"orbiter.dev/keeper/component/dispatcher"
+	"orbiter.dev/types"
+	"orbiter.dev/types/component/adapter"
 )
 
-func NewAdapterComponent(tb testing.TB) (*adapter.Adapter, *Dependencies) {
-	tb.Helper()
+var _ adapter.MsgServer = &msgServer{}
 
-	deps := NewDependencies(tb)
+// msgServer is the server used to handle messages
+// for the executor component.
+type msgServer struct {
+	*Adapter
+	types.Authorizator
+}
 
-	sb := collections.NewSchemaBuilder(deps.StoreService)
+func NewMsgServer(a *Adapter, auth types.Authorizator) msgServer {
+	return msgServer{Adapter: a, Authorizator: auth}
+}
 
-	dispatcher, err := dispatcher.New(
-		deps.EncCfg.Codec,
-		sb,
-		deps.Logger,
-		&ForwardingHandler{},
-		&ActionsHandler{},
-	)
-	require.NoError(tb, err)
+// UpdateParams implements adapter.MsgServer.
+func (s msgServer) UpdateParams(
+	ctx context.Context,
+	msg *adapter.MsgUpdateParams,
+) (*adapter.MsgUpdateParamsResponse, error) {
+	if err := s.RequireAuthority(msg.Signer); err != nil {
+		return nil, err
+	}
 
-	adapter, err := adapter.New(
-		deps.EncCfg.Codec,
-		sb,
-		deps.Logger,
-		BankKeeper{},
-		dispatcher,
-	)
-	require.NoError(tb, err)
+	if err := s.SetParams(ctx, msg.Params); err != nil {
+		return nil, err
+	}
 
-	_, err = sb.Build()
-	require.NoError(tb, err)
-
-	return adapter, &deps
+	return &adapter.MsgUpdateParamsResponse{}, nil
 }

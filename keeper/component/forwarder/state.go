@@ -18,10 +18,11 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component
+package forwarder
 
 import (
 	"context"
+	"fmt"
 
 	"cosmossdk.io/collections"
 
@@ -29,10 +30,10 @@ import (
 )
 
 // ====================================================================================================
-// PausedControllers
+// Paused protocols
 // ====================================================================================================
 
-func (f *Forwarder) IsControllerPaused(
+func (f *Forwarder) IsProtocolPaused(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) (bool, error) {
@@ -41,10 +42,8 @@ func (f *Forwarder) IsControllerPaused(
 	return paused, err
 }
 
-func (f *Forwarder) SetPausedController(ctx context.Context,
-	protocolID core.ProtocolID,
-) error {
-	paused, err := f.IsControllerPaused(ctx, protocolID)
+func (f *Forwarder) SetPausedProtocol(ctx context.Context, protocolID core.ProtocolID) error {
+	paused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -55,11 +54,11 @@ func (f *Forwarder) SetPausedController(ctx context.Context,
 	return f.PausedProtocols.Set(ctx, int32(protocolID))
 }
 
-func (f *Forwarder) SetUnpausedController(
+func (f *Forwarder) SetUnpausedProtocol(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) error {
-	paused, err := f.IsControllerPaused(ctx, protocolID)
+	paused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -70,28 +69,51 @@ func (f *Forwarder) SetUnpausedController(
 	return f.PausedProtocols.Remove(ctx, int32(protocolID))
 }
 
-// ====================================================================================================
-// PausedOrbits
-// ====================================================================================================
-
-func (f *Forwarder) IsOrbitPaused(
+func (f *Forwarder) GetPausedProtocols(
 	ctx context.Context,
-	protocolID core.ProtocolID,
-	counterpartyID string,
-) (bool, error) {
-	paused, err := f.PausedProtocolCounterparties.Has(
-		ctx,
-		collections.Join(int32(protocolID), counterpartyID),
-	)
+) ([]core.ProtocolID, error) {
+	iter, err := f.PausedProtocols.Iterate(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
 
-	return paused, err
+	var paused []core.ProtocolID
+	for ; iter.Valid(); iter.Next() {
+		k, err := iter.Key()
+		if err != nil {
+			return nil, err
+		}
+
+		id, err := core.NewProtocolID(k)
+		if err != nil {
+			return nil, fmt.Errorf("cannot create protocol ID from iterator key: %w", err)
+		}
+		paused = append(paused, id)
+	}
+
+	return paused, nil
 }
 
-func (f *Forwarder) SetPausedOrbit(ctx context.Context,
-	protocolID core.ProtocolID,
-	counterpartyID string,
+// ====================================================================================================
+// Paused cross-chain id
+// ====================================================================================================
+
+func (f *Forwarder) IsCrossChainPaused(
+	ctx context.Context,
+	ccID core.CrossChainID,
+) (bool, error) {
+	return f.PausedCrossChains.Has(
+		ctx,
+		collections.Join(int32(ccID.GetProtocolId()), ccID.GetCounterpartyId()),
+	)
+}
+
+func (f *Forwarder) SetPausedCrossChain(
+	ctx context.Context,
+	ccID core.CrossChainID,
 ) error {
-	paused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)
+	paused, err := f.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
 		return err
 	}
@@ -99,18 +121,17 @@ func (f *Forwarder) SetPausedOrbit(ctx context.Context,
 		return nil
 	}
 
-	return f.PausedProtocolCounterparties.Set(
+	return f.PausedCrossChains.Set(
 		ctx,
-		collections.Join(int32(protocolID), counterpartyID),
+		collections.Join(int32(ccID.GetProtocolId()), ccID.GetCounterpartyId()),
 	)
 }
 
-func (f *Forwarder) SetUnpausedOrbit(
+func (f *Forwarder) SetUnpausedCrossChain(
 	ctx context.Context,
-	protocolID core.ProtocolID,
-	counterpartyID string,
+	ccID core.CrossChainID,
 ) error {
-	paused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)
+	paused, err := f.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
 		return err
 	}
@@ -118,8 +139,33 @@ func (f *Forwarder) SetUnpausedOrbit(
 		return nil
 	}
 
-	return f.PausedProtocolCounterparties.Remove(
+	return f.PausedCrossChains.Remove(
 		ctx,
-		collections.Join(int32(protocolID), counterpartyID),
+		collections.Join(int32(ccID.GetProtocolId()), ccID.GetCounterpartyId()),
 	)
+}
+
+func (f *Forwarder) GetPausedCounterparties(
+	ctx context.Context,
+	protocolID core.ProtocolID,
+) ([]string, error) {
+	rng := collections.NewPrefixedPairRange[int32, string](int32(protocolID))
+
+	iter, err := f.PausedCrossChains.Iterate(ctx, rng)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var paused []string
+	for ; iter.Valid(); iter.Next() {
+		k, err := iter.Key()
+		if err != nil {
+			return nil, err
+		}
+
+		paused = append(paused, k.K2())
+	}
+
+	return paused, nil
 }

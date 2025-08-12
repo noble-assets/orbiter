@@ -9,19 +9,25 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	io "io"
 	v1 "orbiter.dev/api/component/adapter/v1"
+	v12 "orbiter.dev/api/component/executor/v1"
+	v11 "orbiter.dev/api/component/forwarder/v1"
 	reflect "reflect"
 	sync "sync"
 )
 
 var (
-	md_GenesisState                 protoreflect.MessageDescriptor
-	fd_GenesisState_adapter_genesis protoreflect.FieldDescriptor
+	md_GenesisState                   protoreflect.MessageDescriptor
+	fd_GenesisState_adapter_genesis   protoreflect.FieldDescriptor
+	fd_GenesisState_forwarder_genesis protoreflect.FieldDescriptor
+	fd_GenesisState_executor_genesis  protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_v1_genesis_proto_init()
 	md_GenesisState = File_noble_orbiter_v1_genesis_proto.Messages().ByName("GenesisState")
 	fd_GenesisState_adapter_genesis = md_GenesisState.Fields().ByName("adapter_genesis")
+	fd_GenesisState_forwarder_genesis = md_GenesisState.Fields().ByName("forwarder_genesis")
+	fd_GenesisState_executor_genesis = md_GenesisState.Fields().ByName("executor_genesis")
 }
 
 var _ protoreflect.Message = (*fastReflection_GenesisState)(nil)
@@ -95,6 +101,18 @@ func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor,
 			return
 		}
 	}
+	if x.ForwarderGenesis != nil {
+		value := protoreflect.ValueOfMessage(x.ForwarderGenesis.ProtoReflect())
+		if !f(fd_GenesisState_forwarder_genesis, value) {
+			return
+		}
+	}
+	if x.ExecutorGenesis != nil {
+		value := protoreflect.ValueOfMessage(x.ExecutorGenesis.ProtoReflect())
+		if !f(fd_GenesisState_executor_genesis, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -112,6 +130,10 @@ func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool 
 	switch fd.FullName() {
 	case "noble.orbiter.v1.GenesisState.adapter_genesis":
 		return x.AdapterGenesis != nil
+	case "noble.orbiter.v1.GenesisState.forwarder_genesis":
+		return x.ForwarderGenesis != nil
+	case "noble.orbiter.v1.GenesisState.executor_genesis":
+		return x.ExecutorGenesis != nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.GenesisState"))
@@ -130,6 +152,10 @@ func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	case "noble.orbiter.v1.GenesisState.adapter_genesis":
 		x.AdapterGenesis = nil
+	case "noble.orbiter.v1.GenesisState.forwarder_genesis":
+		x.ForwarderGenesis = nil
+	case "noble.orbiter.v1.GenesisState.executor_genesis":
+		x.ExecutorGenesis = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.GenesisState"))
@@ -148,6 +174,12 @@ func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescripto
 	switch descriptor.FullName() {
 	case "noble.orbiter.v1.GenesisState.adapter_genesis":
 		value := x.AdapterGenesis
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "noble.orbiter.v1.GenesisState.forwarder_genesis":
+		value := x.ForwarderGenesis
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "noble.orbiter.v1.GenesisState.executor_genesis":
+		value := x.ExecutorGenesis
 		return protoreflect.ValueOfMessage(value.ProtoReflect())
 	default:
 		if descriptor.IsExtension() {
@@ -171,6 +203,10 @@ func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value
 	switch fd.FullName() {
 	case "noble.orbiter.v1.GenesisState.adapter_genesis":
 		x.AdapterGenesis = value.Message().Interface().(*v1.GenesisState)
+	case "noble.orbiter.v1.GenesisState.forwarder_genesis":
+		x.ForwarderGenesis = value.Message().Interface().(*v11.GenesisState)
+	case "noble.orbiter.v1.GenesisState.executor_genesis":
+		x.ExecutorGenesis = value.Message().Interface().(*v12.GenesisState)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.GenesisState"))
@@ -196,6 +232,16 @@ func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) p
 			x.AdapterGenesis = new(v1.GenesisState)
 		}
 		return protoreflect.ValueOfMessage(x.AdapterGenesis.ProtoReflect())
+	case "noble.orbiter.v1.GenesisState.forwarder_genesis":
+		if x.ForwarderGenesis == nil {
+			x.ForwarderGenesis = new(v11.GenesisState)
+		}
+		return protoreflect.ValueOfMessage(x.ForwarderGenesis.ProtoReflect())
+	case "noble.orbiter.v1.GenesisState.executor_genesis":
+		if x.ExecutorGenesis == nil {
+			x.ExecutorGenesis = new(v12.GenesisState)
+		}
+		return protoreflect.ValueOfMessage(x.ExecutorGenesis.ProtoReflect())
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.GenesisState"))
@@ -211,6 +257,12 @@ func (x *fastReflection_GenesisState) NewField(fd protoreflect.FieldDescriptor) 
 	switch fd.FullName() {
 	case "noble.orbiter.v1.GenesisState.adapter_genesis":
 		m := new(v1.GenesisState)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "noble.orbiter.v1.GenesisState.forwarder_genesis":
+		m := new(v11.GenesisState)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "noble.orbiter.v1.GenesisState.executor_genesis":
+		m := new(v12.GenesisState)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	default:
 		if fd.IsExtension() {
@@ -285,6 +337,14 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 			l = options.Size(x.AdapterGenesis)
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		if x.ForwarderGenesis != nil {
+			l = options.Size(x.ForwarderGenesis)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.ExecutorGenesis != nil {
+			l = options.Size(x.ExecutorGenesis)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -313,6 +373,34 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.ExecutorGenesis != nil {
+			encoded, err := options.Marshal(x.ExecutorGenesis)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x22
+		}
+		if x.ForwarderGenesis != nil {
+			encoded, err := options.Marshal(x.ForwarderGenesis)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x1a
 		}
 		if x.AdapterGenesis != nil {
 			encoded, err := options.Marshal(x.AdapterGenesis)
@@ -413,6 +501,78 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ForwarderGenesis", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.ForwarderGenesis == nil {
+					x.ForwarderGenesis = &v11.GenesisState{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ForwarderGenesis); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ExecutorGenesis", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.ExecutorGenesis == nil {
+					x.ExecutorGenesis = &v12.GenesisState{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ExecutorGenesis); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -467,7 +627,9 @@ type GenesisState struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AdapterGenesis *v1.GenesisState `protobuf:"bytes,1,opt,name=adapter_genesis,json=adapterGenesis,proto3" json:"adapter_genesis,omitempty"`
+	AdapterGenesis   *v1.GenesisState  `protobuf:"bytes,1,opt,name=adapter_genesis,json=adapterGenesis,proto3" json:"adapter_genesis,omitempty"`
+	ForwarderGenesis *v11.GenesisState `protobuf:"bytes,3,opt,name=forwarder_genesis,json=forwarderGenesis,proto3" json:"forwarder_genesis,omitempty"`
+	ExecutorGenesis  *v12.GenesisState `protobuf:"bytes,4,opt,name=executor_genesis,json=executorGenesis,proto3" json:"executor_genesis,omitempty"`
 }
 
 func (x *GenesisState) Reset() {
@@ -497,6 +659,20 @@ func (x *GenesisState) GetAdapterGenesis() *v1.GenesisState {
 	return nil
 }
 
+func (x *GenesisState) GetForwarderGenesis() *v11.GenesisState {
+	if x != nil {
+		return x.ForwarderGenesis
+	}
+	return nil
+}
+
+func (x *GenesisState) GetExecutorGenesis() *v12.GenesisState {
+	if x != nil {
+		return x.ExecutorGenesis
+	}
+	return nil
+}
+
 var File_noble_orbiter_v1_genesis_proto protoreflect.FileDescriptor
 
 var file_noble_orbiter_v1_genesis_proto_rawDesc = []byte{
@@ -506,25 +682,44 @@ var file_noble_orbiter_v1_genesis_proto_rawDesc = []byte{
 	0x76, 0x31, 0x1a, 0x30, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
 	0x72, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2f, 0x61, 0x64, 0x61, 0x70,
 	0x74, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x69, 0x0a, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53,
-	0x74, 0x61, 0x74, 0x65, 0x12, 0x59, 0x0a, 0x0f, 0x61, 0x64, 0x61, 0x70, 0x74, 0x65, 0x72, 0x5f,
-	0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x30, 0x2e,
-	0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f,
-	0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x61, 0x64, 0x61, 0x70, 0x74, 0x65, 0x72, 0x2e,
-	0x76, 0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52,
-	0x0e, 0x61, 0x64, 0x61, 0x70, 0x74, 0x65, 0x72, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x42,
-	0xb2, 0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72,
-	0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x42, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69,
-	0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x2a, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
-	0x72, 0x2e, 0x64, 0x65, 0x76, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f,
-	0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x3b, 0x6f, 0x72, 0x62, 0x69, 0x74,
-	0x65, 0x72, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x4e, 0x4f, 0x58, 0xaa, 0x02, 0x10, 0x4e, 0x6f, 0x62,
-	0x6c, 0x65, 0x2e, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x10,
-	0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c, 0x56, 0x31,
-	0xe2, 0x02, 0x1c, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
-	0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea,
-	0x02, 0x12, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x3a, 0x3a, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
-	0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x31, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69,
+	0x74, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2f, 0x65, 0x78,
+	0x65, 0x63, 0x75, 0x74, 0x6f, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69,
+	0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x32, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f,
+	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74,
+	0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x67, 0x65,
+	0x6e, 0x65, 0x73, 0x69, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xa8, 0x02, 0x0a, 0x0c,
+	0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x59, 0x0a, 0x0f,
+	0x61, 0x64, 0x61, 0x70, 0x74, 0x65, 0x72, 0x5f, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x30, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72,
+	0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e,
+	0x61, 0x64, 0x61, 0x70, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73,
+	0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x0e, 0x61, 0x64, 0x61, 0x70, 0x74, 0x65, 0x72,
+	0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x12, 0x5f, 0x0a, 0x11, 0x66, 0x6f, 0x72, 0x77, 0x61,
+	0x72, 0x64, 0x65, 0x72, 0x5f, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x32, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74,
+	0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72,
+	0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69,
+	0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x10, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65,
+	0x72, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x12, 0x5c, 0x0a, 0x10, 0x65, 0x78, 0x65, 0x63,
+	0x75, 0x74, 0x6f, 0x72, 0x5f, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x31, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74,
+	0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x65, 0x78, 0x65,
+	0x63, 0x75, 0x74, 0x6f, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73,
+	0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x0f, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x6f, 0x72, 0x47,
+	0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x42, 0xb2, 0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x6e,
+	0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x42,
+	0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a,
+	0x2a, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x64, 0x65, 0x76, 0x2f, 0x61, 0x70, 0x69,
+	0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x76,
+	0x31, 0x3b, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x4e, 0x4f,
+	0x58, 0xaa, 0x02, 0x10, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65,
+	0x72, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x10, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62,
+	0x69, 0x74, 0x65, 0x72, 0x5c, 0x56, 0x31, 0xe2, 0x02, 0x1c, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c,
+	0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65,
+	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x12, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x3a, 0x3a,
+	0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -541,16 +736,20 @@ func file_noble_orbiter_v1_genesis_proto_rawDescGZIP() []byte {
 
 var file_noble_orbiter_v1_genesis_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_noble_orbiter_v1_genesis_proto_goTypes = []interface{}{
-	(*GenesisState)(nil),    // 0: noble.orbiter.v1.GenesisState
-	(*v1.GenesisState)(nil), // 1: noble.orbiter.component.adapter.v1.GenesisState
+	(*GenesisState)(nil),     // 0: noble.orbiter.v1.GenesisState
+	(*v1.GenesisState)(nil),  // 1: noble.orbiter.component.adapter.v1.GenesisState
+	(*v11.GenesisState)(nil), // 2: noble.orbiter.component.forwarder.v1.GenesisState
+	(*v12.GenesisState)(nil), // 3: noble.orbiter.component.executor.v1.GenesisState
 }
 var file_noble_orbiter_v1_genesis_proto_depIdxs = []int32{
 	1, // 0: noble.orbiter.v1.GenesisState.adapter_genesis:type_name -> noble.orbiter.component.adapter.v1.GenesisState
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2, // 1: noble.orbiter.v1.GenesisState.forwarder_genesis:type_name -> noble.orbiter.component.forwarder.v1.GenesisState
+	3, // 2: noble.orbiter.v1.GenesisState.executor_genesis:type_name -> noble.orbiter.component.executor.v1.GenesisState
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_noble_orbiter_v1_genesis_proto_init() }

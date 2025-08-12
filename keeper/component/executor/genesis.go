@@ -18,46 +18,34 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package mocks
+package executor
 
 import (
-	"testing"
+	"context"
+	"fmt"
 
-	"github.com/stretchr/testify/require"
-
-	"cosmossdk.io/collections"
-
-	"orbiter.dev/keeper/component/adapter"
-	"orbiter.dev/keeper/component/dispatcher"
+	executortypes "orbiter.dev/types/component/executor"
 )
 
-func NewAdapterComponent(tb testing.TB) (*adapter.Adapter, *Dependencies) {
-	tb.Helper()
+// InitGenesis initialize the state of the component with a genesis state.
+func (e *Executor) InitGenesis(ctx context.Context, g *executortypes.GenesisState) error {
+	for _, id := range g.PausedActionIds {
+		if err := e.SetPausedAction(ctx, id); err != nil {
+			return fmt.Errorf("error setting genesis paused action id: %w", err)
+		}
+	}
 
-	deps := NewDependencies(tb)
+	return nil
+}
 
-	sb := collections.NewSchemaBuilder(deps.StoreService)
+// ExportGenesis returns the current state of the component into a genesis state.
+func (e *Executor) ExportGenesis(ctx context.Context) *executortypes.GenesisState {
+	paused, err := e.GetPausedActions(ctx)
+	if err != nil {
+		e.logger.Error("error exporting paused actions", "err", err.Error())
+	}
 
-	dispatcher, err := dispatcher.New(
-		deps.EncCfg.Codec,
-		sb,
-		deps.Logger,
-		&ForwardingHandler{},
-		&ActionsHandler{},
-	)
-	require.NoError(tb, err)
-
-	adapter, err := adapter.New(
-		deps.EncCfg.Codec,
-		sb,
-		deps.Logger,
-		BankKeeper{},
-		dispatcher,
-	)
-	require.NoError(tb, err)
-
-	_, err = sb.Build()
-	require.NoError(tb, err)
-
-	return adapter, &deps
+	return &executortypes.GenesisState{
+		PausedActionIds: paused,
+	}
 }

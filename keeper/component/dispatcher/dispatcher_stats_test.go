@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component_test
+package dispatcher_test
 
 import (
 	"context"
@@ -28,7 +28,7 @@ import (
 
 	"cosmossdk.io/math"
 
-	"orbiter.dev/keeper/component"
+	"orbiter.dev/keeper/component/dispatcher"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
@@ -39,7 +39,7 @@ import (
 func TestUpdateStats(t *testing.T) {
 	testCases := []struct {
 		name           string
-		setup          func(context.Context, *component.Dispatcher)
+		setup          func(context.Context, *dispatcher.Dispatcher)
 		transferAttr   func() *types.TransferAttributes
 		forwarding     func() *core.Forwarding
 		expErr         string
@@ -191,7 +191,7 @@ func TestUpdateStats(t *testing.T) {
 		},
 		{
 			name: "success - different denom and previous stored stats",
-			setup: func(ctx context.Context, d *component.Dispatcher) {
+			setup: func(ctx context.Context, d *dispatcher.Dispatcher) {
 				sourceID := core.CrossChainID{
 					ProtocolId:     1,
 					CounterpartyId: "hyperliquid",

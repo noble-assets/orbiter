@@ -18,30 +18,31 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package keeper
+package executor
 
 import (
 	"context"
 
+	"orbiter.dev/types"
 	"orbiter.dev/types/component/executor"
 	"orbiter.dev/types/core"
 )
 
-var _ executor.MsgServer = &msgServerExecutor{}
+var _ executor.MsgServer = &msgServer{}
 
-// msgServerExecutor is the server used to handle messages
+// msgServer is the server used to handle messages
 // for the executor component.
-type msgServerExecutor struct {
-	// Keeper is the main Orbiter keeper.
-	*Keeper
+type msgServer struct {
+	*Executor
+	types.Authorizator
 }
 
-func NewMsgServerExecutor(keeper *Keeper) msgServerExecutor {
-	return msgServerExecutor{Keeper: keeper}
+func NewMsgServer(e *Executor, a types.Authorizator) msgServer {
+	return msgServer{Executor: e, Authorizator: a}
 }
 
 // Pause implements executor.MsgServer.
-func (s msgServerExecutor) PauseAction(
+func (s msgServer) PauseAction(
 	ctx context.Context,
 	msg *executor.MsgPauseAction,
 ) (*executor.MsgPauseActionResponse, error) {
@@ -49,9 +50,7 @@ func (s msgServerExecutor) PauseAction(
 		return nil, err
 	}
 
-	e := s.Executor()
-
-	if err := e.Pause(ctx, msg.ActionId); err != nil {
+	if err := s.Pause(ctx, msg.ActionId); err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
 			"action: %s", err.Error(),
 		)
@@ -61,7 +60,7 @@ func (s msgServerExecutor) PauseAction(
 }
 
 // Unpause implements executor.MsgServer.
-func (s msgServerExecutor) UnpauseAction(
+func (s msgServer) UnpauseAction(
 	ctx context.Context,
 	msg *executor.MsgUnpauseAction,
 ) (*executor.MsgUnpauseActionResponse, error) {
@@ -69,9 +68,7 @@ func (s msgServerExecutor) UnpauseAction(
 		return nil, err
 	}
 
-	e := s.Executor()
-
-	if err := e.Unpause(ctx, msg.ActionId); err != nil {
+	if err := s.Unpause(ctx, msg.ActionId); err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"action: %s", err.Error(),
 		)

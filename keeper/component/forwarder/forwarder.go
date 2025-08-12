@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component
+package forwarder
 
 import (
 	"context"
@@ -43,15 +43,15 @@ type Forwarder struct {
 	bankKeeper types.BankKeeperForwarder
 	// router is a forwarding controllers router.
 	router ForwardingRouter
-	// PausedProtocolCounterparties keeps track of the paused protocol id and counterparty id
+	// PausedCrossChains keeps track of the paused protocol id and counterparty id
 	// combinations.
-	PausedProtocolCounterparties collections.KeySet[collections.Pair[int32, string]]
+	PausedCrossChains collections.KeySet[collections.Pair[int32, string]]
 	// PausedController keeps track of the paused protocol ids.
 	PausedProtocols collections.KeySet[int32]
 }
 
-// NewForwarder returns a validated instance of an forwarding component.
-func NewForwarder(
+// New returns a validated instance of a forwarding component.
+func New(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
@@ -66,7 +66,7 @@ func NewForwarder(
 		bankKeeper: bankKeeper,
 
 		router: router.New[core.ProtocolID, types.ControllerForwarding](),
-		PausedProtocolCounterparties: collections.NewKeySet(
+		PausedCrossChains: collections.NewKeySet(
 			sb,
 			core.PausedProtocolCounterpartiesPrefix,
 			core.PausedProtocolCounterpartiesName,
@@ -205,7 +205,7 @@ func (f *Forwarder) validateController(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) error {
-	isPaused, err := f.IsControllerPaused(ctx, protocolID)
+	isPaused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
 	}
@@ -224,7 +224,11 @@ func (f *Forwarder) validateForwarding(
 	protocolID core.ProtocolID,
 	counterpartyID string,
 ) error {
-	isPaused, err := f.IsOrbitPaused(ctx, protocolID, counterpartyID)
+	ccID, err := core.NewCrossChainID(protocolID, counterpartyID)
+	if err != nil {
+		return err
+	}
+	isPaused, err := f.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
 		return err
 	}
@@ -265,7 +269,7 @@ func (f *Forwarder) pauseProtocol(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) error {
-	if err := f.SetPausedController(ctx, protocolID); err != nil {
+	if err := f.SetPausedProtocol(ctx, protocolID); err != nil {
 		return fmt.Errorf(
 			"error pausing all forwardings for protocol %s: %w",
 			protocolID,
@@ -282,7 +286,16 @@ func (f *Forwarder) pauseProtocolDestinations(
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		if err := f.SetPausedOrbit(ctx, protocolID, ID); err != nil {
+		ccID, err := core.NewCrossChainID(protocolID, ID)
+		if err != nil {
+			return fmt.Errorf(
+				"error pausing forwarding for protocol %s and counterparty %s: %w",
+				protocolID,
+				ID,
+				err,
+			)
+		}
+		if err := f.SetPausedCrossChain(ctx, ccID); err != nil {
 			return fmt.Errorf(
 				"error pausing forwarding for protocol %s and counterparty %s: %w",
 				protocolID,
@@ -299,7 +312,7 @@ func (f *Forwarder) unpauseProtocol(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) error {
-	if err := f.SetUnpausedController(ctx, protocolID); err != nil {
+	if err := f.SetUnpausedProtocol(ctx, protocolID); err != nil {
 		return fmt.Errorf(
 			"error unpausing all forwardings for protocol %s: %w",
 			protocolID,
@@ -316,7 +329,16 @@ func (f *Forwarder) unpauseProtocolDestinations(
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		if err := f.SetUnpausedOrbit(ctx, protocolID, ID); err != nil {
+		ccID, err := core.NewCrossChainID(protocolID, ID)
+		if err != nil {
+			return fmt.Errorf(
+				"error unpausing forwarding for protocol %s and counterparty %s: %w",
+				protocolID,
+				ID,
+				err,
+			)
+		}
+		if err := f.SetUnpausedCrossChain(ctx, ccID); err != nil {
 			return fmt.Errorf(
 				"error unpausing forwarding for protocol %s and counterparty %s: %w",
 				protocolID,

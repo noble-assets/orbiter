@@ -18,46 +18,32 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package mocks
+package adapter
 
 import (
-	"testing"
+	"context"
 
-	"github.com/stretchr/testify/require"
-
-	"cosmossdk.io/collections"
-
-	"orbiter.dev/keeper/component/adapter"
-	"orbiter.dev/keeper/component/dispatcher"
+	"orbiter.dev/types/component/adapter"
 )
 
-func NewAdapterComponent(tb testing.TB) (*adapter.Adapter, *Dependencies) {
-	tb.Helper()
+var _ adapter.QueryServer = &queryServer{}
 
-	deps := NewDependencies(tb)
+type queryServer struct {
+	*Adapter
+}
 
-	sb := collections.NewSchemaBuilder(deps.StoreService)
+func NewQueryServer(a *Adapter) queryServer {
+	return queryServer{Adapter: a}
+}
 
-	dispatcher, err := dispatcher.New(
-		deps.EncCfg.Codec,
-		sb,
-		deps.Logger,
-		&ForwardingHandler{},
-		&ActionsHandler{},
-	)
-	require.NoError(tb, err)
+// Params implements adapter.QueryClient.
+func (s queryServer) Params(
+	ctx context.Context,
+	req *adapter.QueryParamsRequest,
+) (*adapter.QueryParamsResponse, error) {
+	params := s.GetParams(ctx)
 
-	adapter, err := adapter.New(
-		deps.EncCfg.Codec,
-		sb,
-		deps.Logger,
-		BankKeeper{},
-		dispatcher,
-	)
-	require.NoError(tb, err)
-
-	_, err = sb.Build()
-	require.NoError(tb, err)
-
-	return adapter, &deps
+	return &adapter.QueryParamsResponse{
+		Params: params,
+	}, nil
 }

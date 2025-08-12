@@ -29,7 +29,7 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"orbiter.dev/keeper/component"
+	"orbiter.dev/keeper/component/dispatcher"
 	"orbiter.dev/types"
 )
 
@@ -65,13 +65,13 @@ func (a *ActionsHandler) HandlePacket(
 	return nil
 }
 
-func NewDispatcherComponent(tb testing.TB) (*component.Dispatcher, *Dependencies) {
+func NewDispatcherComponent(tb testing.TB) (*dispatcher.Dispatcher, *Dependencies) {
 	tb.Helper()
 
 	deps := NewDependencies(tb)
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
-	dispatcher, err := component.NewDispatcher(
+	dispatcher, err := dispatcher.New(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,

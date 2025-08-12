@@ -18,39 +18,51 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package executor
 
 import (
+	"context"
 	"fmt"
 
-	adapter "orbiter.dev/types/component/adapter"
 	"orbiter.dev/types/component/executor"
-	"orbiter.dev/types/component/forwarder"
 )
 
-// DefaultGenesisState returns the default values for the Orbiter module
-// initial state.
-func DefaultGenesisState() *GenesisState {
-	return &GenesisState{
-		AdapterGenesis:   adapter.DefaultGenesisState(),
-		ForwarderGenesis: forwarder.DefaultGenesisState(),
-		ExecutorGenesis:  executor.DefaultGenesisState(),
-	}
+var _ executor.QueryServer = &queryServer{}
+
+type queryServer struct {
+	*Executor
 }
 
-// Validate retusn an error if any of the genesis field is not valid.
-func (g *GenesisState) Validate() error {
-	if err := g.AdapterGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating adapter component genesis state: %w", err)
+func NewQueryServer(e *Executor) queryServer {
+	return queryServer{Executor: e}
+}
+
+// IsActionPaused implements executor.QueryServer.
+func (s queryServer) IsActionPaused(
+	ctx context.Context,
+	req *executor.QueryIsActionPausedRequest,
+) (*executor.QueryIsActionPausedResponse, error) {
+	paused, err := s.Executor.IsActionPaused(ctx, req.ActionId)
+	if err != nil {
+		return nil, fmt.Errorf("unable to query action paused status: %w", err)
 	}
 
-	if err := g.ForwarderGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating forwarder component genesis state: %w", err)
+	return &executor.QueryIsActionPausedResponse{
+		IsPaused: paused,
+	}, nil
+}
+
+// PausedActions implements executor.QueryServer.
+func (s queryServer) PausedActions(
+	ctx context.Context,
+	req *executor.QueryPausedActionsRequest,
+) (*executor.QueryPausedActionsResponse, error) {
+	paused, err := s.GetPausedActions(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("unable to query paused actions: %w", err)
 	}
 
-	if err := g.ExecutorGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating executor component genesis state: %w", err)
-	}
-
-	return nil
+	return &executor.QueryPausedActionsResponse{
+		ActionId: paused,
+	}, nil
 }

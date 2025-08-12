@@ -18,32 +18,27 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component
+package adapter
 
 import (
 	"context"
+	"fmt"
 
-	"orbiter.dev/types"
+	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
-// GetParams returns the adapter params from state. In case of an error,
-// it returns default values and logs the error.
-//
-// NOTE: Returning the default is safe here since it returns zero
-// bytes allowed, which is the restrictive condition.
-func (a *Adapter) GetParams(ctx context.Context) types.AdapterParams {
-	params, err := a.params.Get(ctx)
-	if err != nil {
-		a.logger.Error("error getting params", "err", err.Error())
-
-		return types.AdapterParams{
-			MaxPassthroughPayloadSize: 0,
-		}
+// InitGenesis initialize the state of the adapter component with a genesis state.
+func (a *Adapter) InitGenesis(ctx context.Context, g *adaptertypes.GenesisState) error {
+	if err := a.SetParams(ctx, g.Params); err != nil {
+		return fmt.Errorf("error setting genesis params: %w", err)
 	}
 
-	return params
+	return nil
 }
 
-func (a *Adapter) SetParams(ctx context.Context, params types.AdapterParams) error {
-	return a.params.Set(ctx, params)
+// ExportGenesis returns the current state of the adapter component into a genesis state.
+func (a *Adapter) ExportGenesis(ctx context.Context) *adaptertypes.GenesisState {
+	return &adaptertypes.GenesisState{
+		Params: a.GetParams(ctx),
+	}
 }

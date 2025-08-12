@@ -18,8 +18,8 @@ service Query {
     option (google.api.http).get = "/noble/orbiter/forwarder/v1/paused/protocols";
   }
 
-  // PausedCounterparties retrieves all paused counterparties for a specific protocol.
-  rpc PausedCounterparties(QueryPausedCounterpartiesRequest) returns (QueryPausedCounterpartiesResponse) {
+  // PausedCrossChains retrieves all paused counterparties for a specific protocol.
+  rpc PausedCrossChains(QueryPausedCounterpartiesRequest) returns (QueryPausedCounterpartiesResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http).get = "/noble/orbiter/forwarder/v1/paused/protocols/{protocol_id}/counterparties";
   }

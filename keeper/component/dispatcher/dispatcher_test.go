@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package component_test
+package dispatcher_test
 
 import (
 	"testing"
@@ -29,7 +29,7 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/keeper/component"
+	"orbiter.dev/keeper/component/dispatcher"
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/types"
 )
@@ -57,7 +57,7 @@ func TestNewDispatcherComponent(t *testing.T) {
 
 	for _, tc := range testCases {
 		sb := collections.NewSchemaBuilder(deps.StoreService)
-		_, err := component.NewDispatcher(
+		_, err := dispatcher.New(
 			tc.codec,
 			sb,
 			tc.logger,
@@ -105,7 +105,7 @@ func TestValidate_DispatcherComponent(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		dispatcher := component.Dispatcher{
+		dispatcher := dispatcher.Dispatcher{
 			ForwardingHandler: tc.ForwardingHandler,
 			ActionHandler:     tc.ActionHandler,
 		}
