@@ -37,9 +37,7 @@ func (f *Forwarder) IsProtocolPaused(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) (bool, error) {
-	paused, err := f.pausedProtocols.Has(ctx, int32(protocolID))
-
-	return paused, err
+	return f.pausedProtocols.Has(ctx, int32(protocolID))
 }
 
 func (f *Forwarder) SetPausedProtocol(ctx context.Context, protocolID core.ProtocolID) error {
