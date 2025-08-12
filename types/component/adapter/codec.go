@@ -28,7 +28,7 @@ import (
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgUpdateParams{}, "orbiter/adapter/UpdateParams", nil)
+	cdc.RegisterConcrete(&MsgUpdateParams{}, "orbiter/adapter/v1/UpdateParams", nil)
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
