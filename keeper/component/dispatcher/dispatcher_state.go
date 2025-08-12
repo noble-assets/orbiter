@@ -155,7 +155,7 @@ func (d *Dispatcher) GetDispatchedAmount(
 		denom,
 	)
 
-	amountDispatched, err := d.DispatchedAmounts.Get(ctx, key)
+	amountDispatched, err := d.dispatchedAmounts.Get(ctx, key)
 	if err != nil {
 		amountDispatched = dispatchertypes.AmountDispatched{
 			Incoming: math.ZeroInt(),
@@ -194,7 +194,7 @@ func (d *Dispatcher) SetDispatchedAmount(
 		denom,
 	)
 
-	return d.DispatchedAmounts.Set(ctx, key, amountDispatched)
+	return d.dispatchedAmounts.Set(ctx, key, amountDispatched)
 }
 
 func (d *Dispatcher) GetDispatchedAmountsByProtocolID(
@@ -227,7 +227,7 @@ func (d *Dispatcher) IterateDispatchedAmountsByProtocolID(
 		protocolID.Uint32(),
 	)
 
-	err := d.DispatchedAmounts.Walk(
+	err := d.dispatchedAmounts.Walk(
 		ctx,
 		prefix,
 		func(key DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (stop bool, err error) {
@@ -274,7 +274,7 @@ func (d *Dispatcher) IterateDispatchedAmountsByDestinationProtocolID(
 ) {
 	rng := collections.NewPrefixedPairRange[uint32, DispatchedAmountsKey](protocolID.Uint32())
 
-	err := d.DispatchedAmounts.Indexes.ByDestinationProtocolID.Walk(
+	err := d.dispatchedAmounts.Indexes.ByDestinationProtocolID.Walk(
 		ctx,
 		rng,
 		func(
@@ -282,7 +282,7 @@ func (d *Dispatcher) IterateDispatchedAmountsByDestinationProtocolID(
 			indexedKey DispatchedAmountsKey,
 		) (stop bool, err error) {
 			// Get the actual value from the main collection using the indexed key
-			value, err := d.DispatchedAmounts.Get(ctx, indexedKey)
+			value, err := d.dispatchedAmounts.Get(ctx, indexedKey)
 			if err != nil {
 				return true, err
 			}
@@ -320,7 +320,7 @@ func (d *Dispatcher) GetDispatchedCounts(
 		destID.ID(),
 	)
 
-	countDispatches, err := d.DispatchCounts.Get(ctx, key)
+	countDispatches, err := d.dispatchCounts.Get(ctx, key)
 	if err != nil {
 		countDispatches = 0
 	}
@@ -350,5 +350,5 @@ func (d *Dispatcher) SetDispatchedCounts(
 		destID.ID(),
 	)
 
-	return d.DispatchCounts.Set(ctx, key, countDispatches)
+	return d.dispatchCounts.Set(ctx, key, countDispatches)
 }

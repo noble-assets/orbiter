@@ -35,21 +35,19 @@ import (
 
 var _ types.PayloadDispatcher = &Dispatcher{}
 
-// Dispatcher is a component used to orchestrate the
-// dispatch of an incoming orbiter packet. The dispatcher
-// keeps track of the statistics associated with the handled dispatches.
+// Dispatcher is a component used to orchestrate the dispatch of an incoming orbiter
+// packet. The dispatcher keeps track of the statistics associated with the handled dispatches.
 type Dispatcher struct {
 	logger log.Logger
 	// Packet elements handlers
 	ForwardingHandler types.PacketHandler[*types.ForwardingPacket]
 	ActionHandler     types.PacketHandler[*types.ActionPacket]
 	// Stats
-	DispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, dispatchertypes.AmountDispatched, DispatchedAmountsIndexes]
-	DispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
+	dispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, dispatchertypes.AmountDispatched, DispatchedAmountsIndexes]
+	dispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
 }
 
-// New creates a new validated instance of a the dispatcher
-// component.
+// New creates a new validated instance of a the dispatcher component.
 func New(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
@@ -67,11 +65,11 @@ func New(
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	dispatcherComponent := Dispatcher{
+	d := Dispatcher{
 		logger:            logger.With(core.ComponentPrefix, core.DispatcherName),
 		ForwardingHandler: forwardingHandler,
 		ActionHandler:     actionHandler,
-		DispatchedAmounts: collections.NewIndexedMap(
+		dispatchedAmounts: collections.NewIndexedMap(
 			sb,
 			core.DispatchedAmountsPrefix,
 			core.DispatchedAmountsName,
@@ -84,7 +82,7 @@ func New(
 			codec.CollValue[dispatchertypes.AmountDispatched](cdc),
 			newDispatchedAmountsIndexes(sb),
 		),
-		DispatchCounts: collections.NewIndexedMap(
+		dispatchCounts: collections.NewIndexedMap(
 			sb,
 			core.DispatchedCountsPrefix,
 			core.DispatchedCountsName,
@@ -98,16 +96,19 @@ func New(
 		),
 	}
 
-	return &dispatcherComponent, dispatcherComponent.Validate()
+	return &d, d.Validate()
 }
 
 // Validate checks that the fields of the dispatcher component are valid.
 func (d *Dispatcher) Validate() error {
+	if d.logger == nil {
+		return core.ErrNilPointer.Wrap("logger is not set")
+	}
 	if d.ForwardingHandler == nil {
-		return core.ErrNilPointer.Wrap("forwarding handler cannot be nil")
+		return core.ErrNilPointer.Wrap("forwarding handler is not set")
 	}
 	if d.ActionHandler == nil {
-		return core.ErrNilPointer.Wrap("actions handler cannot be nil")
+		return core.ErrNilPointer.Wrap("actions handler is not set")
 	}
 
 	return nil
@@ -124,7 +125,7 @@ func (d *Dispatcher) DispatchPayload(
 	transferAttr *types.TransferAttributes,
 	payload *core.Payload,
 ) error {
-	if err := d.validatePayload(payload); err != nil {
+	if err := d.ValidatePayload(payload); err != nil {
 		return core.ErrValidation.Wrap(err.Error())
 	}
 
@@ -143,13 +144,9 @@ func (d *Dispatcher) DispatchPayload(
 	return nil
 }
 
-// validatePayload checks if the payload is not nil, and calls
+// ValidatePayload checks if the payload is not nil, and calls
 // its validation method.
-func (d *Dispatcher) validatePayload(payload *core.Payload) error {
-	if payload == nil {
-		return core.ErrNilPointer.Wrap("payload cannot be nil")
-	}
-
+func (d *Dispatcher) ValidatePayload(payload *core.Payload) error {
 	return payload.Validate()
 }
 
