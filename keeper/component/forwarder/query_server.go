@@ -89,16 +89,17 @@ func (s queryServer) IsCounterpartyPaused(
 }
 
 // PausedCounterparties implements forwarder.QueryServer.
-func (s queryServer) PausedCounterparties(
+func (s queryServer) PausedCrossChains(
 	ctx context.Context,
 	req *forwarder.QueryPausedCounterpartiesRequest,
 ) (*forwarder.QueryPausedCounterpartiesResponse, error) {
-	paused, err := s.GetPausedCounterparties(ctx, req.ProtocolId)
+	id := req.ProtocolId
+	paused, err := s.GetPausedCrossChains(ctx, &id)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query paused counterparty: %w", err)
 	}
 
 	return &forwarder.QueryPausedCounterpartiesResponse{
-		CounterpartyIds: paused,
+		CounterpartyIds: paused[int32(id)],
 	}, nil
 }

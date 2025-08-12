@@ -37,7 +37,7 @@ func (f *Forwarder) IsProtocolPaused(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) (bool, error) {
-	paused, err := f.PausedProtocols.Has(ctx, int32(protocolID))
+	paused, err := f.pausedProtocols.Has(ctx, int32(protocolID))
 
 	return paused, err
 }
@@ -51,7 +51,7 @@ func (f *Forwarder) SetPausedProtocol(ctx context.Context, protocolID core.Proto
 		return nil
 	}
 
-	return f.PausedProtocols.Set(ctx, int32(protocolID))
+	return f.pausedProtocols.Set(ctx, int32(protocolID))
 }
 
 func (f *Forwarder) SetUnpausedProtocol(
@@ -66,13 +66,13 @@ func (f *Forwarder) SetUnpausedProtocol(
 		return nil
 	}
 
-	return f.PausedProtocols.Remove(ctx, int32(protocolID))
+	return f.pausedProtocols.Remove(ctx, int32(protocolID))
 }
 
 func (f *Forwarder) GetPausedProtocols(
 	ctx context.Context,
 ) ([]core.ProtocolID, error) {
-	iter, err := f.PausedProtocols.Iterate(ctx, nil)
+	iter, err := f.pausedProtocols.Iterate(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (f *Forwarder) IsCrossChainPaused(
 	ctx context.Context,
 	ccID core.CrossChainID,
 ) (bool, error) {
-	return f.PausedCrossChains.Has(
+	return f.pausedCrossChains.Has(
 		ctx,
 		collections.Join(int32(ccID.GetProtocolId()), ccID.GetCounterpartyId()),
 	)
@@ -121,7 +121,7 @@ func (f *Forwarder) SetPausedCrossChain(
 		return nil
 	}
 
-	return f.PausedCrossChains.Set(
+	return f.pausedCrossChains.Set(
 		ctx,
 		collections.Join(int32(ccID.GetProtocolId()), ccID.GetCounterpartyId()),
 	)
@@ -139,32 +139,46 @@ func (f *Forwarder) SetUnpausedCrossChain(
 		return nil
 	}
 
-	return f.PausedCrossChains.Remove(
+	return f.pausedCrossChains.Remove(
 		ctx,
 		collections.Join(int32(ccID.GetProtocolId()), ccID.GetCounterpartyId()),
 	)
 }
 
-func (f *Forwarder) GetPausedCounterparties(
+// GetPausedCrossChains returns all the paused cross-chain IDs.
+//
+// NOTE: this method uses maps and is intended to be used only for queries.
+func (f *Forwarder) GetPausedCrossChains(
 	ctx context.Context,
-	protocolID core.ProtocolID,
-) ([]string, error) {
-	rng := collections.NewPrefixedPairRange[int32, string](int32(protocolID))
+	protocolID *core.ProtocolID,
+) (map[int32][]string, error) {
+	var err error
+	var iter collections.KeySetIterator[collections.Pair[int32, string]]
+	if protocolID != nil {
+		rng := collections.NewPrefixedPairRange[int32, string](int32(*protocolID))
+		iter, err = f.pausedCrossChains.Iterate(ctx, rng)
+	} else {
+		iter, err = f.pausedCrossChains.Iterate(ctx, nil)
+	}
 
-	iter, err := f.PausedCrossChains.Iterate(ctx, rng)
 	if err != nil {
 		return nil, err
 	}
 	defer iter.Close()
 
-	var paused []string
+	paused := make(map[int32][]string)
+
+	// Process each key-value pair
 	for ; iter.Valid(); iter.Next() {
-		k, err := iter.Key()
+		key, err := iter.Key()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to get key from iterator: %w", err)
 		}
 
-		paused = append(paused, k.K2())
+		protocolID := key.K1()
+		counterpartyID := key.K2()
+
+		paused[protocolID] = append(paused[protocolID], counterpartyID)
 	}
 
 	return paused, nil

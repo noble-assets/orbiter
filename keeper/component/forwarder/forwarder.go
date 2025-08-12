@@ -34,7 +34,7 @@ import (
 	router "orbiter.dev/types/router"
 )
 
-type ForwardingRouter = *router.Router[core.ProtocolID, types.ControllerForwarding]
+type ForwardingRouter = router.Router[core.ProtocolID, types.ControllerForwarding]
 
 var _ types.Forwarder = &Forwarder{}
 
@@ -42,12 +42,11 @@ type Forwarder struct {
 	logger     log.Logger
 	bankKeeper types.BankKeeperForwarder
 	// router is a forwarding controllers router.
-	router ForwardingRouter
-	// PausedCrossChains keeps track of the paused protocol id and counterparty id
-	// combinations.
-	PausedCrossChains collections.KeySet[collections.Pair[int32, string]]
+	router *ForwardingRouter
 	// PausedController keeps track of the paused protocol ids.
-	PausedProtocols collections.KeySet[int32]
+	pausedProtocols collections.KeySet[int32]
+	// pausedCrossChains keeps track of the paused protocol id and counterparty id combinations.
+	pausedCrossChains collections.KeySet[collections.Pair[int32, string]]
 }
 
 // New returns a validated instance of a forwarding component.
@@ -61,18 +60,17 @@ func New(
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	forwarder := Forwarder{
+	f := Forwarder{
 		logger:     logger.With(core.ComponentPrefix, core.ForwarderName),
 		bankKeeper: bankKeeper,
-
-		router: router.New[core.ProtocolID, types.ControllerForwarding](),
-		PausedCrossChains: collections.NewKeySet(
+		router:     router.New[core.ProtocolID, types.ControllerForwarding](),
+		pausedCrossChains: collections.NewKeySet(
 			sb,
-			core.PausedProtocolCounterpartiesPrefix,
-			core.PausedProtocolCounterpartiesName,
+			core.PausedCrossChainsPrefix,
+			core.PausedCrossChainsName,
 			collections.PairKeyCodec(collections.Int32Key, collections.StringKey),
 		),
-		PausedProtocols: collections.NewKeySet(
+		pausedProtocols: collections.NewKeySet(
 			sb,
 			core.PausedProtocolsPrefix,
 			core.PausedProtocolsName,
@@ -80,7 +78,7 @@ func New(
 		),
 	}
 
-	return &forwarder, forwarder.Validate()
+	return &f, f.Validate()
 }
 
 func (f *Forwarder) Validate() error {
@@ -101,11 +99,11 @@ func (f *Forwarder) Logger() log.Logger {
 	return f.logger
 }
 
-func (f *Forwarder) Router() ForwardingRouter {
+func (f *Forwarder) Router() *ForwardingRouter {
 	return f.router
 }
 
-func (f *Forwarder) SetRouter(r ForwardingRouter) error {
+func (f *Forwarder) SetRouter(r *ForwardingRouter) error {
 	if r == nil {
 		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
@@ -129,7 +127,7 @@ func (f *Forwarder) Pause(
 	case len(counterpartyIDs) == 0:
 		return f.pauseProtocol(ctx, protocolID)
 	default:
-		return f.pauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
+		return f.pauseCrossChains(ctx, protocolID, counterpartyIDs)
 	}
 }
 
@@ -141,7 +139,7 @@ func (f *Forwarder) Unpause(
 	if len(counterpartyIDs) == 0 {
 		return f.unpauseProtocol(ctx, protocolID)
 	} else {
-		return f.unpauseProtocolDestinations(ctx, protocolID, counterpartyIDs)
+		return f.unpauseCrossChains(ctx, protocolID, counterpartyIDs)
 	}
 }
 
@@ -169,11 +167,11 @@ func (f *Forwarder) ValidateForwarding(
 	protocolID core.ProtocolID,
 	counterpartyID string,
 ) error {
-	if err := f.validateController(ctx, protocolID); err != nil {
+	if err := f.validateProtocol(ctx, protocolID); err != nil {
 		return err
 	}
 
-	return f.validateForwarding(ctx, protocolID, counterpartyID)
+	return f.validateCrossChain(ctx, protocolID, counterpartyID)
 }
 
 func (f *Forwarder) validatePacket(
@@ -201,7 +199,7 @@ func (f *Forwarder) validatePacket(
 	return f.validateInitialConditions(ctx, packet)
 }
 
-func (f *Forwarder) validateController(
+func (f *Forwarder) validateProtocol(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) error {
@@ -219,7 +217,7 @@ func (f *Forwarder) validateController(
 	return nil
 }
 
-func (f *Forwarder) validateForwarding(
+func (f *Forwarder) validateCrossChain(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 	counterpartyID string,
@@ -280,7 +278,7 @@ func (f *Forwarder) pauseProtocol(
 	return nil
 }
 
-func (f *Forwarder) pauseProtocolDestinations(
+func (f *Forwarder) pauseCrossChains(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 	counterpartyIDs []string,
@@ -323,7 +321,7 @@ func (f *Forwarder) unpauseProtocol(
 	return nil
 }
 
-func (f *Forwarder) unpauseProtocolDestinations(
+func (f *Forwarder) unpauseCrossChains(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 	counterpartyIDs []string,

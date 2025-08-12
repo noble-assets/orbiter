@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Query_PausedProtocols_FullMethodName      = "/noble.orbiter.component.forwarder.v1.Query/PausedProtocols"
-	Query_PausedCounterparties_FullMethodName = "/noble.orbiter.component.forwarder.v1.Query/PausedCounterparties"
+	Query_PausedCrossChains_FullMethodName    = "/noble.orbiter.component.forwarder.v1.Query/PausedCrossChains"
 	Query_IsProtocolPaused_FullMethodName     = "/noble.orbiter.component.forwarder.v1.Query/IsProtocolPaused"
 	Query_IsCounterpartyPaused_FullMethodName = "/noble.orbiter.component.forwarder.v1.Query/IsCounterpartyPaused"
 )
@@ -34,8 +34,8 @@ const (
 type QueryClient interface {
 	// PausedProtocols retrieves all paused protocol IDs.
 	PausedProtocols(ctx context.Context, in *QueryPausedProtocolsRequest, opts ...grpc.CallOption) (*QueryPausedProtocolsResponse, error)
-	// PausedCounterparties retrieves all paused counterparties for a specific protocol.
-	PausedCounterparties(ctx context.Context, in *QueryPausedCounterpartiesRequest, opts ...grpc.CallOption) (*QueryPausedCounterpartiesResponse, error)
+	// PausedCrossChains retrieves all paused counterparties for a specific protocol.
+	PausedCrossChains(ctx context.Context, in *QueryPausedCounterpartiesRequest, opts ...grpc.CallOption) (*QueryPausedCounterpartiesResponse, error)
 	// IsProtocolPaused checks if a specific protocol is paused.
 	IsProtocolPaused(ctx context.Context, in *QueryIsProtocolPausedRequest, opts ...grpc.CallOption) (*QueryIsProtocolPausedResponse, error)
 	// IsCounterpartyPaused checks if a specific counterparty for a protocol is paused.
@@ -60,10 +60,10 @@ func (c *queryClient) PausedProtocols(ctx context.Context, in *QueryPausedProtoc
 	return out, nil
 }
 
-func (c *queryClient) PausedCounterparties(ctx context.Context, in *QueryPausedCounterpartiesRequest, opts ...grpc.CallOption) (*QueryPausedCounterpartiesResponse, error) {
+func (c *queryClient) PausedCrossChains(ctx context.Context, in *QueryPausedCounterpartiesRequest, opts ...grpc.CallOption) (*QueryPausedCounterpartiesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(QueryPausedCounterpartiesResponse)
-	err := c.cc.Invoke(ctx, Query_PausedCounterparties_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Query_PausedCrossChains_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -99,8 +99,8 @@ func (c *queryClient) IsCounterpartyPaused(ctx context.Context, in *QueryIsCount
 type QueryServer interface {
 	// PausedProtocols retrieves all paused protocol IDs.
 	PausedProtocols(context.Context, *QueryPausedProtocolsRequest) (*QueryPausedProtocolsResponse, error)
-	// PausedCounterparties retrieves all paused counterparties for a specific protocol.
-	PausedCounterparties(context.Context, *QueryPausedCounterpartiesRequest) (*QueryPausedCounterpartiesResponse, error)
+	// PausedCrossChains retrieves all paused counterparties for a specific protocol.
+	PausedCrossChains(context.Context, *QueryPausedCounterpartiesRequest) (*QueryPausedCounterpartiesResponse, error)
 	// IsProtocolPaused checks if a specific protocol is paused.
 	IsProtocolPaused(context.Context, *QueryIsProtocolPausedRequest) (*QueryIsProtocolPausedResponse, error)
 	// IsCounterpartyPaused checks if a specific counterparty for a protocol is paused.
@@ -118,8 +118,8 @@ type UnimplementedQueryServer struct{}
 func (UnimplementedQueryServer) PausedProtocols(context.Context, *QueryPausedProtocolsRequest) (*QueryPausedProtocolsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PausedProtocols not implemented")
 }
-func (UnimplementedQueryServer) PausedCounterparties(context.Context, *QueryPausedCounterpartiesRequest) (*QueryPausedCounterpartiesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PausedCounterparties not implemented")
+func (UnimplementedQueryServer) PausedCrossChains(context.Context, *QueryPausedCounterpartiesRequest) (*QueryPausedCounterpartiesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PausedCrossChains not implemented")
 }
 func (UnimplementedQueryServer) IsProtocolPaused(context.Context, *QueryIsProtocolPausedRequest) (*QueryIsProtocolPausedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsProtocolPaused not implemented")
@@ -166,20 +166,20 @@ func _Query_PausedProtocols_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_PausedCounterparties_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Query_PausedCrossChains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryPausedCounterpartiesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).PausedCounterparties(ctx, in)
+		return srv.(QueryServer).PausedCrossChains(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Query_PausedCounterparties_FullMethodName,
+		FullMethod: Query_PausedCrossChains_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).PausedCounterparties(ctx, req.(*QueryPausedCounterpartiesRequest))
+		return srv.(QueryServer).PausedCrossChains(ctx, req.(*QueryPausedCounterpartiesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -232,8 +232,8 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Query_PausedProtocols_Handler,
 		},
 		{
-			MethodName: "PausedCounterparties",
-			Handler:    _Query_PausedCounterparties_Handler,
+			MethodName: "PausedCrossChains",
+			Handler:    _Query_PausedCrossChains_Handler,
 		},
 		{
 			MethodName: "IsProtocolPaused",

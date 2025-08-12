@@ -71,7 +71,7 @@ func NewDispatcherComponent(tb testing.TB) (*dispatcher.Dispatcher, *Dependencie
 	deps := NewDependencies(tb)
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
-	dispatcher, err := dispatcher.New(
+	d, err := dispatcher.New(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
@@ -82,5 +82,5 @@ func NewDispatcherComponent(tb testing.TB) (*dispatcher.Dispatcher, *Dependencie
 	_, err = sb.Build()
 	require.NoError(tb, err)
 
-	return dispatcher, &deps
+	return d, &deps
 }
