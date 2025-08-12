@@ -62,8 +62,8 @@ func (k *Keeper) InitGenesis(ctx context.Context, g types.GenesisState) {
 // into a genesis state.
 func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
 	return &types.GenesisState{
-		AdapterGenesis:   k.Adapter().ExportGenesis(ctx),
-		ForwarderGenesis: k.Forwarder().ExportGenesis(ctx),
-		ExecutorGenesis:  k.Executor().ExportGenesis(ctx),
+		AdapterGenesis:   k.adapter.ExportGenesis(ctx),
+		ForwarderGenesis: k.forwarder.ExportGenesis(ctx),
+		ExecutorGenesis:  k.executor.ExportGenesis(ctx),
 	}
 }
