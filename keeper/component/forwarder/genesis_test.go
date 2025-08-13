@@ -79,7 +79,7 @@ func TestInitGenesis(t *testing.T) {
 					{ProtocolId: core.PROTOCOL_UNSUPPORTED, CounterpartyId: "channel-1"},
 				},
 			},
-			expErr: "invalid paused cross chain id",
+			expErr: "invalid paused cross-chain id",
 		},
 	}
 	for _, tc := range testcases {
