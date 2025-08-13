@@ -177,7 +177,7 @@ func (e *Executor) validateController(
 		return err
 	}
 	if isPaused {
-		return fmt.Errorf("action id %s is paused", id)
+		return fmt.Errorf("action ID %s is paused", id)
 	}
 
 	return nil

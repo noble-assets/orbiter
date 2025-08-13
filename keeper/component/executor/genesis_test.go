@@ -33,7 +33,7 @@ import (
 )
 
 func TestInitGenesis(t *testing.T) {
-	tests := []struct {
+	testcases := []struct {
 		name     string
 		genState *executortypes.GenesisState
 		expErr   string
@@ -64,7 +64,7 @@ func TestInitGenesis(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
+	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ex := k.Executor()
@@ -80,31 +80,32 @@ func TestInitGenesis(t *testing.T) {
 }
 
 func TestExportGenesis(t *testing.T) {
-	tests := []struct {
+	testcases := []struct {
 		name             string
-		setupState       func(ctx context.Context, k *executor.Executor)
+		setup            func(ctx context.Context, k *executor.Executor)
 		expPausedActions []core.ActionID
 	}{
 		{
 			name:             "success - export default genesis state",
-			setupState:       func(ctx context.Context, k *executor.Executor) {},
 			expPausedActions: []core.ActionID{},
 		},
 		{
 			name: "success - export genesis state with paused actions",
-			setupState: func(ctx context.Context, k *executor.Executor) {
+			setup: func(ctx context.Context, k *executor.Executor) {
 				require.NoError(t, k.SetPausedAction(ctx, core.ACTION_FEE))
 			},
 			expPausedActions: []core.ActionID{core.ACTION_FEE},
 		},
 	}
 
-	for _, tc := range tests {
+	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ex := k.Executor()
 
-			tc.setupState(ctx, ex)
+			if tc.setup != nil {
+				tc.setup(ctx, ex)
+			}
 
 			genState := ex.ExportGenesis(ctx)
 

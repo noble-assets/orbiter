@@ -49,7 +49,7 @@ func (f *Forwarder) InitGenesis(ctx context.Context, g *forwardertypes.GenesisSt
 		}
 
 		if err := id.Validate(); err != nil {
-			return fmt.Errorf("invalid paused cross chain id %q: %w", id, err)
+			return fmt.Errorf("invalid paused cross-chain id %q: %w", id, err)
 		}
 
 		if err := f.SetPausedCrossChain(ctx, *id); err != nil {

@@ -27,12 +27,12 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"orbiter.dev/keeper/component/adapter"
-	mockorbiter "orbiter.dev/testutil/mocks/orbiter"
+	"orbiter.dev/testutil/mocks"
 	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
 func TestInitGenesis(t *testing.T) {
-	tests := []struct {
+	testcases := []struct {
 		name     string
 		genState *adaptertypes.GenesisState
 		expErr   string
@@ -58,18 +58,18 @@ func TestInitGenesis(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
+	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx, _, k := mockorbiter.OrbiterKeeper(t)
-			ad := k.Adapter()
+			a, deps := mocks.NewAdapterComponent(t)
+			ctx := deps.SdkCtx
 
-			err := ad.InitGenesis(ctx, tc.genState)
+			err := a.InitGenesis(ctx, tc.genState)
 			if tc.expErr != "" {
 				require.ErrorContains(t, err, tc.expErr)
 			} else {
 				require.NoError(t, err)
 
-				params := ad.GetParams(ctx)
+				params := a.GetParams(ctx)
 				require.Equal(t, tc.genState.Params.MaxPassthroughPayloadSize, params.MaxPassthroughPayloadSize)
 			}
 		})
@@ -77,10 +77,10 @@ func TestInitGenesis(t *testing.T) {
 }
 
 func TestExportGenesis(t *testing.T) {
-	tests := []struct {
-		name       string
-		setupState func(ctx context.Context, k *adapter.Adapter)
-		expParams  adaptertypes.Params
+	testcases := []struct {
+		name      string
+		setup     func(ctx context.Context, k *adapter.Adapter)
+		expParams adaptertypes.Params
 	}{
 		{
 			name: "success - export default genesis state",
@@ -90,7 +90,7 @@ func TestExportGenesis(t *testing.T) {
 		},
 		{
 			name: "success - export genesis state with custom params",
-			setupState: func(ctx context.Context, k *adapter.Adapter) {
+			setup: func(ctx context.Context, k *adapter.Adapter) {
 				params := adaptertypes.Params{MaxPassthroughPayloadSize: 1024}
 				require.NoError(t, k.SetParams(ctx, params))
 			},
@@ -100,16 +100,16 @@ func TestExportGenesis(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
+	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx, _, k := mockorbiter.OrbiterKeeper(t)
-			ad := k.Adapter()
+			a, deps := mocks.NewAdapterComponent(t)
+			ctx := deps.SdkCtx
 
-			if tc.setupState != nil {
-				tc.setupState(ctx, ad)
+			if tc.setup != nil {
+				tc.setup(ctx, a)
 			}
 
-			genState := ad.ExportGenesis(ctx)
+			genState := a.ExportGenesis(ctx)
 
 			require.Equal(
 				t,

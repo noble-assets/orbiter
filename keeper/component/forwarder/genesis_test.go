@@ -27,13 +27,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"orbiter.dev/keeper/component/forwarder"
-	mockorbiter "orbiter.dev/testutil/mocks/orbiter"
+	"orbiter.dev/testutil/mocks"
 	forwardertypes "orbiter.dev/types/component/forwarder"
 	"orbiter.dev/types/core"
 )
 
 func TestInitGenesis(t *testing.T) {
-	tests := []struct {
+	testcases := []struct {
 		name     string
 		genState *forwardertypes.GenesisState
 		expErr   string
@@ -82,12 +82,12 @@ func TestInitGenesis(t *testing.T) {
 			expErr: "invalid paused cross chain id",
 		},
 	}
-	for _, tc := range tests {
+	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx, _, k := mockorbiter.OrbiterKeeper(t)
-			fw := k.Forwarder()
+			f, deps := mocks.NewForwarderComponent(t)
+			ctx := deps.SdkCtx
 
-			err := fw.InitGenesis(ctx, tc.genState)
+			err := f.InitGenesis(ctx, tc.genState)
 			if tc.expErr != "" {
 				require.ErrorContains(t, err, tc.expErr)
 			} else {
@@ -98,9 +98,9 @@ func TestInitGenesis(t *testing.T) {
 }
 
 func TestExportGenesis(t *testing.T) {
-	tests := []struct {
+	testcases := []struct {
 		name           string
-		setupState     func(ctx context.Context, k *forwarder.Forwarder)
+		setup          func(ctx context.Context, k *forwarder.Forwarder)
 		expPausedProts []core.ProtocolID
 	}{
 		{
@@ -109,7 +109,7 @@ func TestExportGenesis(t *testing.T) {
 		},
 		{
 			name: "success - export genesis state with paused protocols",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {
+			setup: func(ctx context.Context, k *forwarder.Forwarder) {
 				require.NoError(t, k.SetPausedProtocol(ctx, core.PROTOCOL_IBC))
 				require.NoError(t, k.SetPausedProtocol(ctx, core.PROTOCOL_CCTP))
 			},
@@ -117,13 +117,13 @@ func TestExportGenesis(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
+	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx, _, k := mockorbiter.OrbiterKeeper(t)
-			fw := k.Forwarder()
+			fw, deps := mocks.NewForwarderComponent(t)
+			ctx := deps.SdkCtx
 
-			if tc.setupState != nil {
-				tc.setupState(ctx, fw)
+			if tc.setup != nil {
+				tc.setup(ctx, fw)
 			}
 
 			genState := fw.ExportGenesis(ctx)
