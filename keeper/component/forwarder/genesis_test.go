@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
 	"orbiter.dev/keeper/component/forwarder"
 	mockorbiter "orbiter.dev/testutil/mocks/orbiter"
 	forwardertypes "orbiter.dev/types/component/forwarder"
@@ -89,7 +90,10 @@ func TestInitGenesis(t *testing.T) {
 		{
 			name: "success - init genesis overwrites existing paused cross-chains",
 			setupState: func(ctx context.Context, k *forwarder.Forwarder) {
-				ccID := core.CrossChainID{ProtocolId: core.PROTOCOL_HYPERLANE, CounterpartyId: "ethereum"}
+				ccID := core.CrossChainID{
+					ProtocolId:     core.PROTOCOL_HYPERLANE,
+					CounterpartyId: "ethereum",
+				}
 				require.NoError(t, k.SetPausedCrossChain(ctx, ccID))
 			},
 			genState: &forwardertypes.GenesisState{

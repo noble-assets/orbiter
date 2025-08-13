@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
 	"orbiter.dev/keeper/component/adapter"
 	mockorbiter "orbiter.dev/testutil/mocks/orbiter"
 	adaptertypes "orbiter.dev/types/component/adapter"
@@ -129,8 +130,16 @@ func TestExportGenesis(t *testing.T) {
 
 			genState := ad.ExportGenesis(ctx)
 
-			require.NotNil(t, genState)
-			require.Equal(t, tc.expParams.MaxPassthroughPayloadSize, genState.Params.MaxPassthroughPayloadSize)
+			require.Equal(
+				t,
+				tc.expParams.MaxPassthroughPayloadSize,
+				genState.Params.MaxPassthroughPayloadSize,
+			)
+			require.Equal(
+				t,
+				tc.expParams.MaxPassthroughPayloadSize,
+				genState.Params.MaxPassthroughPayloadSize,
+			)
 		})
 	}
 }
