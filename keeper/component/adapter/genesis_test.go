@@ -33,20 +33,17 @@ import (
 
 func TestInitGenesis(t *testing.T) {
 	tests := []struct {
-		name       string
-		setupState func(ctx context.Context, k *adapter.Adapter)
-		genState   *adaptertypes.GenesisState
-		expErr     string
+		name     string
+		genState *adaptertypes.GenesisState
+		expErr   string
 	}{
 		{
-			name:       "success - default genesis state",
-			setupState: func(ctx context.Context, k *adapter.Adapter) {},
-			genState:   adaptertypes.DefaultGenesisState(),
-			expErr:     "",
+			name:     "success - default genesis state",
+			genState: adaptertypes.DefaultGenesisState(),
+			expErr:   "",
 		},
 		{
-			name:       "success - genesis state with custom params",
-			setupState: func(ctx context.Context, k *adapter.Adapter) {},
+			name: "success - genesis state with custom params",
 			genState: &adaptertypes.GenesisState{
 				Params: adaptertypes.Params{
 					MaxPassthroughPayloadSize: 1024,
@@ -55,10 +52,9 @@ func TestInitGenesis(t *testing.T) {
 			expErr: "",
 		},
 		{
-			name:       "error - nil genesis state",
-			setupState: func(ctx context.Context, k *adapter.Adapter) {},
-			genState:   nil,
-			expErr:     "adapter genesis: invalid nil pointer",
+			name:     "error - nil genesis state",
+			genState: nil,
+			expErr:   "adapter genesis: invalid nil pointer",
 		},
 	}
 
@@ -67,17 +63,14 @@ func TestInitGenesis(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ad := k.Adapter()
 
-			tc.setupState(ctx, ad)
-
 			err := ad.InitGenesis(ctx, tc.genState)
 			if tc.expErr != "" {
 				require.ErrorContains(t, err, tc.expErr)
 			} else {
 				require.NoError(t, err)
-				if tc.genState != nil {
-					params := ad.GetParams(ctx)
-					require.Equal(t, tc.genState.Params.MaxPassthroughPayloadSize, params.MaxPassthroughPayloadSize)
-				}
+
+				params := ad.GetParams(ctx)
+				require.Equal(t, tc.genState.Params.MaxPassthroughPayloadSize, params.MaxPassthroughPayloadSize)
 			}
 		})
 	}
@@ -90,8 +83,7 @@ func TestExportGenesis(t *testing.T) {
 		expParams  adaptertypes.Params
 	}{
 		{
-			name:       "success - export default genesis state",
-			setupState: func(ctx context.Context, k *adapter.Adapter) {},
+			name: "success - export default genesis state",
 			expParams: adaptertypes.Params{
 				MaxPassthroughPayloadSize: 0,
 			},
@@ -113,7 +105,9 @@ func TestExportGenesis(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ad := k.Adapter()
 
-			tc.setupState(ctx, ad)
+			if tc.setupState != nil {
+				tc.setupState(ctx, ad)
+			}
 
 			genState := ad.ExportGenesis(ctx)
 

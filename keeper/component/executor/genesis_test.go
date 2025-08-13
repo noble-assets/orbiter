@@ -34,34 +34,29 @@ import (
 
 func TestInitGenesis(t *testing.T) {
 	tests := []struct {
-		name       string
-		setupState func(ctx context.Context, k *executor.Executor)
-		genState   *executortypes.GenesisState
-		expErr     string
+		name     string
+		genState *executortypes.GenesisState
+		expErr   string
 	}{
 		{
-			name:       "success - default genesis state",
-			setupState: func(ctx context.Context, k *executor.Executor) {},
-			genState:   executortypes.DefaultGenesisState(),
-			expErr:     "",
+			name:     "success - default genesis state",
+			genState: executortypes.DefaultGenesisState(),
+			expErr:   "",
 		},
 		{
-			name:       "success - genesis state with paused action IDs",
-			setupState: func(ctx context.Context, k *executor.Executor) {},
+			name: "success - genesis state with paused action IDs",
 			genState: &executortypes.GenesisState{
 				PausedActionIds: []core.ActionID{core.ACTION_FEE},
 			},
 			expErr: "",
 		},
 		{
-			name:       "error - nil genesis state",
-			setupState: func(ctx context.Context, k *executor.Executor) {},
-			genState:   nil,
-			expErr:     "executor genesis: invalid nil pointer",
+			name:     "error - nil genesis state",
+			genState: nil,
+			expErr:   "executor genesis: invalid nil pointer",
 		},
 		{
-			name:       "error - invalid action ID",
-			setupState: func(ctx context.Context, k *executor.Executor) {},
+			name: "error - invalid action ID",
 			genState: &executortypes.GenesisState{
 				PausedActionIds: []core.ActionID{core.ACTION_UNSUPPORTED},
 			},
@@ -73,8 +68,6 @@ func TestInitGenesis(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ex := k.Executor()
-
-			tc.setupState(ctx, ex)
 
 			err := ex.InitGenesis(ctx, tc.genState)
 			if tc.expErr != "" {

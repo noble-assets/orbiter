@@ -34,20 +34,17 @@ import (
 
 func TestInitGenesis(t *testing.T) {
 	tests := []struct {
-		name       string
-		setupState func(ctx context.Context, k *forwarder.Forwarder)
-		genState   *forwardertypes.GenesisState
-		expErr     string
+		name     string
+		genState *forwardertypes.GenesisState
+		expErr   string
 	}{
 		{
-			name:       "success - default genesis state",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {},
-			genState:   forwardertypes.DefaultGenesisState(),
-			expErr:     "",
+			name:     "success - default genesis state",
+			genState: forwardertypes.DefaultGenesisState(),
+			expErr:   "",
 		},
 		{
-			name:       "success - genesis state with both paused protocols and cross-chain IDs",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {},
+			name: "success - genesis state with both paused protocols and cross-chain IDs",
 			genState: &forwardertypes.GenesisState{
 				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_HYPERLANE},
 				PausedCrossChainIds: []*core.CrossChainID{
@@ -57,30 +54,26 @@ func TestInitGenesis(t *testing.T) {
 			expErr: "",
 		},
 		{
-			name:       "error - nil genesis state",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {},
-			genState:   nil,
-			expErr:     "forwarder genesis: invalid nil pointer",
+			name:     "error - nil genesis state",
+			genState: nil,
+			expErr:   "forwarder genesis: invalid nil pointer",
 		},
 		{
-			name:       "error - invalid protocol ID",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {},
+			name: "error - invalid protocol ID",
 			genState: &forwardertypes.GenesisState{
 				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_UNSUPPORTED},
 			},
 			expErr: "invalid paused protocol id",
 		},
 		{
-			name:       "error - nil cross chain ID",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {},
+			name: "error - nil cross chain ID",
 			genState: &forwardertypes.GenesisState{
 				PausedCrossChainIds: []*core.CrossChainID{nil},
 			},
 			expErr: "invalid nil pointer",
 		},
 		{
-			name:       "error - invalid cross chain ID",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {},
+			name: "error - invalid cross chain ID",
 			genState: &forwardertypes.GenesisState{
 				PausedCrossChainIds: []*core.CrossChainID{
 					{ProtocolId: core.PROTOCOL_UNSUPPORTED, CounterpartyId: "channel-1"},
@@ -93,8 +86,6 @@ func TestInitGenesis(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			fw := k.Forwarder()
-
-			tc.setupState(ctx, fw)
 
 			err := fw.InitGenesis(ctx, tc.genState)
 			if tc.expErr != "" {
@@ -114,7 +105,6 @@ func TestExportGenesis(t *testing.T) {
 	}{
 		{
 			name:           "success - export default genesis state",
-			setupState:     func(ctx context.Context, k *forwarder.Forwarder) {},
 			expPausedProts: []core.ProtocolID{},
 		},
 		{
@@ -132,7 +122,9 @@ func TestExportGenesis(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			fw := k.Forwarder()
 
-			tc.setupState(ctx, fw)
+			if tc.setupState != nil {
+				tc.setupState(ctx, fw)
+			}
 
 			genState := fw.ExportGenesis(ctx)
 
