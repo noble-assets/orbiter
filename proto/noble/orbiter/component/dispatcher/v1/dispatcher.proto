@@ -30,7 +30,8 @@ message AmountDispatched {
   ];
 }
 
-// DispatchedAmountEntry tracks dispatched amounts for a (source,destination,denom) tuple.
+// DispatchedAmountEntry contains information on the amounts dispatched between
+// a source and a destination chain for a specific denom.
 message DispatchedAmountEntry {
   noble.orbiter.core.v1.CrossChainID source_id = 1 [(amino.dont_omitempty) = true];
   noble.orbiter.core.v1.CrossChainID destination_id = 2 [(amino.dont_omitempty) = true];
@@ -38,9 +39,10 @@ message DispatchedAmountEntry {
   AmountDispatched amount_dispatched = 4 [(gogoproto.nullable) = false];
 }
 
-// DispatchCountEntry tracks dispatch count for a (source,destination) tuple
+// DispatchCountEntry contains information on the number of dispatched between
+// a source and a destination chain.
 message DispatchCountEntry {
   noble.orbiter.core.v1.CrossChainID source_id = 1 [(amino.dont_omitempty) = true];
   noble.orbiter.core.v1.CrossChainID destination_id = 2 [(amino.dont_omitempty) = true];
-  int64 count = 3;
+  uint64 count = 3;
 }

@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package noble.orbiter.component.dispatcher.v1;
+
+import "amino/amino.proto";
+import "cosmos/query/v1/query.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "noble/orbiter/component/dispatcher/v1/dispatcher.proto";
+import "noble/orbiter/core/v1/id.proto";
+
+option go_package = "orbiter.dev/types/component/dispatcher";
+
+// Query defines the gRPC query service for the Orbiter
+// dispatcher component.
+service Query {
+
+  // DispatchedCounts retrieves the dispatch counts for a specific route.
+  rpc DispatchedCounts(QueryDispatchedCountsRequest) returns (QueryDispatchedCountsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/{source_protocol_id}/{source_counterparty_id}/{destination_protocol_id}/{destination_counterparty_id}";
+  }
+
+  rpc DispatchedCountsBySource(QueryDispatchedCountsBySourceRequest) returns (QueryDispatchedCountsBySourceResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/by-source/{source_protocol_id}";
+  }
+
+  rpc DispatchedCountsByDestination(QueryDispatchedCountsByDestinationRequest) returns (QueryDispatchedCountsByDestinationResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/by-destination/{destination_protocol_id}";
+  }
+}
+
+// QueryDispatchedCountsRequest is the request type for the Query/DispatchedCounts RPC method.
+message QueryDispatchedCountsRequest {
+  // source_protocol_id is the source protocol identifier.
+  noble.orbiter.core.v1.ProtocolID source_protocol_id = 1 [(amino.dont_omitempty) = true];
+  // source_counterparty_id is the source counterparty identifier.
+  string source_counterparty_id = 2;
+  // destination_protocol_id is the destination protocol identifier.
+  noble.orbiter.core.v1.ProtocolID destination_protocol_id = 3 [(amino.dont_omitempty) = true];
+  // destination_counterparty_id is the destination counterparty identifier.
+  string destination_counterparty_id = 4;
+}
+
+// QueryDispatchedCountsResponse is the response type for the Query/DispatchedCounts RPC method.
+message QueryDispatchedCountsResponse {
+  // count is the number of dispatches for the specified route.
+  uint32 count = 1;
+}
+
+message QueryDispatchedCountsBySourceRequest {
+  // source_protocol_id is the source protocol identifier.
+  noble.orbiter.core.v1.ProtocolID source_protocol_id = 1 [(amino.dont_omitempty) = true];
+}
+
+message QueryDispatchedCountsBySourceResponse {
+  repeated DispatchCountEntry counts = 1;
+}
+
+
+message QueryDispatchedCountsByDestinationRequest {
+  // source_protocol_id is the source protocol identifier.
+  noble.orbiter.core.v1.ProtocolID destination_protocol_id = 1 [(amino.dont_omitempty) = true];
+}
+
+message QueryDispatchedCountsByDestinationResponse {
+  repeated DispatchCountEntry counts = 1;
+}

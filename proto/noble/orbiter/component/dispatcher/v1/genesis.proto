@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package noble.orbiter.component.dispatcher.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "noble/orbiter/component/dispatcher/v1/dispatcher.proto";
+
+option go_package = "orbiter.dev/types/component/dispatcher";
+
+// GenesisState defines the dispatcher component genesis state.
+message GenesisState {
+  repeated DispatchedAmountEntry dispatched_amounts = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+  repeated DispatchCountEntry dispatched_counts = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}

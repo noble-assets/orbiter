@@ -26,36 +26,32 @@ import (
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/collections/indexes"
+	"cosmossdk.io/errors"
 	"cosmossdk.io/math"
 
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
 	"orbiter.dev/types/core"
 )
 
-type (
-	// DispatchedAmountsKey is defined as:
-	// (source protocol ID, source counterparty ID, destination cross-chain ID, denom).
-	DispatchedAmountsKey = collections.Quad[uint32, string, string, string]
-	// DispatchedCountsKey is defined as:
-	// (source protocol ID, source counterparty ID, destination cross-chain ID).
-	DispatchedCountsKey = collections.Triple[uint32, string, string]
-)
+// DispatchedAmountsKey is defined as:
+// (source protocol ID, source counterparty ID, destination cross-chain ID, denom).
+type DispatchedAmountsKey = collections.Quad[int32, string, string, string]
 
 type DispatchedAmountsIndexes struct {
 	// ByDestinationProtocolID keeps track of entries indexes associated
 	// with a single destination protocol ID.
-	ByDestinationProtocolID *indexes.Multi[uint32, DispatchedAmountsKey, dispatchertypes.AmountDispatched]
+	ByDestinationProtocolID *indexes.Multi[int32, DispatchedAmountsKey, dispatchertypes.AmountDispatched]
 	// ByDestinationCrossChainID keeps track of entries indexes associated with a tuple:
 	// (destination protocol Id, destination chain Id, denom).
-	ByDestinationCrossChainID *indexes.Multi[collections.Triple[uint32, string, string], DispatchedAmountsKey, dispatchertypes.AmountDispatched]
+	ByDestinationCrossChainID *indexes.Multi[collections.Triple[int32, string, string], DispatchedAmountsKey, dispatchertypes.AmountDispatched]
 }
 
 func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmountsIndexes {
 	primaryKeyCodec := collections.QuadKeyCodec(
-		collections.Uint32Key,
-		collections.StringKey,
-		collections.StringKey,
-		collections.StringKey,
+		collections.Int32Key,  // source protocol ID
+		collections.StringKey, // source counterparty ID
+		collections.StringKey, // destination cross-chain ID
+		collections.StringKey, // denom
 	)
 
 	return DispatchedAmountsIndexes{
@@ -63,15 +59,15 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			sb,
 			core.DispatchedAmountsPrefixByDestinationProtocolID,
 			core.DispatchedAmountsName+"_by_destination_protocol_id",
-			collections.Uint32Key,
+			collections.Int32Key,
 			primaryKeyCodec,
-			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (uint32, error) {
+			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (int32, error) {
 				ccID, err := core.ParseCrossChainID(pk.K3())
 				if err != nil {
-					return 0, fmt.Errorf("error parsing destination cross-chain ID: %w", err)
+					return 0, errors.Wrap(err, "error parsing destination cross-chain ID")
 				}
 
-				return ccID.GetProtocolId().Uint32(), nil
+				return int32(ccID.GetProtocolId()), nil
 			},
 		),
 		ByDestinationCrossChainID: indexes.NewMulti(
@@ -79,60 +75,25 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			core.DispatchedAmountsPrefixByDestinationCrossChainID,
 			core.DispatchedAmountsName+"_by_destination_orbit_id",
 			collections.TripleKeyCodec(
-				collections.Uint32Key,
+				collections.Int32Key,
 				collections.StringKey,
 				collections.StringKey,
 			),
 			primaryKeyCodec,
-			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (collections.Triple[uint32, string, string], error) {
+			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (collections.Triple[int32, string, string], error) {
 				ccID, err := core.ParseCrossChainID(pk.K3())
 				if err != nil {
-					return collections.Triple[uint32, string, string]{}, fmt.Errorf(
-						"error parsing destination cross-chain ID: %w",
+					return collections.Triple[int32, string, string]{}, errors.Wrap(
 						err,
+						"error parsing destination cross-chain ID",
 					)
 				}
 
 				return collections.Join3(
-					ccID.GetProtocolId().Uint32(),
+					int32(ccID.GetProtocolId()),
 					ccID.GetCounterpartyId(),
 					pk.K4(),
 				), nil
-			},
-		),
-	}
-}
-
-type DispatchedCountsIndexes struct {
-	// ByDestinationProtocolID keeps track of entries indexes associated
-	// with a single destination protocol ID.
-	ByDestinationProtocolID *indexes.Multi[uint32, DispatchedCountsKey, uint32]
-}
-
-func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsIndexes {
-	primaryKeyCodec := collections.TripleKeyCodec(
-		collections.Uint32Key,
-		collections.StringKey,
-		collections.StringKey,
-	)
-
-	return DispatchedCountsIndexes{
-		ByDestinationProtocolID: indexes.NewMulti(
-			sb,
-			core.DispatchedCountsPrefixByDestinationProtocolID,
-			core.DispatchedCountsName+"_by_destination_protocol_id",
-			collections.Uint32Key,
-			primaryKeyCodec,
-			func(pk DispatchedCountsKey, _ uint32) (uint32, error) {
-				ccID, err := core.ParseCrossChainID(pk.K3())
-				if err != nil {
-					return 0, fmt.Errorf(
-						"error parsing destination cross-chain ID: %w",
-						err,
-					)
-				}
-
-				return ccID.GetProtocolId().Uint32(), nil
 			},
 		),
 	}
@@ -149,7 +110,7 @@ func (d *Dispatcher) GetDispatchedAmount(
 	denom string,
 ) dispatchertypes.AmountDispatched {
 	key := collections.Join4(
-		sourceID.GetProtocolId().Uint32(),
+		int32(sourceID.GetProtocolId()),
 		sourceID.GetCounterpartyId(),
 		destID.ID(),
 		denom,
@@ -157,6 +118,12 @@ func (d *Dispatcher) GetDispatchedAmount(
 
 	amountDispatched, err := d.dispatchedAmounts.Get(ctx, key)
 	if err != nil {
+		d.logger.Error("received an error getting dispatched amounts",
+			"error", err,
+			"source_id", sourceID.ID(),
+			"dest_id", destID.ID(),
+			"denom", denom,
+		)
 		amountDispatched = dispatchertypes.AmountDispatched{
 			Incoming: math.ZeroInt(),
 			Outgoing: math.ZeroInt(),
@@ -182,13 +149,13 @@ func (d *Dispatcher) HasDispatchedAmount(
 
 func (d *Dispatcher) SetDispatchedAmount(
 	ctx context.Context,
-	sourceID core.CrossChainID,
-	destID core.CrossChainID,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
 	denom string,
 	amountDispatched dispatchertypes.AmountDispatched,
 ) error {
 	key := collections.Join4(
-		sourceID.GetProtocolId().Uint32(),
+		int32(sourceID.GetProtocolId()),
 		sourceID.GetCounterpartyId(),
 		destID.ID(),
 		denom,
@@ -223,9 +190,7 @@ func (d *Dispatcher) IterateDispatchedAmountsByProtocolID(
 	protocolID core.ProtocolID,
 	callback func(string, dispatchertypes.ChainAmountDispatched) bool,
 ) {
-	prefix := collections.NewPrefixedQuadRange[uint32, string, string, string](
-		protocolID.Uint32(),
-	)
+	prefix := collections.NewPrefixedQuadRange[int32, string, string, string](int32(protocolID))
 
 	err := d.dispatchedAmounts.Walk(
 		ctx,
@@ -272,13 +237,13 @@ func (d *Dispatcher) IterateDispatchedAmountsByDestinationProtocolID(
 	protocolID core.ProtocolID,
 	callback func(string, dispatchertypes.ChainAmountDispatched) bool,
 ) {
-	rng := collections.NewPrefixedPairRange[uint32, DispatchedAmountsKey](protocolID.Uint32())
+	rng := collections.NewPrefixedPairRange[int32, DispatchedAmountsKey](int32(protocolID))
 
 	err := d.dispatchedAmounts.Indexes.ByDestinationProtocolID.Walk(
 		ctx,
 		rng,
 		func(
-			indexingKey uint32,
+			indexingKey int32,
 			indexedKey DispatchedAmountsKey,
 		) (stop bool, err error) {
 			// Get the actual value from the main collection using the indexed key
@@ -309,46 +274,135 @@ func (d *Dispatcher) IterateDispatchedAmountsByDestinationProtocolID(
 // Dispatched Counts
 // ====================================================================================================
 
-func (d *Dispatcher) GetDispatchedCounts(
-	ctx context.Context,
-	sourceID core.CrossChainID,
-	destID core.CrossChainID,
-) uint32 {
-	key := collections.Join3(
-		sourceID.GetProtocolId().Uint32(),
-		sourceID.GetCounterpartyId(),
-		destID.ID(),
+// DispatchedCountsKey is defined as:
+// (source protocol ID, source counterparty ID, destination cross-chain ID).
+type DispatchedCountsKey = collections.Quad[int32, string, int32, string]
+
+type DispatchedCountsIndexes struct {
+	// ByDestinationProtocolID keeps track of entries indexes associated
+	// with a single destination protocol ID.
+	ByDestinationProtocolID *indexes.Multi[int32, DispatchedCountsKey, uint32]
+}
+
+func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsIndexes {
+	primaryKeyCodec := collections.QuadKeyCodec(
+		collections.Int32Key,  // source protocol ID
+		collections.StringKey, // source counterparty ID
+		collections.Int32Key,  // destinationprotocol ID
+		collections.StringKey, // destination counterparty ID
 	)
 
-	countDispatches, err := d.dispatchCounts.Get(ctx, key)
+	return DispatchedCountsIndexes{
+		ByDestinationProtocolID: indexes.NewMulti(
+			sb,
+			core.DispatchedCountsPrefixByDestinationProtocolID,
+			core.DispatchedCountsName+"_by_destination_protocol_id",
+			collections.Int32Key,
+			primaryKeyCodec,
+			func(pk DispatchedCountsKey, _ uint32) (int32, error) {
+				return pk.K3(), nil
+			},
+		),
+	}
+}
+
+// GetDispatchedCounts returns the number of dispatches between the
+// two cross-chain IDs. Return 0 in case of an error.
+func (d *Dispatcher) GetDispatchedCounts(
+	ctx context.Context,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
+) uint64 {
+	key := collections.Join4(
+		int32(sourceID.GetProtocolId()),
+		sourceID.GetCounterpartyId(),
+		int32(destID.GetProtocolId().Uint32()),
+		destID.GetCounterpartyId(),
+	)
+
+	counts, err := d.dispatchCounts.Get(ctx, key)
 	if err != nil {
-		countDispatches = 0
+		d.logger.Error("received an error getting dispatches count",
+			"error", err,
+			"source_id", sourceID.ID(),
+			"dest_id", destID.ID(),
+		)
+		counts = 0
 	}
 
-	return countDispatches
+	return counts
 }
 
 func (d *Dispatcher) HasDispatchedCounts(
 	ctx context.Context,
-	sourceID core.CrossChainID,
-	destID core.CrossChainID,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
 ) bool {
-	countDispatches := d.GetDispatchedCounts(ctx, sourceID, destID)
+	counts := d.GetDispatchedCounts(ctx, sourceID, destID)
 
-	return countDispatches != 0
+	return counts != 0
 }
 
 func (d *Dispatcher) SetDispatchedCounts(
 	ctx context.Context,
-	sourceID core.CrossChainID,
-	destID core.CrossChainID,
-	countDispatches uint32,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
+	counts uint64,
 ) error {
-	key := collections.Join3(
-		sourceID.GetProtocolId().Uint32(),
+	key := collections.Join4(
+		int32(sourceID.GetProtocolId()),
 		sourceID.GetCounterpartyId(),
-		destID.ID(),
+		int32(destID.GetProtocolId()),
+		destID.GetCounterpartyId(),
 	)
 
-	return d.dispatchCounts.Set(ctx, key, countDispatches)
+	return d.dispatchCounts.Set(ctx, key, counts)
+}
+
+func (d *Dispatcher) GetDispatchedCountsByDestinationProtocolID(
+	ctx context.Context,
+	id core.ProtocolID,
+) []dispatchertypes.DispatchCountEntry {
+	counts := []dispatchertypes.DispatchCountEntry{}
+
+	rng := collections.NewPrefixedPairRange[int32, DispatchedCountsKey](int32(id))
+	err := d.dispatchCounts.Indexes.ByDestinationProtocolID.Walk(
+		ctx,
+		rng,
+		func(
+			indexingKey int32,
+			indexedKey DispatchedCountsKey,
+		) (stop bool, err error) {
+			value, err := d.dispatchCounts.Get(ctx, indexedKey)
+			if err != nil {
+				return true, err
+			}
+
+			sourceID, err := core.NewCrossChainID(core.ProtocolID(indexedKey.K1()), indexedKey.K2())
+			if err != nil {
+				return true, fmt.Errorf("error creating source cross-chain ID: %w", err)
+			}
+
+			destID, err := core.NewCrossChainID(core.ProtocolID(indexedKey.K3()), indexedKey.K4())
+			if err != nil {
+				return true, fmt.Errorf("error creating destination cross-chain ID: %w", err)
+			}
+
+			entry := dispatchertypes.DispatchCountEntry{
+				SourceId:      &sourceID,
+				DestinationId: &destID,
+				Count:         value,
+			}
+			counts = append(counts, entry)
+
+			return false, nil
+		},
+	)
+	if err != nil {
+		d.logger.Error("error in dispatchedCounts walking ByDestinationProtocolID index")
+
+		return []dispatchertypes.DispatchCountEntry{}
+	}
+
+	return counts
 }

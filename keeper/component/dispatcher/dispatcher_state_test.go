@@ -61,13 +61,7 @@ func TestGetDispatchedAmount(t *testing.T) {
 		Outgoing: math.NewInt(50),
 	}
 
-	err := dispatcher.SetDispatchedAmount(
-		ctx,
-		sourceID,
-		destID,
-		UsdcDenom,
-		expectedAmount,
-	)
+	err := dispatcher.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, expectedAmount)
 	require.NoError(t, err)
 
 	// ACT: Test getting existing dispatch record
@@ -102,7 +96,7 @@ func TestHasDispatchedAmount(t *testing.T) {
 		Incoming: math.NewInt(100),
 		Outgoing: math.NewInt(50),
 	}
-	err := dispatcher.SetDispatchedAmount(ctx, sourceID, destID, UsdcDenom, amount)
+	err := dispatcher.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
 	require.NoError(t, err)
 
 	// ACT: Test existing dispatch record
@@ -132,7 +126,7 @@ func TestSetDispatchedAmount(t *testing.T) {
 	}
 
 	// ACT: Test setting dispatch record
-	err := dispatcher.SetDispatchedAmount(ctx, sourceID, destID, UsdcDenom, amount)
+	err := dispatcher.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
 
 	// ASSERT
 	require.NoError(t, err)
@@ -147,13 +141,7 @@ func TestSetDispatchedAmount(t *testing.T) {
 	}
 
 	// ACT
-	err = dispatcher.SetDispatchedAmount(
-		ctx,
-		sourceID,
-		destID,
-		UsdcDenom,
-		updatedAmount,
-	)
+	err = dispatcher.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, updatedAmount)
 
 	// ASSERT
 	require.NoError(t, err)
@@ -169,7 +157,7 @@ func TestSetDispatchedAmount(t *testing.T) {
 	}
 
 	// ACT
-	err = dispatcher.SetDispatchedAmount(ctx, sourceID, invalidDestID, UsdcDenom, amount)
+	err = dispatcher.SetDispatchedAmount(ctx, &sourceID, &invalidDestID, UsdcDenom, amount)
 	require.ErrorContains(t, err, "error parsing destination cross-chain ID")
 }
 
@@ -211,9 +199,9 @@ func TestGetDispatchedAmountByProtocolID(t *testing.T) {
 		Outgoing: math.NewInt(100),
 	}
 
-	err := dispatcher.SetDispatchedAmount(ctx, sourceID1, destID, UsdcDenom, amount1)
+	err := dispatcher.SetDispatchedAmount(ctx, &sourceID1, &destID, UsdcDenom, amount1)
 	require.NoError(t, err)
-	err = dispatcher.SetDispatchedAmount(ctx, sourceID2, destID, UsdcDenom, amount2)
+	err = dispatcher.SetDispatchedAmount(ctx, &sourceID2, &destID, UsdcDenom, amount2)
 	require.NoError(t, err)
 
 	// ACT: Test getting protocol total dispatched
@@ -336,13 +324,7 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 
 	// Set all dispatch records
 	for _, tc := range testCases {
-		err := dispatcher.SetDispatchedAmount(
-			ctx,
-			tc.sourceID,
-			tc.destID,
-			tc.denom,
-			tc.amount,
-		)
+		err := dispatcher.SetDispatchedAmount(ctx, &tc.sourceID, &tc.destID, tc.denom, tc.amount)
 		require.NoError(t, err)
 	}
 
@@ -351,12 +333,7 @@ func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
 		result := dispatcher.GetDispatchedAmount(ctx, tc.sourceID, tc.destID, tc.denom)
 		require.Equal(t, tc.amount, result)
 
-		hasDispatched := dispatcher.HasDispatchedAmount(
-			ctx,
-			tc.sourceID,
-			tc.destID,
-			tc.denom,
-		)
+		hasDispatched := dispatcher.HasDispatchedAmount(ctx, tc.sourceID, tc.destID, tc.denom)
 		require.True(t, hasDispatched)
 	}
 
@@ -383,24 +360,24 @@ func TestSetAndGetDispatchedCounts(t *testing.T) {
 	}
 
 	// ACT: Test setting dispatch record
-	err := dispatcher.SetDispatchedCounts(ctx, sourceID, destID, 1)
+	err := dispatcher.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
 
 	// ASSERT
 	require.NoError(t, err)
 
-	result := dispatcher.GetDispatchedCounts(ctx, sourceID, destID)
+	result := dispatcher.GetDispatchedCounts(ctx, &sourceID, &destID)
 	require.Equal(t, uint32(1), result)
 
 	// ARRANGE: Test updating existing dispatched counts record
 
 	// ACT
-	err = dispatcher.SetDispatchedCounts(ctx, sourceID, destID, 10)
+	err = dispatcher.SetDispatchedCounts(ctx, &sourceID, &destID, 10)
 
 	// ASSERT
 	require.NoError(t, err)
 
 	// Verify the record was updated
-	result = dispatcher.GetDispatchedCounts(ctx, sourceID, destID)
+	result = dispatcher.GetDispatchedCounts(ctx, &sourceID, &destID)
 	require.Equal(t, uint32(10), result)
 
 	// ARRANGE: set a dispatched counts with an invalid destination protocol ID
@@ -410,7 +387,7 @@ func TestSetAndGetDispatchedCounts(t *testing.T) {
 	}
 
 	// ACT
-	err = dispatcher.SetDispatchedCounts(ctx, sourceID, invalidDestID, 1)
+	err = dispatcher.SetDispatchedCounts(ctx, &sourceID, &invalidDestID, 1)
 	require.ErrorContains(t, err, "error parsing destination cross-chain ID")
 }
 
@@ -463,11 +440,11 @@ func TestGetDispatchedAmountByDestinationProtocolID(t *testing.T) {
 		Outgoing: math.NewInt(100),
 	}
 
-	err := dispatcher.SetDispatchedAmount(ctx, sourceID1, destID, denom, amount1)
+	err := dispatcher.SetDispatchedAmount(ctx, &sourceID1, &destID, denom, amount1)
 	require.NoError(t, err)
-	err = dispatcher.SetDispatchedAmount(ctx, sourceID2, destID, denom, amount2)
+	err = dispatcher.SetDispatchedAmount(ctx, &sourceID2, &destID, denom, amount2)
 	require.NoError(t, err)
-	err = dispatcher.SetDispatchedAmount(ctx, sourceID3, destID, denom, amount2)
+	err = dispatcher.SetDispatchedAmount(ctx, &sourceID3, &destID, denom, amount2)
 	require.NoError(t, err)
 
 	// ACT: Test getting protocol total dispatched

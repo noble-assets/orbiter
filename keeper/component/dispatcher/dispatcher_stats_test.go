@@ -202,17 +202,17 @@ func TestUpdateStats(t *testing.T) {
 					CounterpartyId: "ethereum",
 				}
 
-				err := d.SetDispatchedCounts(ctx, sourceID, destID, 10)
+				err := d.SetDispatchedCounts(ctx, &sourceID, &destID, 10)
 				require.NoError(t, err)
 
 				da := dispatchertypes.AmountDispatched{
 					Incoming: math.NewInt(1_000),
 					Outgoing: math.NewInt(1_000),
 				}
-				err = d.SetDispatchedAmount(ctx, sourceID, destID, "uusdc", da)
+				err = d.SetDispatchedAmount(ctx, &sourceID, &destID, "uusdc", da)
 				require.NoError(t, err)
 
-				err = d.SetDispatchedAmount(ctx, destID, sourceID, "uusdc", da)
+				err = d.SetDispatchedAmount(ctx, &destID, &sourceID, "uusdc", da)
 				require.NoError(t, err)
 			},
 			transferAttr: func() *types.TransferAttributes {
@@ -285,7 +285,7 @@ func TestUpdateStats(t *testing.T) {
 				}
 
 				// Verify count stats
-				actualCounts := dispatcher.GetDispatchedCounts(ctx, sourceID, destID)
+				actualCounts := dispatcher.GetDispatchedCounts(ctx, &sourceID, &destID)
 
 				require.Equal(t, tC.expectedCounts, actualCounts)
 			}

@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	"cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -44,7 +45,7 @@ type Dispatcher struct {
 	ActionHandler     types.PacketHandler[*types.ActionPacket]
 	// Stats
 	dispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, dispatchertypes.AmountDispatched, DispatchedAmountsIndexes]
-	dispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint32, DispatchedCountsIndexes]
+	dispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint64, DispatchedCountsIndexes]
 }
 
 // New creates a new validated instance of a the dispatcher component.
@@ -74,7 +75,7 @@ func New(
 			core.DispatchedAmountsPrefix,
 			core.DispatchedAmountsName,
 			collections.QuadKeyCodec(
-				collections.Uint32Key,
+				collections.Int32Key,
 				collections.StringKey,
 				collections.StringKey,
 				collections.StringKey,
@@ -86,12 +87,13 @@ func New(
 			sb,
 			core.DispatchedCountsPrefix,
 			core.DispatchedCountsName,
-			collections.TripleKeyCodec(
-				collections.Uint32Key,
+			collections.QuadKeyCodec(
+				collections.Int32Key,
 				collections.StringKey,
+				collections.Int32Key,
 				collections.StringKey,
 			),
-			collections.Uint32Value,
+			collections.Uint64Value,
 			newDispatchedCountsIndexes(sb),
 		),
 	}
@@ -126,19 +128,21 @@ func (d *Dispatcher) DispatchPayload(
 	payload *core.Payload,
 ) error {
 	if err := d.ValidatePayload(payload); err != nil {
+		// TODO: look at how it is displayed
 		return core.ErrValidation.Wrap(err.Error())
 	}
 
 	if err := d.dispatchActions(ctx, transferAttr, payload.PreActions); err != nil {
-		return fmt.Errorf("actions dispatch failed: %w", err)
+		return errors.Wrap(err, "actions dispatch failed")
 	}
 
 	if err := d.dispatchForwarding(ctx, transferAttr, payload.Forwarding); err != nil {
-		return fmt.Errorf("forwarding dispatch failed: %w", err)
+		return errors.Wrap(err, "forwarding dispatch failed")
 	}
 
 	if err := d.UpdateStats(ctx, transferAttr, payload.Forwarding); err != nil {
-		d.logger.Error("Error updating Orbiter statistics", "error", err.Error())
+		// NOTE: we don't want to interrupt a dispatch because stats are not updated.
+		d.logger.Error("Error updating Orbiter statistics", "error", err)
 	}
 
 	return nil
@@ -157,17 +161,28 @@ func (d *Dispatcher) dispatchActions(
 	transferAttr *types.TransferAttributes,
 	actions []*core.Action,
 ) error {
+	d.logger.Debug("started actions dispatching", "num_actions", len(actions))
 	for _, action := range actions {
 		packet, err := types.NewActionPacket(transferAttr, action)
 		if err != nil {
-			return fmt.Errorf("error creating action %s packet: %w", action.ID(), err)
+			return errors.Wrapf(err, "error creating action %s packet", action.ID())
 		}
 
+		d.logger.Debug(
+			"dispatching action",
+			"id",
+			action.ID(),
+			"dest_denom",
+			transferAttr.DestinationDenom(),
+			"dest_amount",
+			transferAttr.DestinationAmount().String(),
+		)
 		err = d.dispatchActionPacket(ctx, packet)
 		if err != nil {
 			return fmt.Errorf("error dispatching action %s packet: %w", action.ID(), err)
 		}
 	}
+	d.logger.Debug("completed actions dispatching")
 
 	return nil
 }
@@ -179,6 +194,7 @@ func (d *Dispatcher) dispatchForwarding(
 	transferAttr *types.TransferAttributes,
 	forwarding *core.Forwarding,
 ) error {
+	d.logger.Debug("started forwarding dispatching")
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {
 		return fmt.Errorf(
@@ -188,6 +204,15 @@ func (d *Dispatcher) dispatchForwarding(
 		)
 	}
 
+	d.logger.Debug(
+		"dispatching forwarding",
+		"id",
+		forwarding.ProtocolID(),
+		"dest_denom",
+		transferAttr.DestinationDenom(),
+		"dest_amount",
+		transferAttr.DestinationAmount().String(),
+	)
 	err = d.dispatchForwardingPacket(ctx, packet)
 	if err != nil {
 		return fmt.Errorf(
