@@ -24,6 +24,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/types/errors"
+
 	forwardertypes "orbiter.dev/types/component/forwarder"
 	"orbiter.dev/types/core"
 )
@@ -43,6 +45,10 @@ func (s queryServer) IsProtocolPaused(
 	ctx context.Context,
 	req *forwardertypes.QueryIsProtocolPausedRequest,
 ) (*forwardertypes.QueryIsProtocolPausedResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
+
 	paused, err := s.Forwarder.IsProtocolPaused(ctx, req.ProtocolId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query protocol paused status: %w", err)
@@ -58,6 +64,10 @@ func (s queryServer) PausedProtocols(
 	ctx context.Context,
 	req *forwardertypes.QueryPausedProtocolsRequest,
 ) (*forwardertypes.QueryPausedProtocolsResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
+
 	paused, err := s.GetPausedProtocols(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query paused protocols: %w", err)
@@ -72,6 +82,10 @@ func (s queryServer) IsCrossChainPaused(
 	ctx context.Context,
 	req *forwardertypes.QueryIsCrossChainPausedRequest,
 ) (*forwardertypes.QueryIsCrossChainPausedResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
+
 	ccID, err := core.NewCrossChainID(req.ProtocolId, req.CounterpartyId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query counterparty paused status: %w", err)
@@ -92,6 +106,10 @@ func (s queryServer) PausedCrossChains(
 	ctx context.Context,
 	req *forwardertypes.QueryPausedCrossChainsRequest,
 ) (*forwardertypes.QueryPausedCrossChainsResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
+
 	id := req.ProtocolId
 	paused, err := s.GetPausedCrossChains(ctx, &id)
 	if err != nil {

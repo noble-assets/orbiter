@@ -23,6 +23,8 @@ package adapter
 import (
 	"context"
 
+	"github.com/cosmos/cosmos-sdk/types/errors"
+
 	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
@@ -41,6 +43,10 @@ func (s queryServer) Params(
 	ctx context.Context,
 	req *adaptertypes.QueryParamsRequest,
 ) (*adaptertypes.QueryParamsResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
+
 	params := s.GetParams(ctx)
 
 	return &adaptertypes.QueryParamsResponse{

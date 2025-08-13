@@ -24,6 +24,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/types/errors"
+
 	executortypes "orbiter.dev/types/component/executor"
 )
 
@@ -42,6 +44,10 @@ func (s queryServer) IsActionPaused(
 	ctx context.Context,
 	req *executortypes.QueryIsActionPausedRequest,
 ) (*executortypes.QueryIsActionPausedResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
+
 	paused, err := s.Executor.IsActionPaused(ctx, req.ActionId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query action paused status: %w", err)
@@ -57,6 +63,10 @@ func (s queryServer) PausedActions(
 	ctx context.Context,
 	req *executortypes.QueryPausedActionsRequest,
 ) (*executortypes.QueryPausedActionsResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
+
 	paused, err := s.GetPausedActions(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query paused actions: %w", err)
