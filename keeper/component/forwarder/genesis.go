@@ -35,11 +35,11 @@ func (f *Forwarder) InitGenesis(ctx context.Context, g *forwardertypes.GenesisSt
 	}
 	for _, id := range g.PausedProtocolIds {
 		if err := id.Validate(); err != nil {
-			return fmt.Errorf("invalid paused protocol id %q: %w", id, err)
+			return fmt.Errorf("invalid paused protocol ID %q: %w", id, err)
 		}
 
 		if err := f.SetPausedProtocol(ctx, id); err != nil {
-			return fmt.Errorf("error setting genesis paused protocol id: %w", err)
+			return fmt.Errorf("error setting genesis paused protocol ID: %w", err)
 		}
 	}
 

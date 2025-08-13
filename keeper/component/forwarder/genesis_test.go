@@ -63,7 +63,7 @@ func TestInitGenesis(t *testing.T) {
 			genState: &forwardertypes.GenesisState{
 				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_UNSUPPORTED},
 			},
-			expErr: "invalid paused protocol id",
+			expErr: "invalid paused protocol ID",
 		},
 		{
 			name: "error - nil cross chain ID",
