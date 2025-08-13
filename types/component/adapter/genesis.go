@@ -30,5 +30,5 @@ func DefaultGenesisState() *GenesisState {
 	}
 }
 
-// Validate returns an error if any of the genesis field is not valid.
+// Validate returns an error if any of the genesis fields are not valid.
 func (g *GenesisState) Validate() error { return nil }

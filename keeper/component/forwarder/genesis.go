@@ -34,6 +34,10 @@ func (f *Forwarder) InitGenesis(ctx context.Context, g *forwardertypes.GenesisSt
 		return core.ErrNilPointer.Wrap("forwarder genesis")
 	}
 	for _, id := range g.PausedProtocolIds {
+		if err := id.Validate(); err != nil {
+			return fmt.Errorf("invalid paused protocol id %q: %w", id, err)
+		}
+
 		if err := f.SetPausedProtocol(ctx, id); err != nil {
 			return fmt.Errorf("error setting genesis paused protocol id: %w", err)
 		}
@@ -43,6 +47,11 @@ func (f *Forwarder) InitGenesis(ctx context.Context, g *forwardertypes.GenesisSt
 		if id == nil {
 			return core.ErrNilPointer.Wrap("invalid cross-chain ID")
 		}
+
+		if err := id.Validate(); err != nil {
+			return fmt.Errorf("invalid paused cross chain id %q: %w", id, err)
+		}
+
 		if err := f.SetPausedCrossChain(ctx, *id); err != nil {
 			return fmt.Errorf("error setting genesis paused cross-chain id: %w", err)
 		}
@@ -57,6 +66,7 @@ func (f *Forwarder) ExportGenesis(ctx context.Context) *forwardertypes.GenesisSt
 	if err != nil {
 		f.logger.Error("error exporting paused protocols", "err", err.Error())
 	}
+
 	// TODO: add method to get all protocols and counterparties.
 	return &forwardertypes.GenesisState{
 		PausedProtocolIds:   pausedProtocols,

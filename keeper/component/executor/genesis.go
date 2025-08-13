@@ -34,6 +34,10 @@ func (e *Executor) InitGenesis(ctx context.Context, g *executortypes.GenesisStat
 		return core.ErrNilPointer.Wrap("executor genesis")
 	}
 	for _, id := range g.PausedActionIds {
+		if err := id.Validate(); err != nil {
+			return fmt.Errorf("invalid paused action id: %w", err)
+		}
+
 		if err := e.SetPausedAction(ctx, id); err != nil {
 			return fmt.Errorf("error setting genesis paused action id: %w", err)
 		}

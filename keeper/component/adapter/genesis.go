@@ -33,6 +33,7 @@ func (a *Adapter) InitGenesis(ctx context.Context, g *adaptertypes.GenesisState)
 	if g == nil {
 		return core.ErrNilPointer.Wrap("adapter genesis")
 	}
+
 	if err := a.SetParams(ctx, g.Params); err != nil {
 		return fmt.Errorf("error setting genesis params: %w", err)
 	}
