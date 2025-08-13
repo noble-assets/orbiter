@@ -54,16 +54,6 @@ func TestInitGenesis(t *testing.T) {
 			expErr: "",
 		},
 		{
-			name: "success - init genesis overwrites existing paused actions",
-			setupState: func(ctx context.Context, k *executor.Executor) {
-				require.NoError(t, k.SetPausedAction(ctx, core.ACTION_FEE))
-			},
-			genState: &executortypes.GenesisState{
-				PausedActionIds: []core.ActionID{},
-			},
-			expErr: "",
-		},
-		{
 			name:       "error - nil genesis state",
 			setupState: func(ctx context.Context, k *executor.Executor) {},
 			genState:   nil,

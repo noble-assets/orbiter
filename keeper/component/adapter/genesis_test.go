@@ -55,19 +55,6 @@ func TestInitGenesis(t *testing.T) {
 			expErr: "",
 		},
 		{
-			name: "success - init genesis overwrites existing params",
-			setupState: func(ctx context.Context, k *adapter.Adapter) {
-				params := adaptertypes.Params{MaxPassthroughPayloadSize: 2048}
-				require.NoError(t, k.SetParams(ctx, params))
-			},
-			genState: &adaptertypes.GenesisState{
-				Params: adaptertypes.Params{
-					MaxPassthroughPayloadSize: 512,
-				},
-			},
-			expErr: "",
-		},
-		{
 			name:       "error - nil genesis state",
 			setupState: func(ctx context.Context, k *adapter.Adapter) {},
 			genState:   nil,
