@@ -70,7 +70,7 @@ var xxx_messageInfo_QueryPausedProtocolsRequest proto.InternalMessageInfo
 
 // QueryPausedProtocolsResponse is the response type for the Query/PausedProtocol RPC method.
 type QueryPausedProtocolsResponse struct {
-	ProtocolId []core.ProtocolID `protobuf:"varint,1,rep,packed,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"protocol_id,omitempty"`
+	ProtocolIds []core.ProtocolID `protobuf:"varint,1,rep,packed,name=protocol_ids,json=protocolIds,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"protocol_ids,omitempty"`
 }
 
 func (m *QueryPausedProtocolsResponse) Reset()         { *m = QueryPausedProtocolsResponse{} }
@@ -106,31 +106,31 @@ func (m *QueryPausedProtocolsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryPausedProtocolsResponse proto.InternalMessageInfo
 
-func (m *QueryPausedProtocolsResponse) GetProtocolId() []core.ProtocolID {
+func (m *QueryPausedProtocolsResponse) GetProtocolIds() []core.ProtocolID {
 	if m != nil {
-		return m.ProtocolId
+		return m.ProtocolIds
 	}
 	return nil
 }
 
-// QueryPausedCounterpartiesRequest is the request type for the Query/PausedCounterparties RPC method.
-type QueryPausedCounterpartiesRequest struct {
+// QueryPausedCrossChainsRequest is the request type for the Query/PausedCrossChains RPC method.
+type QueryPausedCrossChainsRequest struct {
 	// protocol_id is the protocol to query paused counterparties for.
 	ProtocolId core.ProtocolID `protobuf:"varint,1,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"protocol_id,omitempty"`
 }
 
-func (m *QueryPausedCounterpartiesRequest) Reset()         { *m = QueryPausedCounterpartiesRequest{} }
-func (m *QueryPausedCounterpartiesRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryPausedCounterpartiesRequest) ProtoMessage()    {}
-func (*QueryPausedCounterpartiesRequest) Descriptor() ([]byte, []int) {
+func (m *QueryPausedCrossChainsRequest) Reset()         { *m = QueryPausedCrossChainsRequest{} }
+func (m *QueryPausedCrossChainsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryPausedCrossChainsRequest) ProtoMessage()    {}
+func (*QueryPausedCrossChainsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_aaf39c97a61ced58, []int{2}
 }
-func (m *QueryPausedCounterpartiesRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryPausedCrossChainsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPausedCounterpartiesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryPausedCrossChainsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPausedCounterpartiesRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryPausedCrossChainsRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -140,43 +140,43 @@ func (m *QueryPausedCounterpartiesRequest) XXX_Marshal(b []byte, deterministic b
 		return b[:n], nil
 	}
 }
-func (m *QueryPausedCounterpartiesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPausedCounterpartiesRequest.Merge(m, src)
+func (m *QueryPausedCrossChainsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryPausedCrossChainsRequest.Merge(m, src)
 }
-func (m *QueryPausedCounterpartiesRequest) XXX_Size() int {
+func (m *QueryPausedCrossChainsRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPausedCounterpartiesRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPausedCounterpartiesRequest.DiscardUnknown(m)
+func (m *QueryPausedCrossChainsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryPausedCrossChainsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPausedCounterpartiesRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryPausedCrossChainsRequest proto.InternalMessageInfo
 
-func (m *QueryPausedCounterpartiesRequest) GetProtocolId() core.ProtocolID {
+func (m *QueryPausedCrossChainsRequest) GetProtocolId() core.ProtocolID {
 	if m != nil {
 		return m.ProtocolId
 	}
 	return core.PROTOCOL_UNSUPPORTED
 }
 
-// QueryPausedCounterpartiesResponse is the response type for the Query/PausedCounterparties RPC method.
-type QueryPausedCounterpartiesResponse struct {
-	// counterparty_ids is the list of paused counterparty identifiers.
+// QueryPausedCrossChainsResponse is the response type for the Query/PausedCrossChains RPC method.
+type QueryPausedCrossChainsResponse struct {
+	// counterparty_ids is the list of paused counterparty identifiers for the specified protocol ID.
 	CounterpartyIds []string `protobuf:"bytes,1,rep,name=counterparty_ids,json=counterpartyIds,proto3" json:"counterparty_ids,omitempty"`
 }
 
-func (m *QueryPausedCounterpartiesResponse) Reset()         { *m = QueryPausedCounterpartiesResponse{} }
-func (m *QueryPausedCounterpartiesResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryPausedCounterpartiesResponse) ProtoMessage()    {}
-func (*QueryPausedCounterpartiesResponse) Descriptor() ([]byte, []int) {
+func (m *QueryPausedCrossChainsResponse) Reset()         { *m = QueryPausedCrossChainsResponse{} }
+func (m *QueryPausedCrossChainsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryPausedCrossChainsResponse) ProtoMessage()    {}
+func (*QueryPausedCrossChainsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_aaf39c97a61ced58, []int{3}
 }
-func (m *QueryPausedCounterpartiesResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryPausedCrossChainsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPausedCounterpartiesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryPausedCrossChainsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPausedCounterpartiesResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryPausedCrossChainsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -186,19 +186,19 @@ func (m *QueryPausedCounterpartiesResponse) XXX_Marshal(b []byte, deterministic 
 		return b[:n], nil
 	}
 }
-func (m *QueryPausedCounterpartiesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPausedCounterpartiesResponse.Merge(m, src)
+func (m *QueryPausedCrossChainsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryPausedCrossChainsResponse.Merge(m, src)
 }
-func (m *QueryPausedCounterpartiesResponse) XXX_Size() int {
+func (m *QueryPausedCrossChainsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPausedCounterpartiesResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPausedCounterpartiesResponse.DiscardUnknown(m)
+func (m *QueryPausedCrossChainsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryPausedCrossChainsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPausedCounterpartiesResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryPausedCrossChainsResponse proto.InternalMessageInfo
 
-func (m *QueryPausedCounterpartiesResponse) GetCounterpartyIds() []string {
+func (m *QueryPausedCrossChainsResponse) GetCounterpartyIds() []string {
 	if m != nil {
 		return m.CounterpartyIds
 	}
@@ -297,26 +297,26 @@ func (m *QueryIsProtocolPausedResponse) GetIsPaused() bool {
 	return false
 }
 
-// QueryIsCounterpartyPausedRequest is the request type for the Query/IsCounterpartyPaused RPC method.
-type QueryIsCounterpartyPausedRequest struct {
+// QueryIsCrossChainPausedRequest is the request type for the Query/IsCrossChainPaused RPC method.
+type QueryIsCrossChainPausedRequest struct {
 	// protocol_id is the protocol to check.
 	ProtocolId core.ProtocolID `protobuf:"varint,1,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"protocol_id,omitempty"`
 	// counterparty_id is the counterparty identifier to check.
 	CounterpartyId string `protobuf:"bytes,2,opt,name=counterparty_id,json=counterpartyId,proto3" json:"counterparty_id,omitempty"`
 }
 
-func (m *QueryIsCounterpartyPausedRequest) Reset()         { *m = QueryIsCounterpartyPausedRequest{} }
-func (m *QueryIsCounterpartyPausedRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryIsCounterpartyPausedRequest) ProtoMessage()    {}
-func (*QueryIsCounterpartyPausedRequest) Descriptor() ([]byte, []int) {
+func (m *QueryIsCrossChainPausedRequest) Reset()         { *m = QueryIsCrossChainPausedRequest{} }
+func (m *QueryIsCrossChainPausedRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryIsCrossChainPausedRequest) ProtoMessage()    {}
+func (*QueryIsCrossChainPausedRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_aaf39c97a61ced58, []int{6}
 }
-func (m *QueryIsCounterpartyPausedRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryIsCrossChainPausedRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryIsCounterpartyPausedRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryIsCrossChainPausedRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryIsCounterpartyPausedRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryIsCrossChainPausedRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -326,50 +326,50 @@ func (m *QueryIsCounterpartyPausedRequest) XXX_Marshal(b []byte, deterministic b
 		return b[:n], nil
 	}
 }
-func (m *QueryIsCounterpartyPausedRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryIsCounterpartyPausedRequest.Merge(m, src)
+func (m *QueryIsCrossChainPausedRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryIsCrossChainPausedRequest.Merge(m, src)
 }
-func (m *QueryIsCounterpartyPausedRequest) XXX_Size() int {
+func (m *QueryIsCrossChainPausedRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryIsCounterpartyPausedRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryIsCounterpartyPausedRequest.DiscardUnknown(m)
+func (m *QueryIsCrossChainPausedRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryIsCrossChainPausedRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryIsCounterpartyPausedRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryIsCrossChainPausedRequest proto.InternalMessageInfo
 
-func (m *QueryIsCounterpartyPausedRequest) GetProtocolId() core.ProtocolID {
+func (m *QueryIsCrossChainPausedRequest) GetProtocolId() core.ProtocolID {
 	if m != nil {
 		return m.ProtocolId
 	}
 	return core.PROTOCOL_UNSUPPORTED
 }
 
-func (m *QueryIsCounterpartyPausedRequest) GetCounterpartyId() string {
+func (m *QueryIsCrossChainPausedRequest) GetCounterpartyId() string {
 	if m != nil {
 		return m.CounterpartyId
 	}
 	return ""
 }
 
-// QueryIsCounterpartyPausedResponse is the response type for the Query/IsCounterpartyPaused RPC method.
-type QueryIsCounterpartyPausedResponse struct {
+// QueryIsCrossChainPausedResponse is the response type for the Query/IsCrossChainPaused RPC method.
+type QueryIsCrossChainPausedResponse struct {
 	// is_paused indicates whether the counterparty is paused.
 	IsPaused bool `protobuf:"varint,1,opt,name=is_paused,json=isPaused,proto3" json:"is_paused,omitempty"`
 }
 
-func (m *QueryIsCounterpartyPausedResponse) Reset()         { *m = QueryIsCounterpartyPausedResponse{} }
-func (m *QueryIsCounterpartyPausedResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryIsCounterpartyPausedResponse) ProtoMessage()    {}
-func (*QueryIsCounterpartyPausedResponse) Descriptor() ([]byte, []int) {
+func (m *QueryIsCrossChainPausedResponse) Reset()         { *m = QueryIsCrossChainPausedResponse{} }
+func (m *QueryIsCrossChainPausedResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryIsCrossChainPausedResponse) ProtoMessage()    {}
+func (*QueryIsCrossChainPausedResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_aaf39c97a61ced58, []int{7}
 }
-func (m *QueryIsCounterpartyPausedResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryIsCrossChainPausedResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryIsCounterpartyPausedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryIsCrossChainPausedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryIsCounterpartyPausedResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryIsCrossChainPausedResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -379,19 +379,19 @@ func (m *QueryIsCounterpartyPausedResponse) XXX_Marshal(b []byte, deterministic 
 		return b[:n], nil
 	}
 }
-func (m *QueryIsCounterpartyPausedResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryIsCounterpartyPausedResponse.Merge(m, src)
+func (m *QueryIsCrossChainPausedResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryIsCrossChainPausedResponse.Merge(m, src)
 }
-func (m *QueryIsCounterpartyPausedResponse) XXX_Size() int {
+func (m *QueryIsCrossChainPausedResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryIsCounterpartyPausedResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryIsCounterpartyPausedResponse.DiscardUnknown(m)
+func (m *QueryIsCrossChainPausedResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryIsCrossChainPausedResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryIsCounterpartyPausedResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryIsCrossChainPausedResponse proto.InternalMessageInfo
 
-func (m *QueryIsCounterpartyPausedResponse) GetIsPaused() bool {
+func (m *QueryIsCrossChainPausedResponse) GetIsPaused() bool {
 	if m != nil {
 		return m.IsPaused
 	}
@@ -401,12 +401,12 @@ func (m *QueryIsCounterpartyPausedResponse) GetIsPaused() bool {
 func init() {
 	proto.RegisterType((*QueryPausedProtocolsRequest)(nil), "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsRequest")
 	proto.RegisterType((*QueryPausedProtocolsResponse)(nil), "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse")
-	proto.RegisterType((*QueryPausedCounterpartiesRequest)(nil), "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest")
-	proto.RegisterType((*QueryPausedCounterpartiesResponse)(nil), "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse")
+	proto.RegisterType((*QueryPausedCrossChainsRequest)(nil), "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest")
+	proto.RegisterType((*QueryPausedCrossChainsResponse)(nil), "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse")
 	proto.RegisterType((*QueryIsProtocolPausedRequest)(nil), "noble.orbiter.component.forwarder.v1.QueryIsProtocolPausedRequest")
 	proto.RegisterType((*QueryIsProtocolPausedResponse)(nil), "noble.orbiter.component.forwarder.v1.QueryIsProtocolPausedResponse")
-	proto.RegisterType((*QueryIsCounterpartyPausedRequest)(nil), "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest")
-	proto.RegisterType((*QueryIsCounterpartyPausedResponse)(nil), "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse")
+	proto.RegisterType((*QueryIsCrossChainPausedRequest)(nil), "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest")
+	proto.RegisterType((*QueryIsCrossChainPausedResponse)(nil), "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse")
 }
 
 func init() {
@@ -414,44 +414,44 @@ func init() {
 }
 
 var fileDescriptor_aaf39c97a61ced58 = []byte{
-	// 579 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x95, 0xcf, 0x6b, 0x13, 0x41,
-	0x14, 0xc7, 0x3b, 0x91, 0x6a, 0x33, 0x42, 0xd3, 0x0e, 0x1e, 0xca, 0xa6, 0x5d, 0xd2, 0x45, 0xb1,
-	0x8a, 0xcc, 0x98, 0x7a, 0x52, 0x0a, 0x6a, 0x22, 0x96, 0x45, 0x90, 0x9a, 0x83, 0x07, 0x45, 0xc2,
-	0x66, 0x77, 0x6c, 0x07, 0x92, 0x99, 0xed, 0xcc, 0x26, 0x12, 0x4a, 0x2f, 0x9e, 0x3c, 0x2a, 0x82,
-	0x7f, 0x83, 0x47, 0xff, 0x0c, 0x8f, 0x85, 0x1e, 0xf4, 0x28, 0x49, 0xc1, 0x7f, 0xc2, 0x83, 0x64,
-	0x77, 0x36, 0x3f, 0xd6, 0x6d, 0xe8, 0x36, 0xf6, 0x92, 0xc3, 0x4c, 0xde, 0xf7, 0xbd, 0xcf, 0x7b,
-	0xef, 0x3b, 0x0b, 0xef, 0x72, 0xd1, 0x68, 0x52, 0x22, 0x64, 0x83, 0x05, 0x54, 0x12, 0x57, 0xb4,
-	0x7c, 0xc1, 0x29, 0x0f, 0xc8, 0x5b, 0x21, 0xdf, 0x39, 0xd2, 0xa3, 0x92, 0x74, 0xca, 0x64, 0xbf,
-	0x4d, 0x65, 0x17, 0xfb, 0x52, 0x04, 0x02, 0x5d, 0x0f, 0x23, 0xb0, 0x8e, 0xc0, 0xc3, 0x08, 0x3c,
-	0x8c, 0xc0, 0x9d, 0xb2, 0xb1, 0xec, 0xb4, 0x18, 0x17, 0x24, 0xfc, 0x8d, 0x02, 0x8d, 0xa2, 0x2b,
-	0x54, 0x4b, 0xa8, 0x48, 0x2c, 0xa1, 0x6a, 0xac, 0xee, 0x0a, 0xb1, 0xdb, 0xa4, 0xc4, 0xf1, 0x19,
-	0x71, 0x38, 0x17, 0x81, 0x13, 0x30, 0xc1, 0x95, 0xbe, 0x35, 0x93, 0x55, 0x4a, 0x3a, 0x10, 0x60,
-	0x5e, 0x74, 0x6f, 0xad, 0xc1, 0xe2, 0x8b, 0x81, 0xd8, 0x8e, 0xd3, 0x56, 0xd4, 0xdb, 0x19, 0x9c,
-	0xb9, 0xa2, 0xa9, 0x6a, 0x74, 0xbf, 0x4d, 0x55, 0x60, 0x31, 0xb8, 0x9a, 0x7e, 0xad, 0x7c, 0xc1,
-	0x15, 0x45, 0x36, 0xbc, 0xea, 0xeb, 0xc3, 0x3a, 0xf3, 0x56, 0x40, 0xe9, 0xd2, 0xc6, 0xe2, 0xe6,
-	0x3a, 0x4e, 0x82, 0x4a, 0x8a, 0x3b, 0x65, 0x1c, 0x87, 0xdb, 0x4f, 0x2a, 0xf3, 0x5f, 0x7f, 0x7f,
-	0xbb, 0x0d, 0x6a, 0x30, 0x0e, 0xb6, 0x3d, 0xab, 0x05, 0x4b, 0x63, 0xa9, 0xaa, 0xa2, 0xcd, 0x03,
-	0x2a, 0x7d, 0x47, 0x06, 0x8c, 0xc6, 0xe5, 0xfc, 0x9b, 0x0e, 0x9c, 0x3b, 0xdd, 0x73, 0xb8, 0x3e,
-	0x25, 0x9d, 0xc6, 0xbb, 0x05, 0x97, 0xdc, 0xd1, 0x4d, 0xb7, 0xce, 0x3c, 0x15, 0x32, 0xe6, 0x6b,
-	0x85, 0xf1, 0x73, 0xdb, 0x53, 0xc3, 0x4e, 0xd9, 0x2a, 0xce, 0x1b, 0x29, 0x5f, 0x40, 0xe9, 0x5b,
-	0x70, 0xed, 0x94, 0x54, 0xba, 0xec, 0x22, 0xcc, 0x33, 0x55, 0xf7, 0xc3, 0xc3, 0x30, 0xd3, 0x42,
-	0x6d, 0x81, 0xa9, 0xe8, 0x4f, 0xd6, 0x17, 0xa0, 0x1b, 0x6d, 0xab, 0x31, 0xea, 0xee, 0x45, 0x55,
-	0x8b, 0x6e, 0xc2, 0x42, 0xa2, 0x87, 0x2b, 0xb9, 0x12, 0xd8, 0xc8, 0xd7, 0x16, 0x27, 0x5b, 0x68,
-	0x3d, 0xd2, 0x13, 0x49, 0xaf, 0xeb, 0x0c, 0x68, 0x9b, 0x3f, 0xae, 0xc0, 0xf9, 0x50, 0x02, 0x1d,
-	0x03, 0x58, 0x48, 0xec, 0x2c, 0x7a, 0x8c, 0xcf, 0xe2, 0x3f, 0x3c, 0xc5, 0x0e, 0x46, 0x65, 0x16,
-	0x89, 0x88, 0xc0, 0xba, 0xff, 0x61, 0xd0, 0xa2, 0xf7, 0xc7, 0x27, 0x9f, 0x73, 0x18, 0xdd, 0x21,
-	0x93, 0xfe, 0x9c, 0x78, 0x3b, 0x22, 0x4a, 0xe2, 0x0f, 0x09, 0xfe, 0x00, 0xb8, 0xac, 0xf7, 0x55,
-	0x0a, 0xa5, 0xaa, 0x7b, 0x0e, 0xe3, 0x0a, 0x3d, 0xcd, 0x5c, 0x54, 0xaa, 0xb9, 0x8c, 0xed, 0x99,
-	0x75, 0x34, 0xe1, 0xcb, 0x11, 0xe1, 0x33, 0x64, 0x67, 0x21, 0x24, 0x07, 0x63, 0x5b, 0x77, 0x48,
-	0xdc, 0x09, 0x7d, 0x74, 0x02, 0xe0, 0x52, 0x72, 0xe7, 0x51, 0x96, 0x91, 0x9c, 0xe2, 0x4d, 0xa3,
-	0x3a, 0x93, 0x86, 0xa6, 0xde, 0x1e, 0x51, 0x6f, 0xa1, 0x07, 0xe7, 0xa7, 0x46, 0x9f, 0x72, 0xf0,
-	0x5a, 0x9a, 0x07, 0x32, 0x0d, 0x7a, 0x8a, 0xb9, 0x33, 0x0d, 0x7a, 0x9a, 0x19, 0xad, 0xbd, 0x11,
-	0xf2, 0x1b, 0xf4, 0xfa, 0xbf, 0x0d, 0x9a, 0x1c, 0x24, 0x1e, 0x8c, 0xc3, 0xca, 0xc3, 0xef, 0x3d,
-	0x13, 0x1c, 0xf5, 0x4c, 0xf0, 0xab, 0x67, 0x82, 0x8f, 0x7d, 0x73, 0xee, 0xa8, 0x6f, 0xce, 0xfd,
-	0xec, 0x9b, 0x73, 0xaf, 0x6e, 0xc4, 0x14, 0x1e, 0xed, 0x90, 0xa0, 0xeb, 0x53, 0x95, 0xf6, 0x29,
-	0x6e, 0x5c, 0x0e, 0xf3, 0xdd, 0xfb, 0x1b, 0x00, 0x00, 0xff, 0xff, 0x64, 0xd7, 0x61, 0xc8, 0xb6,
-	0x07, 0x00, 0x00,
+	// 584 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x95, 0x41, 0x6f, 0x12, 0x41,
+	0x14, 0xc7, 0x19, 0x4c, 0xb5, 0x4c, 0x4d, 0x69, 0xe7, 0x44, 0x96, 0x76, 0xc5, 0x8d, 0xc6, 0x6a,
+	0xcc, 0x8c, 0xd4, 0x93, 0xa6, 0xd1, 0x08, 0x18, 0xb3, 0xe1, 0x52, 0x39, 0x78, 0xd0, 0x98, 0x66,
+	0x61, 0xc7, 0x76, 0x14, 0x66, 0xb6, 0x33, 0x0b, 0x86, 0x34, 0xbd, 0x78, 0x32, 0xf1, 0x62, 0xa2,
+	0x1f, 0xc2, 0xa3, 0x1f, 0xc3, 0xc4, 0x4b, 0x93, 0x5e, 0x3c, 0x1a, 0x68, 0xe2, 0x37, 0xf0, 0x6c,
+	0xd8, 0x1d, 0x60, 0x59, 0x8a, 0xe9, 0x8a, 0xbd, 0x70, 0x98, 0xe1, 0xfd, 0xff, 0xff, 0xdf, 0xdb,
+	0xf7, 0x76, 0xe1, 0x1d, 0x2e, 0xea, 0x4d, 0x4a, 0x84, 0xac, 0x33, 0x9f, 0x4a, 0xd2, 0x10, 0x2d,
+	0x4f, 0x70, 0xca, 0x7d, 0xf2, 0x4a, 0xc8, 0xb7, 0x8e, 0x74, 0xa9, 0x24, 0x9d, 0x22, 0xd9, 0x6f,
+	0x53, 0xd9, 0xc5, 0x9e, 0x14, 0xbe, 0x40, 0xd7, 0x82, 0x0a, 0xac, 0x2b, 0xf0, 0xa8, 0x02, 0x8f,
+	0x2a, 0x70, 0xa7, 0x68, 0xac, 0x3a, 0x2d, 0xc6, 0x05, 0x09, 0x7e, 0xc3, 0x42, 0x23, 0xdf, 0x10,
+	0xaa, 0x25, 0x54, 0x28, 0x16, 0x53, 0x35, 0xd6, 0x76, 0x85, 0xd8, 0x6d, 0x52, 0xe2, 0x78, 0x8c,
+	0x38, 0x9c, 0x0b, 0xdf, 0xf1, 0x99, 0xe0, 0x4a, 0xdf, 0x9a, 0xf1, 0x94, 0x92, 0x0e, 0x04, 0x98,
+	0x1b, 0xde, 0x5b, 0xeb, 0x30, 0xff, 0x74, 0x20, 0xb6, 0xed, 0xb4, 0x15, 0x75, 0xb7, 0x07, 0x67,
+	0x0d, 0xd1, 0x54, 0x35, 0xba, 0xdf, 0xa6, 0xca, 0xb7, 0xde, 0xc0, 0xb5, 0xd3, 0xaf, 0x95, 0x27,
+	0xb8, 0xa2, 0xa8, 0x0a, 0x2f, 0x7b, 0xfa, 0x70, 0x87, 0xb9, 0x2a, 0x07, 0x0a, 0x17, 0x36, 0x96,
+	0x37, 0xaf, 0xe2, 0x38, 0xa9, 0xa4, 0xb8, 0x53, 0xc4, 0xc3, 0x7a, 0xbb, 0x52, 0x5a, 0xf8, 0xf2,
+	0xeb, 0xeb, 0x2d, 0x50, 0x5b, 0x1a, 0x56, 0xdb, 0xae, 0xb2, 0x5e, 0xc3, 0xf5, 0x88, 0x59, 0x59,
+	0x0a, 0xa5, 0xca, 0x7b, 0x0e, 0xe3, 0xc3, 0x34, 0xc8, 0x86, 0x4b, 0x11, 0xb7, 0x1c, 0x28, 0x80,
+	0x44, 0x66, 0x70, 0x6c, 0x66, 0x55, 0xa1, 0x39, 0xcb, 0x4b, 0xa3, 0xdd, 0x84, 0x2b, 0x0d, 0xd1,
+	0xe6, 0x3e, 0x95, 0x9e, 0x23, 0xfd, 0xee, 0x08, 0x2f, 0x53, 0xcb, 0x46, 0xcf, 0x07, 0xc1, 0x99,
+	0xee, 0x92, 0xad, 0x86, 0xa6, 0xa1, 0xec, 0x39, 0xe4, 0xde, 0xd2, 0x3d, 0x9a, 0xb6, 0xd2, 0xb1,
+	0xf3, 0x30, 0xc3, 0xd4, 0x8e, 0x17, 0x1c, 0x06, 0x4e, 0x8b, 0xb5, 0x45, 0xa6, 0xc2, 0x3f, 0x59,
+	0x9f, 0x81, 0xc6, 0xb6, 0xd5, 0x18, 0xf9, 0xbc, 0xb2, 0xa2, 0x1b, 0x30, 0x1b, 0xeb, 0x60, 0x2e,
+	0x5d, 0x00, 0x1b, 0x99, 0xda, 0xf2, 0x64, 0x03, 0xad, 0x07, 0xf0, 0xca, 0xcc, 0x54, 0x67, 0xc0,
+	0xda, 0xfc, 0x7e, 0x09, 0x2e, 0x04, 0x02, 0xe8, 0x18, 0xc0, 0x6c, 0x6c, 0x56, 0xd1, 0x23, 0x7c,
+	0x96, 0xbd, 0xc3, 0x7f, 0x59, 0x03, 0xa3, 0x34, 0x8f, 0x44, 0x48, 0x60, 0xdd, 0x7b, 0x3f, 0x68,
+	0xd0, 0xbb, 0xe3, 0x93, 0x4f, 0x69, 0x8c, 0x6e, 0x93, 0xc9, 0xbd, 0x9c, 0x78, 0x67, 0x84, 0x94,
+	0xc4, 0x1b, 0x11, 0xfc, 0x06, 0x70, 0x75, 0x6a, 0x50, 0x51, 0x39, 0x71, 0xa8, 0xe9, 0x95, 0x32,
+	0x2a, 0xf3, 0x89, 0x68, 0xb6, 0x67, 0x63, 0xb6, 0x2a, 0xb2, 0x93, 0xb0, 0x91, 0x83, 0xc8, 0xb4,
+	0x1d, 0x92, 0xc8, 0x60, 0x30, 0xaa, 0xd0, 0x09, 0x80, 0x2b, 0xf1, 0x49, 0x47, 0x49, 0x1e, 0xc6,
+	0x8c, 0x8d, 0x34, 0xca, 0x73, 0x69, 0x68, 0xea, 0x27, 0x63, 0xea, 0x2d, 0x74, 0xff, 0xdf, 0xa9,
+	0xd1, 0x87, 0x34, 0x44, 0xd3, 0xb3, 0x8f, 0x2a, 0x89, 0x42, 0xce, 0x58, 0x68, 0xe3, 0xf1, 0x9c,
+	0x2a, 0x1a, 0x76, 0x6f, 0x0c, 0xfb, 0x12, 0xbd, 0xf8, 0x6f, 0x8f, 0x98, 0x1c, 0xc4, 0x5e, 0x11,
+	0x87, 0xa5, 0x87, 0xdf, 0x7a, 0x26, 0x38, 0xea, 0x99, 0xe0, 0x67, 0xcf, 0x04, 0x1f, 0xfb, 0x66,
+	0xea, 0xa8, 0x6f, 0xa6, 0x7e, 0xf4, 0xcd, 0xd4, 0xf3, 0xeb, 0x43, 0x06, 0x97, 0x76, 0x88, 0xdf,
+	0xf5, 0xa8, 0x3a, 0xed, 0xb3, 0x5b, 0xbf, 0x18, 0xf8, 0xdd, 0xfd, 0x13, 0x00, 0x00, 0xff, 0xff,
+	0xce, 0x89, 0x48, 0x7f, 0xa2, 0x07, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -469,11 +469,11 @@ type QueryClient interface {
 	// PausedProtocols retrieves all paused protocol IDs.
 	PausedProtocols(ctx context.Context, in *QueryPausedProtocolsRequest, opts ...grpc.CallOption) (*QueryPausedProtocolsResponse, error)
 	// PausedCrossChains retrieves all paused counterparties for a specific protocol.
-	PausedCrossChains(ctx context.Context, in *QueryPausedCounterpartiesRequest, opts ...grpc.CallOption) (*QueryPausedCounterpartiesResponse, error)
+	PausedCrossChains(ctx context.Context, in *QueryPausedCrossChainsRequest, opts ...grpc.CallOption) (*QueryPausedCrossChainsResponse, error)
 	// IsProtocolPaused checks if a specific protocol is paused.
 	IsProtocolPaused(ctx context.Context, in *QueryIsProtocolPausedRequest, opts ...grpc.CallOption) (*QueryIsProtocolPausedResponse, error)
-	// IsCounterpartyPaused checks if a specific counterparty for a protocol is paused.
-	IsCounterpartyPaused(ctx context.Context, in *QueryIsCounterpartyPausedRequest, opts ...grpc.CallOption) (*QueryIsCounterpartyPausedResponse, error)
+	// IsCrossChainPaused checks if a specific counterparty for a protocol is paused.
+	IsCrossChainPaused(ctx context.Context, in *QueryIsCrossChainPausedRequest, opts ...grpc.CallOption) (*QueryIsCrossChainPausedResponse, error)
 }
 
 type queryClient struct {
@@ -493,8 +493,8 @@ func (c *queryClient) PausedProtocols(ctx context.Context, in *QueryPausedProtoc
 	return out, nil
 }
 
-func (c *queryClient) PausedCrossChains(ctx context.Context, in *QueryPausedCounterpartiesRequest, opts ...grpc.CallOption) (*QueryPausedCounterpartiesResponse, error) {
-	out := new(QueryPausedCounterpartiesResponse)
+func (c *queryClient) PausedCrossChains(ctx context.Context, in *QueryPausedCrossChainsRequest, opts ...grpc.CallOption) (*QueryPausedCrossChainsResponse, error) {
+	out := new(QueryPausedCrossChainsResponse)
 	err := c.cc.Invoke(ctx, "/noble.orbiter.component.forwarder.v1.Query/PausedCrossChains", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -511,9 +511,9 @@ func (c *queryClient) IsProtocolPaused(ctx context.Context, in *QueryIsProtocolP
 	return out, nil
 }
 
-func (c *queryClient) IsCounterpartyPaused(ctx context.Context, in *QueryIsCounterpartyPausedRequest, opts ...grpc.CallOption) (*QueryIsCounterpartyPausedResponse, error) {
-	out := new(QueryIsCounterpartyPausedResponse)
-	err := c.cc.Invoke(ctx, "/noble.orbiter.component.forwarder.v1.Query/IsCounterpartyPaused", in, out, opts...)
+func (c *queryClient) IsCrossChainPaused(ctx context.Context, in *QueryIsCrossChainPausedRequest, opts ...grpc.CallOption) (*QueryIsCrossChainPausedResponse, error) {
+	out := new(QueryIsCrossChainPausedResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.component.forwarder.v1.Query/IsCrossChainPaused", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -525,11 +525,11 @@ type QueryServer interface {
 	// PausedProtocols retrieves all paused protocol IDs.
 	PausedProtocols(context.Context, *QueryPausedProtocolsRequest) (*QueryPausedProtocolsResponse, error)
 	// PausedCrossChains retrieves all paused counterparties for a specific protocol.
-	PausedCrossChains(context.Context, *QueryPausedCounterpartiesRequest) (*QueryPausedCounterpartiesResponse, error)
+	PausedCrossChains(context.Context, *QueryPausedCrossChainsRequest) (*QueryPausedCrossChainsResponse, error)
 	// IsProtocolPaused checks if a specific protocol is paused.
 	IsProtocolPaused(context.Context, *QueryIsProtocolPausedRequest) (*QueryIsProtocolPausedResponse, error)
-	// IsCounterpartyPaused checks if a specific counterparty for a protocol is paused.
-	IsCounterpartyPaused(context.Context, *QueryIsCounterpartyPausedRequest) (*QueryIsCounterpartyPausedResponse, error)
+	// IsCrossChainPaused checks if a specific counterparty for a protocol is paused.
+	IsCrossChainPaused(context.Context, *QueryIsCrossChainPausedRequest) (*QueryIsCrossChainPausedResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -539,14 +539,14 @@ type UnimplementedQueryServer struct {
 func (*UnimplementedQueryServer) PausedProtocols(ctx context.Context, req *QueryPausedProtocolsRequest) (*QueryPausedProtocolsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PausedProtocols not implemented")
 }
-func (*UnimplementedQueryServer) PausedCrossChains(ctx context.Context, req *QueryPausedCounterpartiesRequest) (*QueryPausedCounterpartiesResponse, error) {
+func (*UnimplementedQueryServer) PausedCrossChains(ctx context.Context, req *QueryPausedCrossChainsRequest) (*QueryPausedCrossChainsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PausedCrossChains not implemented")
 }
 func (*UnimplementedQueryServer) IsProtocolPaused(ctx context.Context, req *QueryIsProtocolPausedRequest) (*QueryIsProtocolPausedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsProtocolPaused not implemented")
 }
-func (*UnimplementedQueryServer) IsCounterpartyPaused(ctx context.Context, req *QueryIsCounterpartyPausedRequest) (*QueryIsCounterpartyPausedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IsCounterpartyPaused not implemented")
+func (*UnimplementedQueryServer) IsCrossChainPaused(ctx context.Context, req *QueryIsCrossChainPausedRequest) (*QueryIsCrossChainPausedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsCrossChainPaused not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -572,7 +572,7 @@ func _Query_PausedProtocols_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Query_PausedCrossChains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryPausedCounterpartiesRequest)
+	in := new(QueryPausedCrossChainsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -584,7 +584,7 @@ func _Query_PausedCrossChains_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/noble.orbiter.component.forwarder.v1.Query/PausedCrossChains",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).PausedCrossChains(ctx, req.(*QueryPausedCounterpartiesRequest))
+		return srv.(QueryServer).PausedCrossChains(ctx, req.(*QueryPausedCrossChainsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -607,20 +607,20 @@ func _Query_IsProtocolPaused_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_IsCounterpartyPaused_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryIsCounterpartyPausedRequest)
+func _Query_IsCrossChainPaused_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryIsCrossChainPausedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).IsCounterpartyPaused(ctx, in)
+		return srv.(QueryServer).IsCrossChainPaused(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/noble.orbiter.component.forwarder.v1.Query/IsCounterpartyPaused",
+		FullMethod: "/noble.orbiter.component.forwarder.v1.Query/IsCrossChainPaused",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).IsCounterpartyPaused(ctx, req.(*QueryIsCounterpartyPausedRequest))
+		return srv.(QueryServer).IsCrossChainPaused(ctx, req.(*QueryIsCrossChainPausedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -643,8 +643,8 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_IsProtocolPaused_Handler,
 		},
 		{
-			MethodName: "IsCounterpartyPaused",
-			Handler:    _Query_IsCounterpartyPaused_Handler,
+			MethodName: "IsCrossChainPaused",
+			Handler:    _Query_IsCrossChainPaused_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -694,10 +694,10 @@ func (m *QueryPausedProtocolsResponse) MarshalToSizedBuffer(dAtA []byte) (int, e
 	_ = i
 	var l int
 	_ = l
-	if len(m.ProtocolId) > 0 {
-		dAtA2 := make([]byte, len(m.ProtocolId)*10)
+	if len(m.ProtocolIds) > 0 {
+		dAtA2 := make([]byte, len(m.ProtocolIds)*10)
 		var j1 int
-		for _, num := range m.ProtocolId {
+		for _, num := range m.ProtocolIds {
 			for num >= 1<<7 {
 				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
@@ -715,7 +715,7 @@ func (m *QueryPausedProtocolsResponse) MarshalToSizedBuffer(dAtA []byte) (int, e
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPausedCounterpartiesRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryPausedCrossChainsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -725,12 +725,12 @@ func (m *QueryPausedCounterpartiesRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPausedCounterpartiesRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryPausedCrossChainsRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPausedCounterpartiesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryPausedCrossChainsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -743,7 +743,7 @@ func (m *QueryPausedCounterpartiesRequest) MarshalToSizedBuffer(dAtA []byte) (in
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPausedCounterpartiesResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryPausedCrossChainsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -753,12 +753,12 @@ func (m *QueryPausedCounterpartiesResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPausedCounterpartiesResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryPausedCrossChainsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPausedCounterpartiesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryPausedCrossChainsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -836,7 +836,7 @@ func (m *QueryIsProtocolPausedResponse) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryIsCounterpartyPausedRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryIsCrossChainPausedRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -846,12 +846,12 @@ func (m *QueryIsCounterpartyPausedRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryIsCounterpartyPausedRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryIsCrossChainPausedRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryIsCounterpartyPausedRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryIsCrossChainPausedRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -871,7 +871,7 @@ func (m *QueryIsCounterpartyPausedRequest) MarshalToSizedBuffer(dAtA []byte) (in
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryIsCounterpartyPausedResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryIsCrossChainPausedResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -881,12 +881,12 @@ func (m *QueryIsCounterpartyPausedResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryIsCounterpartyPausedResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryIsCrossChainPausedResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryIsCounterpartyPausedResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryIsCrossChainPausedResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -930,9 +930,9 @@ func (m *QueryPausedProtocolsResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if len(m.ProtocolId) > 0 {
+	if len(m.ProtocolIds) > 0 {
 		l = 0
-		for _, e := range m.ProtocolId {
+		for _, e := range m.ProtocolIds {
 			l += sovQuery(uint64(e))
 		}
 		n += 1 + sovQuery(uint64(l)) + l
@@ -940,7 +940,7 @@ func (m *QueryPausedProtocolsResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryPausedCounterpartiesRequest) Size() (n int) {
+func (m *QueryPausedCrossChainsRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -952,7 +952,7 @@ func (m *QueryPausedCounterpartiesRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryPausedCounterpartiesResponse) Size() (n int) {
+func (m *QueryPausedCrossChainsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -991,7 +991,7 @@ func (m *QueryIsProtocolPausedResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryIsCounterpartyPausedRequest) Size() (n int) {
+func (m *QueryIsCrossChainPausedRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1007,7 +1007,7 @@ func (m *QueryIsCounterpartyPausedRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryIsCounterpartyPausedResponse) Size() (n int) {
+func (m *QueryIsCrossChainPausedResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1121,7 +1121,7 @@ func (m *QueryPausedProtocolsResponse) Unmarshal(dAtA []byte) error {
 						break
 					}
 				}
-				m.ProtocolId = append(m.ProtocolId, v)
+				m.ProtocolIds = append(m.ProtocolIds, v)
 			} else if wireType == 2 {
 				var packedLen int
 				for shift := uint(0); ; shift += 7 {
@@ -1149,8 +1149,8 @@ func (m *QueryPausedProtocolsResponse) Unmarshal(dAtA []byte) error {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
-				if elementCount != 0 && len(m.ProtocolId) == 0 {
-					m.ProtocolId = make([]core.ProtocolID, 0, elementCount)
+				if elementCount != 0 && len(m.ProtocolIds) == 0 {
+					m.ProtocolIds = make([]core.ProtocolID, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v core.ProtocolID
@@ -1168,10 +1168,10 @@ func (m *QueryPausedProtocolsResponse) Unmarshal(dAtA []byte) error {
 							break
 						}
 					}
-					m.ProtocolId = append(m.ProtocolId, v)
+					m.ProtocolIds = append(m.ProtocolIds, v)
 				}
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field ProtocolId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ProtocolIds", wireType)
 			}
 		default:
 			iNdEx = preIndex
@@ -1194,7 +1194,7 @@ func (m *QueryPausedProtocolsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPausedCounterpartiesRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryPausedCrossChainsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1217,10 +1217,10 @@ func (m *QueryPausedCounterpartiesRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPausedCounterpartiesRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryPausedCrossChainsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPausedCounterpartiesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryPausedCrossChainsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1263,7 +1263,7 @@ func (m *QueryPausedCounterpartiesRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPausedCounterpartiesResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryPausedCrossChainsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1286,10 +1286,10 @@ func (m *QueryPausedCounterpartiesResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPausedCounterpartiesResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryPausedCrossChainsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPausedCounterpartiesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryPausedCrossChainsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1484,7 +1484,7 @@ func (m *QueryIsProtocolPausedResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryIsCounterpartyPausedRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryIsCrossChainPausedRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1507,10 +1507,10 @@ func (m *QueryIsCounterpartyPausedRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryIsCounterpartyPausedRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryIsCrossChainPausedRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryIsCounterpartyPausedRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryIsCrossChainPausedRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1585,7 +1585,7 @@ func (m *QueryIsCounterpartyPausedRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryIsCounterpartyPausedResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryIsCrossChainPausedResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1608,10 +1608,10 @@ func (m *QueryIsCounterpartyPausedResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryIsCounterpartyPausedResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryIsCrossChainPausedResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryIsCounterpartyPausedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryIsCrossChainPausedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

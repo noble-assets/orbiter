@@ -23,6 +23,7 @@ package forwarder
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"cosmossdk.io/collections"
 
@@ -74,7 +75,9 @@ func (f *Forwarder) GetPausedProtocols(
 	if err != nil {
 		return nil, err
 	}
-	defer iter.Close()
+	defer func() {
+		_ = iter.Close()
+	}()
 
 	var paused []core.ProtocolID
 	for ; iter.Valid(); iter.Next() {
@@ -89,6 +92,8 @@ func (f *Forwarder) GetPausedProtocols(
 		}
 		paused = append(paused, id)
 	}
+
+	sort.Slice(paused, func(i, j int) bool { return paused[i] < paused[j] })
 
 	return paused, nil
 }
@@ -162,7 +167,9 @@ func (f *Forwarder) GetPausedCrossChains(
 	if err != nil {
 		return nil, err
 	}
-	defer iter.Close()
+	defer func() {
+		_ = iter.Close()
+	}()
 
 	paused := make(map[int32][]string)
 
@@ -173,10 +180,10 @@ func (f *Forwarder) GetPausedCrossChains(
 			return nil, fmt.Errorf("failed to get key from iterator: %w", err)
 		}
 
-		protocolID := key.K1()
-		counterpartyID := key.K2()
+		pID := key.K1()
+		cID := key.K2()
 
-		paused[protocolID] = append(paused[protocolID], counterpartyID)
+		paused[pID] = append(paused[pID], cID)
 	}
 
 	return paused, nil

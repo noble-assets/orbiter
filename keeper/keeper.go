@@ -38,7 +38,7 @@ import (
 	"orbiter.dev/types/core"
 )
 
-var _ types.Authorizator = &Keeper{}
+var _ types.Authorizer = &Keeper{}
 
 // Keeper is the main module keeper.
 type Keeper struct {

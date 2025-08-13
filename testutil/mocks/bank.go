@@ -29,7 +29,7 @@ import (
 	"orbiter.dev/types"
 )
 
-var _ types.BankKeeper = BankKeeper{}
+var _ types.BankKeeper = (*BankKeeper)(nil)
 
 type BankKeeper struct {
 	Balances map[string]sdk.Coins

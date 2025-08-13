@@ -402,7 +402,7 @@ func (x *_QueryPausedProtocolsResponse_1_list) Append(value protoreflect.Value) 
 }
 
 func (x *_QueryPausedProtocolsResponse_1_list) AppendMutable() protoreflect.Value {
-	panic(fmt.Errorf("AppendMutable can not be called on message QueryPausedProtocolsResponse at list field ProtocolId as it is not of Message kind"))
+	panic(fmt.Errorf("AppendMutable can not be called on message QueryPausedProtocolsResponse at list field ProtocolIds as it is not of Message kind"))
 }
 
 func (x *_QueryPausedProtocolsResponse_1_list) Truncate(n int) {
@@ -419,14 +419,14 @@ func (x *_QueryPausedProtocolsResponse_1_list) IsValid() bool {
 }
 
 var (
-	md_QueryPausedProtocolsResponse             protoreflect.MessageDescriptor
-	fd_QueryPausedProtocolsResponse_protocol_id protoreflect.FieldDescriptor
+	md_QueryPausedProtocolsResponse              protoreflect.MessageDescriptor
+	fd_QueryPausedProtocolsResponse_protocol_ids protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_component_forwarder_v1_query_proto_init()
 	md_QueryPausedProtocolsResponse = File_noble_orbiter_component_forwarder_v1_query_proto.Messages().ByName("QueryPausedProtocolsResponse")
-	fd_QueryPausedProtocolsResponse_protocol_id = md_QueryPausedProtocolsResponse.Fields().ByName("protocol_id")
+	fd_QueryPausedProtocolsResponse_protocol_ids = md_QueryPausedProtocolsResponse.Fields().ByName("protocol_ids")
 }
 
 var _ protoreflect.Message = (*fastReflection_QueryPausedProtocolsResponse)(nil)
@@ -494,9 +494,9 @@ func (x *fastReflection_QueryPausedProtocolsResponse) Interface() protoreflect.P
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_QueryPausedProtocolsResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if len(x.ProtocolId) != 0 {
-		value := protoreflect.ValueOfList(&_QueryPausedProtocolsResponse_1_list{list: &x.ProtocolId})
-		if !f(fd_QueryPausedProtocolsResponse_protocol_id, value) {
+	if len(x.ProtocolIds) != 0 {
+		value := protoreflect.ValueOfList(&_QueryPausedProtocolsResponse_1_list{list: &x.ProtocolIds})
+		if !f(fd_QueryPausedProtocolsResponse_protocol_ids, value) {
 			return
 		}
 	}
@@ -515,8 +515,8 @@ func (x *fastReflection_QueryPausedProtocolsResponse) Range(f func(protoreflect.
 // a repeated field is populated if it is non-empty.
 func (x *fastReflection_QueryPausedProtocolsResponse) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_id":
-		return len(x.ProtocolId) != 0
+	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_ids":
+		return len(x.ProtocolIds) != 0
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse"))
@@ -533,8 +533,8 @@ func (x *fastReflection_QueryPausedProtocolsResponse) Has(fd protoreflect.FieldD
 // Clear is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_QueryPausedProtocolsResponse) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_id":
-		x.ProtocolId = nil
+	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_ids":
+		x.ProtocolIds = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse"))
@@ -551,11 +551,11 @@ func (x *fastReflection_QueryPausedProtocolsResponse) Clear(fd protoreflect.Fiel
 // of the value; to obtain a mutable reference, use Mutable.
 func (x *fastReflection_QueryPausedProtocolsResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_id":
-		if len(x.ProtocolId) == 0 {
+	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_ids":
+		if len(x.ProtocolIds) == 0 {
 			return protoreflect.ValueOfList(&_QueryPausedProtocolsResponse_1_list{})
 		}
-		listValue := &_QueryPausedProtocolsResponse_1_list{list: &x.ProtocolId}
+		listValue := &_QueryPausedProtocolsResponse_1_list{list: &x.ProtocolIds}
 		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
@@ -577,10 +577,10 @@ func (x *fastReflection_QueryPausedProtocolsResponse) Get(descriptor protoreflec
 // Set is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_QueryPausedProtocolsResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_ids":
 		lv := value.List()
 		clv := lv.(*_QueryPausedProtocolsResponse_1_list)
-		x.ProtocolId = *clv.list
+		x.ProtocolIds = *clv.list
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse"))
@@ -601,11 +601,11 @@ func (x *fastReflection_QueryPausedProtocolsResponse) Set(fd protoreflect.FieldD
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_QueryPausedProtocolsResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_id":
-		if x.ProtocolId == nil {
-			x.ProtocolId = []v1.ProtocolID{}
+	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_ids":
+		if x.ProtocolIds == nil {
+			x.ProtocolIds = []v1.ProtocolID{}
 		}
-		value := &_QueryPausedProtocolsResponse_1_list{list: &x.ProtocolId}
+		value := &_QueryPausedProtocolsResponse_1_list{list: &x.ProtocolIds}
 		return protoreflect.ValueOfList(value)
 	default:
 		if fd.IsExtension() {
@@ -620,7 +620,7 @@ func (x *fastReflection_QueryPausedProtocolsResponse) Mutable(fd protoreflect.Fi
 // For lists, maps, and messages, this returns a new, empty, mutable value.
 func (x *fastReflection_QueryPausedProtocolsResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_ids":
 		list := []v1.ProtocolID{}
 		return protoreflect.ValueOfList(&_QueryPausedProtocolsResponse_1_list{list: &list})
 	default:
@@ -692,9 +692,9 @@ func (x *fastReflection_QueryPausedProtocolsResponse) ProtoMethods() *protoiface
 		var n int
 		var l int
 		_ = l
-		if len(x.ProtocolId) > 0 {
+		if len(x.ProtocolIds) > 0 {
 			l = 0
-			for _, e := range x.ProtocolId {
+			for _, e := range x.ProtocolIds {
 				l += runtime.Sov(uint64(e))
 			}
 			n += 1 + runtime.Sov(uint64(l)) + l
@@ -728,14 +728,14 @@ func (x *fastReflection_QueryPausedProtocolsResponse) ProtoMethods() *protoiface
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if len(x.ProtocolId) > 0 {
+		if len(x.ProtocolIds) > 0 {
 			var pksize2 int
-			for _, num := range x.ProtocolId {
+			for _, num := range x.ProtocolIds {
 				pksize2 += runtime.Sov(uint64(num))
 			}
 			i -= pksize2
 			j1 := i
-			for _, num1 := range x.ProtocolId {
+			for _, num1 := range x.ProtocolIds {
 				num := uint64(num1)
 				for num >= 1<<7 {
 					dAtA[j1] = uint8(uint64(num)&0x7f | 0x80)
@@ -815,7 +815,7 @@ func (x *fastReflection_QueryPausedProtocolsResponse) ProtoMethods() *protoiface
 							break
 						}
 					}
-					x.ProtocolId = append(x.ProtocolId, v)
+					x.ProtocolIds = append(x.ProtocolIds, v)
 				} else if wireType == 2 {
 					var packedLen int
 					for shift := uint(0); ; shift += 7 {
@@ -843,8 +843,8 @@ func (x *fastReflection_QueryPausedProtocolsResponse) ProtoMethods() *protoiface
 						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 					}
 					var elementCount int
-					if elementCount != 0 && len(x.ProtocolId) == 0 {
-						x.ProtocolId = make([]v1.ProtocolID, 0, elementCount)
+					if elementCount != 0 && len(x.ProtocolIds) == 0 {
+						x.ProtocolIds = make([]v1.ProtocolID, 0, elementCount)
 					}
 					for iNdEx < postIndex {
 						var v v1.ProtocolID
@@ -862,10 +862,10 @@ func (x *fastReflection_QueryPausedProtocolsResponse) ProtoMethods() *protoiface
 								break
 							}
 						}
-						x.ProtocolId = append(x.ProtocolId, v)
+						x.ProtocolIds = append(x.ProtocolIds, v)
 					}
 				} else {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ProtocolId", wireType)
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ProtocolIds", wireType)
 				}
 			default:
 				iNdEx = preIndex
@@ -903,25 +903,25 @@ func (x *fastReflection_QueryPausedProtocolsResponse) ProtoMethods() *protoiface
 }
 
 var (
-	md_QueryPausedCounterpartiesRequest             protoreflect.MessageDescriptor
-	fd_QueryPausedCounterpartiesRequest_protocol_id protoreflect.FieldDescriptor
+	md_QueryPausedCrossChainsRequest             protoreflect.MessageDescriptor
+	fd_QueryPausedCrossChainsRequest_protocol_id protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_component_forwarder_v1_query_proto_init()
-	md_QueryPausedCounterpartiesRequest = File_noble_orbiter_component_forwarder_v1_query_proto.Messages().ByName("QueryPausedCounterpartiesRequest")
-	fd_QueryPausedCounterpartiesRequest_protocol_id = md_QueryPausedCounterpartiesRequest.Fields().ByName("protocol_id")
+	md_QueryPausedCrossChainsRequest = File_noble_orbiter_component_forwarder_v1_query_proto.Messages().ByName("QueryPausedCrossChainsRequest")
+	fd_QueryPausedCrossChainsRequest_protocol_id = md_QueryPausedCrossChainsRequest.Fields().ByName("protocol_id")
 }
 
-var _ protoreflect.Message = (*fastReflection_QueryPausedCounterpartiesRequest)(nil)
+var _ protoreflect.Message = (*fastReflection_QueryPausedCrossChainsRequest)(nil)
 
-type fastReflection_QueryPausedCounterpartiesRequest QueryPausedCounterpartiesRequest
+type fastReflection_QueryPausedCrossChainsRequest QueryPausedCrossChainsRequest
 
-func (x *QueryPausedCounterpartiesRequest) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_QueryPausedCounterpartiesRequest)(x)
+func (x *QueryPausedCrossChainsRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryPausedCrossChainsRequest)(x)
 }
 
-func (x *QueryPausedCounterpartiesRequest) slowProtoReflect() protoreflect.Message {
+func (x *QueryPausedCrossChainsRequest) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -933,43 +933,43 @@ func (x *QueryPausedCounterpartiesRequest) slowProtoReflect() protoreflect.Messa
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_QueryPausedCounterpartiesRequest_messageType fastReflection_QueryPausedCounterpartiesRequest_messageType
-var _ protoreflect.MessageType = fastReflection_QueryPausedCounterpartiesRequest_messageType{}
+var _fastReflection_QueryPausedCrossChainsRequest_messageType fastReflection_QueryPausedCrossChainsRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryPausedCrossChainsRequest_messageType{}
 
-type fastReflection_QueryPausedCounterpartiesRequest_messageType struct{}
+type fastReflection_QueryPausedCrossChainsRequest_messageType struct{}
 
-func (x fastReflection_QueryPausedCounterpartiesRequest_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_QueryPausedCounterpartiesRequest)(nil)
+func (x fastReflection_QueryPausedCrossChainsRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryPausedCrossChainsRequest)(nil)
 }
-func (x fastReflection_QueryPausedCounterpartiesRequest_messageType) New() protoreflect.Message {
-	return new(fastReflection_QueryPausedCounterpartiesRequest)
+func (x fastReflection_QueryPausedCrossChainsRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryPausedCrossChainsRequest)
 }
-func (x fastReflection_QueryPausedCounterpartiesRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryPausedCounterpartiesRequest
+func (x fastReflection_QueryPausedCrossChainsRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPausedCrossChainsRequest
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryPausedCounterpartiesRequest
+func (x *fastReflection_QueryPausedCrossChainsRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPausedCrossChainsRequest
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) Type() protoreflect.MessageType {
-	return _fastReflection_QueryPausedCounterpartiesRequest_messageType
+func (x *fastReflection_QueryPausedCrossChainsRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryPausedCrossChainsRequest_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) New() protoreflect.Message {
-	return new(fastReflection_QueryPausedCounterpartiesRequest)
+func (x *fastReflection_QueryPausedCrossChainsRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryPausedCrossChainsRequest)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) Interface() protoreflect.ProtoMessage {
-	return (*QueryPausedCounterpartiesRequest)(x)
+func (x *fastReflection_QueryPausedCrossChainsRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryPausedCrossChainsRequest)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -977,10 +977,10 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) Interface() protorefle
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_QueryPausedCrossChainsRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 	if x.ProtocolId != 0 {
 		value := protoreflect.ValueOfEnum((protoreflect.EnumNumber)(x.ProtocolId))
-		if !f(fd_QueryPausedCounterpartiesRequest_protocol_id, value) {
+		if !f(fd_QueryPausedCrossChainsRequest_protocol_id, value) {
 			return
 		}
 	}
@@ -997,15 +997,15 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) Range(f func(protorefl
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_QueryPausedCrossChainsRequest) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest.protocol_id":
 		return x.ProtocolId != 0
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1015,15 +1015,15 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) Has(fd protoreflect.Fi
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_QueryPausedCrossChainsRequest) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest.protocol_id":
 		x.ProtocolId = 0
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1033,16 +1033,16 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) Clear(fd protoreflect.
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryPausedCrossChainsRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest.protocol_id":
 		value := x.ProtocolId
 		return protoreflect.ValueOfEnum((protoreflect.EnumNumber)(value))
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -1056,15 +1056,15 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) Get(descriptor protore
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_QueryPausedCrossChainsRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest.protocol_id":
 		x.ProtocolId = (v1.ProtocolID)(value.Enum())
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1078,40 +1078,40 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) Set(fd protoreflect.Fi
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryPausedCrossChainsRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest.protocol_id":
-		panic(fmt.Errorf("field protocol_id of message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest is not mutable"))
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest.protocol_id":
+		panic(fmt.Errorf("field protocol_id of message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest is not mutable"))
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryPausedCrossChainsRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest.protocol_id":
 		return protoreflect.ValueOfEnum(0)
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_QueryPausedCrossChainsRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -1119,7 +1119,7 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) WhichOneof(d protorefl
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_QueryPausedCrossChainsRequest) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -1130,7 +1130,7 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) GetUnknown() protorefl
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_QueryPausedCrossChainsRequest) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -1142,7 +1142,7 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) SetUnknown(fields prot
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) IsValid() bool {
+func (x *fastReflection_QueryPausedCrossChainsRequest) IsValid() bool {
 	return x != nil
 }
 
@@ -1152,9 +1152,9 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_QueryPausedCounterpartiesRequest) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_QueryPausedCrossChainsRequest) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*QueryPausedCounterpartiesRequest)
+		x := input.Message.Interface().(*QueryPausedCrossChainsRequest)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1179,7 +1179,7 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) ProtoMethods() *protoi
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*QueryPausedCounterpartiesRequest)
+		x := input.Message.Interface().(*QueryPausedCrossChainsRequest)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1214,7 +1214,7 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) ProtoMethods() *protoi
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*QueryPausedCounterpartiesRequest)
+		x := input.Message.Interface().(*QueryPausedCrossChainsRequest)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1246,10 +1246,10 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) ProtoMethods() *protoi
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPausedCounterpartiesRequest: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPausedCrossChainsRequest: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPausedCounterpartiesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPausedCrossChainsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			case 1:
@@ -1306,72 +1306,72 @@ func (x *fastReflection_QueryPausedCounterpartiesRequest) ProtoMethods() *protoi
 	}
 }
 
-var _ protoreflect.List = (*_QueryPausedCounterpartiesResponse_1_list)(nil)
+var _ protoreflect.List = (*_QueryPausedCrossChainsResponse_1_list)(nil)
 
-type _QueryPausedCounterpartiesResponse_1_list struct {
+type _QueryPausedCrossChainsResponse_1_list struct {
 	list *[]string
 }
 
-func (x *_QueryPausedCounterpartiesResponse_1_list) Len() int {
+func (x *_QueryPausedCrossChainsResponse_1_list) Len() int {
 	if x.list == nil {
 		return 0
 	}
 	return len(*x.list)
 }
 
-func (x *_QueryPausedCounterpartiesResponse_1_list) Get(i int) protoreflect.Value {
+func (x *_QueryPausedCrossChainsResponse_1_list) Get(i int) protoreflect.Value {
 	return protoreflect.ValueOfString((*x.list)[i])
 }
 
-func (x *_QueryPausedCounterpartiesResponse_1_list) Set(i int, value protoreflect.Value) {
+func (x *_QueryPausedCrossChainsResponse_1_list) Set(i int, value protoreflect.Value) {
 	valueUnwrapped := value.String()
 	concreteValue := valueUnwrapped
 	(*x.list)[i] = concreteValue
 }
 
-func (x *_QueryPausedCounterpartiesResponse_1_list) Append(value protoreflect.Value) {
+func (x *_QueryPausedCrossChainsResponse_1_list) Append(value protoreflect.Value) {
 	valueUnwrapped := value.String()
 	concreteValue := valueUnwrapped
 	*x.list = append(*x.list, concreteValue)
 }
 
-func (x *_QueryPausedCounterpartiesResponse_1_list) AppendMutable() protoreflect.Value {
-	panic(fmt.Errorf("AppendMutable can not be called on message QueryPausedCounterpartiesResponse at list field CounterpartyIds as it is not of Message kind"))
+func (x *_QueryPausedCrossChainsResponse_1_list) AppendMutable() protoreflect.Value {
+	panic(fmt.Errorf("AppendMutable can not be called on message QueryPausedCrossChainsResponse at list field CounterpartyIds as it is not of Message kind"))
 }
 
-func (x *_QueryPausedCounterpartiesResponse_1_list) Truncate(n int) {
+func (x *_QueryPausedCrossChainsResponse_1_list) Truncate(n int) {
 	*x.list = (*x.list)[:n]
 }
 
-func (x *_QueryPausedCounterpartiesResponse_1_list) NewElement() protoreflect.Value {
+func (x *_QueryPausedCrossChainsResponse_1_list) NewElement() protoreflect.Value {
 	v := ""
 	return protoreflect.ValueOfString(v)
 }
 
-func (x *_QueryPausedCounterpartiesResponse_1_list) IsValid() bool {
+func (x *_QueryPausedCrossChainsResponse_1_list) IsValid() bool {
 	return x.list != nil
 }
 
 var (
-	md_QueryPausedCounterpartiesResponse                  protoreflect.MessageDescriptor
-	fd_QueryPausedCounterpartiesResponse_counterparty_ids protoreflect.FieldDescriptor
+	md_QueryPausedCrossChainsResponse                  protoreflect.MessageDescriptor
+	fd_QueryPausedCrossChainsResponse_counterparty_ids protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_component_forwarder_v1_query_proto_init()
-	md_QueryPausedCounterpartiesResponse = File_noble_orbiter_component_forwarder_v1_query_proto.Messages().ByName("QueryPausedCounterpartiesResponse")
-	fd_QueryPausedCounterpartiesResponse_counterparty_ids = md_QueryPausedCounterpartiesResponse.Fields().ByName("counterparty_ids")
+	md_QueryPausedCrossChainsResponse = File_noble_orbiter_component_forwarder_v1_query_proto.Messages().ByName("QueryPausedCrossChainsResponse")
+	fd_QueryPausedCrossChainsResponse_counterparty_ids = md_QueryPausedCrossChainsResponse.Fields().ByName("counterparty_ids")
 }
 
-var _ protoreflect.Message = (*fastReflection_QueryPausedCounterpartiesResponse)(nil)
+var _ protoreflect.Message = (*fastReflection_QueryPausedCrossChainsResponse)(nil)
 
-type fastReflection_QueryPausedCounterpartiesResponse QueryPausedCounterpartiesResponse
+type fastReflection_QueryPausedCrossChainsResponse QueryPausedCrossChainsResponse
 
-func (x *QueryPausedCounterpartiesResponse) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_QueryPausedCounterpartiesResponse)(x)
+func (x *QueryPausedCrossChainsResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryPausedCrossChainsResponse)(x)
 }
 
-func (x *QueryPausedCounterpartiesResponse) slowProtoReflect() protoreflect.Message {
+func (x *QueryPausedCrossChainsResponse) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1383,43 +1383,43 @@ func (x *QueryPausedCounterpartiesResponse) slowProtoReflect() protoreflect.Mess
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_QueryPausedCounterpartiesResponse_messageType fastReflection_QueryPausedCounterpartiesResponse_messageType
-var _ protoreflect.MessageType = fastReflection_QueryPausedCounterpartiesResponse_messageType{}
+var _fastReflection_QueryPausedCrossChainsResponse_messageType fastReflection_QueryPausedCrossChainsResponse_messageType
+var _ protoreflect.MessageType = fastReflection_QueryPausedCrossChainsResponse_messageType{}
 
-type fastReflection_QueryPausedCounterpartiesResponse_messageType struct{}
+type fastReflection_QueryPausedCrossChainsResponse_messageType struct{}
 
-func (x fastReflection_QueryPausedCounterpartiesResponse_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_QueryPausedCounterpartiesResponse)(nil)
+func (x fastReflection_QueryPausedCrossChainsResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryPausedCrossChainsResponse)(nil)
 }
-func (x fastReflection_QueryPausedCounterpartiesResponse_messageType) New() protoreflect.Message {
-	return new(fastReflection_QueryPausedCounterpartiesResponse)
+func (x fastReflection_QueryPausedCrossChainsResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryPausedCrossChainsResponse)
 }
-func (x fastReflection_QueryPausedCounterpartiesResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryPausedCounterpartiesResponse
+func (x fastReflection_QueryPausedCrossChainsResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPausedCrossChainsResponse
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryPausedCounterpartiesResponse
+func (x *fastReflection_QueryPausedCrossChainsResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPausedCrossChainsResponse
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) Type() protoreflect.MessageType {
-	return _fastReflection_QueryPausedCounterpartiesResponse_messageType
+func (x *fastReflection_QueryPausedCrossChainsResponse) Type() protoreflect.MessageType {
+	return _fastReflection_QueryPausedCrossChainsResponse_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) New() protoreflect.Message {
-	return new(fastReflection_QueryPausedCounterpartiesResponse)
+func (x *fastReflection_QueryPausedCrossChainsResponse) New() protoreflect.Message {
+	return new(fastReflection_QueryPausedCrossChainsResponse)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) Interface() protoreflect.ProtoMessage {
-	return (*QueryPausedCounterpartiesResponse)(x)
+func (x *fastReflection_QueryPausedCrossChainsResponse) Interface() protoreflect.ProtoMessage {
+	return (*QueryPausedCrossChainsResponse)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -1427,10 +1427,10 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) Interface() protorefl
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_QueryPausedCrossChainsResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 	if len(x.CounterpartyIds) != 0 {
-		value := protoreflect.ValueOfList(&_QueryPausedCounterpartiesResponse_1_list{list: &x.CounterpartyIds})
-		if !f(fd_QueryPausedCounterpartiesResponse_counterparty_ids, value) {
+		value := protoreflect.ValueOfList(&_QueryPausedCrossChainsResponse_1_list{list: &x.CounterpartyIds})
+		if !f(fd_QueryPausedCrossChainsResponse_counterparty_ids, value) {
 			return
 		}
 	}
@@ -1447,15 +1447,15 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) Range(f func(protoref
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_QueryPausedCrossChainsResponse) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse.counterparty_ids":
 		return len(x.CounterpartyIds) != 0
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1465,15 +1465,15 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) Has(fd protoreflect.F
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_QueryPausedCrossChainsResponse) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse.counterparty_ids":
 		x.CounterpartyIds = nil
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1483,19 +1483,19 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) Clear(fd protoreflect
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryPausedCrossChainsResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse.counterparty_ids":
 		if len(x.CounterpartyIds) == 0 {
-			return protoreflect.ValueOfList(&_QueryPausedCounterpartiesResponse_1_list{})
+			return protoreflect.ValueOfList(&_QueryPausedCrossChainsResponse_1_list{})
 		}
-		listValue := &_QueryPausedCounterpartiesResponse_1_list{list: &x.CounterpartyIds}
+		listValue := &_QueryPausedCrossChainsResponse_1_list{list: &x.CounterpartyIds}
 		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -1509,17 +1509,17 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) Get(descriptor protor
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_QueryPausedCrossChainsResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse.counterparty_ids":
 		lv := value.List()
-		clv := lv.(*_QueryPausedCounterpartiesResponse_1_list)
+		clv := lv.(*_QueryPausedCrossChainsResponse_1_list)
 		x.CounterpartyIds = *clv.list
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1533,45 +1533,45 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) Set(fd protoreflect.F
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryPausedCrossChainsResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse.counterparty_ids":
 		if x.CounterpartyIds == nil {
 			x.CounterpartyIds = []string{}
 		}
-		value := &_QueryPausedCounterpartiesResponse_1_list{list: &x.CounterpartyIds}
+		value := &_QueryPausedCrossChainsResponse_1_list{list: &x.CounterpartyIds}
 		return protoreflect.ValueOfList(value)
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryPausedCrossChainsResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse.counterparty_ids":
 		list := []string{}
-		return protoreflect.ValueOfList(&_QueryPausedCounterpartiesResponse_1_list{list: &list})
+		return protoreflect.ValueOfList(&_QueryPausedCrossChainsResponse_1_list{list: &list})
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_QueryPausedCrossChainsResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -1579,7 +1579,7 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) WhichOneof(d protoref
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_QueryPausedCrossChainsResponse) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -1590,7 +1590,7 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) GetUnknown() protoref
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_QueryPausedCrossChainsResponse) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -1602,7 +1602,7 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) SetUnknown(fields pro
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) IsValid() bool {
+func (x *fastReflection_QueryPausedCrossChainsResponse) IsValid() bool {
 	return x != nil
 }
 
@@ -1612,9 +1612,9 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_QueryPausedCounterpartiesResponse) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_QueryPausedCrossChainsResponse) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*QueryPausedCounterpartiesResponse)
+		x := input.Message.Interface().(*QueryPausedCrossChainsResponse)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1642,7 +1642,7 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) ProtoMethods() *proto
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*QueryPausedCounterpartiesResponse)
+		x := input.Message.Interface().(*QueryPausedCrossChainsResponse)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1681,7 +1681,7 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) ProtoMethods() *proto
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*QueryPausedCounterpartiesResponse)
+		x := input.Message.Interface().(*QueryPausedCrossChainsResponse)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1713,10 +1713,10 @@ func (x *fastReflection_QueryPausedCounterpartiesResponse) ProtoMethods() *proto
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPausedCounterpartiesResponse: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPausedCrossChainsResponse: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPausedCounterpartiesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPausedCrossChainsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			case 1:
@@ -2601,27 +2601,27 @@ func (x *fastReflection_QueryIsProtocolPausedResponse) ProtoMethods() *protoifac
 }
 
 var (
-	md_QueryIsCounterpartyPausedRequest                 protoreflect.MessageDescriptor
-	fd_QueryIsCounterpartyPausedRequest_protocol_id     protoreflect.FieldDescriptor
-	fd_QueryIsCounterpartyPausedRequest_counterparty_id protoreflect.FieldDescriptor
+	md_QueryIsCrossChainPausedRequest                 protoreflect.MessageDescriptor
+	fd_QueryIsCrossChainPausedRequest_protocol_id     protoreflect.FieldDescriptor
+	fd_QueryIsCrossChainPausedRequest_counterparty_id protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_component_forwarder_v1_query_proto_init()
-	md_QueryIsCounterpartyPausedRequest = File_noble_orbiter_component_forwarder_v1_query_proto.Messages().ByName("QueryIsCounterpartyPausedRequest")
-	fd_QueryIsCounterpartyPausedRequest_protocol_id = md_QueryIsCounterpartyPausedRequest.Fields().ByName("protocol_id")
-	fd_QueryIsCounterpartyPausedRequest_counterparty_id = md_QueryIsCounterpartyPausedRequest.Fields().ByName("counterparty_id")
+	md_QueryIsCrossChainPausedRequest = File_noble_orbiter_component_forwarder_v1_query_proto.Messages().ByName("QueryIsCrossChainPausedRequest")
+	fd_QueryIsCrossChainPausedRequest_protocol_id = md_QueryIsCrossChainPausedRequest.Fields().ByName("protocol_id")
+	fd_QueryIsCrossChainPausedRequest_counterparty_id = md_QueryIsCrossChainPausedRequest.Fields().ByName("counterparty_id")
 }
 
-var _ protoreflect.Message = (*fastReflection_QueryIsCounterpartyPausedRequest)(nil)
+var _ protoreflect.Message = (*fastReflection_QueryIsCrossChainPausedRequest)(nil)
 
-type fastReflection_QueryIsCounterpartyPausedRequest QueryIsCounterpartyPausedRequest
+type fastReflection_QueryIsCrossChainPausedRequest QueryIsCrossChainPausedRequest
 
-func (x *QueryIsCounterpartyPausedRequest) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_QueryIsCounterpartyPausedRequest)(x)
+func (x *QueryIsCrossChainPausedRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryIsCrossChainPausedRequest)(x)
 }
 
-func (x *QueryIsCounterpartyPausedRequest) slowProtoReflect() protoreflect.Message {
+func (x *QueryIsCrossChainPausedRequest) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2633,43 +2633,43 @@ func (x *QueryIsCounterpartyPausedRequest) slowProtoReflect() protoreflect.Messa
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_QueryIsCounterpartyPausedRequest_messageType fastReflection_QueryIsCounterpartyPausedRequest_messageType
-var _ protoreflect.MessageType = fastReflection_QueryIsCounterpartyPausedRequest_messageType{}
+var _fastReflection_QueryIsCrossChainPausedRequest_messageType fastReflection_QueryIsCrossChainPausedRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryIsCrossChainPausedRequest_messageType{}
 
-type fastReflection_QueryIsCounterpartyPausedRequest_messageType struct{}
+type fastReflection_QueryIsCrossChainPausedRequest_messageType struct{}
 
-func (x fastReflection_QueryIsCounterpartyPausedRequest_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_QueryIsCounterpartyPausedRequest)(nil)
+func (x fastReflection_QueryIsCrossChainPausedRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryIsCrossChainPausedRequest)(nil)
 }
-func (x fastReflection_QueryIsCounterpartyPausedRequest_messageType) New() protoreflect.Message {
-	return new(fastReflection_QueryIsCounterpartyPausedRequest)
+func (x fastReflection_QueryIsCrossChainPausedRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryIsCrossChainPausedRequest)
 }
-func (x fastReflection_QueryIsCounterpartyPausedRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryIsCounterpartyPausedRequest
+func (x fastReflection_QueryIsCrossChainPausedRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryIsCrossChainPausedRequest
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryIsCounterpartyPausedRequest
+func (x *fastReflection_QueryIsCrossChainPausedRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryIsCrossChainPausedRequest
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) Type() protoreflect.MessageType {
-	return _fastReflection_QueryIsCounterpartyPausedRequest_messageType
+func (x *fastReflection_QueryIsCrossChainPausedRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryIsCrossChainPausedRequest_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) New() protoreflect.Message {
-	return new(fastReflection_QueryIsCounterpartyPausedRequest)
+func (x *fastReflection_QueryIsCrossChainPausedRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryIsCrossChainPausedRequest)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) Interface() protoreflect.ProtoMessage {
-	return (*QueryIsCounterpartyPausedRequest)(x)
+func (x *fastReflection_QueryIsCrossChainPausedRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryIsCrossChainPausedRequest)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -2677,16 +2677,16 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) Interface() protorefle
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 	if x.ProtocolId != 0 {
 		value := protoreflect.ValueOfEnum((protoreflect.EnumNumber)(x.ProtocolId))
-		if !f(fd_QueryIsCounterpartyPausedRequest_protocol_id, value) {
+		if !f(fd_QueryIsCrossChainPausedRequest_protocol_id, value) {
 			return
 		}
 	}
 	if x.CounterpartyId != "" {
 		value := protoreflect.ValueOfString(x.CounterpartyId)
-		if !f(fd_QueryIsCounterpartyPausedRequest_counterparty_id, value) {
+		if !f(fd_QueryIsCrossChainPausedRequest_counterparty_id, value) {
 			return
 		}
 	}
@@ -2703,17 +2703,17 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) Range(f func(protorefl
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.protocol_id":
 		return x.ProtocolId != 0
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.counterparty_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.counterparty_id":
 		return x.CounterpartyId != ""
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -2723,17 +2723,17 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) Has(fd protoreflect.Fi
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.protocol_id":
 		x.ProtocolId = 0
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.counterparty_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.counterparty_id":
 		x.CounterpartyId = ""
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -2743,19 +2743,19 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) Clear(fd protoreflect.
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.protocol_id":
 		value := x.ProtocolId
 		return protoreflect.ValueOfEnum((protoreflect.EnumNumber)(value))
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.counterparty_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.counterparty_id":
 		value := x.CounterpartyId
 		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -2769,17 +2769,17 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) Get(descriptor protore
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.protocol_id":
 		x.ProtocolId = (v1.ProtocolID)(value.Enum())
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.counterparty_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.counterparty_id":
 		x.CounterpartyId = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -2793,44 +2793,44 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) Set(fd protoreflect.Fi
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.protocol_id":
-		panic(fmt.Errorf("field protocol_id of message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest is not mutable"))
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.counterparty_id":
-		panic(fmt.Errorf("field counterparty_id of message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest is not mutable"))
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.protocol_id":
+		panic(fmt.Errorf("field protocol_id of message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest is not mutable"))
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.counterparty_id":
+		panic(fmt.Errorf("field counterparty_id of message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest is not mutable"))
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.protocol_id":
 		return protoreflect.ValueOfEnum(0)
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.counterparty_id":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.counterparty_id":
 		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -2838,7 +2838,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) WhichOneof(d protorefl
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -2849,7 +2849,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) GetUnknown() protorefl
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -2861,7 +2861,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) SetUnknown(fields prot
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) IsValid() bool {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) IsValid() bool {
 	return x != nil
 }
 
@@ -2871,9 +2871,9 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_QueryIsCounterpartyPausedRequest) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_QueryIsCrossChainPausedRequest) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*QueryIsCounterpartyPausedRequest)
+		x := input.Message.Interface().(*QueryIsCrossChainPausedRequest)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -2902,7 +2902,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) ProtoMethods() *protoi
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*QueryIsCounterpartyPausedRequest)
+		x := input.Message.Interface().(*QueryIsCrossChainPausedRequest)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -2944,7 +2944,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) ProtoMethods() *protoi
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*QueryIsCounterpartyPausedRequest)
+		x := input.Message.Interface().(*QueryIsCrossChainPausedRequest)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -2976,10 +2976,10 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) ProtoMethods() *protoi
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryIsCounterpartyPausedRequest: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryIsCrossChainPausedRequest: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryIsCounterpartyPausedRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryIsCrossChainPausedRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			case 1:
@@ -3069,25 +3069,25 @@ func (x *fastReflection_QueryIsCounterpartyPausedRequest) ProtoMethods() *protoi
 }
 
 var (
-	md_QueryIsCounterpartyPausedResponse           protoreflect.MessageDescriptor
-	fd_QueryIsCounterpartyPausedResponse_is_paused protoreflect.FieldDescriptor
+	md_QueryIsCrossChainPausedResponse           protoreflect.MessageDescriptor
+	fd_QueryIsCrossChainPausedResponse_is_paused protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_component_forwarder_v1_query_proto_init()
-	md_QueryIsCounterpartyPausedResponse = File_noble_orbiter_component_forwarder_v1_query_proto.Messages().ByName("QueryIsCounterpartyPausedResponse")
-	fd_QueryIsCounterpartyPausedResponse_is_paused = md_QueryIsCounterpartyPausedResponse.Fields().ByName("is_paused")
+	md_QueryIsCrossChainPausedResponse = File_noble_orbiter_component_forwarder_v1_query_proto.Messages().ByName("QueryIsCrossChainPausedResponse")
+	fd_QueryIsCrossChainPausedResponse_is_paused = md_QueryIsCrossChainPausedResponse.Fields().ByName("is_paused")
 }
 
-var _ protoreflect.Message = (*fastReflection_QueryIsCounterpartyPausedResponse)(nil)
+var _ protoreflect.Message = (*fastReflection_QueryIsCrossChainPausedResponse)(nil)
 
-type fastReflection_QueryIsCounterpartyPausedResponse QueryIsCounterpartyPausedResponse
+type fastReflection_QueryIsCrossChainPausedResponse QueryIsCrossChainPausedResponse
 
-func (x *QueryIsCounterpartyPausedResponse) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_QueryIsCounterpartyPausedResponse)(x)
+func (x *QueryIsCrossChainPausedResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryIsCrossChainPausedResponse)(x)
 }
 
-func (x *QueryIsCounterpartyPausedResponse) slowProtoReflect() protoreflect.Message {
+func (x *QueryIsCrossChainPausedResponse) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3099,43 +3099,43 @@ func (x *QueryIsCounterpartyPausedResponse) slowProtoReflect() protoreflect.Mess
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_QueryIsCounterpartyPausedResponse_messageType fastReflection_QueryIsCounterpartyPausedResponse_messageType
-var _ protoreflect.MessageType = fastReflection_QueryIsCounterpartyPausedResponse_messageType{}
+var _fastReflection_QueryIsCrossChainPausedResponse_messageType fastReflection_QueryIsCrossChainPausedResponse_messageType
+var _ protoreflect.MessageType = fastReflection_QueryIsCrossChainPausedResponse_messageType{}
 
-type fastReflection_QueryIsCounterpartyPausedResponse_messageType struct{}
+type fastReflection_QueryIsCrossChainPausedResponse_messageType struct{}
 
-func (x fastReflection_QueryIsCounterpartyPausedResponse_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_QueryIsCounterpartyPausedResponse)(nil)
+func (x fastReflection_QueryIsCrossChainPausedResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryIsCrossChainPausedResponse)(nil)
 }
-func (x fastReflection_QueryIsCounterpartyPausedResponse_messageType) New() protoreflect.Message {
-	return new(fastReflection_QueryIsCounterpartyPausedResponse)
+func (x fastReflection_QueryIsCrossChainPausedResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryIsCrossChainPausedResponse)
 }
-func (x fastReflection_QueryIsCounterpartyPausedResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryIsCounterpartyPausedResponse
+func (x fastReflection_QueryIsCrossChainPausedResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryIsCrossChainPausedResponse
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryIsCounterpartyPausedResponse
+func (x *fastReflection_QueryIsCrossChainPausedResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryIsCrossChainPausedResponse
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) Type() protoreflect.MessageType {
-	return _fastReflection_QueryIsCounterpartyPausedResponse_messageType
+func (x *fastReflection_QueryIsCrossChainPausedResponse) Type() protoreflect.MessageType {
+	return _fastReflection_QueryIsCrossChainPausedResponse_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) New() protoreflect.Message {
-	return new(fastReflection_QueryIsCounterpartyPausedResponse)
+func (x *fastReflection_QueryIsCrossChainPausedResponse) New() protoreflect.Message {
+	return new(fastReflection_QueryIsCrossChainPausedResponse)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) Interface() protoreflect.ProtoMessage {
-	return (*QueryIsCounterpartyPausedResponse)(x)
+func (x *fastReflection_QueryIsCrossChainPausedResponse) Interface() protoreflect.ProtoMessage {
+	return (*QueryIsCrossChainPausedResponse)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -3143,10 +3143,10 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) Interface() protorefl
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 	if x.IsPaused != false {
 		value := protoreflect.ValueOfBool(x.IsPaused)
-		if !f(fd_QueryIsCounterpartyPausedResponse_is_paused, value) {
+		if !f(fd_QueryIsCrossChainPausedResponse_is_paused, value) {
 			return
 		}
 	}
@@ -3163,15 +3163,15 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) Range(f func(protoref
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse.is_paused":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse.is_paused":
 		return x.IsPaused != false
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -3181,15 +3181,15 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) Has(fd protoreflect.F
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse.is_paused":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse.is_paused":
 		x.IsPaused = false
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -3199,16 +3199,16 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) Clear(fd protoreflect
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse.is_paused":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse.is_paused":
 		value := x.IsPaused
 		return protoreflect.ValueOfBool(value)
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -3222,15 +3222,15 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) Get(descriptor protor
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse.is_paused":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse.is_paused":
 		x.IsPaused = value.Bool()
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -3244,40 +3244,40 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) Set(fd protoreflect.F
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse.is_paused":
-		panic(fmt.Errorf("field is_paused of message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse is not mutable"))
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse.is_paused":
+		panic(fmt.Errorf("field is_paused of message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse is not mutable"))
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse.is_paused":
+	case "noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse.is_paused":
 		return protoreflect.ValueOfBool(false)
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -3285,7 +3285,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) WhichOneof(d protoref
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -3296,7 +3296,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) GetUnknown() protoref
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -3308,7 +3308,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) SetUnknown(fields pro
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) IsValid() bool {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) IsValid() bool {
 	return x != nil
 }
 
@@ -3318,9 +3318,9 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_QueryIsCounterpartyPausedResponse) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_QueryIsCrossChainPausedResponse) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*QueryIsCounterpartyPausedResponse)
+		x := input.Message.Interface().(*QueryIsCrossChainPausedResponse)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -3345,7 +3345,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) ProtoMethods() *proto
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*QueryIsCounterpartyPausedResponse)
+		x := input.Message.Interface().(*QueryIsCrossChainPausedResponse)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -3385,7 +3385,7 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) ProtoMethods() *proto
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*QueryIsCounterpartyPausedResponse)
+		x := input.Message.Interface().(*QueryIsCrossChainPausedResponse)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -3417,10 +3417,10 @@ func (x *fastReflection_QueryIsCounterpartyPausedResponse) ProtoMethods() *proto
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryIsCounterpartyPausedResponse: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryIsCrossChainPausedResponse: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryIsCounterpartyPausedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryIsCrossChainPausedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			case 1:
@@ -3524,7 +3524,7 @@ type QueryPausedProtocolsResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ProtocolId []v1.ProtocolID `protobuf:"varint,1,rep,packed,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"protocol_id,omitempty"`
+	ProtocolIds []v1.ProtocolID `protobuf:"varint,1,rep,packed,name=protocol_ids,json=protocolIds,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"protocol_ids,omitempty"`
 }
 
 func (x *QueryPausedProtocolsResponse) Reset() {
@@ -3547,15 +3547,15 @@ func (*QueryPausedProtocolsResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_query_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *QueryPausedProtocolsResponse) GetProtocolId() []v1.ProtocolID {
+func (x *QueryPausedProtocolsResponse) GetProtocolIds() []v1.ProtocolID {
 	if x != nil {
-		return x.ProtocolId
+		return x.ProtocolIds
 	}
 	return nil
 }
 
-// QueryPausedCounterpartiesRequest is the request type for the Query/PausedCounterparties RPC method.
-type QueryPausedCounterpartiesRequest struct {
+// QueryPausedCrossChainsRequest is the request type for the Query/PausedCrossChains RPC method.
+type QueryPausedCrossChainsRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -3564,8 +3564,8 @@ type QueryPausedCounterpartiesRequest struct {
 	ProtocolId v1.ProtocolID `protobuf:"varint,1,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"protocol_id,omitempty"`
 }
 
-func (x *QueryPausedCounterpartiesRequest) Reset() {
-	*x = QueryPausedCounterpartiesRequest{}
+func (x *QueryPausedCrossChainsRequest) Reset() {
+	*x = QueryPausedCrossChainsRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3573,36 +3573,36 @@ func (x *QueryPausedCounterpartiesRequest) Reset() {
 	}
 }
 
-func (x *QueryPausedCounterpartiesRequest) String() string {
+func (x *QueryPausedCrossChainsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*QueryPausedCounterpartiesRequest) ProtoMessage() {}
+func (*QueryPausedCrossChainsRequest) ProtoMessage() {}
 
-// Deprecated: Use QueryPausedCounterpartiesRequest.ProtoReflect.Descriptor instead.
-func (*QueryPausedCounterpartiesRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use QueryPausedCrossChainsRequest.ProtoReflect.Descriptor instead.
+func (*QueryPausedCrossChainsRequest) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_query_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *QueryPausedCounterpartiesRequest) GetProtocolId() v1.ProtocolID {
+func (x *QueryPausedCrossChainsRequest) GetProtocolId() v1.ProtocolID {
 	if x != nil {
 		return x.ProtocolId
 	}
 	return v1.ProtocolID(0)
 }
 
-// QueryPausedCounterpartiesResponse is the response type for the Query/PausedCounterparties RPC method.
-type QueryPausedCounterpartiesResponse struct {
+// QueryPausedCrossChainsResponse is the response type for the Query/PausedCrossChains RPC method.
+type QueryPausedCrossChainsResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// counterparty_ids is the list of paused counterparty identifiers.
+	// counterparty_ids is the list of paused counterparty identifiers for the specified protocol ID.
 	CounterpartyIds []string `protobuf:"bytes,1,rep,name=counterparty_ids,json=counterpartyIds,proto3" json:"counterparty_ids,omitempty"`
 }
 
-func (x *QueryPausedCounterpartiesResponse) Reset() {
-	*x = QueryPausedCounterpartiesResponse{}
+func (x *QueryPausedCrossChainsResponse) Reset() {
+	*x = QueryPausedCrossChainsResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3610,18 +3610,18 @@ func (x *QueryPausedCounterpartiesResponse) Reset() {
 	}
 }
 
-func (x *QueryPausedCounterpartiesResponse) String() string {
+func (x *QueryPausedCrossChainsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*QueryPausedCounterpartiesResponse) ProtoMessage() {}
+func (*QueryPausedCrossChainsResponse) ProtoMessage() {}
 
-// Deprecated: Use QueryPausedCounterpartiesResponse.ProtoReflect.Descriptor instead.
-func (*QueryPausedCounterpartiesResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use QueryPausedCrossChainsResponse.ProtoReflect.Descriptor instead.
+func (*QueryPausedCrossChainsResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_query_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *QueryPausedCounterpartiesResponse) GetCounterpartyIds() []string {
+func (x *QueryPausedCrossChainsResponse) GetCounterpartyIds() []string {
 	if x != nil {
 		return x.CounterpartyIds
 	}
@@ -3702,8 +3702,8 @@ func (x *QueryIsProtocolPausedResponse) GetIsPaused() bool {
 	return false
 }
 
-// QueryIsCounterpartyPausedRequest is the request type for the Query/IsCounterpartyPaused RPC method.
-type QueryIsCounterpartyPausedRequest struct {
+// QueryIsCrossChainPausedRequest is the request type for the Query/IsCrossChainPaused RPC method.
+type QueryIsCrossChainPausedRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -3714,8 +3714,8 @@ type QueryIsCounterpartyPausedRequest struct {
 	CounterpartyId string `protobuf:"bytes,2,opt,name=counterparty_id,json=counterpartyId,proto3" json:"counterparty_id,omitempty"`
 }
 
-func (x *QueryIsCounterpartyPausedRequest) Reset() {
-	*x = QueryIsCounterpartyPausedRequest{}
+func (x *QueryIsCrossChainPausedRequest) Reset() {
+	*x = QueryIsCrossChainPausedRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3723,33 +3723,33 @@ func (x *QueryIsCounterpartyPausedRequest) Reset() {
 	}
 }
 
-func (x *QueryIsCounterpartyPausedRequest) String() string {
+func (x *QueryIsCrossChainPausedRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*QueryIsCounterpartyPausedRequest) ProtoMessage() {}
+func (*QueryIsCrossChainPausedRequest) ProtoMessage() {}
 
-// Deprecated: Use QueryIsCounterpartyPausedRequest.ProtoReflect.Descriptor instead.
-func (*QueryIsCounterpartyPausedRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use QueryIsCrossChainPausedRequest.ProtoReflect.Descriptor instead.
+func (*QueryIsCrossChainPausedRequest) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_query_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *QueryIsCounterpartyPausedRequest) GetProtocolId() v1.ProtocolID {
+func (x *QueryIsCrossChainPausedRequest) GetProtocolId() v1.ProtocolID {
 	if x != nil {
 		return x.ProtocolId
 	}
 	return v1.ProtocolID(0)
 }
 
-func (x *QueryIsCounterpartyPausedRequest) GetCounterpartyId() string {
+func (x *QueryIsCrossChainPausedRequest) GetCounterpartyId() string {
 	if x != nil {
 		return x.CounterpartyId
 	}
 	return ""
 }
 
-// QueryIsCounterpartyPausedResponse is the response type for the Query/IsCounterpartyPaused RPC method.
-type QueryIsCounterpartyPausedResponse struct {
+// QueryIsCrossChainPausedResponse is the response type for the Query/IsCrossChainPaused RPC method.
+type QueryIsCrossChainPausedResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -3758,8 +3758,8 @@ type QueryIsCounterpartyPausedResponse struct {
 	IsPaused bool `protobuf:"varint,1,opt,name=is_paused,json=isPaused,proto3" json:"is_paused,omitempty"`
 }
 
-func (x *QueryIsCounterpartyPausedResponse) Reset() {
-	*x = QueryIsCounterpartyPausedResponse{}
+func (x *QueryIsCrossChainPausedResponse) Reset() {
+	*x = QueryIsCrossChainPausedResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3767,18 +3767,18 @@ func (x *QueryIsCounterpartyPausedResponse) Reset() {
 	}
 }
 
-func (x *QueryIsCounterpartyPausedResponse) String() string {
+func (x *QueryIsCrossChainPausedResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*QueryIsCounterpartyPausedResponse) ProtoMessage() {}
+func (*QueryIsCrossChainPausedResponse) ProtoMessage() {}
 
-// Deprecated: Use QueryIsCounterpartyPausedResponse.ProtoReflect.Descriptor instead.
-func (*QueryIsCounterpartyPausedResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use QueryIsCrossChainPausedResponse.ProtoReflect.Descriptor instead.
+func (*QueryIsCrossChainPausedResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_query_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *QueryIsCounterpartyPausedResponse) GetIsPaused() bool {
+func (x *QueryIsCrossChainPausedResponse) GetIsPaused() bool {
 	if x != nil {
 		return x.IsPaused
 	}
@@ -3802,131 +3802,130 @@ var file_noble_orbiter_component_forwarder_v1_query_proto_rawDesc = []byte{
 	0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x2f, 0x69, 0x64,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x1d, 0x0a, 0x1b, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50,
 	0x61, 0x75, 0x73, 0x65, 0x64, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x69, 0x0a, 0x1c, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x6b, 0x0a, 0x1c, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61,
 	0x75, 0x73, 0x65, 0x64, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x49, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
-	0x6c, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62,
-	0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e,
-	0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x42, 0x05, 0xa8,
-	0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64,
-	0x22, 0x6d, 0x0a, 0x20, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x43,
-	0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x12, 0x49, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62, 0x6c,
-	0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76,
-	0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x42, 0x05, 0xa8, 0xe7,
-	0xb0, 0x2a, 0x01, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64, 0x22,
-	0x4e, 0x0a, 0x21, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x43, 0x6f,
-	0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x29, 0x0a, 0x10, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70,
-	0x61, 0x72, 0x74, 0x79, 0x5f, 0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0f,
-	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x49, 0x64, 0x73, 0x22,
-	0x69, 0x0a, 0x1c, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
-	0x49, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62,
-	0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x42, 0x05, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x0a,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64, 0x22, 0x3c, 0x0a, 0x1d, 0x51, 0x75,
-	0x65, 0x72, 0x79, 0x49, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x61, 0x75,
-	0x73, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x69,
-	0x73, 0x5f, 0x70, 0x61, 0x75, 0x73, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08,
-	0x69, 0x73, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x22, 0x96, 0x01, 0x0a, 0x20, 0x51, 0x75, 0x65,
-	0x72, 0x79, 0x49, 0x73, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79,
-	0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x49, 0x0a,
-	0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0e, 0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74,
-	0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f,
-	0x63, 0x6f, 0x6c, 0x49, 0x44, 0x42, 0x05, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x0a, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x63, 0x6f, 0x75, 0x6e,
-	0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x0e, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x49,
-	0x64, 0x22, 0x40, 0x0a, 0x21, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x43, 0x6f, 0x75, 0x6e,
-	0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x69, 0x73, 0x5f, 0x70, 0x61, 0x75,
-	0x73, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x69, 0x73, 0x50, 0x61, 0x75,
-	0x73, 0x65, 0x64, 0x32, 0xd7, 0x07, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0xd3, 0x01,
-	0x0a, 0x0f, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x73, 0x12, 0x41, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
-	0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77,
-	0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61,
-	0x75, 0x73, 0x65, 0x64, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x42, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62,
-	0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66,
-	0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72,
-	0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x39, 0x88, 0xe7, 0xb0, 0x2a, 0x01, 0x82,
-	0xd3, 0xe4, 0x93, 0x02, 0x2e, 0x12, 0x2c, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72,
-	0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f,
-	0x76, 0x31, 0x2f, 0x70, 0x61, 0x75, 0x73, 0x65, 0x64, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x73, 0x12, 0xfc, 0x01, 0x0a, 0x11, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x43, 0x72,
-	0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x73, 0x12, 0x46, 0x2e, 0x6e, 0x6f, 0x62, 0x6c,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4b, 0x0a, 0x0c, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x5f, 0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x6e, 0x6f,
+	0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65,
+	0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x42, 0x05,
+	0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49,
+	0x64, 0x73, 0x22, 0x6a, 0x0a, 0x1d, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65,
+	0x64, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x49, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65,
+	0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
+	0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x42, 0x05, 0xa8, 0xe7, 0xb0,
+	0x2a, 0x01, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64, 0x22, 0x4b,
+	0x0a, 0x1e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x43, 0x72, 0x6f,
+	0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x29, 0x0a, 0x10, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79,
+	0x5f, 0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0f, 0x63, 0x6f, 0x75, 0x6e,
+	0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x49, 0x64, 0x73, 0x22, 0x69, 0x0a, 0x1c, 0x51,
+	0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x61,
+	0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x49, 0x0a, 0x0b, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e,
+	0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
+	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x49, 0x44, 0x42, 0x05, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64, 0x22, 0x3c, 0x0a, 0x1d, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49,
+	0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x69, 0x73, 0x5f, 0x70, 0x61,
+	0x75, 0x73, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x69, 0x73, 0x50, 0x61,
+	0x75, 0x73, 0x65, 0x64, 0x22, 0x94, 0x01, 0x0a, 0x1e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49, 0x73,
+	0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x49, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x6e,
+	0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72,
+	0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x42,
+	0x05, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x49, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72,
+	0x74, 0x79, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x6f, 0x75,
+	0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x49, 0x64, 0x22, 0x3e, 0x0a, 0x1f, 0x51,
+	0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e,
+	0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1b,
+	0x0a, 0x09, 0x69, 0x73, 0x5f, 0x70, 0x61, 0x75, 0x73, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x08, 0x52, 0x08, 0x69, 0x73, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x32, 0xcb, 0x07, 0x0a, 0x05,
+	0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0xd3, 0x01, 0x0a, 0x0f, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64,
+	0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x12, 0x41, 0x2e, 0x6e, 0x6f, 0x62, 0x6c,
 	0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e,
 	0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31,
-	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x43, 0x6f, 0x75, 0x6e,
-	0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x47, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
-	0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77,
-	0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61,
-	0x75, 0x73, 0x65, 0x64, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69,
-	0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x56, 0x88, 0xe7, 0xb0, 0x2a,
-	0x01, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x4b, 0x12, 0x49, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f,
-	0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65,
-	0x72, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61, 0x75, 0x73, 0x65, 0x64, 0x2f, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x2f, 0x7b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f,
-	0x69, 0x64, 0x7d, 0x2f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69,
-	0x65, 0x73, 0x12, 0xe4, 0x01, 0x0a, 0x10, 0x49, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
-	0x6c, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x12, 0x42, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e,
-	0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e,
-	0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x51,
-	0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x61,
-	0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x43, 0x2e, 0x6e, 0x6f,
-	0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70,
-	0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e,
-	0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x22, 0x47, 0x88, 0xe7, 0xb0, 0x2a, 0x01, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x3c, 0x12, 0x3a, 0x2f,
+	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x50, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x42, 0x2e, 0x6e,
+	0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d,
+	0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72,
+	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x50,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x39, 0x88, 0xe7, 0xb0, 0x2a, 0x01, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2e, 0x12, 0x2c, 0x2f,
 	0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6f,
 	0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61, 0x75, 0x73, 0x65,
-	0x64, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x2f, 0x7b, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x7d, 0x12, 0x91, 0x02, 0x0a, 0x14, 0x49, 0x73,
-	0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x50, 0x61, 0x75, 0x73,
-	0x65, 0x64, 0x12, 0x46, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74,
+	0x64, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x12, 0xf6, 0x01, 0x0a, 0x11,
+	0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e,
+	0x73, 0x12, 0x43, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
+	0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77,
+	0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61,
+	0x75, 0x73, 0x65, 0x64, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x44, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f,
+	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74,
+	0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68,
+	0x61, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x56, 0x88, 0xe7,
+	0xb0, 0x2a, 0x01, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x4b, 0x12, 0x49, 0x2f, 0x6e, 0x6f, 0x62, 0x6c,
+	0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72,
+	0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61, 0x75, 0x73, 0x65, 0x64, 0x2f, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x2f, 0x7b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x5f, 0x69, 0x64, 0x7d, 0x2f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72,
+	0x74, 0x69, 0x65, 0x73, 0x12, 0xe4, 0x01, 0x0a, 0x10, 0x49, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x12, 0x42, 0x2e, 0x6e, 0x6f, 0x62, 0x6c,
+	0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e,
+	0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31,
+	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x43, 0x2e,
+	0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f,
+	0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65,
+	0x72, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x50, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x47, 0x88, 0xe7, 0xb0, 0x2a, 0x01, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x3c, 0x12,
+	0x3a, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f,
+	0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61, 0x75,
+	0x73, 0x65, 0x64, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x2f, 0x7b, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x7d, 0x12, 0x8b, 0x02, 0x0a, 0x12,
+	0x49, 0x73, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x50, 0x61, 0x75, 0x73,
+	0x65, 0x64, 0x12, 0x44, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74,
 	0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72,
 	0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49,
-	0x73, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x50, 0x61, 0x75,
-	0x73, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x47, 0x2e, 0x6e, 0x6f, 0x62,
-	0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f,
-	0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76,
-	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72,
-	0x70, 0x61, 0x72, 0x74, 0x79, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x68, 0x88, 0xe7, 0xb0, 0x2a, 0x01, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x5d,
-	0x12, 0x5b, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
-	0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61,
-	0x75, 0x73, 0x65, 0x64, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x2f, 0x7b,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x7d, 0x2f, 0x63, 0x6f, 0x75,
-	0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x2f, 0x7b, 0x63, 0x6f, 0x75,
-	0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x5f, 0x69, 0x64, 0x7d, 0x42, 0xad, 0x02,
-	0x0a, 0x28, 0x63, 0x6f, 0x6d, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69,
-	0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f,
-	0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x42, 0x0a, 0x51, 0x75, 0x65, 0x72,
-	0x79, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x40, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
-	0x72, 0x2e, 0x64, 0x65, 0x76, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f,
-	0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e,
-	0x74, 0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x3b, 0x66,
-	0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x76, 0x31, 0xa2, 0x02, 0x04, 0x4e, 0x4f, 0x43,
-	0x46, 0xaa, 0x02, 0x24, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65,
-	0x72, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x46, 0x6f, 0x72, 0x77,
-	0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x24, 0x4e, 0x6f, 0x62, 0x6c, 0x65,
-	0x5c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c, 0x43, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65,
-	0x6e, 0x74, 0x5c, 0x46, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x5c, 0x56, 0x31, 0xe2,
-	0x02, 0x30, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c,
-	0x43, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x5c, 0x46, 0x6f, 0x72, 0x77, 0x61, 0x72,
-	0x64, 0x65, 0x72, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61,
-	0x74, 0x61, 0xea, 0x02, 0x28, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x3a, 0x3a, 0x4f, 0x72, 0x62, 0x69,
-	0x74, 0x65, 0x72, 0x3a, 0x3a, 0x43, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x3a, 0x3a,
-	0x46, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x50, 0x61, 0x75, 0x73, 0x65,
+	0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x45, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65,
+	0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65,
+	0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e,
+	0x51, 0x75, 0x65, 0x72, 0x79, 0x49, 0x73, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69,
+	0x6e, 0x50, 0x61, 0x75, 0x73, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x68, 0x88, 0xe7, 0xb0, 0x2a, 0x01, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x5d, 0x12, 0x5b, 0x2f, 0x6e,
+	0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6f, 0x72,
+	0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61, 0x75, 0x73, 0x65, 0x64,
+	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x73, 0x2f, 0x7b, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x7d, 0x2f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72,
+	0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x2f, 0x7b, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72,
+	0x70, 0x61, 0x72, 0x74, 0x79, 0x5f, 0x69, 0x64, 0x7d, 0x42, 0xad, 0x02, 0x0a, 0x28, 0x63, 0x6f,
+	0x6d, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e,
+	0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72,
+	0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x42, 0x0a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x72, 0x6f,
+	0x74, 0x6f, 0x50, 0x01, 0x5a, 0x40, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x64, 0x65,
+	0x76, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2f, 0x6f, 0x72, 0x62, 0x69,
+	0x74, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2f, 0x66, 0x6f,
+	0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x3b, 0x66, 0x6f, 0x72, 0x77, 0x61,
+	0x72, 0x64, 0x65, 0x72, 0x76, 0x31, 0xa2, 0x02, 0x04, 0x4e, 0x4f, 0x43, 0x46, 0xaa, 0x02, 0x24,
+	0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x43, 0x6f,
+	0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x46, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65,
+	0x72, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x24, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62,
+	0x69, 0x74, 0x65, 0x72, 0x5c, 0x43, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x5c, 0x46,
+	0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x5c, 0x56, 0x31, 0xe2, 0x02, 0x30, 0x4e, 0x6f,
+	0x62, 0x6c, 0x65, 0x5c, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x5c, 0x43, 0x6f, 0x6d, 0x70,
+	0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x5c, 0x46, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x5c,
+	0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02,
+	0x28, 0x4e, 0x6f, 0x62, 0x6c, 0x65, 0x3a, 0x3a, 0x4f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x3a,
+	0x3a, 0x43, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x3a, 0x3a, 0x46, 0x6f, 0x72, 0x77,
+	0x61, 0x72, 0x64, 0x65, 0x72, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -3943,29 +3942,29 @@ func file_noble_orbiter_component_forwarder_v1_query_proto_rawDescGZIP() []byte 
 
 var file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_noble_orbiter_component_forwarder_v1_query_proto_goTypes = []interface{}{
-	(*QueryPausedProtocolsRequest)(nil),       // 0: noble.orbiter.component.forwarder.v1.QueryPausedProtocolsRequest
-	(*QueryPausedProtocolsResponse)(nil),      // 1: noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse
-	(*QueryPausedCounterpartiesRequest)(nil),  // 2: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest
-	(*QueryPausedCounterpartiesResponse)(nil), // 3: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse
-	(*QueryIsProtocolPausedRequest)(nil),      // 4: noble.orbiter.component.forwarder.v1.QueryIsProtocolPausedRequest
-	(*QueryIsProtocolPausedResponse)(nil),     // 5: noble.orbiter.component.forwarder.v1.QueryIsProtocolPausedResponse
-	(*QueryIsCounterpartyPausedRequest)(nil),  // 6: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest
-	(*QueryIsCounterpartyPausedResponse)(nil), // 7: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse
-	(v1.ProtocolID)(0),                        // 8: noble.orbiter.core.v1.ProtocolID
+	(*QueryPausedProtocolsRequest)(nil),     // 0: noble.orbiter.component.forwarder.v1.QueryPausedProtocolsRequest
+	(*QueryPausedProtocolsResponse)(nil),    // 1: noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse
+	(*QueryPausedCrossChainsRequest)(nil),   // 2: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest
+	(*QueryPausedCrossChainsResponse)(nil),  // 3: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse
+	(*QueryIsProtocolPausedRequest)(nil),    // 4: noble.orbiter.component.forwarder.v1.QueryIsProtocolPausedRequest
+	(*QueryIsProtocolPausedResponse)(nil),   // 5: noble.orbiter.component.forwarder.v1.QueryIsProtocolPausedResponse
+	(*QueryIsCrossChainPausedRequest)(nil),  // 6: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest
+	(*QueryIsCrossChainPausedResponse)(nil), // 7: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse
+	(v1.ProtocolID)(0),                      // 8: noble.orbiter.core.v1.ProtocolID
 }
 var file_noble_orbiter_component_forwarder_v1_query_proto_depIdxs = []int32{
-	8, // 0: noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
-	8, // 1: noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
+	8, // 0: noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse.protocol_ids:type_name -> noble.orbiter.core.v1.ProtocolID
+	8, // 1: noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
 	8, // 2: noble.orbiter.component.forwarder.v1.QueryIsProtocolPausedRequest.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
-	8, // 3: noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
+	8, // 3: noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
 	0, // 4: noble.orbiter.component.forwarder.v1.Query.PausedProtocols:input_type -> noble.orbiter.component.forwarder.v1.QueryPausedProtocolsRequest
-	2, // 5: noble.orbiter.component.forwarder.v1.Query.PausedCrossChains:input_type -> noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesRequest
+	2, // 5: noble.orbiter.component.forwarder.v1.Query.PausedCrossChains:input_type -> noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsRequest
 	4, // 6: noble.orbiter.component.forwarder.v1.Query.IsProtocolPaused:input_type -> noble.orbiter.component.forwarder.v1.QueryIsProtocolPausedRequest
-	6, // 7: noble.orbiter.component.forwarder.v1.Query.IsCounterpartyPaused:input_type -> noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedRequest
+	6, // 7: noble.orbiter.component.forwarder.v1.Query.IsCrossChainPaused:input_type -> noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedRequest
 	1, // 8: noble.orbiter.component.forwarder.v1.Query.PausedProtocols:output_type -> noble.orbiter.component.forwarder.v1.QueryPausedProtocolsResponse
-	3, // 9: noble.orbiter.component.forwarder.v1.Query.PausedCrossChains:output_type -> noble.orbiter.component.forwarder.v1.QueryPausedCounterpartiesResponse
+	3, // 9: noble.orbiter.component.forwarder.v1.Query.PausedCrossChains:output_type -> noble.orbiter.component.forwarder.v1.QueryPausedCrossChainsResponse
 	5, // 10: noble.orbiter.component.forwarder.v1.Query.IsProtocolPaused:output_type -> noble.orbiter.component.forwarder.v1.QueryIsProtocolPausedResponse
-	7, // 11: noble.orbiter.component.forwarder.v1.Query.IsCounterpartyPaused:output_type -> noble.orbiter.component.forwarder.v1.QueryIsCounterpartyPausedResponse
+	7, // 11: noble.orbiter.component.forwarder.v1.Query.IsCrossChainPaused:output_type -> noble.orbiter.component.forwarder.v1.QueryIsCrossChainPausedResponse
 	8, // [8:12] is the sub-list for method output_type
 	4, // [4:8] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -4004,7 +4003,7 @@ func file_noble_orbiter_component_forwarder_v1_query_proto_init() {
 			}
 		}
 		file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryPausedCounterpartiesRequest); i {
+			switch v := v.(*QueryPausedCrossChainsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -4016,7 +4015,7 @@ func file_noble_orbiter_component_forwarder_v1_query_proto_init() {
 			}
 		}
 		file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryPausedCounterpartiesResponse); i {
+			switch v := v.(*QueryPausedCrossChainsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -4052,7 +4051,7 @@ func file_noble_orbiter_component_forwarder_v1_query_proto_init() {
 			}
 		}
 		file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryIsCounterpartyPausedRequest); i {
+			switch v := v.(*QueryIsCrossChainPausedRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -4064,7 +4063,7 @@ func file_noble_orbiter_component_forwarder_v1_query_proto_init() {
 			}
 		}
 		file_noble_orbiter_component_forwarder_v1_query_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryIsCounterpartyPausedResponse); i {
+			switch v := v.(*QueryIsCrossChainPausedResponse); i {
 			case 0:
 				return &v.state
 			case 1:

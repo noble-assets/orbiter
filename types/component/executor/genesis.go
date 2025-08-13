@@ -30,7 +30,7 @@ func DefaultGenesisState() *GenesisState {
 	}
 }
 
-// Validate retusn an error if any of the genesis field is not valid.
+// Validate returns an error if any of the genesis field is not valid.
 func (g *GenesisState) Validate() error {
 	for _, id := range g.PausedActionIds {
 		if err := id.Validate(); err != nil {

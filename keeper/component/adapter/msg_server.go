@@ -24,27 +24,26 @@ import (
 	"context"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/component/adapter"
+	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
-var _ adapter.MsgServer = &msgServer{}
+var _ adaptertypes.MsgServer = &msgServer{}
 
-// msgServer is the server used to handle messages
-// for the executor component.
+// msgServer is the server used to handle messages for the component.
 type msgServer struct {
 	*Adapter
-	types.Authorizator
+	types.Authorizer
 }
 
-func NewMsgServer(a *Adapter, auth types.Authorizator) msgServer {
-	return msgServer{Adapter: a, Authorizator: auth}
+func NewMsgServer(a *Adapter, auth types.Authorizer) msgServer {
+	return msgServer{Adapter: a, Authorizer: auth}
 }
 
 // UpdateParams implements adapter.MsgServer.
 func (s msgServer) UpdateParams(
 	ctx context.Context,
-	msg *adapter.MsgUpdateParams,
-) (*adapter.MsgUpdateParamsResponse, error) {
+	msg *adaptertypes.MsgUpdateParams,
+) (*adaptertypes.MsgUpdateParamsResponse, error) {
 	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
@@ -53,5 +52,5 @@ func (s msgServer) UpdateParams(
 		return nil, err
 	}
 
-	return &adapter.MsgUpdateParamsResponse{}, nil
+	return &adaptertypes.MsgUpdateParamsResponse{}, nil
 }

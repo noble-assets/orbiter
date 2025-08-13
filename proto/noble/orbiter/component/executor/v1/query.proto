@@ -25,7 +25,7 @@ service Query {
 message QueryPausedActionsRequest {}
 
 message QueryPausedActionsResponse {
-  repeated noble.orbiter.core.v1.ActionID action_id = 1 [(amino.dont_omitempty) = true];
+  repeated noble.orbiter.core.v1.ActionID action_ids = 1 [(amino.dont_omitempty) = true];
 }
 
 message QueryIsActionPausedRequest {

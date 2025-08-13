@@ -38,7 +38,7 @@ func NewAdapterComponent(tb testing.TB) (*adapter.Adapter, *Dependencies) {
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
 
-	dispatcher, err := dispatcher.New(
+	d, err := dispatcher.New(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
@@ -47,17 +47,17 @@ func NewAdapterComponent(tb testing.TB) (*adapter.Adapter, *Dependencies) {
 	)
 	require.NoError(tb, err)
 
-	adapter, err := adapter.New(
+	a, err := adapter.New(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
-		BankKeeper{},
-		dispatcher,
+		&BankKeeper{},
+		d,
 	)
 	require.NoError(tb, err)
 
 	_, err = sb.Build()
 	require.NoError(tb, err)
 
-	return adapter, &deps
+	return a, &deps
 }

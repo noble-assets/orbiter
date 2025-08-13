@@ -95,7 +95,12 @@ func NewCrossChainID(
 		CounterpartyId: counterpartyID,
 	}
 
-	return attr, attr.Validate()
+	err := attr.Validate()
+	if err != nil {
+		return CrossChainID{}, fmt.Errorf("invalid cross-chain ID: %w", err)
+	}
+
+	return attr, nil
 }
 
 // Validate returns an error if any of the cross-chain ID field

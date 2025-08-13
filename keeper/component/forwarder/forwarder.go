@@ -38,6 +38,10 @@ type ForwardingRouter = router.Router[core.ProtocolID, types.ControllerForwardin
 
 var _ types.Forwarder = &Forwarder{}
 
+// Forwarder is an Orbiter module component that handles the forwarding
+// logic of an Orbiter packet. This component manages its own storage, and
+// orcherstrate the controllers of the supported outgoing cross-chain
+// transfer bridges.
 type Forwarder struct {
 	logger     log.Logger
 	bankKeeper types.BankKeeperForwarder
@@ -224,7 +228,8 @@ func (f *Forwarder) validateCrossChain(
 ) error {
 	ccID, err := core.NewCrossChainID(protocolID, counterpartyID)
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid cross-chain ID for protocol %v and counterparty %s: %w",
+			protocolID, counterpartyID, err)
 	}
 	isPaused, err := f.IsCrossChainPaused(ctx, ccID)
 	if err != nil {

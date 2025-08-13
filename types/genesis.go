@@ -38,7 +38,7 @@ func DefaultGenesisState() *GenesisState {
 	}
 }
 
-// Validate retusn an error if any of the genesis field is not valid.
+// Validate returns an error if any of the genesis fields is not valid.
 func (g *GenesisState) Validate() error {
 	if err := g.AdapterGenesis.Validate(); err != nil {
 		return fmt.Errorf("error validating adapter component genesis state: %w", err)

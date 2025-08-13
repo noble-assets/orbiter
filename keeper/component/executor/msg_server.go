@@ -24,28 +24,28 @@ import (
 	"context"
 
 	"orbiter.dev/types"
-	"orbiter.dev/types/component/executor"
+	executortypes "orbiter.dev/types/component/executor"
 	"orbiter.dev/types/core"
 )
 
-var _ executor.MsgServer = &msgServer{}
+var _ executortypes.MsgServer = &msgServer{}
 
 // msgServer is the server used to handle messages
 // for the executor component.
 type msgServer struct {
 	*Executor
-	types.Authorizator
+	types.Authorizer
 }
 
-func NewMsgServer(e *Executor, a types.Authorizator) msgServer {
-	return msgServer{Executor: e, Authorizator: a}
+func NewMsgServer(e *Executor, a types.Authorizer) msgServer {
+	return msgServer{Executor: e, Authorizer: a}
 }
 
 // Pause implements executor.MsgServer.
 func (s msgServer) PauseAction(
 	ctx context.Context,
-	msg *executor.MsgPauseAction,
-) (*executor.MsgPauseActionResponse, error) {
+	msg *executortypes.MsgPauseAction,
+) (*executortypes.MsgPauseActionResponse, error) {
 	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
@@ -56,14 +56,14 @@ func (s msgServer) PauseAction(
 		)
 	}
 
-	return &executor.MsgPauseActionResponse{}, nil
+	return &executortypes.MsgPauseActionResponse{}, nil
 }
 
 // Unpause implements executor.MsgServer.
 func (s msgServer) UnpauseAction(
 	ctx context.Context,
-	msg *executor.MsgUnpauseAction,
-) (*executor.MsgUnpauseActionResponse, error) {
+	msg *executortypes.MsgUnpauseAction,
+) (*executortypes.MsgUnpauseActionResponse, error) {
 	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
@@ -74,5 +74,5 @@ func (s msgServer) UnpauseAction(
 		)
 	}
 
-	return &executor.MsgUnpauseActionResponse{}, nil
+	return &executortypes.MsgUnpauseActionResponse{}, nil
 }

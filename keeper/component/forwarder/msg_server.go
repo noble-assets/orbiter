@@ -40,11 +40,11 @@ var _ forwardertypes.MsgServer = &msgServer{}
 // for the forwarder component.
 type msgServer struct {
 	*Forwarder
-	types.Authorizator
+	types.Authorizer
 }
 
-func NewMsgServer(f *Forwarder, a types.Authorizator) msgServer {
-	return msgServer{Forwarder: f, Authorizator: a}
+func NewMsgServer(f *Forwarder, a types.Authorizer) msgServer {
+	return msgServer{Forwarder: f, Authorizer: a}
 }
 
 // PauseProtocol implements forwarder.MsgServer.
@@ -128,7 +128,7 @@ func (s msgServer) ReplaceDepositForBurn(
 		return nil, err
 	}
 
-	controller, found := s.Router().Route(core.PROTOCOL_CCTP)
+	controller, found := s.router.Route(core.PROTOCOL_CCTP)
 	if !found {
 		return nil, errors.New("cctp controller not found")
 	}

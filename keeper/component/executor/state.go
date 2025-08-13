@@ -64,9 +64,11 @@ func (e *Executor) GetPausedActions(
 	if err != nil {
 		return nil, err
 	}
-	defer iter.Close()
+	defer func() {
+		_ = iter.Close()
+	}()
 
-	var paused []core.ActionID
+	paused := make([]core.ActionID, 0, len(core.ActionID_name))
 	for ; iter.Valid(); iter.Next() {
 		k, err := iter.Key()
 		if err != nil {

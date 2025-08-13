@@ -33,7 +33,7 @@ type Loggable interface {
 	Logger() log.Logger
 }
 
-type Authorizator interface {
+type Authorizer interface {
 	RequireAuthority(string) error
 }
 

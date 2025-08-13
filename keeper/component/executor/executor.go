@@ -52,6 +52,15 @@ func New(
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
 ) (*Executor, error) {
+	if cdc == nil {
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
+	}
+	if sb == nil {
+		return nil, core.ErrNilPointer.Wrap("schema builder cannot be nil")
+	}
+	if logger == nil {
+		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
+	}
 	executor := Executor{
 		logger: logger.With(core.ComponentPrefix, core.ExecutorName),
 		router: router.New[core.ActionID, types.ControllerAction](),

@@ -186,7 +186,7 @@ func (d *Dispatcher) dispatchForwarding(
 	if err != nil {
 		return fmt.Errorf(
 			"error creating forwarding packet for protocol ID %s: %w",
-			packet.Forwarding.ProtocolID(),
+			forwarding.ProtocolID(),
 			err,
 		)
 	}

@@ -23,10 +23,10 @@ package adapter
 import (
 	"context"
 
-	"orbiter.dev/types/component/adapter"
+	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
-var _ adapter.QueryServer = &queryServer{}
+var _ adaptertypes.QueryServer = &queryServer{}
 
 type queryServer struct {
 	*Adapter
@@ -36,14 +36,14 @@ func NewQueryServer(a *Adapter) queryServer {
 	return queryServer{Adapter: a}
 }
 
-// Params implements adapter.QueryClient.
+// Params implements adapter.QueryServer.
 func (s queryServer) Params(
 	ctx context.Context,
-	req *adapter.QueryParamsRequest,
-) (*adapter.QueryParamsResponse, error) {
+	req *adaptertypes.QueryParamsRequest,
+) (*adaptertypes.QueryParamsResponse, error) {
 	params := s.GetParams(ctx)
 
-	return &adapter.QueryParamsResponse{
+	return &adaptertypes.QueryParamsResponse{
 		Params: params,
 	}, nil
 }

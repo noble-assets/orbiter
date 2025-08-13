@@ -1249,8 +1249,8 @@ func (x *fastReflection_DispatchCountEntry) Range(f func(protoreflect.FieldDescr
 			return
 		}
 	}
-	if x.Count != int32(0) {
-		value := protoreflect.ValueOfInt32(x.Count)
+	if x.Count != int64(0) {
+		value := protoreflect.ValueOfInt64(x.Count)
 		if !f(fd_DispatchCountEntry_count, value) {
 			return
 		}
@@ -1275,7 +1275,7 @@ func (x *fastReflection_DispatchCountEntry) Has(fd protoreflect.FieldDescriptor)
 	case "noble.orbiter.component.dispatcher.v1.DispatchCountEntry.destination_id":
 		return x.DestinationId != nil
 	case "noble.orbiter.component.dispatcher.v1.DispatchCountEntry.count":
-		return x.Count != int32(0)
+		return x.Count != int64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.dispatcher.v1.DispatchCountEntry"))
@@ -1297,7 +1297,7 @@ func (x *fastReflection_DispatchCountEntry) Clear(fd protoreflect.FieldDescripto
 	case "noble.orbiter.component.dispatcher.v1.DispatchCountEntry.destination_id":
 		x.DestinationId = nil
 	case "noble.orbiter.component.dispatcher.v1.DispatchCountEntry.count":
-		x.Count = int32(0)
+		x.Count = int64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.dispatcher.v1.DispatchCountEntry"))
@@ -1322,7 +1322,7 @@ func (x *fastReflection_DispatchCountEntry) Get(descriptor protoreflect.FieldDes
 		return protoreflect.ValueOfMessage(value.ProtoReflect())
 	case "noble.orbiter.component.dispatcher.v1.DispatchCountEntry.count":
 		value := x.Count
-		return protoreflect.ValueOfInt32(value)
+		return protoreflect.ValueOfInt64(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.dispatcher.v1.DispatchCountEntry"))
@@ -1348,7 +1348,7 @@ func (x *fastReflection_DispatchCountEntry) Set(fd protoreflect.FieldDescriptor,
 	case "noble.orbiter.component.dispatcher.v1.DispatchCountEntry.destination_id":
 		x.DestinationId = value.Message().Interface().(*v1.CrossChainID)
 	case "noble.orbiter.component.dispatcher.v1.DispatchCountEntry.count":
-		x.Count = int32(value.Int())
+		x.Count = value.Int()
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.dispatcher.v1.DispatchCountEntry"))
@@ -1401,7 +1401,7 @@ func (x *fastReflection_DispatchCountEntry) NewField(fd protoreflect.FieldDescri
 		m := new(v1.CrossChainID)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	case "noble.orbiter.component.dispatcher.v1.DispatchCountEntry.count":
-		return protoreflect.ValueOfInt32(int32(0))
+		return protoreflect.ValueOfInt64(int64(0))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.dispatcher.v1.DispatchCountEntry"))
@@ -1679,7 +1679,7 @@ func (x *fastReflection_DispatchCountEntry) ProtoMethods() *protoiface.Methods {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					x.Count |= int32(b&0x7F) << shift
+					x.Count |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1780,6 +1780,7 @@ func (x *AmountDispatched) GetOutgoing() string {
 	return ""
 }
 
+// DispatchedAmountEntry tracks dispatched amounts for a (source,destination,denom) tuple.
 type DispatchedAmountEntry struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1839,6 +1840,7 @@ func (x *DispatchedAmountEntry) GetAmountDispatched() *AmountDispatched {
 	return nil
 }
 
+// DispatchCountEntry tracks dispatch count for a (source,destination) tuple
 type DispatchCountEntry struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1846,7 +1848,7 @@ type DispatchCountEntry struct {
 
 	SourceId      *v1.CrossChainID `protobuf:"bytes,1,opt,name=source_id,json=sourceId,proto3" json:"source_id,omitempty"`
 	DestinationId *v1.CrossChainID `protobuf:"bytes,2,opt,name=destination_id,json=destinationId,proto3" json:"destination_id,omitempty"`
-	Count         int32            `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
+	Count         int64            `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
 }
 
 func (x *DispatchCountEntry) Reset() {
@@ -1883,7 +1885,7 @@ func (x *DispatchCountEntry) GetDestinationId() *v1.CrossChainID {
 	return nil
 }
 
-func (x *DispatchCountEntry) GetCount() int32 {
+func (x *DispatchCountEntry) GetCount() int64 {
 	if x != nil {
 		return x.Count
 	}
@@ -1947,7 +1949,7 @@ var file_noble_orbiter_component_dispatcher_v1_dispatcher_proto_rawDesc = []byte
 	0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x72, 0x6f,
 	0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x49, 0x44, 0x42, 0x05, 0xa8, 0xe7, 0xb0, 0x2a, 0x01,
 	0x52, 0x0d, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12,
-	0x14, 0x0a, 0x05, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05,
+	0x14, 0x0a, 0x05, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05,
 	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0xb9, 0x02, 0x0a, 0x29, 0x63, 0x6f, 0x6d, 0x2e, 0x6e, 0x6f,
 	0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70,
 	0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x64, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x65, 0x72,

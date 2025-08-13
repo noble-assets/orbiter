@@ -30,6 +30,9 @@ import (
 
 // InitGenesis initialize the state of the component with a genesis state.
 func (f *Forwarder) InitGenesis(ctx context.Context, g *forwardertypes.GenesisState) error {
+	if g == nil {
+		return core.ErrNilPointer.Wrap("forwarder genesis")
+	}
 	for _, id := range g.PausedProtocolIds {
 		if err := f.SetPausedProtocol(ctx, id); err != nil {
 			return fmt.Errorf("error setting genesis paused protocol id: %w", err)
@@ -37,6 +40,9 @@ func (f *Forwarder) InitGenesis(ctx context.Context, g *forwardertypes.GenesisSt
 	}
 
 	for _, id := range g.PausedCrossChainIds {
+		if id == nil {
+			return core.ErrNilPointer.Wrap("invalid cross-chain ID")
+		}
 		if err := f.SetPausedCrossChain(ctx, *id); err != nil {
 			return fmt.Errorf("error setting genesis paused cross-chain id: %w", err)
 		}

@@ -24,11 +24,11 @@ import (
 	"context"
 	"fmt"
 
-	"orbiter.dev/types/component/forwarder"
+	forwardertypes "orbiter.dev/types/component/forwarder"
 	"orbiter.dev/types/core"
 )
 
-var _ forwarder.QueryServer = &queryServer{}
+var _ forwardertypes.QueryServer = &queryServer{}
 
 type queryServer struct {
 	*Forwarder
@@ -41,14 +41,14 @@ func NewQueryServer(f *Forwarder) queryServer {
 // IsProtocolPaused implements forwarder.QueryServer.
 func (s queryServer) IsProtocolPaused(
 	ctx context.Context,
-	req *forwarder.QueryIsProtocolPausedRequest,
-) (*forwarder.QueryIsProtocolPausedResponse, error) {
+	req *forwardertypes.QueryIsProtocolPausedRequest,
+) (*forwardertypes.QueryIsProtocolPausedResponse, error) {
 	paused, err := s.Forwarder.IsProtocolPaused(ctx, req.ProtocolId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query protocol paused status: %w", err)
 	}
 
-	return &forwarder.QueryIsProtocolPausedResponse{
+	return &forwardertypes.QueryIsProtocolPausedResponse{
 		IsPaused: paused,
 	}, nil
 }
@@ -56,50 +56,49 @@ func (s queryServer) IsProtocolPaused(
 // PausedProtocols implements forwarder.QueryServer.
 func (s queryServer) PausedProtocols(
 	ctx context.Context,
-	req *forwarder.QueryPausedProtocolsRequest,
-) (*forwarder.QueryPausedProtocolsResponse, error) {
+	req *forwardertypes.QueryPausedProtocolsRequest,
+) (*forwardertypes.QueryPausedProtocolsResponse, error) {
 	paused, err := s.GetPausedProtocols(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query paused protocols: %w", err)
 	}
 
-	return &forwarder.QueryPausedProtocolsResponse{
-		ProtocolId: paused,
+	return &forwardertypes.QueryPausedProtocolsResponse{
+		ProtocolIds: paused,
 	}, nil
 }
 
-// IsCounterpartyPaused implements forwarder.QueryServer.
-func (s queryServer) IsCounterpartyPaused(
+func (s queryServer) IsCrossChainPaused(
 	ctx context.Context,
-	req *forwarder.QueryIsCounterpartyPausedRequest,
-) (*forwarder.QueryIsCounterpartyPausedResponse, error) {
+	req *forwardertypes.QueryIsCrossChainPausedRequest,
+) (*forwardertypes.QueryIsCrossChainPausedResponse, error) {
 	ccID, err := core.NewCrossChainID(req.ProtocolId, req.CounterpartyId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query counterparty paused status: %w", err)
 	}
 
-	paused, err := s.IsCrossChainPaused(ctx, ccID)
+	paused, err := s.Forwarder.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query counterparty paused status: %w", err)
 	}
 
-	return &forwarder.QueryIsCounterpartyPausedResponse{
+	return &forwardertypes.QueryIsCrossChainPausedResponse{
 		IsPaused: paused,
 	}, nil
 }
 
-// PausedCounterparties implements forwarder.QueryServer.
+// PausedCrossChains implements forwarder.QueryServer.
 func (s queryServer) PausedCrossChains(
 	ctx context.Context,
-	req *forwarder.QueryPausedCounterpartiesRequest,
-) (*forwarder.QueryPausedCounterpartiesResponse, error) {
+	req *forwardertypes.QueryPausedCrossChainsRequest,
+) (*forwardertypes.QueryPausedCrossChainsResponse, error) {
 	id := req.ProtocolId
 	paused, err := s.GetPausedCrossChains(ctx, &id)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query paused counterparty: %w", err)
 	}
 
-	return &forwarder.QueryPausedCounterpartiesResponse{
+	return &forwardertypes.QueryPausedCrossChainsResponse{
 		CounterpartyIds: paused[int32(id)],
 	}, nil
 }

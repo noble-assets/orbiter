@@ -24,8 +24,7 @@ import (
 	core "orbiter.dev/types/core"
 )
 
-// DefaultGenesisState returns the default values for the adapter
-// component initial state.
+// DefaultGenesisState returns the default values for the component initial state.
 func DefaultGenesisState() *GenesisState {
 	return &GenesisState{
 		PausedProtocolIds:   []core.ProtocolID{},
@@ -33,7 +32,7 @@ func DefaultGenesisState() *GenesisState {
 	}
 }
 
-// Validate retusn an error if any of the genesis field is not valid.
+// Validate returns an error if any of the genesis field is not valid.
 func (g *GenesisState) Validate() error {
 	for _, id := range g.PausedProtocolIds {
 		if err := id.Validate(); err != nil {

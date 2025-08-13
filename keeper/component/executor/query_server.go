@@ -24,10 +24,10 @@ import (
 	"context"
 	"fmt"
 
-	"orbiter.dev/types/component/executor"
+	executortypes "orbiter.dev/types/component/executor"
 )
 
-var _ executor.QueryServer = &queryServer{}
+var _ executortypes.QueryServer = &queryServer{}
 
 type queryServer struct {
 	*Executor
@@ -40,14 +40,14 @@ func NewQueryServer(e *Executor) queryServer {
 // IsActionPaused implements executor.QueryServer.
 func (s queryServer) IsActionPaused(
 	ctx context.Context,
-	req *executor.QueryIsActionPausedRequest,
-) (*executor.QueryIsActionPausedResponse, error) {
+	req *executortypes.QueryIsActionPausedRequest,
+) (*executortypes.QueryIsActionPausedResponse, error) {
 	paused, err := s.Executor.IsActionPaused(ctx, req.ActionId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query action paused status: %w", err)
 	}
 
-	return &executor.QueryIsActionPausedResponse{
+	return &executortypes.QueryIsActionPausedResponse{
 		IsPaused: paused,
 	}, nil
 }
@@ -55,14 +55,14 @@ func (s queryServer) IsActionPaused(
 // PausedActions implements executor.QueryServer.
 func (s queryServer) PausedActions(
 	ctx context.Context,
-	req *executor.QueryPausedActionsRequest,
-) (*executor.QueryPausedActionsResponse, error) {
+	req *executortypes.QueryPausedActionsRequest,
+) (*executortypes.QueryPausedActionsResponse, error) {
 	paused, err := s.GetPausedActions(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query paused actions: %w", err)
 	}
 
-	return &executor.QueryPausedActionsResponse{
-		ActionId: paused,
+	return &executortypes.QueryPausedActionsResponse{
+		ActionIds: paused,
 	}, nil
 }

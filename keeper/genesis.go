@@ -22,7 +22,6 @@ package keeper
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"orbiter.dev/types"
@@ -31,29 +30,15 @@ import (
 // InitGenesis initialize the state of the Orbiter module with
 // a genesis state.
 func (k *Keeper) InitGenesis(ctx context.Context, g types.GenesisState) {
-	a := k.Adapter()
-	if g.AdapterGenesis == nil {
-		panic(errors.New("nil pointer: missing adapter genesis state"))
-	}
-	if err := a.InitGenesis(ctx, g.AdapterGenesis); err != nil {
+	if err := k.adapter.InitGenesis(ctx, g.AdapterGenesis); err != nil {
 		panic(fmt.Errorf("unable to initialize adapter genesis state %w", err))
 	}
 
-	// TODO: add dispatcher
-
-	f := k.Forwarder()
-	if g.ForwarderGenesis == nil {
-		panic(errors.New("nil pointer: missing forwarder genesis state"))
-	}
-	if err := f.InitGenesis(ctx, g.ForwarderGenesis); err != nil {
+	if err := k.forwarder.InitGenesis(ctx, g.ForwarderGenesis); err != nil {
 		panic(fmt.Errorf("unable to initialize forwarder genesis state %w", err))
 	}
 
-	e := k.Executor()
-	if g.ExecutorGenesis == nil {
-		panic(errors.New("nil pointer: missing forwarder genesis state"))
-	}
-	if err := e.InitGenesis(ctx, g.ExecutorGenesis); err != nil {
+	if err := k.executor.InitGenesis(ctx, g.ExecutorGenesis); err != nil {
 		panic(fmt.Errorf("unable to initialize executor genesis state %w", err))
 	}
 }

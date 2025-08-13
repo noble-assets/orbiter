@@ -51,12 +51,12 @@ func (d *Dispatcher) UpdateStats(
 
 	var sourceID core.CrossChainID
 	if sourceID, err = core.NewCrossChainID(transferAttr.SourceProtocolID(), transferAttr.SourceCounterpartyID()); err != nil {
-		return err
+		return fmt.Errorf("failed to create source cross-chain ID: %w", err)
 	}
 
 	var destID core.CrossChainID
 	if destID, err = core.NewCrossChainID(forwarding.ProtocolID(), attr.CounterpartyID()); err != nil {
-		return err
+		return fmt.Errorf("failed to create destination cross-chain ID: %w", err)
 	}
 
 	// Since incoming denom can be different than the outgoing one,

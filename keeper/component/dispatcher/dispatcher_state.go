@@ -241,7 +241,8 @@ func (d *Dispatcher) IterateDispatchedAmountsByProtocolID(
 		},
 	)
 	if err != nil {
-		d.logger.Error("error in IterateDispatchedByProtocolID walking Dispatched")
+		// Note: We continue execution as partial data is better than no data for statistics
+		d.logger.Error("error in IterateDispatchedByProtocolID walking Dispatched", "error", err)
 	}
 }
 
@@ -298,6 +299,8 @@ func (d *Dispatcher) IterateDispatchedAmountsByDestinationProtocolID(
 	if err != nil {
 		d.logger.Error(
 			"error in IterateDispatchedByDestinationProtocolID walking ByDestinationProtocolID index",
+			"error",
+			err,
 		)
 	}
 }
