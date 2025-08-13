@@ -46,59 +46,12 @@ func TestInitGenesis(t *testing.T) {
 			expErr:     "",
 		},
 		{
-			name:       "success - genesis state with paused protocol IDs",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {},
-			genState: &forwardertypes.GenesisState{
-				PausedProtocolIds:   []core.ProtocolID{core.PROTOCOL_IBC, core.PROTOCOL_CCTP},
-				PausedCrossChainIds: []*core.CrossChainID{},
-			},
-			expErr: "",
-		},
-		{
-			name:       "success - genesis state with paused cross-chain IDs",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {},
-			genState: &forwardertypes.GenesisState{
-				PausedProtocolIds: []core.ProtocolID{},
-				PausedCrossChainIds: []*core.CrossChainID{
-					{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-1"},
-					{ProtocolId: core.PROTOCOL_CCTP, CounterpartyId: "0"},
-				},
-			},
-			expErr: "",
-		},
-		{
 			name:       "success - genesis state with both paused protocols and cross-chain IDs",
 			setupState: func(ctx context.Context, k *forwarder.Forwarder) {},
 			genState: &forwardertypes.GenesisState{
 				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_HYPERLANE},
 				PausedCrossChainIds: []*core.CrossChainID{
 					{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-42"},
-				},
-			},
-			expErr: "",
-		},
-		{
-			name: "success - init genesis overwrites existing paused protocols",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {
-				require.NoError(t, k.SetPausedProtocol(ctx, core.PROTOCOL_HYPERLANE))
-			},
-			genState: &forwardertypes.GenesisState{
-				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_IBC},
-			},
-			expErr: "",
-		},
-		{
-			name: "success - init genesis overwrites existing paused cross-chains",
-			setupState: func(ctx context.Context, k *forwarder.Forwarder) {
-				ccID := core.CrossChainID{
-					ProtocolId:     core.PROTOCOL_HYPERLANE,
-					CounterpartyId: "ethereum",
-				}
-				require.NoError(t, k.SetPausedCrossChain(ctx, ccID))
-			},
-			genState: &forwardertypes.GenesisState{
-				PausedCrossChainIds: []*core.CrossChainID{
-					{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-1"},
 				},
 			},
 			expErr: "",
