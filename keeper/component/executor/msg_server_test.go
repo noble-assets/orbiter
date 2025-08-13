@@ -47,12 +47,12 @@ func TestMsgServerPauseAction(t *testing.T) {
 			expErr: core.ErrUnauthorized.Error(),
 		},
 		{
-			name: "success - already paused action",
+			name: "error - invalid action ID",
 			msg: &executortypes.MsgPauseAction{
 				Signer:   testutil.Authority,
 				ActionId: core.ActionID(99),
 			},
-			expErr: "",
+			expErr: "action ID is unknown",
 		},
 		{
 			name: "success - valid pause request",
@@ -97,12 +97,12 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			expErr: core.ErrUnauthorized.Error(),
 		},
 		{
-			name: "success - already unpaused action",
+			name: "error - invalid action id",
 			msg: &executortypes.MsgUnpauseAction{
 				Signer:   testutil.Authority,
 				ActionId: core.ActionID(99),
 			},
-			expErr: "",
+			expErr: "action ID is unknown",
 		},
 		{
 			name: "success - valid unpause request",

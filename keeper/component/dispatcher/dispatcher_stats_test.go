@@ -89,7 +89,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return &forwarding
 			},
-			expErr: "id is not supported",
+			expErr: "ID is not supported",
 		},
 		{
 			name: "error - invalid forwarding attributes",

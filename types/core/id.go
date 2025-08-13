@@ -48,10 +48,10 @@ func NewActionID(id int32) (ActionID, error) {
 // Validate returns an error if the ID is not valid.
 func (id ActionID) Validate() error {
 	if id == ACTION_UNSUPPORTED {
-		return fmt.Errorf("action id is not supported: %s", id.String())
+		return fmt.Errorf("action ID is not supported: %s", id.String())
 	}
 	if _, found := ActionID_name[int32(id)]; !found {
-		return fmt.Errorf("action id is unknown: %d", int32(id))
+		return fmt.Errorf("action ID is unknown: %d", int32(id))
 	}
 
 	return nil
@@ -71,11 +71,11 @@ func NewProtocolID(id int32) (ProtocolID, error) {
 // Validate returns an error if the ID is not valid.
 func (id ProtocolID) Validate() error {
 	if id == PROTOCOL_UNSUPPORTED {
-		return fmt.Errorf("protocol id is not supported: %s", id.String())
+		return fmt.Errorf("protocol ID is not supported: %s", id.String())
 	}
 	// Check if the protocol ID exists in the proto generated enum map
 	if _, found := ProtocolID_name[int32(id)]; !found {
-		return fmt.Errorf("protocol id is unknown: %d", int32(id))
+		return fmt.Errorf("protocol ID is unknown: %d", int32(id))
 	}
 
 	return nil
