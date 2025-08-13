@@ -105,17 +105,63 @@ func (m *QueryDispatchedCountsRequest) GetDestinationCounterpartyId() string {
 	return ""
 }
 
-// QueryDispatchedCountsResponse is the response type for the Query/DispatchedCounts RPC method.
+type QueryDispatchedCountsByProtocolIDRequest struct {
+	// source_protocol_id is the protocol identifier.
+	ProtocolId core.ProtocolID `protobuf:"varint,1,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"protocol_id,omitempty"`
+}
+
+func (m *QueryDispatchedCountsByProtocolIDRequest) Reset() {
+	*m = QueryDispatchedCountsByProtocolIDRequest{}
+}
+func (m *QueryDispatchedCountsByProtocolIDRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryDispatchedCountsByProtocolIDRequest) ProtoMessage()    {}
+func (*QueryDispatchedCountsByProtocolIDRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a56d135821e5d01e, []int{1}
+}
+func (m *QueryDispatchedCountsByProtocolIDRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryDispatchedCountsByProtocolIDRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryDispatchedCountsByProtocolIDRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryDispatchedCountsByProtocolIDRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryDispatchedCountsByProtocolIDRequest.Merge(m, src)
+}
+func (m *QueryDispatchedCountsByProtocolIDRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryDispatchedCountsByProtocolIDRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryDispatchedCountsByProtocolIDRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryDispatchedCountsByProtocolIDRequest proto.InternalMessageInfo
+
+func (m *QueryDispatchedCountsByProtocolIDRequest) GetProtocolId() core.ProtocolID {
+	if m != nil {
+		return m.ProtocolId
+	}
+	return core.PROTOCOL_UNSUPPORTED
+}
+
+// QueryDispatchedCountsResponse is the response type for the Query/DispatchedCounts* RPC method.
 type QueryDispatchedCountsResponse struct {
-	// count is the number of dispatches for the specified route.
-	Count uint32 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
+	Counts []*DispatchCountEntry `protobuf:"bytes,1,rep,name=counts,proto3" json:"counts,omitempty"`
 }
 
 func (m *QueryDispatchedCountsResponse) Reset()         { *m = QueryDispatchedCountsResponse{} }
 func (m *QueryDispatchedCountsResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryDispatchedCountsResponse) ProtoMessage()    {}
 func (*QueryDispatchedCountsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a56d135821e5d01e, []int{1}
+	return fileDescriptor_a56d135821e5d01e, []int{2}
 }
 func (m *QueryDispatchedCountsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -144,193 +190,7 @@ func (m *QueryDispatchedCountsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryDispatchedCountsResponse proto.InternalMessageInfo
 
-func (m *QueryDispatchedCountsResponse) GetCount() uint32 {
-	if m != nil {
-		return m.Count
-	}
-	return 0
-}
-
-type QueryDispatchedCountsBySourceRequest struct {
-	// source_protocol_id is the source protocol identifier.
-	SourceProtocolId core.ProtocolID `protobuf:"varint,1,opt,name=source_protocol_id,json=sourceProtocolId,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"source_protocol_id,omitempty"`
-}
-
-func (m *QueryDispatchedCountsBySourceRequest) Reset()         { *m = QueryDispatchedCountsBySourceRequest{} }
-func (m *QueryDispatchedCountsBySourceRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryDispatchedCountsBySourceRequest) ProtoMessage()    {}
-func (*QueryDispatchedCountsBySourceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a56d135821e5d01e, []int{2}
-}
-func (m *QueryDispatchedCountsBySourceRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryDispatchedCountsBySourceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryDispatchedCountsBySourceRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryDispatchedCountsBySourceRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryDispatchedCountsBySourceRequest.Merge(m, src)
-}
-func (m *QueryDispatchedCountsBySourceRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryDispatchedCountsBySourceRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryDispatchedCountsBySourceRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryDispatchedCountsBySourceRequest proto.InternalMessageInfo
-
-func (m *QueryDispatchedCountsBySourceRequest) GetSourceProtocolId() core.ProtocolID {
-	if m != nil {
-		return m.SourceProtocolId
-	}
-	return core.PROTOCOL_UNSUPPORTED
-}
-
-type QueryDispatchedCountsBySourceResponse struct {
-	Counts []*DispatchCountEntry `protobuf:"bytes,1,rep,name=counts,proto3" json:"counts,omitempty"`
-}
-
-func (m *QueryDispatchedCountsBySourceResponse) Reset()         { *m = QueryDispatchedCountsBySourceResponse{} }
-func (m *QueryDispatchedCountsBySourceResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryDispatchedCountsBySourceResponse) ProtoMessage()    {}
-func (*QueryDispatchedCountsBySourceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a56d135821e5d01e, []int{3}
-}
-func (m *QueryDispatchedCountsBySourceResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryDispatchedCountsBySourceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryDispatchedCountsBySourceResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryDispatchedCountsBySourceResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryDispatchedCountsBySourceResponse.Merge(m, src)
-}
-func (m *QueryDispatchedCountsBySourceResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryDispatchedCountsBySourceResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryDispatchedCountsBySourceResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryDispatchedCountsBySourceResponse proto.InternalMessageInfo
-
-func (m *QueryDispatchedCountsBySourceResponse) GetCounts() []*DispatchCountEntry {
-	if m != nil {
-		return m.Counts
-	}
-	return nil
-}
-
-type QueryDispatchedCountsByDestinationRequest struct {
-	// source_protocol_id is the source protocol identifier.
-	DestinationProtocolId core.ProtocolID `protobuf:"varint,1,opt,name=destination_protocol_id,json=destinationProtocolId,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"destination_protocol_id,omitempty"`
-}
-
-func (m *QueryDispatchedCountsByDestinationRequest) Reset() {
-	*m = QueryDispatchedCountsByDestinationRequest{}
-}
-func (m *QueryDispatchedCountsByDestinationRequest) String() string {
-	return proto.CompactTextString(m)
-}
-func (*QueryDispatchedCountsByDestinationRequest) ProtoMessage() {}
-func (*QueryDispatchedCountsByDestinationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a56d135821e5d01e, []int{4}
-}
-func (m *QueryDispatchedCountsByDestinationRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryDispatchedCountsByDestinationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryDispatchedCountsByDestinationRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryDispatchedCountsByDestinationRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryDispatchedCountsByDestinationRequest.Merge(m, src)
-}
-func (m *QueryDispatchedCountsByDestinationRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryDispatchedCountsByDestinationRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryDispatchedCountsByDestinationRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryDispatchedCountsByDestinationRequest proto.InternalMessageInfo
-
-func (m *QueryDispatchedCountsByDestinationRequest) GetDestinationProtocolId() core.ProtocolID {
-	if m != nil {
-		return m.DestinationProtocolId
-	}
-	return core.PROTOCOL_UNSUPPORTED
-}
-
-type QueryDispatchedCountsByDestinationResponse struct {
-	Counts []*DispatchCountEntry `protobuf:"bytes,1,rep,name=counts,proto3" json:"counts,omitempty"`
-}
-
-func (m *QueryDispatchedCountsByDestinationResponse) Reset() {
-	*m = QueryDispatchedCountsByDestinationResponse{}
-}
-func (m *QueryDispatchedCountsByDestinationResponse) String() string {
-	return proto.CompactTextString(m)
-}
-func (*QueryDispatchedCountsByDestinationResponse) ProtoMessage() {}
-func (*QueryDispatchedCountsByDestinationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a56d135821e5d01e, []int{5}
-}
-func (m *QueryDispatchedCountsByDestinationResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryDispatchedCountsByDestinationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryDispatchedCountsByDestinationResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryDispatchedCountsByDestinationResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryDispatchedCountsByDestinationResponse.Merge(m, src)
-}
-func (m *QueryDispatchedCountsByDestinationResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryDispatchedCountsByDestinationResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryDispatchedCountsByDestinationResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryDispatchedCountsByDestinationResponse proto.InternalMessageInfo
-
-func (m *QueryDispatchedCountsByDestinationResponse) GetCounts() []*DispatchCountEntry {
+func (m *QueryDispatchedCountsResponse) GetCounts() []*DispatchCountEntry {
 	if m != nil {
 		return m.Counts
 	}
@@ -339,11 +199,8 @@ func (m *QueryDispatchedCountsByDestinationResponse) GetCounts() []*DispatchCoun
 
 func init() {
 	proto.RegisterType((*QueryDispatchedCountsRequest)(nil), "noble.orbiter.component.dispatcher.v1.QueryDispatchedCountsRequest")
+	proto.RegisterType((*QueryDispatchedCountsByProtocolIDRequest)(nil), "noble.orbiter.component.dispatcher.v1.QueryDispatchedCountsByProtocolIDRequest")
 	proto.RegisterType((*QueryDispatchedCountsResponse)(nil), "noble.orbiter.component.dispatcher.v1.QueryDispatchedCountsResponse")
-	proto.RegisterType((*QueryDispatchedCountsBySourceRequest)(nil), "noble.orbiter.component.dispatcher.v1.QueryDispatchedCountsBySourceRequest")
-	proto.RegisterType((*QueryDispatchedCountsBySourceResponse)(nil), "noble.orbiter.component.dispatcher.v1.QueryDispatchedCountsBySourceResponse")
-	proto.RegisterType((*QueryDispatchedCountsByDestinationRequest)(nil), "noble.orbiter.component.dispatcher.v1.QueryDispatchedCountsByDestinationRequest")
-	proto.RegisterType((*QueryDispatchedCountsByDestinationResponse)(nil), "noble.orbiter.component.dispatcher.v1.QueryDispatchedCountsByDestinationResponse")
 }
 
 func init() {
@@ -351,47 +208,44 @@ func init() {
 }
 
 var fileDescriptor_a56d135821e5d01e = []byte{
-	// 627 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x95, 0x4f, 0x8b, 0xd3, 0x40,
-	0x18, 0xc6, 0x77, 0xb2, 0xee, 0x8a, 0x23, 0xca, 0x3a, 0x54, 0xad, 0xd9, 0xdd, 0x50, 0x83, 0x2b,
-	0x75, 0xc1, 0x0c, 0xad, 0x7f, 0xc0, 0x8b, 0x48, 0x5b, 0x0f, 0x8b, 0x8a, 0xdb, 0x0a, 0x8a, 0x7b,
-	0x59, 0xd3, 0x64, 0xa8, 0x81, 0x36, 0x93, 0xcd, 0x4c, 0x0b, 0x71, 0x59, 0x05, 0x4f, 0x5e, 0x14,
-	0x45, 0xc1, 0x0f, 0xe0, 0x45, 0x3c, 0xf9, 0x1d, 0xbc, 0x78, 0x92, 0x05, 0x2f, 0x1e, 0xa5, 0x15,
-	0xfc, 0x1a, 0x92, 0x49, 0xda, 0xa6, 0xd9, 0xa6, 0xb6, 0xb4, 0x7b, 0x29, 0x69, 0xde, 0x79, 0x9e,
-	0x79, 0xe6, 0x97, 0xf7, 0x4d, 0x60, 0xce, 0xa6, 0xd5, 0x3a, 0xc1, 0xd4, 0xad, 0x5a, 0x9c, 0xb8,
-	0xd8, 0xa0, 0x0d, 0x87, 0xda, 0xc4, 0xe6, 0xd8, 0xb4, 0x98, 0xa3, 0x73, 0xe3, 0x29, 0x71, 0x71,
-	0x2b, 0x87, 0x77, 0x9a, 0xc4, 0xf5, 0x34, 0xc7, 0xa5, 0x9c, 0xa2, 0x35, 0x21, 0xd1, 0x42, 0x89,
-	0xd6, 0x93, 0x68, 0x7d, 0x89, 0xd6, 0xca, 0xc9, 0xa7, 0xf4, 0x86, 0x65, 0x53, 0x2c, 0x7e, 0x03,
-	0xa5, 0xbc, 0x6c, 0x50, 0xd6, 0xa0, 0x2c, 0x70, 0x8b, 0xd9, 0xca, 0xa9, 0x1a, 0xad, 0x51, 0x71,
-	0x89, 0xfd, 0xab, 0xf0, 0xee, 0x4a, 0x8d, 0xd2, 0x5a, 0x9d, 0x60, 0xdd, 0xb1, 0xb0, 0x6e, 0xdb,
-	0x94, 0xeb, 0xdc, 0xa2, 0x36, 0x0b, 0xab, 0xd7, 0xc7, 0x4b, 0x1f, 0x09, 0x16, 0xe8, 0x94, 0xb8,
-	0xce, 0x25, 0xfe, 0x3a, 0xcb, 0x0c, 0xea, 0xea, 0x0f, 0x09, 0xae, 0x94, 0xfd, 0x6c, 0xa5, 0xae,
-	0xd2, 0x2c, 0xd2, 0xa6, 0xcd, 0x59, 0x85, 0xec, 0x34, 0x09, 0xe3, 0xe8, 0x21, 0x44, 0x8c, 0x36,
-	0x5d, 0x83, 0x6c, 0x0b, 0x81, 0x41, 0xeb, 0xdb, 0x96, 0x99, 0x06, 0x19, 0x90, 0x3d, 0x99, 0x3f,
-	0xaf, 0xc5, 0x01, 0xb9, 0x44, 0x6b, 0xe5, 0xb4, 0xcd, 0x70, 0xe5, 0x46, 0xa9, 0xb0, 0xf0, 0xf9,
-	0xef, 0xd7, 0x75, 0x50, 0x59, 0x0a, 0x3c, 0x7a, 0x05, 0x13, 0x5d, 0x85, 0x67, 0x42, 0x5f, 0xc3,
-	0xdf, 0x8f, 0xb8, 0x8e, 0xee, 0x72, 0xcf, 0xf7, 0x96, 0x32, 0x20, 0x7b, 0xac, 0x92, 0x0a, 0xaa,
-	0xc5, 0x48, 0x71, 0xc3, 0x44, 0x4f, 0xe0, 0x59, 0x93, 0x30, 0x6e, 0xd9, 0x02, 0xce, 0x40, 0xa4,
-	0xf9, 0x09, 0x23, 0x9d, 0x8e, 0x18, 0x45, 0x72, 0xdd, 0x84, 0xcb, 0xd1, 0x1d, 0xe2, 0xe1, 0x8e,
-	0x88, 0x70, 0xe7, 0x22, 0x4b, 0x06, 0x13, 0xaa, 0xd7, 0xe0, 0x6a, 0x02, 0x4f, 0xe6, 0x50, 0x9b,
-	0x11, 0x94, 0x82, 0x0b, 0xc2, 0x54, 0x30, 0x3c, 0x51, 0x09, 0xfe, 0xa8, 0xcf, 0xe1, 0x85, 0xa1,
-	0xb2, 0x82, 0xf7, 0x40, 0x70, 0x38, 0xe4, 0xc7, 0xa1, 0x3e, 0x83, 0x6b, 0xff, 0xd9, 0x3f, 0x8c,
-	0x5f, 0x86, 0x8b, 0x22, 0x31, 0x4b, 0x83, 0xcc, 0x7c, 0xf6, 0x78, 0xfe, 0x86, 0x36, 0xd6, 0x90,
-	0x68, 0x5d, 0x63, 0x61, 0x7b, 0xdb, 0xe6, 0xae, 0x57, 0x09, 0x8d, 0xd4, 0xd7, 0x00, 0x5e, 0x4a,
-	0xd8, 0xbc, 0xd4, 0xe7, 0xdc, 0x25, 0x30, 0xa2, 0x05, 0xc0, 0x4c, 0x5a, 0x40, 0x7d, 0x01, 0xd7,
-	0xc7, 0x89, 0x73, 0x68, 0x40, 0xf2, 0x6f, 0x8e, 0xc2, 0x05, 0x91, 0x00, 0x7d, 0x93, 0xe0, 0x52,
-	0x3c, 0x06, 0x2a, 0x8e, 0xb9, 0xc3, 0xa8, 0xb9, 0x96, 0x4b, 0xd3, 0x99, 0x04, 0x87, 0x57, 0x3f,
-	0x81, 0x57, 0x3e, 0xc9, 0x97, 0x3f, 0xff, 0xbc, 0x97, 0x3e, 0x02, 0xf4, 0x01, 0xe0, 0xc1, 0xf7,
-	0x4d, 0xc2, 0xdb, 0xc9, 0xc4, 0xc1, 0x49, 0xf1, 0xee, 0xc1, 0x66, 0xde, 0xeb, 0xdd, 0x8c, 0xcd,
-	0xde, 0x1e, 0xde, 0x4d, 0x78, 0xf0, 0xb1, 0x4a, 0x5c, 0x87, 0xde, 0x49, 0x30, 0x9d, 0xd4, 0xd8,
-	0xe8, 0xce, 0x34, 0x20, 0x62, 0xe3, 0x29, 0xdf, 0x9d, 0x8d, 0x59, 0x48, 0x77, 0xab, 0x0f, 0xf7,
-	0x3e, 0xba, 0x37, 0x21, 0xda, 0xaa, 0x77, 0x39, 0xe0, 0x38, 0x14, 0x32, 0xfa, 0x22, 0xc1, 0xd5,
-	0x91, 0x0d, 0x8e, 0x36, 0xa7, 0x3b, 0xcb, 0xc1, 0xd1, 0x95, 0xcb, 0x33, 0x74, 0x0c, 0x11, 0x99,
-	0x7d, 0x44, 0x8f, 0xd1, 0xa3, 0xc9, 0x11, 0x45, 0xfa, 0x26, 0xb9, 0xbd, 0x0a, 0xb7, 0xbe, 0xb7,
-	0x15, 0xb0, 0xdf, 0x56, 0xc0, 0xef, 0xb6, 0x02, 0xde, 0x76, 0x94, 0xb9, 0xfd, 0x8e, 0x32, 0xf7,
-	0xab, 0xa3, 0xcc, 0x6d, 0x5d, 0xec, 0x9e, 0xc5, 0x24, 0x2d, 0xcc, 0x3d, 0x87, 0xb0, 0xa1, 0xdf,
-	0xe6, 0xea, 0xa2, 0xf0, 0xbb, 0xf2, 0x2f, 0x00, 0x00, 0xff, 0xff, 0x8d, 0x70, 0x71, 0x33, 0x86,
-	0x08, 0x00, 0x00,
+	// 581 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x95, 0x41, 0x8b, 0xd3, 0x4e,
+	0x18, 0xc6, 0x3b, 0xd9, 0xff, 0x16, 0xfe, 0xb3, 0x20, 0xeb, 0xb0, 0xea, 0xda, 0x5d, 0x43, 0x2d,
+	0xa8, 0x45, 0x70, 0x86, 0x56, 0x11, 0xbc, 0x88, 0xb4, 0x55, 0x2c, 0x22, 0xba, 0x5d, 0x10, 0xf1,
+	0xb2, 0xa6, 0xc9, 0x50, 0x03, 0xed, 0x4c, 0x76, 0x66, 0x5a, 0x08, 0x65, 0x2f, 0x9e, 0x3c, 0x2e,
+	0x28, 0x08, 0x5e, 0xbd, 0x78, 0xf4, 0x3b, 0x78, 0xf1, 0x24, 0x0b, 0x5e, 0x3c, 0x4a, 0x2b, 0xf8,
+	0x29, 0x04, 0xc9, 0x24, 0x6d, 0x93, 0xb4, 0x95, 0x96, 0x7a, 0xf0, 0x52, 0x42, 0xde, 0x79, 0x9e,
+	0xf7, 0x99, 0x5f, 0xdf, 0x97, 0xc0, 0x12, 0xe3, 0xcd, 0x36, 0x25, 0x5c, 0x34, 0x5d, 0x45, 0x05,
+	0xb1, 0x79, 0xc7, 0xe3, 0x8c, 0x32, 0x45, 0x1c, 0x57, 0x7a, 0x96, 0xb2, 0x5f, 0x50, 0x41, 0x7a,
+	0x25, 0x72, 0xd8, 0xa5, 0xc2, 0xc7, 0x9e, 0xe0, 0x8a, 0xa3, 0x4b, 0x5a, 0x82, 0x23, 0x09, 0x1e,
+	0x4b, 0xf0, 0x44, 0x82, 0x7b, 0xa5, 0xdc, 0x69, 0xab, 0xe3, 0x32, 0x4e, 0xf4, 0x6f, 0xa8, 0xcc,
+	0xed, 0xd8, 0x5c, 0x76, 0xb8, 0x0c, 0xdd, 0x52, 0xb6, 0xb9, 0xad, 0x16, 0x6f, 0x71, 0xfd, 0x48,
+	0x82, 0xa7, 0xe8, 0xed, 0x6e, 0x8b, 0xf3, 0x56, 0x9b, 0x12, 0xcb, 0x73, 0x89, 0xc5, 0x18, 0x57,
+	0x96, 0x72, 0x39, 0x93, 0x51, 0xf5, 0xe6, 0x62, 0xe9, 0x63, 0xc1, 0x42, 0x9d, 0x99, 0xd6, 0x09,
+	0x1a, 0x9c, 0x73, 0x9d, 0xb0, 0x5e, 0xf8, 0x62, 0xc0, 0xdd, 0xbd, 0x20, 0x5b, 0x6d, 0xa4, 0x74,
+	0xaa, 0xbc, 0xcb, 0x94, 0x6c, 0xd0, 0xc3, 0x2e, 0x95, 0x0a, 0x3d, 0x81, 0x48, 0xf2, 0xae, 0xb0,
+	0xe9, 0x81, 0x16, 0xd8, 0xbc, 0x7d, 0xe0, 0x3a, 0xdb, 0x20, 0x0f, 0x8a, 0xa7, 0xca, 0x17, 0x71,
+	0x1a, 0x90, 0xa0, 0xb8, 0x57, 0xc2, 0x8f, 0xa3, 0x93, 0xf5, 0x5a, 0x65, 0xfd, 0xc3, 0xcf, 0x8f,
+	0x57, 0x41, 0x63, 0x33, 0xf4, 0x18, 0x17, 0x1c, 0x74, 0x03, 0x9e, 0x8d, 0x7c, 0xed, 0xa0, 0x1f,
+	0x15, 0x9e, 0x25, 0x94, 0x1f, 0x78, 0x1b, 0x79, 0x50, 0xfc, 0xbf, 0xb1, 0x15, 0x56, 0xab, 0xb1,
+	0x62, 0xdd, 0x41, 0xcf, 0xe1, 0x39, 0x87, 0x4a, 0xe5, 0x32, 0x0d, 0x27, 0x11, 0x69, 0x6d, 0xc9,
+	0x48, 0x67, 0x62, 0x46, 0xb1, 0x5c, 0xb7, 0xe1, 0x4e, 0xbc, 0x43, 0x3a, 0xdc, 0x7f, 0x3a, 0xdc,
+	0xf9, 0xd8, 0x91, 0x64, 0xc2, 0x42, 0x17, 0x16, 0x67, 0xf2, 0xac, 0xf8, 0x93, 0x08, 0x23, 0xb6,
+	0x75, 0xb8, 0xb1, 0x0a, 0x54, 0xe8, 0x8d, 0x63, 0x17, 0x04, 0xbc, 0x30, 0xe7, 0x6f, 0x94, 0x1e,
+	0x67, 0x92, 0xa2, 0x3d, 0x98, 0xd5, 0x77, 0x91, 0xdb, 0x20, 0xbf, 0x56, 0xdc, 0x28, 0xdf, 0xc2,
+	0x0b, 0x0d, 0x37, 0x1e, 0x19, 0x6a, 0xbb, 0xbb, 0x4c, 0x09, 0xbf, 0x11, 0x19, 0x95, 0x7f, 0x65,
+	0xe1, 0xba, 0x6e, 0x8a, 0x3e, 0x19, 0x70, 0x33, 0xdd, 0x19, 0x55, 0x17, 0xec, 0xf0, 0xa7, 0xf1,
+	0xcb, 0xd5, 0x56, 0x33, 0x09, 0x2f, 0x5f, 0x78, 0x0f, 0x5e, 0x05, 0xc4, 0x5e, 0x7e, 0xfd, 0xf1,
+	0xda, 0x78, 0x0b, 0xd0, 0x1b, 0x40, 0x92, 0x6b, 0x31, 0x67, 0x89, 0x1c, 0x12, 0xde, 0x94, 0xf4,
+	0xa7, 0x57, 0xe0, 0x68, 0xfc, 0x32, 0x35, 0x22, 0x47, 0xa4, 0x3f, 0x67, 0x44, 0x53, 0x95, 0xb4,
+	0x0e, 0x1d, 0x1b, 0xb0, 0x30, 0x3d, 0x36, 0xfb, 0xc9, 0xcd, 0xa9, 0xa1, 0x47, 0xab, 0x20, 0x99,
+	0x31, 0x86, 0x7f, 0x89, 0xf1, 0xfe, 0x04, 0xf1, 0x7d, 0x74, 0x6f, 0x49, 0xc0, 0x4d, 0xff, 0x5a,
+	0x48, 0x93, 0xf4, 0xe3, 0xc0, 0xd0, 0x3b, 0x03, 0x5e, 0x99, 0xbe, 0x42, 0x6d, 0xc6, 0xe6, 0xfe,
+	0xb3, 0x5c, 0x9e, 0x4e, 0xb8, 0x3c, 0x44, 0x0f, 0x96, 0xe7, 0x12, 0x1b, 0x99, 0x24, 0x9c, 0xca,
+	0x9d, 0xcf, 0x03, 0x13, 0x9c, 0x0c, 0x4c, 0xf0, 0x7d, 0x60, 0x82, 0xe3, 0xa1, 0x99, 0x39, 0x19,
+	0x9a, 0x99, 0x6f, 0x43, 0x33, 0xf3, 0xec, 0xf2, 0x28, 0xb2, 0x43, 0x7b, 0x44, 0xf9, 0x1e, 0x95,
+	0x33, 0xbf, 0x18, 0xcd, 0xac, 0xf6, 0xbb, 0xfe, 0x3b, 0x00, 0x00, 0xff, 0xff, 0x0b, 0x49, 0xf6,
+	0x5f, 0x1c, 0x07, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -408,8 +262,8 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// DispatchedCounts retrieves the dispatch counts for a specific route.
 	DispatchedCounts(ctx context.Context, in *QueryDispatchedCountsRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error)
-	DispatchedCountsBySource(ctx context.Context, in *QueryDispatchedCountsBySourceRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsBySourceResponse, error)
-	DispatchedCountsByDestination(ctx context.Context, in *QueryDispatchedCountsByDestinationRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsByDestinationResponse, error)
+	DispatchedCountsBySourceProtocolID(ctx context.Context, in *QueryDispatchedCountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error)
+	DispatchedCountsByDestinationProtocolID(ctx context.Context, in *QueryDispatchedCountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error)
 }
 
 type queryClient struct {
@@ -429,18 +283,18 @@ func (c *queryClient) DispatchedCounts(ctx context.Context, in *QueryDispatchedC
 	return out, nil
 }
 
-func (c *queryClient) DispatchedCountsBySource(ctx context.Context, in *QueryDispatchedCountsBySourceRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsBySourceResponse, error) {
-	out := new(QueryDispatchedCountsBySourceResponse)
-	err := c.cc.Invoke(ctx, "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsBySource", in, out, opts...)
+func (c *queryClient) DispatchedCountsBySourceProtocolID(ctx context.Context, in *QueryDispatchedCountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error) {
+	out := new(QueryDispatchedCountsResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsBySourceProtocolID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) DispatchedCountsByDestination(ctx context.Context, in *QueryDispatchedCountsByDestinationRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsByDestinationResponse, error) {
-	out := new(QueryDispatchedCountsByDestinationResponse)
-	err := c.cc.Invoke(ctx, "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsByDestination", in, out, opts...)
+func (c *queryClient) DispatchedCountsByDestinationProtocolID(ctx context.Context, in *QueryDispatchedCountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error) {
+	out := new(QueryDispatchedCountsResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsByDestinationProtocolID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -451,8 +305,8 @@ func (c *queryClient) DispatchedCountsByDestination(ctx context.Context, in *Que
 type QueryServer interface {
 	// DispatchedCounts retrieves the dispatch counts for a specific route.
 	DispatchedCounts(context.Context, *QueryDispatchedCountsRequest) (*QueryDispatchedCountsResponse, error)
-	DispatchedCountsBySource(context.Context, *QueryDispatchedCountsBySourceRequest) (*QueryDispatchedCountsBySourceResponse, error)
-	DispatchedCountsByDestination(context.Context, *QueryDispatchedCountsByDestinationRequest) (*QueryDispatchedCountsByDestinationResponse, error)
+	DispatchedCountsBySourceProtocolID(context.Context, *QueryDispatchedCountsByProtocolIDRequest) (*QueryDispatchedCountsResponse, error)
+	DispatchedCountsByDestinationProtocolID(context.Context, *QueryDispatchedCountsByProtocolIDRequest) (*QueryDispatchedCountsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -462,11 +316,11 @@ type UnimplementedQueryServer struct {
 func (*UnimplementedQueryServer) DispatchedCounts(ctx context.Context, req *QueryDispatchedCountsRequest) (*QueryDispatchedCountsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DispatchedCounts not implemented")
 }
-func (*UnimplementedQueryServer) DispatchedCountsBySource(ctx context.Context, req *QueryDispatchedCountsBySourceRequest) (*QueryDispatchedCountsBySourceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DispatchedCountsBySource not implemented")
+func (*UnimplementedQueryServer) DispatchedCountsBySourceProtocolID(ctx context.Context, req *QueryDispatchedCountsByProtocolIDRequest) (*QueryDispatchedCountsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DispatchedCountsBySourceProtocolID not implemented")
 }
-func (*UnimplementedQueryServer) DispatchedCountsByDestination(ctx context.Context, req *QueryDispatchedCountsByDestinationRequest) (*QueryDispatchedCountsByDestinationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DispatchedCountsByDestination not implemented")
+func (*UnimplementedQueryServer) DispatchedCountsByDestinationProtocolID(ctx context.Context, req *QueryDispatchedCountsByProtocolIDRequest) (*QueryDispatchedCountsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DispatchedCountsByDestinationProtocolID not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -491,38 +345,38 @@ func _Query_DispatchedCounts_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_DispatchedCountsBySource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryDispatchedCountsBySourceRequest)
+func _Query_DispatchedCountsBySourceProtocolID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryDispatchedCountsByProtocolIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).DispatchedCountsBySource(ctx, in)
+		return srv.(QueryServer).DispatchedCountsBySourceProtocolID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsBySource",
+		FullMethod: "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsBySourceProtocolID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).DispatchedCountsBySource(ctx, req.(*QueryDispatchedCountsBySourceRequest))
+		return srv.(QueryServer).DispatchedCountsBySourceProtocolID(ctx, req.(*QueryDispatchedCountsByProtocolIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_DispatchedCountsByDestination_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryDispatchedCountsByDestinationRequest)
+func _Query_DispatchedCountsByDestinationProtocolID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryDispatchedCountsByProtocolIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).DispatchedCountsByDestination(ctx, in)
+		return srv.(QueryServer).DispatchedCountsByDestinationProtocolID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsByDestination",
+		FullMethod: "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsByDestinationProtocolID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).DispatchedCountsByDestination(ctx, req.(*QueryDispatchedCountsByDestinationRequest))
+		return srv.(QueryServer).DispatchedCountsByDestinationProtocolID(ctx, req.(*QueryDispatchedCountsByProtocolIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -537,12 +391,12 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_DispatchedCounts_Handler,
 		},
 		{
-			MethodName: "DispatchedCountsBySource",
-			Handler:    _Query_DispatchedCountsBySource_Handler,
+			MethodName: "DispatchedCountsBySourceProtocolID",
+			Handler:    _Query_DispatchedCountsBySourceProtocolID_Handler,
 		},
 		{
-			MethodName: "DispatchedCountsByDestination",
-			Handler:    _Query_DispatchedCountsByDestination_Handler,
+			MethodName: "DispatchedCountsByDestinationProtocolID",
+			Handler:    _Query_DispatchedCountsByDestinationProtocolID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -596,6 +450,34 @@ func (m *QueryDispatchedCountsRequest) MarshalToSizedBuffer(dAtA []byte) (int, e
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryDispatchedCountsByProtocolIDRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryDispatchedCountsByProtocolIDRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryDispatchedCountsByProtocolIDRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ProtocolId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.ProtocolId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *QueryDispatchedCountsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -612,127 +494,6 @@ func (m *QueryDispatchedCountsResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *QueryDispatchedCountsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Count != 0 {
-		i = encodeVarintQuery(dAtA, i, uint64(m.Count))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryDispatchedCountsBySourceRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryDispatchedCountsBySourceRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryDispatchedCountsBySourceRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.SourceProtocolId != 0 {
-		i = encodeVarintQuery(dAtA, i, uint64(m.SourceProtocolId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryDispatchedCountsBySourceResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryDispatchedCountsBySourceResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryDispatchedCountsBySourceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Counts) > 0 {
-		for iNdEx := len(m.Counts) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Counts[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryDispatchedCountsByDestinationRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryDispatchedCountsByDestinationRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryDispatchedCountsByDestinationRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.DestinationProtocolId != 0 {
-		i = encodeVarintQuery(dAtA, i, uint64(m.DestinationProtocolId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryDispatchedCountsByDestinationResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryDispatchedCountsByDestinationResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryDispatchedCountsByDestinationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -788,58 +549,19 @@ func (m *QueryDispatchedCountsRequest) Size() (n int) {
 	return n
 }
 
+func (m *QueryDispatchedCountsByProtocolIDRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ProtocolId != 0 {
+		n += 1 + sovQuery(uint64(m.ProtocolId))
+	}
+	return n
+}
+
 func (m *QueryDispatchedCountsResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Count != 0 {
-		n += 1 + sovQuery(uint64(m.Count))
-	}
-	return n
-}
-
-func (m *QueryDispatchedCountsBySourceRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.SourceProtocolId != 0 {
-		n += 1 + sovQuery(uint64(m.SourceProtocolId))
-	}
-	return n
-}
-
-func (m *QueryDispatchedCountsBySourceResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Counts) > 0 {
-		for _, e := range m.Counts {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *QueryDispatchedCountsByDestinationRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.DestinationProtocolId != 0 {
-		n += 1 + sovQuery(uint64(m.DestinationProtocolId))
-	}
-	return n
-}
-
-func (m *QueryDispatchedCountsByDestinationResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1012,6 +734,75 @@ func (m *QueryDispatchedCountsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *QueryDispatchedCountsByProtocolIDRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryDispatchedCountsByProtocolIDRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryDispatchedCountsByProtocolIDRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProtocolId", wireType)
+			}
+			m.ProtocolId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProtocolId |= core.ProtocolID(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *QueryDispatchedCountsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1039,297 +830,6 @@ func (m *QueryDispatchedCountsResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: QueryDispatchedCountsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Count", wireType)
-			}
-			m.Count = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Count |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryDispatchedCountsBySourceRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryDispatchedCountsBySourceRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryDispatchedCountsBySourceRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SourceProtocolId", wireType)
-			}
-			m.SourceProtocolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SourceProtocolId |= core.ProtocolID(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryDispatchedCountsBySourceResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryDispatchedCountsBySourceResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryDispatchedCountsBySourceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Counts", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Counts = append(m.Counts, &DispatchCountEntry{})
-			if err := m.Counts[len(m.Counts)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryDispatchedCountsByDestinationRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryDispatchedCountsByDestinationRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryDispatchedCountsByDestinationRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DestinationProtocolId", wireType)
-			}
-			m.DestinationProtocolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.DestinationProtocolId |= core.ProtocolID(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryDispatchedCountsByDestinationResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryDispatchedCountsByDestinationResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryDispatchedCountsByDestinationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

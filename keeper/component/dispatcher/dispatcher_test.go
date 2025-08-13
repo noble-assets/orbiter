@@ -34,7 +34,7 @@ import (
 	"orbiter.dev/types"
 )
 
-func TestNewDispatcherComponent(t *testing.T) {
+func TestNew(t *testing.T) {
 	deps := mocks.NewDependencies(t)
 
 	testCases := []struct {
@@ -77,7 +77,7 @@ func TestNewDispatcherComponent(t *testing.T) {
 	}
 }
 
-func TestValidate_DispatcherComponent(t *testing.T) {
+func TestValidate(t *testing.T) {
 	testCases := []struct {
 		name              string
 		ForwardingHandler types.PacketHandler[*types.ForwardingPacket]

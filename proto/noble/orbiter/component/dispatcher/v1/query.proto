@@ -21,14 +21,14 @@ service Query {
     option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/{source_protocol_id}/{source_counterparty_id}/{destination_protocol_id}/{destination_counterparty_id}";
   }
 
-  rpc DispatchedCountsBySource(QueryDispatchedCountsBySourceRequest) returns (QueryDispatchedCountsBySourceResponse) {
+  rpc DispatchedCountsBySourceProtocolID(QueryDispatchedCountsByProtocolIDRequest) returns (QueryDispatchedCountsResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/by-source/{source_protocol_id}";
+    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/by-source/{protocol_id}";
   }
 
-  rpc DispatchedCountsByDestination(QueryDispatchedCountsByDestinationRequest) returns (QueryDispatchedCountsByDestinationResponse) {
+  rpc DispatchedCountsByDestinationProtocolID(QueryDispatchedCountsByProtocolIDRequest) returns (QueryDispatchedCountsResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/by-destination/{destination_protocol_id}";
+    option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/by-destination/{protocol_id}";
   }
 }
 
@@ -44,27 +44,12 @@ message QueryDispatchedCountsRequest {
   string destination_counterparty_id = 4;
 }
 
-// QueryDispatchedCountsResponse is the response type for the Query/DispatchedCounts RPC method.
+message QueryDispatchedCountsByProtocolIDRequest {
+  // source_protocol_id is the protocol identifier.
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+}
+
+// QueryDispatchedCountsResponse is the response type for the Query/DispatchedCounts* RPC method.
 message QueryDispatchedCountsResponse {
-  // count is the number of dispatches for the specified route.
-  uint32 count = 1;
-}
-
-message QueryDispatchedCountsBySourceRequest {
-  // source_protocol_id is the source protocol identifier.
-  noble.orbiter.core.v1.ProtocolID source_protocol_id = 1 [(amino.dont_omitempty) = true];
-}
-
-message QueryDispatchedCountsBySourceResponse {
-  repeated DispatchCountEntry counts = 1;
-}
-
-
-message QueryDispatchedCountsByDestinationRequest {
-  // source_protocol_id is the source protocol identifier.
-  noble.orbiter.core.v1.ProtocolID destination_protocol_id = 1 [(amino.dont_omitempty) = true];
-}
-
-message QueryDispatchedCountsByDestinationResponse {
   repeated DispatchCountEntry counts = 1;
 }

@@ -164,8 +164,8 @@ func local_request_Query_DispatchedCounts_0(ctx context.Context, marshaler runti
 
 }
 
-func request_Query_DispatchedCountsBySource_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryDispatchedCountsBySourceRequest
+func request_Query_DispatchedCountsBySourceProtocolID_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryDispatchedCountsByProtocolIDRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -176,26 +176,26 @@ func request_Query_DispatchedCountsBySource_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["source_protocol_id"]
+	val, ok = pathParams["protocol_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "source_protocol_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
 	e, err = runtime.Enum(val, core.ProtocolID_value)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "source_protocol_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
 
-	protoReq.SourceProtocolId = core.ProtocolID(e)
+	protoReq.ProtocolId = core.ProtocolID(e)
 
-	msg, err := client.DispatchedCountsBySource(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.DispatchedCountsBySourceProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Query_DispatchedCountsBySource_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryDispatchedCountsBySourceRequest
+func local_request_Query_DispatchedCountsBySourceProtocolID_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryDispatchedCountsByProtocolIDRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -206,26 +206,26 @@ func local_request_Query_DispatchedCountsBySource_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["source_protocol_id"]
+	val, ok = pathParams["protocol_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "source_protocol_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
 	e, err = runtime.Enum(val, core.ProtocolID_value)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "source_protocol_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
 
-	protoReq.SourceProtocolId = core.ProtocolID(e)
+	protoReq.ProtocolId = core.ProtocolID(e)
 
-	msg, err := server.DispatchedCountsBySource(ctx, &protoReq)
+	msg, err := server.DispatchedCountsBySourceProtocolID(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_Query_DispatchedCountsByDestination_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryDispatchedCountsByDestinationRequest
+func request_Query_DispatchedCountsByDestinationProtocolID_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryDispatchedCountsByProtocolIDRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -236,26 +236,26 @@ func request_Query_DispatchedCountsByDestination_0(ctx context.Context, marshale
 		_   = err
 	)
 
-	val, ok = pathParams["destination_protocol_id"]
+	val, ok = pathParams["protocol_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "destination_protocol_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
 	e, err = runtime.Enum(val, core.ProtocolID_value)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "destination_protocol_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
 
-	protoReq.DestinationProtocolId = core.ProtocolID(e)
+	protoReq.ProtocolId = core.ProtocolID(e)
 
-	msg, err := client.DispatchedCountsByDestination(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.DispatchedCountsByDestinationProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Query_DispatchedCountsByDestination_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryDispatchedCountsByDestinationRequest
+func local_request_Query_DispatchedCountsByDestinationProtocolID_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryDispatchedCountsByProtocolIDRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -266,20 +266,20 @@ func local_request_Query_DispatchedCountsByDestination_0(ctx context.Context, ma
 		_   = err
 	)
 
-	val, ok = pathParams["destination_protocol_id"]
+	val, ok = pathParams["protocol_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "destination_protocol_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
 	e, err = runtime.Enum(val, core.ProtocolID_value)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "destination_protocol_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
 
-	protoReq.DestinationProtocolId = core.ProtocolID(e)
+	protoReq.ProtocolId = core.ProtocolID(e)
 
-	msg, err := server.DispatchedCountsByDestination(ctx, &protoReq)
+	msg, err := server.DispatchedCountsByDestinationProtocolID(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -313,7 +313,7 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 
 	})
 
-	mux.Handle("GET", pattern_Query_DispatchedCountsBySource_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Query_DispatchedCountsBySourceProtocolID_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -324,7 +324,7 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Query_DispatchedCountsBySource_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Query_DispatchedCountsBySourceProtocolID_0(rctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -332,11 +332,11 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 			return
 		}
 
-		forward_Query_DispatchedCountsBySource_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Query_DispatchedCountsBySourceProtocolID_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Query_DispatchedCountsByDestination_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Query_DispatchedCountsByDestinationProtocolID_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -347,7 +347,7 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Query_DispatchedCountsByDestination_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Query_DispatchedCountsByDestinationProtocolID_0(rctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -355,7 +355,7 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 			return
 		}
 
-		forward_Query_DispatchedCountsByDestination_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Query_DispatchedCountsByDestinationProtocolID_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -420,7 +420,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 
 	})
 
-	mux.Handle("GET", pattern_Query_DispatchedCountsBySource_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Query_DispatchedCountsBySourceProtocolID_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -429,18 +429,18 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Query_DispatchedCountsBySource_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Query_DispatchedCountsBySourceProtocolID_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Query_DispatchedCountsBySource_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Query_DispatchedCountsBySourceProtocolID_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Query_DispatchedCountsByDestination_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Query_DispatchedCountsByDestinationProtocolID_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -449,14 +449,14 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Query_DispatchedCountsByDestination_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Query_DispatchedCountsByDestinationProtocolID_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Query_DispatchedCountsByDestination_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Query_DispatchedCountsByDestinationProtocolID_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -466,15 +466,15 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 var (
 	pattern_Query_DispatchedCounts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 2, 5, 1, 0, 4, 1, 5, 6, 1, 0, 4, 1, 5, 7, 1, 0, 4, 1, 5, 8, 1, 0, 4, 1, 5, 9}, []string{"noble", "orbiter", "dispatcher", "v1", "dispatched", "counts", "source_protocol_id", "source_counterparty_id", "destination_protocol_id", "destination_counterparty_id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_DispatchedCountsBySource_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 2, 5, 2, 6, 1, 0, 4, 1, 5, 7}, []string{"noble", "orbiter", "dispatcher", "v1", "dispatched", "counts", "by-source", "source_protocol_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_DispatchedCountsBySourceProtocolID_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 2, 5, 2, 6, 1, 0, 4, 1, 5, 7}, []string{"noble", "orbiter", "dispatcher", "v1", "dispatched", "counts", "by-source", "protocol_id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_DispatchedCountsByDestination_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 2, 5, 2, 6, 1, 0, 4, 1, 5, 7}, []string{"noble", "orbiter", "dispatcher", "v1", "dispatched", "counts", "by-destination", "destination_protocol_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_DispatchedCountsByDestinationProtocolID_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 2, 5, 2, 6, 1, 0, 4, 1, 5, 7}, []string{"noble", "orbiter", "dispatcher", "v1", "dispatched", "counts", "by-destination", "protocol_id"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (
 	forward_Query_DispatchedCounts_0 = runtime.ForwardResponseMessage
 
-	forward_Query_DispatchedCountsBySource_0 = runtime.ForwardResponseMessage
+	forward_Query_DispatchedCountsBySourceProtocolID_0 = runtime.ForwardResponseMessage
 
-	forward_Query_DispatchedCountsByDestination_0 = runtime.ForwardResponseMessage
+	forward_Query_DispatchedCountsByDestinationProtocolID_0 = runtime.ForwardResponseMessage
 )
