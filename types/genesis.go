@@ -20,10 +20,37 @@
 
 package types
 
+import (
+	"fmt"
+
+	adapter "orbiter.dev/types/component/adapter"
+	"orbiter.dev/types/component/executor"
+	"orbiter.dev/types/component/forwarder"
+)
+
+// DefaultGenesisState returns the default values for the Orbiter module
+// initial state.
 func DefaultGenesisState() *GenesisState {
-	return &GenesisState{}
+	return &GenesisState{
+		AdapterGenesis:   adapter.DefaultGenesisState(),
+		ForwarderGenesis: forwarder.DefaultGenesisState(),
+		ExecutorGenesis:  executor.DefaultGenesisState(),
+	}
 }
 
-func (genesis *GenesisState) Validate() error {
+// Validate returns an error if any of the genesis fields is not valid.
+func (g *GenesisState) Validate() error {
+	if err := g.AdapterGenesis.Validate(); err != nil {
+		return fmt.Errorf("error validating adapter component genesis state: %w", err)
+	}
+
+	if err := g.ForwarderGenesis.Validate(); err != nil {
+		return fmt.Errorf("error validating forwarder component genesis state: %w", err)
+	}
+
+	if err := g.ExecutorGenesis.Validate(); err != nil {
+		return fmt.Errorf("error validating executor component genesis state: %w", err)
+	}
+
 	return nil
 }

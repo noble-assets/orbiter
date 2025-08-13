@@ -48,13 +48,13 @@ const (
 	ForwardingControllerName = "forwarding_controller"
 
 	// Maps names.
-	PausedProtocolCounterpartiesName = "paused_protocol_counterparties"
-	PausedProtocolsName              = "paused_protocols"
+	PausedCrossChainsName = "paused_cross_chains"
+	PausedProtocolsName   = "paused_protocols"
 )
 
 var (
-	PausedProtocolCounterpartiesPrefix = collections.NewPrefix(10)
-	PausedProtocolsPrefix              = collections.NewPrefix(11)
+	PausedCrossChainsPrefix = collections.NewPrefix(10)
+	PausedProtocolsPrefix   = collections.NewPrefix(11)
 )
 
 // ====================================================================================================

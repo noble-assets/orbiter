@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package noble.orbiter.component.forwarder.v1;
+
+import "amino/amino.proto";
+import "cosmos/query/v1/query.proto";
+import "google/api/annotations.proto";
+import "noble/orbiter/core/v1/id.proto";
+
+option go_package = "orbiter.dev/types/component/forwarder";
+
+// Query defines the gRPC query service for the Orbiter
+// forwarder component.
+service Query {
+  // PausedProtocols retrieves all paused protocol IDs.
+  rpc PausedProtocols(QueryPausedProtocolsRequest) returns (QueryPausedProtocolsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/forwarder/v1/paused/protocols";
+  }
+
+  // PausedCrossChains retrieves all paused counterparties for a specific protocol.
+  rpc PausedCrossChains(QueryPausedCrossChainsRequest) returns (QueryPausedCrossChainsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/forwarder/v1/paused/protocols/{protocol_id}/counterparties";
+  }
+
+  // IsProtocolPaused checks if a specific protocol is paused.
+  rpc IsProtocolPaused(QueryIsProtocolPausedRequest) returns (QueryIsProtocolPausedResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/forwarder/v1/paused/protocols/{protocol_id}";
+  }
+
+  // IsCrossChainPaused checks if a specific counterparty for a protocol is paused.
+  rpc IsCrossChainPaused(QueryIsCrossChainPausedRequest) returns (QueryIsCrossChainPausedResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/forwarder/v1/paused/protocols/{protocol_id}/counterparties/{counterparty_id}";
+  }
+}
+
+// QueryPausedProtocolsRequest is the request type for the Query/PausedProtocol RPC method.
+message QueryPausedProtocolsRequest {}
+
+// QueryPausedProtocolsResponse is the response type for the Query/PausedProtocol RPC method.
+message QueryPausedProtocolsResponse {
+  repeated noble.orbiter.core.v1.ProtocolID protocol_ids = 1 [(amino.dont_omitempty) = true];
+}
+
+// QueryPausedCrossChainsRequest is the request type for the Query/PausedCrossChains RPC method.
+message QueryPausedCrossChainsRequest {
+  // protocol_id is the protocol to query paused counterparties for.
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+}
+
+// QueryPausedCrossChainsResponse is the response type for the Query/PausedCrossChains RPC method.
+message QueryPausedCrossChainsResponse {
+  // counterparty_ids is the list of paused counterparty identifiers for the specified protocol ID.
+  repeated string counterparty_ids = 1;
+}
+
+// QueryIsProtocolPausedRequest is the request type for the Query/IsProtocolPaused RPC method.
+message QueryIsProtocolPausedRequest {
+  // protocol_id is the protocol to check.
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+}
+
+// QueryIsProtocolPausedResponse is the response type for the Query/IsProtocolPaused RPC method.
+message QueryIsProtocolPausedResponse {
+  // is_paused indicates whether the protocol is paused.
+  bool is_paused = 1;
+}
+
+// QueryIsCrossChainPausedRequest is the request type for the Query/IsCrossChainPaused RPC method.
+message QueryIsCrossChainPausedRequest {
+  // protocol_id is the protocol to check.
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+  // counterparty_id is the counterparty identifier to check.
+  string counterparty_id = 2;
+}
+
+// QueryIsCrossChainPausedResponse is the response type for the Query/IsCrossChainPaused RPC method.
+message QueryIsCrossChainPausedResponse {
+  // is_paused indicates whether the counterparty is paused.
+  bool is_paused = 1;
+}

@@ -5,6 +5,7 @@ package noble.orbiter.component.dispatcher.v1;
 import "amino/amino.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
+import "noble/orbiter/core/v1/id.proto";
 
 option go_package = "orbiter.dev/types/component/dispatcher";
 
@@ -27,4 +28,19 @@ message AmountDispatched {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
+}
+
+// DispatchedAmountEntry tracks dispatched amounts for a (source,destination,denom) tuple.
+message DispatchedAmountEntry {
+  noble.orbiter.core.v1.CrossChainID source_id = 1 [(amino.dont_omitempty) = true];
+  noble.orbiter.core.v1.CrossChainID destination_id = 2 [(amino.dont_omitempty) = true];
+  string denom = 3;
+  AmountDispatched amount_dispatched = 4 [(gogoproto.nullable) = false];
+}
+
+// DispatchCountEntry tracks dispatch count for a (source,destination) tuple
+message DispatchCountEntry {
+  noble.orbiter.core.v1.CrossChainID source_id = 1 [(amino.dont_omitempty) = true];
+  noble.orbiter.core.v1.CrossChainID destination_id = 2 [(amino.dont_omitempty) = true];
+  int64 count = 3;
 }

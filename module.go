@@ -35,8 +35,6 @@ import (
 
 	"orbiter.dev/keeper"
 	"orbiter.dev/types"
-	"orbiter.dev/types/component/executor"
-	"orbiter.dev/types/component/forwarder"
 	"orbiter.dev/types/core"
 )
 
@@ -86,8 +84,8 @@ func NewAppModule(keeper *keeper.Keeper) AppModule {
 }
 
 func (m AppModule) RegisterServices(cfg module.Configurator) {
-	forwarder.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerForwarder(m.keeper))
-	executor.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerExecutor(m.keeper))
+	keeper.RegisterMsgServers(cfg, m.keeper)
+	keeper.RegisterQueryServers(cfg, m.keeper)
 }
 
 func (m AppModule) IsAppModule() {}

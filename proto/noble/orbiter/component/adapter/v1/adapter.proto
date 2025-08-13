@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package noble.orbiter.component.adapter.v1;
+
+import "amino/amino.proto";
+
+option go_package = "orbiter.dev/types/component/adapter";
+
+// Params represents the adapter components parameters.
+message Params {
+  // max_passthrough_payload_size is the maximum number of bytes
+  // of the passthrough payload that can be sent in a forwarding.
+  uint32 max_passthrough_payload_size = 1 [(amino.dont_omitempty) = true];
+}

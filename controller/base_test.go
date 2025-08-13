@@ -38,7 +38,7 @@ func TestNewBaseController(t *testing.T) {
 		{
 			name:       "error - when the ID is not valid",
 			protocolID: core.PROTOCOL_UNSUPPORTED,
-			expErr:     "id is not supported",
+			expErr:     "ID is not supported",
 		},
 		{
 			name:       "success - with valid ID",

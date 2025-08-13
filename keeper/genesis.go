@@ -22,12 +22,33 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	"orbiter.dev/types"
 )
 
-func (k *Keeper) InitGenesis(_ context.Context, _ types.GenesisState) {}
+// InitGenesis initialize the state of the Orbiter module with
+// a genesis state.
+func (k *Keeper) InitGenesis(ctx context.Context, g types.GenesisState) {
+	if err := k.adapter.InitGenesis(ctx, g.AdapterGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize adapter genesis state %w", err))
+	}
 
-func (k *Keeper) ExportGenesis(_ context.Context) *types.GenesisState {
-	return types.DefaultGenesisState()
+	if err := k.forwarder.InitGenesis(ctx, g.ForwarderGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize forwarder genesis state %w", err))
+	}
+
+	if err := k.executor.InitGenesis(ctx, g.ExecutorGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize executor genesis state %w", err))
+	}
+}
+
+// ExportGenesis returns the current state of the Orbiter module
+// into a genesis state.
+func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
+	return &types.GenesisState{
+		AdapterGenesis:   k.adapter.ExportGenesis(ctx),
+		ForwarderGenesis: k.forwarder.ExportGenesis(ctx),
+		ExecutorGenesis:  k.executor.ExportGenesis(ctx),
+	}
 }

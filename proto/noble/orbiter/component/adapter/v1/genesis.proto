@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package noble.orbiter.component.adapter.v1;
+
+import "gogoproto/gogo.proto";
+import "noble/orbiter/component/adapter/v1/adapter.proto";
+
+option go_package = "orbiter.dev/types/component/adapter";
+
+// GenesisState defines the adapter component genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}

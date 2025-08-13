@@ -48,10 +48,10 @@ func NewActionID(id int32) (ActionID, error) {
 // Validate returns an error if the ID is not valid.
 func (id ActionID) Validate() error {
 	if id == ACTION_UNSUPPORTED {
-		return fmt.Errorf("action id is not supported: %s", id.String())
+		return fmt.Errorf("action ID is not supported: %s", id.String())
 	}
 	if _, found := ActionID_name[int32(id)]; !found {
-		return fmt.Errorf("action id is unknown: %d", int32(id))
+		return fmt.Errorf("action ID is unknown: %d", int32(id))
 	}
 
 	return nil
@@ -71,11 +71,11 @@ func NewProtocolID(id int32) (ProtocolID, error) {
 // Validate returns an error if the ID is not valid.
 func (id ProtocolID) Validate() error {
 	if id == PROTOCOL_UNSUPPORTED {
-		return fmt.Errorf("protocol id is not supported: %s", id.String())
+		return fmt.Errorf("protocol ID is not supported: %s", id.String())
 	}
 	// Check if the protocol ID exists in the proto generated enum map
 	if _, found := ProtocolID_name[int32(id)]; !found {
-		return fmt.Errorf("protocol id is unknown: %d", int32(id))
+		return fmt.Errorf("protocol ID is unknown: %d", int32(id))
 	}
 
 	return nil
@@ -90,12 +90,17 @@ func NewCrossChainID(
 	protocolID ProtocolID,
 	counterpartyID string,
 ) (CrossChainID, error) {
-	attr := CrossChainID{
+	id := CrossChainID{
 		ProtocolId:     protocolID,
 		CounterpartyId: counterpartyID,
 	}
 
-	return attr, attr.Validate()
+	err := id.Validate()
+	if err != nil {
+		return CrossChainID{}, fmt.Errorf("invalid cross-chain ID: %w", err)
+	}
+
+	return id, nil
 }
 
 // Validate returns an error if any of the cross-chain ID field
@@ -104,8 +109,16 @@ func (i CrossChainID) Validate() error {
 	if err := i.ProtocolId.Validate(); err != nil {
 		return err
 	}
-	if i.CounterpartyId == "" {
-		return errors.New("counterparty id cannot be empty string")
+	if err := ValidateCounterpartyID(i.CounterpartyId); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ValidateCounterpartyID(id string) error {
+	if id == "" {
+		return errors.New("counterparty ID cannot be empty string")
 	}
 
 	return nil

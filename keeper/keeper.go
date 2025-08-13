@@ -30,10 +30,15 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/keeper/component"
+	adaptercomp "orbiter.dev/keeper/component/adapter"
+	dispatchercomp "orbiter.dev/keeper/component/dispatcher"
+	executorcomp "orbiter.dev/keeper/component/executor"
+	forwardercomp "orbiter.dev/keeper/component/forwarder"
 	"orbiter.dev/types"
 	"orbiter.dev/types/core"
 )
+
+var _ types.Authorizer = &Keeper{}
 
 // Keeper is the main module keeper.
 type Keeper struct {
@@ -44,10 +49,10 @@ type Keeper struct {
 	authority string
 
 	// Each component manages its own state.
-	executor   *component.Executor
-	forwarder  *component.Forwarder
-	dispatcher *component.Dispatcher
-	adapter    *component.Adapter
+	executor   *executorcomp.Executor
+	forwarder  *forwardercomp.Forwarder
+	dispatcher *dispatchercomp.Dispatcher
+	adapter    *adaptercomp.Adapter
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -140,19 +145,19 @@ func (k *Keeper) Authority() string {
 	return k.authority
 }
 
-func (k *Keeper) Executor() *component.Executor {
+func (k *Keeper) Executor() *executorcomp.Executor {
 	return k.executor
 }
 
-func (k *Keeper) Forwarder() *component.Forwarder {
+func (k *Keeper) Forwarder() *forwardercomp.Forwarder {
 	return k.forwarder
 }
 
-func (k *Keeper) Dispatcher() *component.Dispatcher {
+func (k *Keeper) Dispatcher() *dispatchercomp.Dispatcher {
 	return k.dispatcher
 }
 
-func (k *Keeper) Adapter() *component.Adapter {
+func (k *Keeper) Adapter() *adaptercomp.Adapter {
 	return k.adapter
 }
 
@@ -209,17 +214,17 @@ func (k *Keeper) setComponents(
 	sb *collections.SchemaBuilder,
 	bankKeeper types.BankKeeper,
 ) error {
-	executor, err := component.NewExecutor(cdc, sb, logger)
+	executor, err := executorcomp.New(cdc, sb, logger)
 	if err != nil {
 		return fmt.Errorf("error creating a new action component: %w", err)
 	}
 
-	forwarder, err := component.NewForwarder(cdc, sb, logger, bankKeeper)
+	forwarder, err := forwardercomp.New(cdc, sb, logger, bankKeeper)
 	if err != nil {
 		return fmt.Errorf("error creating a new forwarding component: %w", err)
 	}
 
-	dispatcher, err := component.NewDispatcher(
+	dispatcher, err := dispatchercomp.New(
 		cdc,
 		sb,
 		logger,
@@ -230,7 +235,7 @@ func (k *Keeper) setComponents(
 		return fmt.Errorf("error creating a new dispatcher component: %w", err)
 	}
 
-	adapter, err := component.NewAdapter(cdc, sb, logger, bankKeeper, dispatcher)
+	adapter, err := adaptercomp.New(cdc, sb, logger, bankKeeper, dispatcher)
 	if err != nil {
 		return fmt.Errorf("error creating a new adapter component: %w", err)
 	}

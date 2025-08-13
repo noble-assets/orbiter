@@ -29,10 +29,16 @@ import (
 	"orbiter.dev/types"
 )
 
-var _ types.BankKeeper = BankKeeper{}
+var _ types.BankKeeper = (*BankKeeper)(nil)
 
 type BankKeeper struct {
 	Balances map[string]sdk.Coins
+}
+
+func NewBankKeeper() *BankKeeper {
+	return &BankKeeper{
+		Balances: make(map[string]sdk.Coins),
+	}
 }
 
 func (k BankKeeper) GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins {

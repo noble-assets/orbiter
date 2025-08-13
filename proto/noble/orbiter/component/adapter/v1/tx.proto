@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package noble.orbiter.component.adapter.v1;
+
+import "amino/amino.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "noble/orbiter/component/adapter/v1/adapter.proto";
+
+option go_package = "orbiter.dev/types/component/adapter";
+
+// Msg defines the RPC methods for the Adapter component.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // UpdateParams updates the Adapter component params.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+}
+
+// MsgUpdateParams is the request to update the adapter component parameters.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "noble/orbiter/component/adapter/v1/MsgUpdateParams";
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  Params params = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgUpdateParamsResponse is the response to the MsgUpdateParams.
+message MsgUpdateParamsResponse {}

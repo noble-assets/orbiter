@@ -27,17 +27,18 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"orbiter.dev/keeper/component"
+	"orbiter.dev/keeper/component/adapter"
+	"orbiter.dev/keeper/component/dispatcher"
 )
 
-func NewAdapterComponent(tb testing.TB) (*component.Adapter, *Dependencies) {
+func NewAdapterComponent(tb testing.TB) (*adapter.Adapter, *Dependencies) {
 	tb.Helper()
 
 	deps := NewDependencies(tb)
 
 	sb := collections.NewSchemaBuilder(deps.StoreService)
 
-	dispatcher, err := component.NewDispatcher(
+	d, err := dispatcher.New(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
@@ -46,17 +47,17 @@ func NewAdapterComponent(tb testing.TB) (*component.Adapter, *Dependencies) {
 	)
 	require.NoError(tb, err)
 
-	adapter, err := component.NewAdapter(
+	a, err := adapter.New(
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
-		BankKeeper{},
-		dispatcher,
+		&BankKeeper{},
+		d,
 	)
 	require.NoError(tb, err)
 
 	_, err = sb.Build()
 	require.NoError(tb, err)
 
-	return adapter, &deps
+	return a, &deps
 }

@@ -841,76 +841,76 @@ func (x *fastReflection_MsgPauseProtocolResponse) ProtoMethods() *protoiface.Met
 	}
 }
 
-var _ protoreflect.List = (*_MsgPauseCounterparties_3_list)(nil)
+var _ protoreflect.List = (*_MsgPauseCrossChain_3_list)(nil)
 
-type _MsgPauseCounterparties_3_list struct {
+type _MsgPauseCrossChain_3_list struct {
 	list *[]string
 }
 
-func (x *_MsgPauseCounterparties_3_list) Len() int {
+func (x *_MsgPauseCrossChain_3_list) Len() int {
 	if x.list == nil {
 		return 0
 	}
 	return len(*x.list)
 }
 
-func (x *_MsgPauseCounterparties_3_list) Get(i int) protoreflect.Value {
+func (x *_MsgPauseCrossChain_3_list) Get(i int) protoreflect.Value {
 	return protoreflect.ValueOfString((*x.list)[i])
 }
 
-func (x *_MsgPauseCounterparties_3_list) Set(i int, value protoreflect.Value) {
+func (x *_MsgPauseCrossChain_3_list) Set(i int, value protoreflect.Value) {
 	valueUnwrapped := value.String()
 	concreteValue := valueUnwrapped
 	(*x.list)[i] = concreteValue
 }
 
-func (x *_MsgPauseCounterparties_3_list) Append(value protoreflect.Value) {
+func (x *_MsgPauseCrossChain_3_list) Append(value protoreflect.Value) {
 	valueUnwrapped := value.String()
 	concreteValue := valueUnwrapped
 	*x.list = append(*x.list, concreteValue)
 }
 
-func (x *_MsgPauseCounterparties_3_list) AppendMutable() protoreflect.Value {
-	panic(fmt.Errorf("AppendMutable can not be called on message MsgPauseCounterparties at list field CounterpartyIds as it is not of Message kind"))
+func (x *_MsgPauseCrossChain_3_list) AppendMutable() protoreflect.Value {
+	panic(fmt.Errorf("AppendMutable can not be called on message MsgPauseCrossChain at list field CounterpartyIds as it is not of Message kind"))
 }
 
-func (x *_MsgPauseCounterparties_3_list) Truncate(n int) {
+func (x *_MsgPauseCrossChain_3_list) Truncate(n int) {
 	*x.list = (*x.list)[:n]
 }
 
-func (x *_MsgPauseCounterparties_3_list) NewElement() protoreflect.Value {
+func (x *_MsgPauseCrossChain_3_list) NewElement() protoreflect.Value {
 	v := ""
 	return protoreflect.ValueOfString(v)
 }
 
-func (x *_MsgPauseCounterparties_3_list) IsValid() bool {
+func (x *_MsgPauseCrossChain_3_list) IsValid() bool {
 	return x.list != nil
 }
 
 var (
-	md_MsgPauseCounterparties                  protoreflect.MessageDescriptor
-	fd_MsgPauseCounterparties_signer           protoreflect.FieldDescriptor
-	fd_MsgPauseCounterparties_protocol_id      protoreflect.FieldDescriptor
-	fd_MsgPauseCounterparties_counterparty_ids protoreflect.FieldDescriptor
+	md_MsgPauseCrossChain                  protoreflect.MessageDescriptor
+	fd_MsgPauseCrossChain_signer           protoreflect.FieldDescriptor
+	fd_MsgPauseCrossChain_protocol_id      protoreflect.FieldDescriptor
+	fd_MsgPauseCrossChain_counterparty_ids protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_component_forwarder_v1_tx_proto_init()
-	md_MsgPauseCounterparties = File_noble_orbiter_component_forwarder_v1_tx_proto.Messages().ByName("MsgPauseCounterparties")
-	fd_MsgPauseCounterparties_signer = md_MsgPauseCounterparties.Fields().ByName("signer")
-	fd_MsgPauseCounterparties_protocol_id = md_MsgPauseCounterparties.Fields().ByName("protocol_id")
-	fd_MsgPauseCounterparties_counterparty_ids = md_MsgPauseCounterparties.Fields().ByName("counterparty_ids")
+	md_MsgPauseCrossChain = File_noble_orbiter_component_forwarder_v1_tx_proto.Messages().ByName("MsgPauseCrossChain")
+	fd_MsgPauseCrossChain_signer = md_MsgPauseCrossChain.Fields().ByName("signer")
+	fd_MsgPauseCrossChain_protocol_id = md_MsgPauseCrossChain.Fields().ByName("protocol_id")
+	fd_MsgPauseCrossChain_counterparty_ids = md_MsgPauseCrossChain.Fields().ByName("counterparty_ids")
 }
 
-var _ protoreflect.Message = (*fastReflection_MsgPauseCounterparties)(nil)
+var _ protoreflect.Message = (*fastReflection_MsgPauseCrossChain)(nil)
 
-type fastReflection_MsgPauseCounterparties MsgPauseCounterparties
+type fastReflection_MsgPauseCrossChain MsgPauseCrossChain
 
-func (x *MsgPauseCounterparties) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_MsgPauseCounterparties)(x)
+func (x *MsgPauseCrossChain) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgPauseCrossChain)(x)
 }
 
-func (x *MsgPauseCounterparties) slowProtoReflect() protoreflect.Message {
+func (x *MsgPauseCrossChain) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -922,43 +922,43 @@ func (x *MsgPauseCounterparties) slowProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_MsgPauseCounterparties_messageType fastReflection_MsgPauseCounterparties_messageType
-var _ protoreflect.MessageType = fastReflection_MsgPauseCounterparties_messageType{}
+var _fastReflection_MsgPauseCrossChain_messageType fastReflection_MsgPauseCrossChain_messageType
+var _ protoreflect.MessageType = fastReflection_MsgPauseCrossChain_messageType{}
 
-type fastReflection_MsgPauseCounterparties_messageType struct{}
+type fastReflection_MsgPauseCrossChain_messageType struct{}
 
-func (x fastReflection_MsgPauseCounterparties_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_MsgPauseCounterparties)(nil)
+func (x fastReflection_MsgPauseCrossChain_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgPauseCrossChain)(nil)
 }
-func (x fastReflection_MsgPauseCounterparties_messageType) New() protoreflect.Message {
-	return new(fastReflection_MsgPauseCounterparties)
+func (x fastReflection_MsgPauseCrossChain_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgPauseCrossChain)
 }
-func (x fastReflection_MsgPauseCounterparties_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgPauseCounterparties
+func (x fastReflection_MsgPauseCrossChain_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgPauseCrossChain
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_MsgPauseCounterparties) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgPauseCounterparties
+func (x *fastReflection_MsgPauseCrossChain) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgPauseCrossChain
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_MsgPauseCounterparties) Type() protoreflect.MessageType {
-	return _fastReflection_MsgPauseCounterparties_messageType
+func (x *fastReflection_MsgPauseCrossChain) Type() protoreflect.MessageType {
+	return _fastReflection_MsgPauseCrossChain_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_MsgPauseCounterparties) New() protoreflect.Message {
-	return new(fastReflection_MsgPauseCounterparties)
+func (x *fastReflection_MsgPauseCrossChain) New() protoreflect.Message {
+	return new(fastReflection_MsgPauseCrossChain)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_MsgPauseCounterparties) Interface() protoreflect.ProtoMessage {
-	return (*MsgPauseCounterparties)(x)
+func (x *fastReflection_MsgPauseCrossChain) Interface() protoreflect.ProtoMessage {
+	return (*MsgPauseCrossChain)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -966,22 +966,22 @@ func (x *fastReflection_MsgPauseCounterparties) Interface() protoreflect.ProtoMe
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_MsgPauseCounterparties) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_MsgPauseCrossChain) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 	if x.Signer != "" {
 		value := protoreflect.ValueOfString(x.Signer)
-		if !f(fd_MsgPauseCounterparties_signer, value) {
+		if !f(fd_MsgPauseCrossChain_signer, value) {
 			return
 		}
 	}
 	if x.ProtocolId != 0 {
 		value := protoreflect.ValueOfEnum((protoreflect.EnumNumber)(x.ProtocolId))
-		if !f(fd_MsgPauseCounterparties_protocol_id, value) {
+		if !f(fd_MsgPauseCrossChain_protocol_id, value) {
 			return
 		}
 	}
 	if len(x.CounterpartyIds) != 0 {
-		value := protoreflect.ValueOfList(&_MsgPauseCounterparties_3_list{list: &x.CounterpartyIds})
-		if !f(fd_MsgPauseCounterparties_counterparty_ids, value) {
+		value := protoreflect.ValueOfList(&_MsgPauseCrossChain_3_list{list: &x.CounterpartyIds})
+		if !f(fd_MsgPauseCrossChain_counterparty_ids, value) {
 			return
 		}
 	}
@@ -998,19 +998,19 @@ func (x *fastReflection_MsgPauseCounterparties) Range(f func(protoreflect.FieldD
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_MsgPauseCounterparties) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_MsgPauseCrossChain) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.signer":
 		return x.Signer != ""
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.protocol_id":
 		return x.ProtocolId != 0
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.counterparty_ids":
 		return len(x.CounterpartyIds) != 0
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1020,19 +1020,19 @@ func (x *fastReflection_MsgPauseCounterparties) Has(fd protoreflect.FieldDescrip
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgPauseCounterparties) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_MsgPauseCrossChain) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.signer":
 		x.Signer = ""
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.protocol_id":
 		x.ProtocolId = 0
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.counterparty_ids":
 		x.CounterpartyIds = nil
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1042,25 +1042,25 @@ func (x *fastReflection_MsgPauseCounterparties) Clear(fd protoreflect.FieldDescr
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_MsgPauseCounterparties) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgPauseCrossChain) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.signer":
 		value := x.Signer
 		return protoreflect.ValueOfString(value)
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.protocol_id":
 		value := x.ProtocolId
 		return protoreflect.ValueOfEnum((protoreflect.EnumNumber)(value))
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.counterparty_ids":
 		if len(x.CounterpartyIds) == 0 {
-			return protoreflect.ValueOfList(&_MsgPauseCounterparties_3_list{})
+			return protoreflect.ValueOfList(&_MsgPauseCrossChain_3_list{})
 		}
-		listValue := &_MsgPauseCounterparties_3_list{list: &x.CounterpartyIds}
+		listValue := &_MsgPauseCrossChain_3_list{list: &x.CounterpartyIds}
 		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterparties does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChain does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -1074,21 +1074,21 @@ func (x *fastReflection_MsgPauseCounterparties) Get(descriptor protoreflect.Fiel
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgPauseCounterparties) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_MsgPauseCrossChain) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.signer":
 		x.Signer = value.Interface().(string)
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.protocol_id":
 		x.ProtocolId = (v1.ProtocolID)(value.Enum())
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.counterparty_ids":
 		lv := value.List()
-		clv := lv.(*_MsgPauseCounterparties_3_list)
+		clv := lv.(*_MsgPauseCrossChain_3_list)
 		x.CounterpartyIds = *clv.list
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1102,53 +1102,53 @@ func (x *fastReflection_MsgPauseCounterparties) Set(fd protoreflect.FieldDescrip
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgPauseCounterparties) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgPauseCrossChain) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.counterparty_ids":
 		if x.CounterpartyIds == nil {
 			x.CounterpartyIds = []string{}
 		}
-		value := &_MsgPauseCounterparties_3_list{list: &x.CounterpartyIds}
+		value := &_MsgPauseCrossChain_3_list{list: &x.CounterpartyIds}
 		return protoreflect.ValueOfList(value)
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.signer":
-		panic(fmt.Errorf("field signer of message noble.orbiter.component.forwarder.v1.MsgPauseCounterparties is not mutable"))
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.protocol_id":
-		panic(fmt.Errorf("field protocol_id of message noble.orbiter.component.forwarder.v1.MsgPauseCounterparties is not mutable"))
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.signer":
+		panic(fmt.Errorf("field signer of message noble.orbiter.component.forwarder.v1.MsgPauseCrossChain is not mutable"))
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.protocol_id":
+		panic(fmt.Errorf("field protocol_id of message noble.orbiter.component.forwarder.v1.MsgPauseCrossChain is not mutable"))
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_MsgPauseCounterparties) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgPauseCrossChain) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.signer":
 		return protoreflect.ValueOfString("")
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.protocol_id":
 		return protoreflect.ValueOfEnum(0)
-	case "noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.counterparty_ids":
 		list := []string{}
-		return protoreflect.ValueOfList(&_MsgPauseCounterparties_3_list{list: &list})
+		return protoreflect.ValueOfList(&_MsgPauseCrossChain_3_list{list: &list})
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_MsgPauseCounterparties) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_MsgPauseCrossChain) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.MsgPauseCounterparties", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.MsgPauseCrossChain", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -1156,7 +1156,7 @@ func (x *fastReflection_MsgPauseCounterparties) WhichOneof(d protoreflect.OneofD
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_MsgPauseCounterparties) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_MsgPauseCrossChain) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -1167,7 +1167,7 @@ func (x *fastReflection_MsgPauseCounterparties) GetUnknown() protoreflect.RawFie
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgPauseCounterparties) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_MsgPauseCrossChain) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -1179,7 +1179,7 @@ func (x *fastReflection_MsgPauseCounterparties) SetUnknown(fields protoreflect.R
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_MsgPauseCounterparties) IsValid() bool {
+func (x *fastReflection_MsgPauseCrossChain) IsValid() bool {
 	return x != nil
 }
 
@@ -1189,9 +1189,9 @@ func (x *fastReflection_MsgPauseCounterparties) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_MsgPauseCounterparties) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_MsgPauseCrossChain) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*MsgPauseCounterparties)
+		x := input.Message.Interface().(*MsgPauseCrossChain)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1226,7 +1226,7 @@ func (x *fastReflection_MsgPauseCounterparties) ProtoMethods() *protoiface.Metho
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*MsgPauseCounterparties)
+		x := input.Message.Interface().(*MsgPauseCrossChain)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1277,7 +1277,7 @@ func (x *fastReflection_MsgPauseCounterparties) ProtoMethods() *protoiface.Metho
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*MsgPauseCounterparties)
+		x := input.Message.Interface().(*MsgPauseCrossChain)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1309,10 +1309,10 @@ func (x *fastReflection_MsgPauseCounterparties) ProtoMethods() *protoiface.Metho
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgPauseCounterparties: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgPauseCrossChain: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgPauseCounterparties: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgPauseCrossChain: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			case 1:
@@ -1434,23 +1434,23 @@ func (x *fastReflection_MsgPauseCounterparties) ProtoMethods() *protoiface.Metho
 }
 
 var (
-	md_MsgPauseCounterpartiesResponse protoreflect.MessageDescriptor
+	md_MsgPauseCrossChainResponse protoreflect.MessageDescriptor
 )
 
 func init() {
 	file_noble_orbiter_component_forwarder_v1_tx_proto_init()
-	md_MsgPauseCounterpartiesResponse = File_noble_orbiter_component_forwarder_v1_tx_proto.Messages().ByName("MsgPauseCounterpartiesResponse")
+	md_MsgPauseCrossChainResponse = File_noble_orbiter_component_forwarder_v1_tx_proto.Messages().ByName("MsgPauseCrossChainResponse")
 }
 
-var _ protoreflect.Message = (*fastReflection_MsgPauseCounterpartiesResponse)(nil)
+var _ protoreflect.Message = (*fastReflection_MsgPauseCrossChainResponse)(nil)
 
-type fastReflection_MsgPauseCounterpartiesResponse MsgPauseCounterpartiesResponse
+type fastReflection_MsgPauseCrossChainResponse MsgPauseCrossChainResponse
 
-func (x *MsgPauseCounterpartiesResponse) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_MsgPauseCounterpartiesResponse)(x)
+func (x *MsgPauseCrossChainResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgPauseCrossChainResponse)(x)
 }
 
-func (x *MsgPauseCounterpartiesResponse) slowProtoReflect() protoreflect.Message {
+func (x *MsgPauseCrossChainResponse) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1462,43 +1462,43 @@ func (x *MsgPauseCounterpartiesResponse) slowProtoReflect() protoreflect.Message
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_MsgPauseCounterpartiesResponse_messageType fastReflection_MsgPauseCounterpartiesResponse_messageType
-var _ protoreflect.MessageType = fastReflection_MsgPauseCounterpartiesResponse_messageType{}
+var _fastReflection_MsgPauseCrossChainResponse_messageType fastReflection_MsgPauseCrossChainResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgPauseCrossChainResponse_messageType{}
 
-type fastReflection_MsgPauseCounterpartiesResponse_messageType struct{}
+type fastReflection_MsgPauseCrossChainResponse_messageType struct{}
 
-func (x fastReflection_MsgPauseCounterpartiesResponse_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_MsgPauseCounterpartiesResponse)(nil)
+func (x fastReflection_MsgPauseCrossChainResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgPauseCrossChainResponse)(nil)
 }
-func (x fastReflection_MsgPauseCounterpartiesResponse_messageType) New() protoreflect.Message {
-	return new(fastReflection_MsgPauseCounterpartiesResponse)
+func (x fastReflection_MsgPauseCrossChainResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgPauseCrossChainResponse)
 }
-func (x fastReflection_MsgPauseCounterpartiesResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgPauseCounterpartiesResponse
+func (x fastReflection_MsgPauseCrossChainResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgPauseCrossChainResponse
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgPauseCounterpartiesResponse
+func (x *fastReflection_MsgPauseCrossChainResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgPauseCrossChainResponse
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) Type() protoreflect.MessageType {
-	return _fastReflection_MsgPauseCounterpartiesResponse_messageType
+func (x *fastReflection_MsgPauseCrossChainResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgPauseCrossChainResponse_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) New() protoreflect.Message {
-	return new(fastReflection_MsgPauseCounterpartiesResponse)
+func (x *fastReflection_MsgPauseCrossChainResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgPauseCrossChainResponse)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) Interface() protoreflect.ProtoMessage {
-	return (*MsgPauseCounterpartiesResponse)(x)
+func (x *fastReflection_MsgPauseCrossChainResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgPauseCrossChainResponse)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -1506,7 +1506,7 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) Interface() protoreflect
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_MsgPauseCrossChainResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 }
 
 // Has reports whether a field is populated.
@@ -1520,13 +1520,13 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) Range(f func(protoreflec
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_MsgPauseCrossChainResponse) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1536,13 +1536,13 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) Has(fd protoreflect.Fiel
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_MsgPauseCrossChainResponse) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1552,13 +1552,13 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) Clear(fd protoreflect.Fi
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgPauseCrossChainResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -1572,13 +1572,13 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) Get(descriptor protorefl
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_MsgPauseCrossChainResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -1592,36 +1592,36 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) Set(fd protoreflect.Fiel
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgPauseCrossChainResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgPauseCrossChainResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_MsgPauseCrossChainResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -1629,7 +1629,7 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) WhichOneof(d protoreflec
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_MsgPauseCrossChainResponse) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -1640,7 +1640,7 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) GetUnknown() protoreflec
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_MsgPauseCrossChainResponse) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -1652,7 +1652,7 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) SetUnknown(fields protor
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) IsValid() bool {
+func (x *fastReflection_MsgPauseCrossChainResponse) IsValid() bool {
 	return x != nil
 }
 
@@ -1662,9 +1662,9 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_MsgPauseCounterpartiesResponse) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_MsgPauseCrossChainResponse) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*MsgPauseCounterpartiesResponse)
+		x := input.Message.Interface().(*MsgPauseCrossChainResponse)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1686,7 +1686,7 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) ProtoMethods() *protoifa
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*MsgPauseCounterpartiesResponse)
+		x := input.Message.Interface().(*MsgPauseCrossChainResponse)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1716,7 +1716,7 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) ProtoMethods() *protoifa
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*MsgPauseCounterpartiesResponse)
+		x := input.Message.Interface().(*MsgPauseCrossChainResponse)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1748,10 +1748,10 @@ func (x *fastReflection_MsgPauseCounterpartiesResponse) ProtoMethods() *protoifa
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgPauseCounterpartiesResponse: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgPauseCrossChainResponse: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgPauseCounterpartiesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgPauseCrossChainResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			default:
@@ -2613,76 +2613,76 @@ func (x *fastReflection_MsgUnpauseProtocolResponse) ProtoMethods() *protoiface.M
 	}
 }
 
-var _ protoreflect.List = (*_MsgUnpauseCounterparties_3_list)(nil)
+var _ protoreflect.List = (*_MsgUnpauseCrossChain_3_list)(nil)
 
-type _MsgUnpauseCounterparties_3_list struct {
+type _MsgUnpauseCrossChain_3_list struct {
 	list *[]string
 }
 
-func (x *_MsgUnpauseCounterparties_3_list) Len() int {
+func (x *_MsgUnpauseCrossChain_3_list) Len() int {
 	if x.list == nil {
 		return 0
 	}
 	return len(*x.list)
 }
 
-func (x *_MsgUnpauseCounterparties_3_list) Get(i int) protoreflect.Value {
+func (x *_MsgUnpauseCrossChain_3_list) Get(i int) protoreflect.Value {
 	return protoreflect.ValueOfString((*x.list)[i])
 }
 
-func (x *_MsgUnpauseCounterparties_3_list) Set(i int, value protoreflect.Value) {
+func (x *_MsgUnpauseCrossChain_3_list) Set(i int, value protoreflect.Value) {
 	valueUnwrapped := value.String()
 	concreteValue := valueUnwrapped
 	(*x.list)[i] = concreteValue
 }
 
-func (x *_MsgUnpauseCounterparties_3_list) Append(value protoreflect.Value) {
+func (x *_MsgUnpauseCrossChain_3_list) Append(value protoreflect.Value) {
 	valueUnwrapped := value.String()
 	concreteValue := valueUnwrapped
 	*x.list = append(*x.list, concreteValue)
 }
 
-func (x *_MsgUnpauseCounterparties_3_list) AppendMutable() protoreflect.Value {
-	panic(fmt.Errorf("AppendMutable can not be called on message MsgUnpauseCounterparties at list field CounterpartyIds as it is not of Message kind"))
+func (x *_MsgUnpauseCrossChain_3_list) AppendMutable() protoreflect.Value {
+	panic(fmt.Errorf("AppendMutable can not be called on message MsgUnpauseCrossChain at list field CounterpartyIds as it is not of Message kind"))
 }
 
-func (x *_MsgUnpauseCounterparties_3_list) Truncate(n int) {
+func (x *_MsgUnpauseCrossChain_3_list) Truncate(n int) {
 	*x.list = (*x.list)[:n]
 }
 
-func (x *_MsgUnpauseCounterparties_3_list) NewElement() protoreflect.Value {
+func (x *_MsgUnpauseCrossChain_3_list) NewElement() protoreflect.Value {
 	v := ""
 	return protoreflect.ValueOfString(v)
 }
 
-func (x *_MsgUnpauseCounterparties_3_list) IsValid() bool {
+func (x *_MsgUnpauseCrossChain_3_list) IsValid() bool {
 	return x.list != nil
 }
 
 var (
-	md_MsgUnpauseCounterparties                  protoreflect.MessageDescriptor
-	fd_MsgUnpauseCounterparties_signer           protoreflect.FieldDescriptor
-	fd_MsgUnpauseCounterparties_protocol_id      protoreflect.FieldDescriptor
-	fd_MsgUnpauseCounterparties_counterparty_ids protoreflect.FieldDescriptor
+	md_MsgUnpauseCrossChain                  protoreflect.MessageDescriptor
+	fd_MsgUnpauseCrossChain_signer           protoreflect.FieldDescriptor
+	fd_MsgUnpauseCrossChain_protocol_id      protoreflect.FieldDescriptor
+	fd_MsgUnpauseCrossChain_counterparty_ids protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_noble_orbiter_component_forwarder_v1_tx_proto_init()
-	md_MsgUnpauseCounterparties = File_noble_orbiter_component_forwarder_v1_tx_proto.Messages().ByName("MsgUnpauseCounterparties")
-	fd_MsgUnpauseCounterparties_signer = md_MsgUnpauseCounterparties.Fields().ByName("signer")
-	fd_MsgUnpauseCounterparties_protocol_id = md_MsgUnpauseCounterparties.Fields().ByName("protocol_id")
-	fd_MsgUnpauseCounterparties_counterparty_ids = md_MsgUnpauseCounterparties.Fields().ByName("counterparty_ids")
+	md_MsgUnpauseCrossChain = File_noble_orbiter_component_forwarder_v1_tx_proto.Messages().ByName("MsgUnpauseCrossChain")
+	fd_MsgUnpauseCrossChain_signer = md_MsgUnpauseCrossChain.Fields().ByName("signer")
+	fd_MsgUnpauseCrossChain_protocol_id = md_MsgUnpauseCrossChain.Fields().ByName("protocol_id")
+	fd_MsgUnpauseCrossChain_counterparty_ids = md_MsgUnpauseCrossChain.Fields().ByName("counterparty_ids")
 }
 
-var _ protoreflect.Message = (*fastReflection_MsgUnpauseCounterparties)(nil)
+var _ protoreflect.Message = (*fastReflection_MsgUnpauseCrossChain)(nil)
 
-type fastReflection_MsgUnpauseCounterparties MsgUnpauseCounterparties
+type fastReflection_MsgUnpauseCrossChain MsgUnpauseCrossChain
 
-func (x *MsgUnpauseCounterparties) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_MsgUnpauseCounterparties)(x)
+func (x *MsgUnpauseCrossChain) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgUnpauseCrossChain)(x)
 }
 
-func (x *MsgUnpauseCounterparties) slowProtoReflect() protoreflect.Message {
+func (x *MsgUnpauseCrossChain) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2694,43 +2694,43 @@ func (x *MsgUnpauseCounterparties) slowProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_MsgUnpauseCounterparties_messageType fastReflection_MsgUnpauseCounterparties_messageType
-var _ protoreflect.MessageType = fastReflection_MsgUnpauseCounterparties_messageType{}
+var _fastReflection_MsgUnpauseCrossChain_messageType fastReflection_MsgUnpauseCrossChain_messageType
+var _ protoreflect.MessageType = fastReflection_MsgUnpauseCrossChain_messageType{}
 
-type fastReflection_MsgUnpauseCounterparties_messageType struct{}
+type fastReflection_MsgUnpauseCrossChain_messageType struct{}
 
-func (x fastReflection_MsgUnpauseCounterparties_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_MsgUnpauseCounterparties)(nil)
+func (x fastReflection_MsgUnpauseCrossChain_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgUnpauseCrossChain)(nil)
 }
-func (x fastReflection_MsgUnpauseCounterparties_messageType) New() protoreflect.Message {
-	return new(fastReflection_MsgUnpauseCounterparties)
+func (x fastReflection_MsgUnpauseCrossChain_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgUnpauseCrossChain)
 }
-func (x fastReflection_MsgUnpauseCounterparties_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgUnpauseCounterparties
+func (x fastReflection_MsgUnpauseCrossChain_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgUnpauseCrossChain
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_MsgUnpauseCounterparties) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgUnpauseCounterparties
+func (x *fastReflection_MsgUnpauseCrossChain) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgUnpauseCrossChain
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_MsgUnpauseCounterparties) Type() protoreflect.MessageType {
-	return _fastReflection_MsgUnpauseCounterparties_messageType
+func (x *fastReflection_MsgUnpauseCrossChain) Type() protoreflect.MessageType {
+	return _fastReflection_MsgUnpauseCrossChain_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_MsgUnpauseCounterparties) New() protoreflect.Message {
-	return new(fastReflection_MsgUnpauseCounterparties)
+func (x *fastReflection_MsgUnpauseCrossChain) New() protoreflect.Message {
+	return new(fastReflection_MsgUnpauseCrossChain)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_MsgUnpauseCounterparties) Interface() protoreflect.ProtoMessage {
-	return (*MsgUnpauseCounterparties)(x)
+func (x *fastReflection_MsgUnpauseCrossChain) Interface() protoreflect.ProtoMessage {
+	return (*MsgUnpauseCrossChain)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -2738,22 +2738,22 @@ func (x *fastReflection_MsgUnpauseCounterparties) Interface() protoreflect.Proto
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_MsgUnpauseCounterparties) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_MsgUnpauseCrossChain) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 	if x.Signer != "" {
 		value := protoreflect.ValueOfString(x.Signer)
-		if !f(fd_MsgUnpauseCounterparties_signer, value) {
+		if !f(fd_MsgUnpauseCrossChain_signer, value) {
 			return
 		}
 	}
 	if x.ProtocolId != 0 {
 		value := protoreflect.ValueOfEnum((protoreflect.EnumNumber)(x.ProtocolId))
-		if !f(fd_MsgUnpauseCounterparties_protocol_id, value) {
+		if !f(fd_MsgUnpauseCrossChain_protocol_id, value) {
 			return
 		}
 	}
 	if len(x.CounterpartyIds) != 0 {
-		value := protoreflect.ValueOfList(&_MsgUnpauseCounterparties_3_list{list: &x.CounterpartyIds})
-		if !f(fd_MsgUnpauseCounterparties_counterparty_ids, value) {
+		value := protoreflect.ValueOfList(&_MsgUnpauseCrossChain_3_list{list: &x.CounterpartyIds})
+		if !f(fd_MsgUnpauseCrossChain_counterparty_ids, value) {
 			return
 		}
 	}
@@ -2770,19 +2770,19 @@ func (x *fastReflection_MsgUnpauseCounterparties) Range(f func(protoreflect.Fiel
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_MsgUnpauseCounterparties) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_MsgUnpauseCrossChain) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.signer":
 		return x.Signer != ""
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.protocol_id":
 		return x.ProtocolId != 0
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.counterparty_ids":
 		return len(x.CounterpartyIds) != 0
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -2792,19 +2792,19 @@ func (x *fastReflection_MsgUnpauseCounterparties) Has(fd protoreflect.FieldDescr
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgUnpauseCounterparties) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_MsgUnpauseCrossChain) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.signer":
 		x.Signer = ""
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.protocol_id":
 		x.ProtocolId = 0
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.counterparty_ids":
 		x.CounterpartyIds = nil
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -2814,25 +2814,25 @@ func (x *fastReflection_MsgUnpauseCounterparties) Clear(fd protoreflect.FieldDes
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_MsgUnpauseCounterparties) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgUnpauseCrossChain) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.signer":
 		value := x.Signer
 		return protoreflect.ValueOfString(value)
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.protocol_id":
 		value := x.ProtocolId
 		return protoreflect.ValueOfEnum((protoreflect.EnumNumber)(value))
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.counterparty_ids":
 		if len(x.CounterpartyIds) == 0 {
-			return protoreflect.ValueOfList(&_MsgUnpauseCounterparties_3_list{})
+			return protoreflect.ValueOfList(&_MsgUnpauseCrossChain_3_list{})
 		}
-		listValue := &_MsgUnpauseCounterparties_3_list{list: &x.CounterpartyIds}
+		listValue := &_MsgUnpauseCrossChain_3_list{list: &x.CounterpartyIds}
 		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -2846,21 +2846,21 @@ func (x *fastReflection_MsgUnpauseCounterparties) Get(descriptor protoreflect.Fi
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgUnpauseCounterparties) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_MsgUnpauseCrossChain) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.signer":
 		x.Signer = value.Interface().(string)
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.protocol_id":
 		x.ProtocolId = (v1.ProtocolID)(value.Enum())
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.counterparty_ids":
 		lv := value.List()
-		clv := lv.(*_MsgUnpauseCounterparties_3_list)
+		clv := lv.(*_MsgUnpauseCrossChain_3_list)
 		x.CounterpartyIds = *clv.list
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -2874,53 +2874,53 @@ func (x *fastReflection_MsgUnpauseCounterparties) Set(fd protoreflect.FieldDescr
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgUnpauseCounterparties) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgUnpauseCrossChain) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.counterparty_ids":
 		if x.CounterpartyIds == nil {
 			x.CounterpartyIds = []string{}
 		}
-		value := &_MsgUnpauseCounterparties_3_list{list: &x.CounterpartyIds}
+		value := &_MsgUnpauseCrossChain_3_list{list: &x.CounterpartyIds}
 		return protoreflect.ValueOfList(value)
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.signer":
-		panic(fmt.Errorf("field signer of message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties is not mutable"))
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.protocol_id":
-		panic(fmt.Errorf("field protocol_id of message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties is not mutable"))
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.signer":
+		panic(fmt.Errorf("field signer of message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain is not mutable"))
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.protocol_id":
+		panic(fmt.Errorf("field protocol_id of message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain is not mutable"))
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_MsgUnpauseCounterparties) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgUnpauseCrossChain) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.signer":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.signer":
 		return protoreflect.ValueOfString("")
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.protocol_id":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.protocol_id":
 		return protoreflect.ValueOfEnum(0)
-	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.counterparty_ids":
+	case "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.counterparty_ids":
 		list := []string{}
-		return protoreflect.ValueOfList(&_MsgUnpauseCounterparties_3_list{list: &list})
+		return protoreflect.ValueOfList(&_MsgUnpauseCrossChain_3_list{list: &list})
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_MsgUnpauseCounterparties) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_MsgUnpauseCrossChain) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -2928,7 +2928,7 @@ func (x *fastReflection_MsgUnpauseCounterparties) WhichOneof(d protoreflect.Oneo
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_MsgUnpauseCounterparties) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_MsgUnpauseCrossChain) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -2939,7 +2939,7 @@ func (x *fastReflection_MsgUnpauseCounterparties) GetUnknown() protoreflect.RawF
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgUnpauseCounterparties) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_MsgUnpauseCrossChain) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -2951,7 +2951,7 @@ func (x *fastReflection_MsgUnpauseCounterparties) SetUnknown(fields protoreflect
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_MsgUnpauseCounterparties) IsValid() bool {
+func (x *fastReflection_MsgUnpauseCrossChain) IsValid() bool {
 	return x != nil
 }
 
@@ -2961,9 +2961,9 @@ func (x *fastReflection_MsgUnpauseCounterparties) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_MsgUnpauseCounterparties) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_MsgUnpauseCrossChain) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*MsgUnpauseCounterparties)
+		x := input.Message.Interface().(*MsgUnpauseCrossChain)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -2998,7 +2998,7 @@ func (x *fastReflection_MsgUnpauseCounterparties) ProtoMethods() *protoiface.Met
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*MsgUnpauseCounterparties)
+		x := input.Message.Interface().(*MsgUnpauseCrossChain)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -3049,7 +3049,7 @@ func (x *fastReflection_MsgUnpauseCounterparties) ProtoMethods() *protoiface.Met
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*MsgUnpauseCounterparties)
+		x := input.Message.Interface().(*MsgUnpauseCrossChain)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -3081,10 +3081,10 @@ func (x *fastReflection_MsgUnpauseCounterparties) ProtoMethods() *protoiface.Met
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgUnpauseCounterparties: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgUnpauseCrossChain: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgUnpauseCounterparties: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgUnpauseCrossChain: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			case 1:
@@ -3206,23 +3206,23 @@ func (x *fastReflection_MsgUnpauseCounterparties) ProtoMethods() *protoiface.Met
 }
 
 var (
-	md_MsgUnpauseCounterpartiesResponse protoreflect.MessageDescriptor
+	md_MsgUnpauseCrossChainResponse protoreflect.MessageDescriptor
 )
 
 func init() {
 	file_noble_orbiter_component_forwarder_v1_tx_proto_init()
-	md_MsgUnpauseCounterpartiesResponse = File_noble_orbiter_component_forwarder_v1_tx_proto.Messages().ByName("MsgUnpauseCounterpartiesResponse")
+	md_MsgUnpauseCrossChainResponse = File_noble_orbiter_component_forwarder_v1_tx_proto.Messages().ByName("MsgUnpauseCrossChainResponse")
 }
 
-var _ protoreflect.Message = (*fastReflection_MsgUnpauseCounterpartiesResponse)(nil)
+var _ protoreflect.Message = (*fastReflection_MsgUnpauseCrossChainResponse)(nil)
 
-type fastReflection_MsgUnpauseCounterpartiesResponse MsgUnpauseCounterpartiesResponse
+type fastReflection_MsgUnpauseCrossChainResponse MsgUnpauseCrossChainResponse
 
-func (x *MsgUnpauseCounterpartiesResponse) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_MsgUnpauseCounterpartiesResponse)(x)
+func (x *MsgUnpauseCrossChainResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgUnpauseCrossChainResponse)(x)
 }
 
-func (x *MsgUnpauseCounterpartiesResponse) slowProtoReflect() protoreflect.Message {
+func (x *MsgUnpauseCrossChainResponse) slowProtoReflect() protoreflect.Message {
 	mi := &file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3234,43 +3234,43 @@ func (x *MsgUnpauseCounterpartiesResponse) slowProtoReflect() protoreflect.Messa
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_MsgUnpauseCounterpartiesResponse_messageType fastReflection_MsgUnpauseCounterpartiesResponse_messageType
-var _ protoreflect.MessageType = fastReflection_MsgUnpauseCounterpartiesResponse_messageType{}
+var _fastReflection_MsgUnpauseCrossChainResponse_messageType fastReflection_MsgUnpauseCrossChainResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgUnpauseCrossChainResponse_messageType{}
 
-type fastReflection_MsgUnpauseCounterpartiesResponse_messageType struct{}
+type fastReflection_MsgUnpauseCrossChainResponse_messageType struct{}
 
-func (x fastReflection_MsgUnpauseCounterpartiesResponse_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_MsgUnpauseCounterpartiesResponse)(nil)
+func (x fastReflection_MsgUnpauseCrossChainResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgUnpauseCrossChainResponse)(nil)
 }
-func (x fastReflection_MsgUnpauseCounterpartiesResponse_messageType) New() protoreflect.Message {
-	return new(fastReflection_MsgUnpauseCounterpartiesResponse)
+func (x fastReflection_MsgUnpauseCrossChainResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgUnpauseCrossChainResponse)
 }
-func (x fastReflection_MsgUnpauseCounterpartiesResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgUnpauseCounterpartiesResponse
+func (x fastReflection_MsgUnpauseCrossChainResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgUnpauseCrossChainResponse
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgUnpauseCounterpartiesResponse
+func (x *fastReflection_MsgUnpauseCrossChainResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgUnpauseCrossChainResponse
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Type() protoreflect.MessageType {
-	return _fastReflection_MsgUnpauseCounterpartiesResponse_messageType
+func (x *fastReflection_MsgUnpauseCrossChainResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgUnpauseCrossChainResponse_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) New() protoreflect.Message {
-	return new(fastReflection_MsgUnpauseCounterpartiesResponse)
+func (x *fastReflection_MsgUnpauseCrossChainResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgUnpauseCrossChainResponse)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Interface() protoreflect.ProtoMessage {
-	return (*MsgUnpauseCounterpartiesResponse)(x)
+func (x *fastReflection_MsgUnpauseCrossChainResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgUnpauseCrossChainResponse)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -3278,7 +3278,7 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Interface() protorefle
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 }
 
 // Has reports whether a field is populated.
@@ -3292,13 +3292,13 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Range(f func(protorefl
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -3308,13 +3308,13 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Has(fd protoreflect.Fi
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -3324,13 +3324,13 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Clear(fd protoreflect.
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -3344,13 +3344,13 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Get(descriptor protore
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -3364,36 +3364,36 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Set(fd protoreflect.Fi
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse"))
 		}
-		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -3401,7 +3401,7 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) WhichOneof(d protorefl
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -3412,7 +3412,7 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) GetUnknown() protorefl
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -3424,7 +3424,7 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) SetUnknown(fields prot
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) IsValid() bool {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) IsValid() bool {
 	return x != nil
 }
 
@@ -3434,9 +3434,9 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_MsgUnpauseCounterpartiesResponse) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_MsgUnpauseCrossChainResponse) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*MsgUnpauseCounterpartiesResponse)
+		x := input.Message.Interface().(*MsgUnpauseCrossChainResponse)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -3458,7 +3458,7 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) ProtoMethods() *protoi
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*MsgUnpauseCounterpartiesResponse)
+		x := input.Message.Interface().(*MsgUnpauseCrossChainResponse)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -3488,7 +3488,7 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) ProtoMethods() *protoi
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*MsgUnpauseCounterpartiesResponse)
+		x := input.Message.Interface().(*MsgUnpauseCrossChainResponse)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -3520,10 +3520,10 @@ func (x *fastReflection_MsgUnpauseCounterpartiesResponse) ProtoMethods() *protoi
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgUnpauseCounterpartiesResponse: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgUnpauseCrossChainResponse: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgUnpauseCounterpartiesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgUnpauseCrossChainResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			default:
@@ -4687,8 +4687,8 @@ func (*MsgPauseProtocolResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_tx_proto_rawDescGZIP(), []int{1}
 }
 
-// MsgPauseCounterparties pauses specific counterparty pairs for a protocol.
-type MsgPauseCounterparties struct {
+// MsgPauseCrossChain pauses specific counterparty pairs for a protocol.
+type MsgPauseCrossChain struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -4701,8 +4701,8 @@ type MsgPauseCounterparties struct {
 	CounterpartyIds []string `protobuf:"bytes,3,rep,name=counterparty_ids,json=counterpartyIds,proto3" json:"counterparty_ids,omitempty"`
 }
 
-func (x *MsgPauseCounterparties) Reset() {
-	*x = MsgPauseCounterparties{}
+func (x *MsgPauseCrossChain) Reset() {
+	*x = MsgPauseCrossChain{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4710,48 +4710,48 @@ func (x *MsgPauseCounterparties) Reset() {
 	}
 }
 
-func (x *MsgPauseCounterparties) String() string {
+func (x *MsgPauseCrossChain) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MsgPauseCounterparties) ProtoMessage() {}
+func (*MsgPauseCrossChain) ProtoMessage() {}
 
-// Deprecated: Use MsgPauseCounterparties.ProtoReflect.Descriptor instead.
-func (*MsgPauseCounterparties) Descriptor() ([]byte, []int) {
+// Deprecated: Use MsgPauseCrossChain.ProtoReflect.Descriptor instead.
+func (*MsgPauseCrossChain) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_tx_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *MsgPauseCounterparties) GetSigner() string {
+func (x *MsgPauseCrossChain) GetSigner() string {
 	if x != nil {
 		return x.Signer
 	}
 	return ""
 }
 
-func (x *MsgPauseCounterparties) GetProtocolId() v1.ProtocolID {
+func (x *MsgPauseCrossChain) GetProtocolId() v1.ProtocolID {
 	if x != nil {
 		return x.ProtocolId
 	}
 	return v1.ProtocolID(0)
 }
 
-func (x *MsgPauseCounterparties) GetCounterpartyIds() []string {
+func (x *MsgPauseCrossChain) GetCounterpartyIds() []string {
 	if x != nil {
 		return x.CounterpartyIds
 	}
 	return nil
 }
 
-// MsgPauseCounterpartiesResponse is the response type
-// from a MsgPauseCounterparties request.
-type MsgPauseCounterpartiesResponse struct {
+// MsgPauseCrossChainResponse is the response type
+// from a MsgPauseCrossChain request.
+type MsgPauseCrossChainResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *MsgPauseCounterpartiesResponse) Reset() {
-	*x = MsgPauseCounterpartiesResponse{}
+func (x *MsgPauseCrossChainResponse) Reset() {
+	*x = MsgPauseCrossChainResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4759,14 +4759,14 @@ func (x *MsgPauseCounterpartiesResponse) Reset() {
 	}
 }
 
-func (x *MsgPauseCounterpartiesResponse) String() string {
+func (x *MsgPauseCrossChainResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MsgPauseCounterpartiesResponse) ProtoMessage() {}
+func (*MsgPauseCrossChainResponse) ProtoMessage() {}
 
-// Deprecated: Use MsgPauseCounterpartiesResponse.ProtoReflect.Descriptor instead.
-func (*MsgPauseCounterpartiesResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use MsgPauseCrossChainResponse.ProtoReflect.Descriptor instead.
+func (*MsgPauseCrossChainResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_tx_proto_rawDescGZIP(), []int{3}
 }
 
@@ -4843,8 +4843,8 @@ func (*MsgUnpauseProtocolResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_tx_proto_rawDescGZIP(), []int{5}
 }
 
-// MsgUnpauseCounterparties resumes specific counterparty pairs for a protocol.
-type MsgUnpauseCounterparties struct {
+// MsgUnpauseCrossChain resumes specific counterparty pairs for a protocol.
+type MsgUnpauseCrossChain struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -4857,8 +4857,8 @@ type MsgUnpauseCounterparties struct {
 	CounterpartyIds []string `protobuf:"bytes,3,rep,name=counterparty_ids,json=counterpartyIds,proto3" json:"counterparty_ids,omitempty"`
 }
 
-func (x *MsgUnpauseCounterparties) Reset() {
-	*x = MsgUnpauseCounterparties{}
+func (x *MsgUnpauseCrossChain) Reset() {
+	*x = MsgUnpauseCrossChain{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4866,48 +4866,48 @@ func (x *MsgUnpauseCounterparties) Reset() {
 	}
 }
 
-func (x *MsgUnpauseCounterparties) String() string {
+func (x *MsgUnpauseCrossChain) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MsgUnpauseCounterparties) ProtoMessage() {}
+func (*MsgUnpauseCrossChain) ProtoMessage() {}
 
-// Deprecated: Use MsgUnpauseCounterparties.ProtoReflect.Descriptor instead.
-func (*MsgUnpauseCounterparties) Descriptor() ([]byte, []int) {
+// Deprecated: Use MsgUnpauseCrossChain.ProtoReflect.Descriptor instead.
+func (*MsgUnpauseCrossChain) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_tx_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *MsgUnpauseCounterparties) GetSigner() string {
+func (x *MsgUnpauseCrossChain) GetSigner() string {
 	if x != nil {
 		return x.Signer
 	}
 	return ""
 }
 
-func (x *MsgUnpauseCounterparties) GetProtocolId() v1.ProtocolID {
+func (x *MsgUnpauseCrossChain) GetProtocolId() v1.ProtocolID {
 	if x != nil {
 		return x.ProtocolId
 	}
 	return v1.ProtocolID(0)
 }
 
-func (x *MsgUnpauseCounterparties) GetCounterpartyIds() []string {
+func (x *MsgUnpauseCrossChain) GetCounterpartyIds() []string {
 	if x != nil {
 		return x.CounterpartyIds
 	}
 	return nil
 }
 
-// MsgUnpauseCounterpartiesResponse is the response type
-// from a MsgUnpauseCounterparties request.
-type MsgUnpauseCounterpartiesResponse struct {
+// MsgUnpauseCrossChainResponse is the response type
+// from a MsgUnpauseCrossChain request.
+type MsgUnpauseCrossChainResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *MsgUnpauseCounterpartiesResponse) Reset() {
-	*x = MsgUnpauseCounterpartiesResponse{}
+func (x *MsgUnpauseCrossChainResponse) Reset() {
+	*x = MsgUnpauseCrossChainResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4915,14 +4915,14 @@ func (x *MsgUnpauseCounterpartiesResponse) Reset() {
 	}
 }
 
-func (x *MsgUnpauseCounterpartiesResponse) String() string {
+func (x *MsgUnpauseCrossChainResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MsgUnpauseCounterpartiesResponse) ProtoMessage() {}
+func (*MsgUnpauseCrossChainResponse) ProtoMessage() {}
 
-// Deprecated: Use MsgUnpauseCounterpartiesResponse.ProtoReflect.Descriptor instead.
-func (*MsgUnpauseCounterpartiesResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use MsgUnpauseCrossChainResponse.ProtoReflect.Descriptor instead.
+func (*MsgUnpauseCrossChainResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_tx_proto_rawDescGZIP(), []int{7}
 }
 
@@ -5053,41 +5053,40 @@ var file_noble_orbiter_component_forwarder_v1_tx_proto_rawDesc = []byte{
 	0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x50, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72,
 	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x22, 0x1a, 0x0a, 0x18, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x75,
 	0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0xf8, 0x01, 0x0a, 0x16, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43,
-	0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x12, 0x30, 0x0a,
-	0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2,
-	0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
-	0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x12,
-	0x42, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62,
-	0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
-	0x6c, 0x49, 0x64, 0x12, 0x29, 0x0a, 0x10, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61,
-	0x72, 0x74, 0x79, 0x5f, 0x69, 0x64, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0f, 0x63,
-	0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x49, 0x64, 0x73, 0x3a, 0x3d,
-	0x88, 0xa0, 0x1f, 0x00, 0xe8, 0xa0, 0x1f, 0x00, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x73, 0x69, 0x67,
-	0x6e, 0x65, 0x72, 0x8a, 0xe7, 0xb0, 0x2a, 0x25, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f,
-	0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43,
-	0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x22, 0x20, 0x0a,
-	0x1e, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72,
-	0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0xc5, 0x01, 0x0a, 0x12, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72,
-	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x12, 0x30, 0x0a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d,
-	0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67,
-	0x52, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x12, 0x42, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e,
-	0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f,
-	0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x44,
-	0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64, 0x3a, 0x39, 0x88, 0xa0,
-	0x1f, 0x00, 0xe8, 0xa0, 0x1f, 0x00, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65,
-	0x72, 0x8a, 0xe7, 0xb0, 0x2a, 0x21, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6f,
-	0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x50,
-	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x22, 0x1c, 0x0a, 0x1a, 0x4d, 0x73, 0x67, 0x55, 0x6e,
-	0x70, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xfc, 0x01, 0x0a, 0x18, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70,
-	0x61, 0x75, 0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69,
-	0x65, 0x73, 0x12, 0x30, 0x0a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01,
+	0x73, 0x65, 0x22, 0xf0, 0x01, 0x0a, 0x12, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43,
+	0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x12, 0x30, 0x0a, 0x06, 0x73, 0x69, 0x67,
+	0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63,
+	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72,
+	0x69, 0x6e, 0x67, 0x52, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x12, 0x42, 0x0a, 0x0b, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e,
+	0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
+	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x49, 0x44, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64, 0x12,
+	0x29, 0x0a, 0x10, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x5f,
+	0x69, 0x64, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0f, 0x63, 0x6f, 0x75, 0x6e, 0x74,
+	0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x49, 0x64, 0x73, 0x3a, 0x39, 0x88, 0xa0, 0x1f, 0x00,
+	0xe8, 0xa0, 0x1f, 0x00, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x8a,
+	0xe7, 0xb0, 0x2a, 0x21, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6f, 0x72, 0x77,
+	0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43, 0x72, 0x6f, 0x73, 0x73,
+	0x43, 0x68, 0x61, 0x69, 0x6e, 0x22, 0x1c, 0x0a, 0x1a, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x75, 0x73,
+	0x65, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0xc5, 0x01, 0x0a, 0x12, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75,
+	0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x12, 0x30, 0x0a, 0x06, 0x73, 0x69,
+	0x67, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74,
+	0x72, 0x69, 0x6e, 0x67, 0x52, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x12, 0x42, 0x0a, 0x0b,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x0e, 0x32, 0x21, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
+	0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63,
+	0x6f, 0x6c, 0x49, 0x44, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64,
+	0x3a, 0x39, 0x88, 0xa0, 0x1f, 0x00, 0xe8, 0xa0, 0x1f, 0x00, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x73,
+	0x69, 0x67, 0x6e, 0x65, 0x72, 0x8a, 0xe7, 0xb0, 0x2a, 0x21, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65,
+	0x72, 0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x55, 0x6e, 0x70, 0x61,
+	0x75, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x22, 0x1c, 0x0a, 0x1a, 0x4d,
+	0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xf4, 0x01, 0x0a, 0x14, 0x4d, 0x73,
+	0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61,
+	0x69, 0x6e, 0x12, 0x30, 0x0a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41,
 	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x06, 0x73, 0x69,
 	0x67, 0x6e, 0x65, 0x72, 0x12, 0x42, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
@@ -5097,74 +5096,72 @@ var file_noble_orbiter_component_forwarder_v1_tx_proto_rawDesc = []byte{
 	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x49, 0x64, 0x12, 0x29, 0x0a, 0x10, 0x63, 0x6f, 0x75, 0x6e,
 	0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79, 0x5f, 0x69, 0x64, 0x73, 0x18, 0x03, 0x20, 0x03,
 	0x28, 0x09, 0x52, 0x0f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x79,
-	0x49, 0x64, 0x73, 0x3a, 0x3f, 0x88, 0xa0, 0x1f, 0x00, 0xe8, 0xa0, 0x1f, 0x00, 0x82, 0xe7, 0xb0,
-	0x2a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x8a, 0xe7, 0xb0, 0x2a, 0x27, 0x6f, 0x72, 0x62,
+	0x49, 0x64, 0x73, 0x3a, 0x3b, 0x88, 0xa0, 0x1f, 0x00, 0xe8, 0xa0, 0x1f, 0x00, 0x82, 0xe7, 0xb0,
+	0x2a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x8a, 0xe7, 0xb0, 0x2a, 0x23, 0x6f, 0x72, 0x62,
 	0x69, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x55,
-	0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72,
-	0x74, 0x69, 0x65, 0x73, 0x22, 0x22, 0x0a, 0x20, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75,
-	0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xcf, 0x02, 0x0a, 0x18, 0x4d, 0x73, 0x67,
-	0x52, 0x65, 0x70, 0x6c, 0x61, 0x63, 0x65, 0x44, 0x65, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x46, 0x6f,
-	0x72, 0x42, 0x75, 0x72, 0x6e, 0x12, 0x30, 0x0a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
-	0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52,
-	0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x12, 0x29, 0x0a, 0x10, 0x6f, 0x72, 0x69, 0x67, 0x69,
-	0x6e, 0x61, 0x6c, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x0c, 0x52, 0x0f, 0x6f, 0x72, 0x69, 0x67, 0x69, 0x6e, 0x61, 0x6c, 0x4d, 0x65, 0x73, 0x73, 0x61,
-	0x67, 0x65, 0x12, 0x31, 0x0a, 0x14, 0x6f, 0x72, 0x69, 0x67, 0x69, 0x6e, 0x61, 0x6c, 0x5f, 0x61,
-	0x74, 0x74, 0x65, 0x73, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c,
-	0x52, 0x13, 0x6f, 0x72, 0x69, 0x67, 0x69, 0x6e, 0x61, 0x6c, 0x41, 0x74, 0x74, 0x65, 0x73, 0x74,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x34, 0x0a, 0x16, 0x6e, 0x65, 0x77, 0x5f, 0x64, 0x65, 0x73,
-	0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x63, 0x61, 0x6c, 0x6c, 0x65, 0x72, 0x18,
-	0x04, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x14, 0x6e, 0x65, 0x77, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x43, 0x61, 0x6c, 0x6c, 0x65, 0x72, 0x12, 0x2c, 0x0a, 0x12, 0x6e,
-	0x65, 0x77, 0x5f, 0x6d, 0x69, 0x6e, 0x74, 0x5f, 0x72, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65, 0x6e,
-	0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x10, 0x6e, 0x65, 0x77, 0x4d, 0x69, 0x6e, 0x74,
-	0x52, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65, 0x6e, 0x74, 0x3a, 0x3f, 0x88, 0xa0, 0x1f, 0x00, 0xe8,
-	0xa0, 0x1f, 0x00, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x8a, 0xe7,
-	0xb0, 0x2a, 0x27, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61,
-	0x72, 0x64, 0x65, 0x72, 0x2f, 0x52, 0x65, 0x70, 0x6c, 0x61, 0x63, 0x65, 0x44, 0x65, 0x70, 0x6f,
-	0x73, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x42, 0x75, 0x72, 0x6e, 0x22, 0x22, 0x0a, 0x20, 0x4d, 0x73,
-	0x67, 0x52, 0x65, 0x70, 0x6c, 0x61, 0x63, 0x65, 0x44, 0x65, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x46,
-	0x6f, 0x72, 0x42, 0x75, 0x72, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0x86,
-	0x06, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x87, 0x01, 0x0a, 0x0d, 0x50, 0x61, 0x75, 0x73, 0x65,
-	0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x12, 0x36, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65,
+	0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e,
+	0x22, 0x1e, 0x0a, 0x1c, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x43, 0x72,
+	0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0xcf, 0x02, 0x0a, 0x18, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x61, 0x63, 0x65, 0x44,
+	0x65, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x42, 0x75, 0x72, 0x6e, 0x12, 0x30, 0x0a,
+	0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2,
+	0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
+	0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x12,
+	0x29, 0x0a, 0x10, 0x6f, 0x72, 0x69, 0x67, 0x69, 0x6e, 0x61, 0x6c, 0x5f, 0x6d, 0x65, 0x73, 0x73,
+	0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x0f, 0x6f, 0x72, 0x69, 0x67, 0x69,
+	0x6e, 0x61, 0x6c, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x31, 0x0a, 0x14, 0x6f, 0x72,
+	0x69, 0x67, 0x69, 0x6e, 0x61, 0x6c, 0x5f, 0x61, 0x74, 0x74, 0x65, 0x73, 0x74, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x13, 0x6f, 0x72, 0x69, 0x67, 0x69, 0x6e,
+	0x61, 0x6c, 0x41, 0x74, 0x74, 0x65, 0x73, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x34, 0x0a,
+	0x16, 0x6e, 0x65, 0x77, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x5f, 0x63, 0x61, 0x6c, 0x6c, 0x65, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x14, 0x6e,
+	0x65, 0x77, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x43, 0x61, 0x6c,
+	0x6c, 0x65, 0x72, 0x12, 0x2c, 0x0a, 0x12, 0x6e, 0x65, 0x77, 0x5f, 0x6d, 0x69, 0x6e, 0x74, 0x5f,
+	0x72, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65, 0x6e, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0c, 0x52,
+	0x10, 0x6e, 0x65, 0x77, 0x4d, 0x69, 0x6e, 0x74, 0x52, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65, 0x6e,
+	0x74, 0x3a, 0x3f, 0x88, 0xa0, 0x1f, 0x00, 0xe8, 0xa0, 0x1f, 0x00, 0x82, 0xe7, 0xb0, 0x2a, 0x06,
+	0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x8a, 0xe7, 0xb0, 0x2a, 0x27, 0x6f, 0x72, 0x62, 0x69, 0x74,
+	0x65, 0x72, 0x2f, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x52, 0x65, 0x70,
+	0x6c, 0x61, 0x63, 0x65, 0x44, 0x65, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x42, 0x75,
+	0x72, 0x6e, 0x22, 0x22, 0x0a, 0x20, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x61, 0x63, 0x65,
+	0x44, 0x65, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x42, 0x75, 0x72, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xee, 0x05, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x87,
+	0x01, 0x0a, 0x0d, 0x50, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x12, 0x36, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
+	0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61,
+	0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x75, 0x73, 0x65,
+	0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x1a, 0x3e, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65,
 	0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65,
 	0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e,
 	0x4d, 0x73, 0x67, 0x50, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x1a, 0x3e, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
-	0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61,
-	0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x75, 0x73, 0x65,
-	0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x99, 0x01, 0x0a, 0x13, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65,
-	0x72, 0x70, 0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x12, 0x3c, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65,
-	0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65,
-	0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e,
-	0x4d, 0x73, 0x67, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70,
-	0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x1a, 0x44, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x8d, 0x01, 0x0a, 0x0f, 0x55, 0x6e, 0x70,
+	0x61, 0x75, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x12, 0x38, 0x2e, 0x6e,
+	0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d,
+	0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72,
+	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x1a, 0x40, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f,
 	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74,
 	0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
-	0x67, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70, 0x61, 0x72,
-	0x74, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x8d, 0x01, 0x0a,
-	0x0f, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x12, 0x38, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
-	0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61,
-	0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75,
-	0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x1a, 0x40, 0x2e, 0x6e, 0x6f, 0x62,
+	0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x8d, 0x01, 0x0a, 0x0f, 0x50, 0x61, 0x75,
+	0x73, 0x65, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x12, 0x38, 0x2e, 0x6e,
+	0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d,
+	0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72,
+	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43, 0x72, 0x6f, 0x73,
+	0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x1a, 0x40, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f,
+	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74,
+	0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
+	0x67, 0x50, 0x61, 0x75, 0x73, 0x65, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x93, 0x01, 0x0a, 0x11, 0x55, 0x6e, 0x70,
+	0x61, 0x75, 0x73, 0x65, 0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x12, 0x3a,
+	0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63,
+	0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64,
+	0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65,
+	0x43, 0x72, 0x6f, 0x73, 0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x1a, 0x42, 0x2e, 0x6e, 0x6f, 0x62,
 	0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f,
 	0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76,
-	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x9f, 0x01, 0x0a,
-	0x15, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70,
-	0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x12, 0x3e, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f,
-	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74,
-	0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
-	0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70,
-	0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x1a, 0x46, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f,
-	0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74,
-	0x2e, 0x66, 0x6f, 0x72, 0x77, 0x61, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
-	0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x65, 0x72, 0x70,
-	0x61, 0x72, 0x74, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x9f,
+	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x70, 0x61, 0x75, 0x73, 0x65, 0x43, 0x72, 0x6f, 0x73,
+	0x73, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x9f,
 	0x01, 0x0a, 0x15, 0x52, 0x65, 0x70, 0x6c, 0x61, 0x63, 0x65, 0x44, 0x65, 0x70, 0x6f, 0x73, 0x69,
 	0x74, 0x46, 0x6f, 0x72, 0x42, 0x75, 0x72, 0x6e, 0x12, 0x3e, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65,
 	0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65,
@@ -5213,30 +5210,30 @@ var file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes = make([]protoim
 var file_noble_orbiter_component_forwarder_v1_tx_proto_goTypes = []interface{}{
 	(*MsgPauseProtocol)(nil),                 // 0: noble.orbiter.component.forwarder.v1.MsgPauseProtocol
 	(*MsgPauseProtocolResponse)(nil),         // 1: noble.orbiter.component.forwarder.v1.MsgPauseProtocolResponse
-	(*MsgPauseCounterparties)(nil),           // 2: noble.orbiter.component.forwarder.v1.MsgPauseCounterparties
-	(*MsgPauseCounterpartiesResponse)(nil),   // 3: noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse
+	(*MsgPauseCrossChain)(nil),               // 2: noble.orbiter.component.forwarder.v1.MsgPauseCrossChain
+	(*MsgPauseCrossChainResponse)(nil),       // 3: noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse
 	(*MsgUnpauseProtocol)(nil),               // 4: noble.orbiter.component.forwarder.v1.MsgUnpauseProtocol
 	(*MsgUnpauseProtocolResponse)(nil),       // 5: noble.orbiter.component.forwarder.v1.MsgUnpauseProtocolResponse
-	(*MsgUnpauseCounterparties)(nil),         // 6: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties
-	(*MsgUnpauseCounterpartiesResponse)(nil), // 7: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse
+	(*MsgUnpauseCrossChain)(nil),             // 6: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain
+	(*MsgUnpauseCrossChainResponse)(nil),     // 7: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse
 	(*MsgReplaceDepositForBurn)(nil),         // 8: noble.orbiter.component.forwarder.v1.MsgReplaceDepositForBurn
 	(*MsgReplaceDepositForBurnResponse)(nil), // 9: noble.orbiter.component.forwarder.v1.MsgReplaceDepositForBurnResponse
 	(v1.ProtocolID)(0),                       // 10: noble.orbiter.core.v1.ProtocolID
 }
 var file_noble_orbiter_component_forwarder_v1_tx_proto_depIdxs = []int32{
 	10, // 0: noble.orbiter.component.forwarder.v1.MsgPauseProtocol.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
-	10, // 1: noble.orbiter.component.forwarder.v1.MsgPauseCounterparties.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
+	10, // 1: noble.orbiter.component.forwarder.v1.MsgPauseCrossChain.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
 	10, // 2: noble.orbiter.component.forwarder.v1.MsgUnpauseProtocol.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
-	10, // 3: noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
+	10, // 3: noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain.protocol_id:type_name -> noble.orbiter.core.v1.ProtocolID
 	0,  // 4: noble.orbiter.component.forwarder.v1.Msg.PauseProtocol:input_type -> noble.orbiter.component.forwarder.v1.MsgPauseProtocol
-	2,  // 5: noble.orbiter.component.forwarder.v1.Msg.PauseCounterparties:input_type -> noble.orbiter.component.forwarder.v1.MsgPauseCounterparties
-	4,  // 6: noble.orbiter.component.forwarder.v1.Msg.UnpauseProtocol:input_type -> noble.orbiter.component.forwarder.v1.MsgUnpauseProtocol
-	6,  // 7: noble.orbiter.component.forwarder.v1.Msg.UnpauseCounterparties:input_type -> noble.orbiter.component.forwarder.v1.MsgUnpauseCounterparties
+	4,  // 5: noble.orbiter.component.forwarder.v1.Msg.UnpauseProtocol:input_type -> noble.orbiter.component.forwarder.v1.MsgUnpauseProtocol
+	2,  // 6: noble.orbiter.component.forwarder.v1.Msg.PauseCrossChain:input_type -> noble.orbiter.component.forwarder.v1.MsgPauseCrossChain
+	6,  // 7: noble.orbiter.component.forwarder.v1.Msg.UnpauseCrossChain:input_type -> noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain
 	8,  // 8: noble.orbiter.component.forwarder.v1.Msg.ReplaceDepositForBurn:input_type -> noble.orbiter.component.forwarder.v1.MsgReplaceDepositForBurn
 	1,  // 9: noble.orbiter.component.forwarder.v1.Msg.PauseProtocol:output_type -> noble.orbiter.component.forwarder.v1.MsgPauseProtocolResponse
-	3,  // 10: noble.orbiter.component.forwarder.v1.Msg.PauseCounterparties:output_type -> noble.orbiter.component.forwarder.v1.MsgPauseCounterpartiesResponse
-	5,  // 11: noble.orbiter.component.forwarder.v1.Msg.UnpauseProtocol:output_type -> noble.orbiter.component.forwarder.v1.MsgUnpauseProtocolResponse
-	7,  // 12: noble.orbiter.component.forwarder.v1.Msg.UnpauseCounterparties:output_type -> noble.orbiter.component.forwarder.v1.MsgUnpauseCounterpartiesResponse
+	5,  // 10: noble.orbiter.component.forwarder.v1.Msg.UnpauseProtocol:output_type -> noble.orbiter.component.forwarder.v1.MsgUnpauseProtocolResponse
+	3,  // 11: noble.orbiter.component.forwarder.v1.Msg.PauseCrossChain:output_type -> noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse
+	7,  // 12: noble.orbiter.component.forwarder.v1.Msg.UnpauseCrossChain:output_type -> noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse
 	9,  // 13: noble.orbiter.component.forwarder.v1.Msg.ReplaceDepositForBurn:output_type -> noble.orbiter.component.forwarder.v1.MsgReplaceDepositForBurnResponse
 	9,  // [9:14] is the sub-list for method output_type
 	4,  // [4:9] is the sub-list for method input_type
@@ -5276,7 +5273,7 @@ func file_noble_orbiter_component_forwarder_v1_tx_proto_init() {
 			}
 		}
 		file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgPauseCounterparties); i {
+			switch v := v.(*MsgPauseCrossChain); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5288,7 +5285,7 @@ func file_noble_orbiter_component_forwarder_v1_tx_proto_init() {
 			}
 		}
 		file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgPauseCounterpartiesResponse); i {
+			switch v := v.(*MsgPauseCrossChainResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5324,7 +5321,7 @@ func file_noble_orbiter_component_forwarder_v1_tx_proto_init() {
 			}
 		}
 		file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgUnpauseCounterparties); i {
+			switch v := v.(*MsgUnpauseCrossChain); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5336,7 +5333,7 @@ func file_noble_orbiter_component_forwarder_v1_tx_proto_init() {
 			}
 		}
 		file_noble_orbiter_component_forwarder_v1_tx_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgUnpauseCounterpartiesResponse); i {
+			switch v := v.(*MsgUnpauseCrossChainResponse); i {
 			case 0:
 				return &v.state
 			case 1:
