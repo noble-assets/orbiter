@@ -90,17 +90,17 @@ func NewCrossChainID(
 	protocolID ProtocolID,
 	counterpartyID string,
 ) (CrossChainID, error) {
-	attr := CrossChainID{
+	id := CrossChainID{
 		ProtocolId:     protocolID,
 		CounterpartyId: counterpartyID,
 	}
 
-	err := attr.Validate()
+	err := id.Validate()
 	if err != nil {
 		return CrossChainID{}, fmt.Errorf("invalid cross-chain ID: %w", err)
 	}
 
-	return attr, nil
+	return id, nil
 }
 
 // Validate returns an error if any of the cross-chain ID field
@@ -109,8 +109,16 @@ func (i CrossChainID) Validate() error {
 	if err := i.ProtocolId.Validate(); err != nil {
 		return err
 	}
-	if i.CounterpartyId == "" {
-		return errors.New("counterparty id cannot be empty string")
+	if err := ValidateCounterpartyID(i.CounterpartyId); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ValidateCounterpartyID(id string) error {
+	if id == "" {
+		return errors.New("counterparty ID cannot be empty string")
 	}
 
 	return nil

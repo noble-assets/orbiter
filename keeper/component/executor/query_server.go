@@ -47,6 +47,9 @@ func (s queryServer) IsActionPaused(
 	if req == nil {
 		return nil, errors.ErrInvalidRequest
 	}
+	if err := req.ActionId.Validate(); err != nil {
+		return nil, fmt.Errorf("invalid action ID: %w", err)
+	}
 
 	paused, err := s.Executor.IsActionPaused(ctx, req.ActionId)
 	if err != nil {

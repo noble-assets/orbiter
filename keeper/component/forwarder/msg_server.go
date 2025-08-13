@@ -84,10 +84,10 @@ func (s msgServer) UnpauseProtocol(
 }
 
 // PauseCounterparties implements forwarder.MsgServer.
-func (s msgServer) PauseCounterparties(
+func (s msgServer) PauseCrossChain(
 	ctx context.Context,
-	msg *forwardertypes.MsgPauseCounterparties,
-) (*forwardertypes.MsgPauseCounterpartiesResponse, error) {
+	msg *forwardertypes.MsgPauseCrossChain,
+) (*forwardertypes.MsgPauseCrossChainResponse, error) {
 	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
@@ -98,14 +98,14 @@ func (s msgServer) PauseCounterparties(
 		)
 	}
 
-	return &forwardertypes.MsgPauseCounterpartiesResponse{}, nil
+	return &forwardertypes.MsgPauseCrossChainResponse{}, nil
 }
 
 // UnpauseCounterparties implements forwarder.MsgServer.
-func (s msgServer) UnpauseCounterparties(
+func (s msgServer) UnpauseCrossChain(
 	ctx context.Context,
-	msg *forwardertypes.MsgUnpauseCounterparties,
-) (*forwardertypes.MsgUnpauseCounterpartiesResponse, error) {
+	msg *forwardertypes.MsgUnpauseCrossChain,
+) (*forwardertypes.MsgUnpauseCrossChainResponse, error) {
 	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (s msgServer) UnpauseCounterparties(
 		)
 	}
 
-	return &forwardertypes.MsgUnpauseCounterpartiesResponse{}, nil
+	return &forwardertypes.MsgUnpauseCrossChainResponse{}, nil
 }
 
 // ReplaceDepositForBurn implements forwarder.MsgServer.

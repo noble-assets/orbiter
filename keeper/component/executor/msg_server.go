@@ -41,13 +41,19 @@ func NewMsgServer(e *Executor, a types.Authorizer) msgServer {
 	return msgServer{Executor: e, Authorizer: a}
 }
 
-// Pause implements executor.MsgServer.
+// PauseAction implements executor.MsgServer.
 func (s msgServer) PauseAction(
 	ctx context.Context,
 	msg *executortypes.MsgPauseAction,
 ) (*executortypes.MsgPauseActionResponse, error) {
 	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
+	}
+
+	if err := msg.ActionId.Validate(); err != nil {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"invalid action ID: %s", err.Error(),
+		)
 	}
 
 	if err := s.Pause(ctx, msg.ActionId); err != nil {
@@ -59,13 +65,19 @@ func (s msgServer) PauseAction(
 	return &executortypes.MsgPauseActionResponse{}, nil
 }
 
-// Unpause implements executor.MsgServer.
+// UnpauseAction implements executor.MsgServer.
 func (s msgServer) UnpauseAction(
 	ctx context.Context,
 	msg *executortypes.MsgUnpauseAction,
 ) (*executortypes.MsgUnpauseActionResponse, error) {
 	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
+	}
+
+	if err := msg.ActionId.Validate(); err != nil {
+		return nil, core.ErrUnableToUnpause.Wrapf(
+			"invalid action ID: %s", err.Error(),
+		)
 	}
 
 	if err := s.Unpause(ctx, msg.ActionId); err != nil {

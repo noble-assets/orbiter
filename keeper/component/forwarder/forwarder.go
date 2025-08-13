@@ -127,6 +127,10 @@ func (f *Forwarder) Pause(
 	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
+	if err := ValidateCrossChains(protocolID, counterpartyIDs); err != nil {
+		return core.ErrUnableToPause.Wrap(err.Error())
+	}
+
 	switch {
 	case len(counterpartyIDs) == 0:
 		return f.pauseProtocol(ctx, protocolID)
@@ -140,11 +144,31 @@ func (f *Forwarder) Unpause(
 	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
+	if err := ValidateCrossChains(protocolID, counterpartyIDs); err != nil {
+		return core.ErrUnableToUnpause.Wrap(err.Error())
+	}
+
 	if len(counterpartyIDs) == 0 {
 		return f.unpauseProtocol(ctx, protocolID)
 	} else {
 		return f.unpauseCrossChains(ctx, protocolID, counterpartyIDs)
 	}
+}
+
+func ValidateCrossChains(
+	protocolID core.ProtocolID,
+	counterpartyIDs []string,
+) error {
+	if err := protocolID.Validate(); err != nil {
+		return fmt.Errorf("invalid protocol ID: %w", err)
+	}
+	for _, id := range counterpartyIDs {
+		if err := core.ValidateCounterpartyID(id); err != nil {
+			return fmt.Errorf("invalid counterparty ID: %w", err)
+		}
+	}
+
+	return nil
 }
 
 func (f *Forwarder) HandlePacket(
@@ -289,15 +313,7 @@ func (f *Forwarder) pauseCrossChains(
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		ccID, err := core.NewCrossChainID(protocolID, ID)
-		if err != nil {
-			return fmt.Errorf(
-				"error pausing forwarding for protocol %s and counterparty %s: %w",
-				protocolID,
-				ID,
-				err,
-			)
-		}
+		ccID := core.CrossChainID{ProtocolId: protocolID, CounterpartyId: ID}
 		if err := f.SetPausedCrossChain(ctx, ccID); err != nil {
 			return fmt.Errorf(
 				"error pausing forwarding for protocol %s and counterparty %s: %w",
@@ -332,15 +348,7 @@ func (f *Forwarder) unpauseCrossChains(
 	counterpartyIDs []string,
 ) error {
 	for _, ID := range counterpartyIDs {
-		ccID, err := core.NewCrossChainID(protocolID, ID)
-		if err != nil {
-			return fmt.Errorf(
-				"error unpausing forwarding for protocol %s and counterparty %s: %w",
-				protocolID,
-				ID,
-				err,
-			)
-		}
+		ccID := core.CrossChainID{ProtocolId: protocolID, CounterpartyId: ID}
 		if err := f.SetUnpausedCrossChain(ctx, ccID); err != nil {
 			return fmt.Errorf(
 				"error unpausing forwarding for protocol %s and counterparty %s: %w",
