@@ -122,11 +122,6 @@ func TestExportGenesis(t *testing.T) {
 				tc.expParams.MaxPassthroughPayloadSize,
 				genState.Params.MaxPassthroughPayloadSize,
 			)
-			require.Equal(
-				t,
-				tc.expParams.MaxPassthroughPayloadSize,
-				genState.Params.MaxPassthroughPayloadSize,
-			)
 		})
 	}
 }
