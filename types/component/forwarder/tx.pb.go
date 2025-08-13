@@ -517,7 +517,6 @@ type MsgClient interface {
 	PauseCrossChain(ctx context.Context, in *MsgPauseCrossChain, opts ...grpc.CallOption) (*MsgPauseCrossChainResponse, error)
 	// UnpauseCrossChain resumes specific counterparty pairs for a protocol.
 	UnpauseCrossChain(ctx context.Context, in *MsgUnpauseCrossChain, opts ...grpc.CallOption) (*MsgUnpauseCrossChainResponse, error)
-	// UnpauseCrossChain resumes specific counterparty pairs for a protocol.
 	ReplaceDepositForBurn(ctx context.Context, in *MsgReplaceDepositForBurn, opts ...grpc.CallOption) (*MsgReplaceDepositForBurnResponse, error)
 }
 
@@ -584,7 +583,6 @@ type MsgServer interface {
 	PauseCrossChain(context.Context, *MsgPauseCrossChain) (*MsgPauseCrossChainResponse, error)
 	// UnpauseCrossChain resumes specific counterparty pairs for a protocol.
 	UnpauseCrossChain(context.Context, *MsgUnpauseCrossChain) (*MsgUnpauseCrossChainResponse, error)
-	// UnpauseCrossChain resumes specific counterparty pairs for a protocol.
 	ReplaceDepositForBurn(context.Context, *MsgReplaceDepositForBurn) (*MsgReplaceDepositForBurnResponse, error)
 }
 

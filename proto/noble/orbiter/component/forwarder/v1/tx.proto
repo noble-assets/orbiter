@@ -23,7 +23,6 @@ service Msg {
   // UnpauseCrossChain resumes specific counterparty pairs for a protocol.
   rpc UnpauseCrossChain(MsgUnpauseCrossChain) returns (MsgUnpauseCrossChainResponse);
 
-  // UnpauseCrossChain resumes specific counterparty pairs for a protocol.
   rpc ReplaceDepositForBurn(MsgReplaceDepositForBurn) returns (MsgReplaceDepositForBurnResponse);
 }
 
