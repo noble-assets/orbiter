@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"orbiter.dev/keeper/component/executor"
-	mockorbiter "orbiter.dev/testutil/mocks/orbiter"
+	"orbiter.dev/testutil/mocks"
 	executortypes "orbiter.dev/types/component/executor"
 	"orbiter.dev/types/core"
 )
@@ -66,10 +66,9 @@ func TestInitGenesis(t *testing.T) {
 
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx, _, k := mockorbiter.OrbiterKeeper(t)
-			ex := k.Executor()
+			e, deps := mocks.NewExecutorComponent(t)
 
-			err := ex.InitGenesis(ctx, tc.genState)
+			err := e.InitGenesis(deps.SdkCtx, tc.genState)
 			if tc.expErr != "" {
 				require.ErrorContains(t, err, tc.expErr)
 			} else {
@@ -100,14 +99,13 @@ func TestExportGenesis(t *testing.T) {
 
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx, _, k := mockorbiter.OrbiterKeeper(t)
-			ex := k.Executor()
+			e, deps := mocks.NewExecutorComponent(t)
 
 			if tc.setup != nil {
-				tc.setup(ctx, ex)
+				tc.setup(deps.SdkCtx, e)
 			}
 
-			genState := ex.ExportGenesis(ctx)
+			genState := e.ExportGenesis(deps.SdkCtx)
 
 			require.NotNil(t, genState)
 			require.ElementsMatch(t, tc.expPausedActions, genState.PausedActionIds)
