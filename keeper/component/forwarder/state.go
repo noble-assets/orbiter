@@ -148,10 +148,35 @@ func (f *Forwarder) SetUnpausedCrossChain(
 	)
 }
 
-// GetPausedCrossChains returns all the paused cross-chain IDs.
+// GetAllPausedCrossChainIDs returns a slice of all paused cross-chain IDs.
+func (f *Forwarder) GetAllPausedCrossChainIDs(
+	ctx context.Context,
+) ([]*core.CrossChainID, error) {
+	crossChainIDs := make([]*core.CrossChainID, 0)
+
+	err := f.pausedCrossChains.Walk(ctx, nil, func(key collections.Pair[int32, string]) (stop bool, err error) {
+		ccid := core.CrossChainID{
+			ProtocolId:     core.ProtocolID(key.K1()),
+			CounterpartyId: key.K2(),
+		}
+		if err != nil {
+			return true, err
+		}
+
+		crossChainIDs = append(crossChainIDs, &ccid)
+		return false, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return crossChainIDs, nil
+}
+
+// GetPausedCrossChainsMap returns all the paused cross-chain IDs in a map for easier display in query results.
 //
-// NOTE: this method uses maps and is intended to be used only for queries.
-func (f *Forwarder) GetPausedCrossChains(
+// NOTE: this method is intended to ONLY be used for queries.
+func (f *Forwarder) GetPausedCrossChainsMap(
 	ctx context.Context,
 	protocolID *core.ProtocolID,
 ) (map[int32][]string, error) {

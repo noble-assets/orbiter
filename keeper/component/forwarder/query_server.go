@@ -117,7 +117,7 @@ func (s queryServer) PausedCrossChains(
 	if err := id.Validate(); err != nil {
 		return nil, fmt.Errorf("invalid protocol ID: %w", err)
 	}
-	paused, err := s.GetPausedCrossChains(ctx, &id)
+	paused, err := s.GetPausedCrossChainsMap(ctx, &id)
 	if err != nil {
 		return nil, fmt.Errorf("unable to query paused counterparty: %w", err)
 	}

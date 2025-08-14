@@ -65,7 +65,7 @@ func TestInitGenesis(t *testing.T) {
 	require.NoError(t, err, "failed to get paused protocol IDs")
 	require.Equal(t, updatedGenState.PausedProtocolIds, pausedProtocolIDs, "paused protocol IDs do not match")
 
-	pausedCrossChainIDs, err := f.GetPausedCrossChains(deps.SdkCtx, nil)
+	pausedCrossChainIDs, err := f.GetAllPausedCrossChainIDs(deps.SdkCtx)
 	require.NoError(t, err, "failed to get paused cross chain IDs")
 	require.Equal(t, updatedGenState.PausedCrossChainIds, pausedCrossChainIDs, "paused cross chain IDs do not match")
 }

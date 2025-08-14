@@ -25,7 +25,6 @@ import (
 	"fmt"
 
 	forwardertypes "orbiter.dev/types/component/forwarder"
-	"orbiter.dev/types/core"
 )
 
 // InitGenesis initialize the state of the component with a genesis state.
@@ -56,9 +55,13 @@ func (f *Forwarder) ExportGenesis(ctx context.Context) *forwardertypes.GenesisSt
 		f.logger.Error("error exporting paused protocols", "err", err.Error())
 	}
 
-	// TODO: add method to get all protocols and counterparties.
+	pausedCrossChainIDs, err := f.GetAllPausedCrossChainIDs(ctx)
+	if err != nil {
+		f.logger.Error("error exporting paused cross chains", "err", err.Error())
+	}
+
 	return &forwardertypes.GenesisState{
 		PausedProtocolIds:   pausedProtocols,
-		PausedCrossChainIds: []*core.CrossChainID{},
+		PausedCrossChainIds: pausedCrossChainIDs,
 	}
 }
