@@ -142,7 +142,7 @@ func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 		return nil, errors.Wrapf(err, "invalid protocol ID")
 	}
 
-	amounts := q.GetDispatchedAmountsBySourceProtocolID(ctx, req.ProtocolId)
+	amounts := q.GetDispatchedAmountsByDestinationProtocolID(ctx, req.ProtocolId)
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
 		Amounts: amounts,
@@ -162,7 +162,7 @@ func (q queryServer) DispatchedAmountsBySourceProtocolID(
 		return nil, errors.Wrapf(err, "invalid protocol ID")
 	}
 
-	amounts := q.GetDispatchedAmountsByDestinationProtocolID(ctx, req.ProtocolId)
+	amounts := q.GetDispatchedAmountsBySourceProtocolID(ctx, req.ProtocolId)
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
 		Amounts: amounts,
