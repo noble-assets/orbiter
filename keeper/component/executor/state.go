@@ -32,6 +32,10 @@ func (e *Executor) IsActionPaused(ctx context.Context, id core.ActionID) (bool, 
 }
 
 func (e *Executor) SetPausedAction(ctx context.Context, id core.ActionID) error {
+	if err := id.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := e.IsActionPaused(ctx, id)
 	if err != nil {
 		return err
@@ -45,6 +49,10 @@ func (e *Executor) SetPausedAction(ctx context.Context, id core.ActionID) error 
 }
 
 func (e *Executor) SetUnpausedAction(ctx context.Context, id core.ActionID) error {
+	if err := id.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := e.IsActionPaused(ctx, id)
 	if err != nil {
 		return err

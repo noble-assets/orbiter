@@ -40,6 +40,10 @@ func (f *Forwarder) IsProtocolPaused(
 }
 
 func (f *Forwarder) SetPausedProtocol(ctx context.Context, protocolID core.ProtocolID) error {
+	if err := protocolID.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
@@ -55,6 +59,10 @@ func (f *Forwarder) SetUnpausedProtocol(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) error {
+	if err := protocolID.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
@@ -100,6 +108,10 @@ func (f *Forwarder) SetPausedCrossChain(
 	ctx context.Context,
 	ccID core.CrossChainID,
 ) error {
+	if err := ccID.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := f.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
 		return err
@@ -118,6 +130,10 @@ func (f *Forwarder) SetUnpausedCrossChain(
 	ctx context.Context,
 	ccID core.CrossChainID,
 ) error {
+	if err := ccID.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := f.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
 		return err
@@ -133,6 +149,8 @@ func (f *Forwarder) SetUnpausedCrossChain(
 }
 
 // GetAllPausedCrossChainIDs returns a slice of all paused cross-chain IDs.
+//
+// CONTRACT: this assumes that all cross-chain ids in state are VALID!
 func (f *Forwarder) GetAllPausedCrossChainIDs(
 	ctx context.Context,
 ) ([]*core.CrossChainID, error) {
@@ -142,9 +160,6 @@ func (f *Forwarder) GetAllPausedCrossChainIDs(
 		ccid := core.CrossChainID{
 			ProtocolId:     core.ProtocolID(key.K1()),
 			CounterpartyId: key.K2(),
-		}
-		if err != nil {
-			return true, err
 		}
 
 		crossChainIDs = append(crossChainIDs, &ccid)
