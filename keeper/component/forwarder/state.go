@@ -23,10 +23,8 @@ package forwarder
 import (
 	"context"
 	"fmt"
-	"sort"
 
 	"cosmossdk.io/collections"
-
 	"orbiter.dev/types/core"
 )
 
@@ -71,29 +69,15 @@ func (f *Forwarder) SetUnpausedProtocol(
 func (f *Forwarder) GetPausedProtocols(
 	ctx context.Context,
 ) ([]core.ProtocolID, error) {
-	iter, err := f.pausedProtocols.Iterate(ctx, nil)
+	paused := make([]core.ProtocolID, 0)
+
+	err := f.pausedProtocols.Walk(ctx, nil, func(key int32) (stop bool, err error) {
+		paused = append(paused, core.ProtocolID(key))
+		return false, nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		_ = iter.Close()
-	}()
-
-	var paused []core.ProtocolID
-	for ; iter.Valid(); iter.Next() {
-		k, err := iter.Key()
-		if err != nil {
-			return nil, err
-		}
-
-		id, err := core.NewProtocolID(k)
-		if err != nil {
-			return nil, fmt.Errorf("cannot create protocol ID from iterator key: %w", err)
-		}
-		paused = append(paused, id)
-	}
-
-	sort.Slice(paused, func(i, j int) bool { return paused[i] < paused[j] })
 
 	return paused, nil
 }
