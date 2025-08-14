@@ -32,6 +32,10 @@ func DefaultGenesisState() *GenesisState {
 
 // Validate returns an error if any of the genesis field is not valid.
 func (g *GenesisState) Validate() error {
+	if g == nil {
+		return core.ErrNilPointer.Wrap("executor genesis state")
+	}
+
 	for _, id := range g.PausedActionIds {
 		if err := id.Validate(); err != nil {
 			return err

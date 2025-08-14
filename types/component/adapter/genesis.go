@@ -20,6 +20,10 @@
 
 package adapter
 
+import (
+	"orbiter.dev/types/core"
+)
+
 // DefaultGenesisState returns the default values for the adapter
 // component initial state.
 func DefaultGenesisState() *GenesisState {
@@ -31,4 +35,10 @@ func DefaultGenesisState() *GenesisState {
 }
 
 // Validate returns an error if any of the genesis fields are not valid.
-func (g *GenesisState) Validate() error { return nil }
+func (g *GenesisState) Validate() error {
+	if g == nil {
+		return core.ErrNilPointer.Wrap("adapter genesis state")
+	}
+
+	return nil
+}

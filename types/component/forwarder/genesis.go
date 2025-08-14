@@ -21,6 +21,7 @@
 package forwarder
 
 import (
+	"fmt"
 	core "orbiter.dev/types/core"
 )
 
@@ -34,6 +35,10 @@ func DefaultGenesisState() *GenesisState {
 
 // Validate returns an error if any of the genesis field is not valid.
 func (g *GenesisState) Validate() error {
+	if g == nil {
+		return core.ErrNilPointer.Wrap("executor genesis state")
+	}
+
 	for _, id := range g.PausedProtocolIds {
 		if err := id.Validate(); err != nil {
 			return err
@@ -41,8 +46,12 @@ func (g *GenesisState) Validate() error {
 	}
 
 	for _, id := range g.PausedCrossChainIds {
+		if id == nil {
+			return core.ErrNilPointer.Wrap("invalid cross-chain ID")
+		}
+
 		if err := id.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid paused cross-chain id %q: %w", id, err)
 		}
 	}
 

@@ -24,14 +24,14 @@ import (
 	"context"
 	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	adaptertypes "orbiter.dev/types/component/adapter"
-	"orbiter.dev/types/core"
 )
 
 // InitGenesis initialize the state of the adapter component with a genesis state.
 func (a *Adapter) InitGenesis(ctx context.Context, g *adaptertypes.GenesisState) error {
-	if g == nil {
-		return core.ErrNilPointer.Wrap("adapter genesis")
+	if err := g.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid adapter genesis state")
 	}
 
 	if err := a.SetParams(ctx, g.Params); err != nil {

@@ -22,6 +22,7 @@ package forwarder
 
 import (
 	"context"
+	errorsmod "cosmossdk.io/errors"
 	"fmt"
 
 	forwardertypes "orbiter.dev/types/component/forwarder"
@@ -30,28 +31,17 @@ import (
 
 // InitGenesis initialize the state of the component with a genesis state.
 func (f *Forwarder) InitGenesis(ctx context.Context, g *forwardertypes.GenesisState) error {
-	if g == nil {
-		return core.ErrNilPointer.Wrap("forwarder genesis")
+	if err := g.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid forwarder genesis state")
 	}
-	for _, id := range g.PausedProtocolIds {
-		if err := id.Validate(); err != nil {
-			return fmt.Errorf("invalid paused protocol ID %q: %w", id, err)
-		}
 
+	for _, id := range g.PausedProtocolIds {
 		if err := f.SetPausedProtocol(ctx, id); err != nil {
 			return fmt.Errorf("error setting genesis paused protocol ID: %w", err)
 		}
 	}
 
 	for _, id := range g.PausedCrossChainIds {
-		if id == nil {
-			return core.ErrNilPointer.Wrap("invalid cross-chain ID")
-		}
-
-		if err := id.Validate(); err != nil {
-			return fmt.Errorf("invalid paused cross-chain id %q: %w", id, err)
-		}
-
 		if err := f.SetPausedCrossChain(ctx, *id); err != nil {
 			return fmt.Errorf("error setting genesis paused cross-chain id: %w", err)
 		}
