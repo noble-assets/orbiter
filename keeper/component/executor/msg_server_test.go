@@ -97,7 +97,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			expErr: core.ErrUnauthorized.Error(),
 		},
 		{
-			name: "error - invalid action id",
+			name: "error - invalid action ID",
 			msg: &executortypes.MsgUnpauseAction{
 				Signer:   testutil.Authority,
 				ActionId: core.ActionID(99),

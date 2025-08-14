@@ -25,17 +25,18 @@ import (
 	"fmt"
 
 	executortypes "orbiter.dev/types/component/executor"
-	"orbiter.dev/types/core"
 )
 
 // InitGenesis initialize the state of the component with a genesis state.
 func (e *Executor) InitGenesis(ctx context.Context, g *executortypes.GenesisState) error {
-	if g == nil {
-		return core.ErrNilPointer.Wrap("executor genesis")
+	if err := g.Validate(); err != nil {
+		return err
 	}
+
+	// NOTE: paused action ids are already validated
 	for _, id := range g.PausedActionIds {
 		if err := e.SetPausedAction(ctx, id); err != nil {
-			return fmt.Errorf("error setting genesis paused action id: %w", err)
+			return fmt.Errorf("error setting genesis paused action ID: %w", err)
 		}
 	}
 

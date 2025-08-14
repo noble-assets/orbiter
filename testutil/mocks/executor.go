@@ -18,33 +18,34 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package adapter
+package mocks
 
 import (
-	"context"
-	"fmt"
+	"testing"
 
-	errorsmod "cosmossdk.io/errors"
+	"github.com/stretchr/testify/require"
 
-	adaptertypes "orbiter.dev/types/component/adapter"
+	"cosmossdk.io/collections"
+
+	"orbiter.dev/keeper/component/executor"
 )
 
-// InitGenesis initialize the state of the adapter component with a genesis state.
-func (a *Adapter) InitGenesis(ctx context.Context, g *adaptertypes.GenesisState) error {
-	if err := g.Validate(); err != nil {
-		return errorsmod.Wrap(err, "invalid adapter genesis state")
-	}
+func NewExecutorComponent(tb testing.TB) (*executor.Executor, *Dependencies) {
+	tb.Helper()
 
-	if err := a.SetParams(ctx, g.Params); err != nil {
-		return fmt.Errorf("error setting genesis params: %w", err)
-	}
+	deps := NewDependencies(tb)
 
-	return nil
-}
+	sb := collections.NewSchemaBuilder(deps.StoreService)
 
-// ExportGenesis returns the current state of the adapter component into a genesis state.
-func (a *Adapter) ExportGenesis(ctx context.Context) *adaptertypes.GenesisState {
-	return &adaptertypes.GenesisState{
-		Params: a.GetParams(ctx),
-	}
+	e, err := executor.New(
+		deps.EncCfg.Codec,
+		sb,
+		deps.Logger,
+	)
+	require.NoError(tb, err, "failed to create executor component")
+
+	_, err = sb.Build()
+	require.NoError(tb, err, "failed to build collections schema")
+
+	return e, &deps
 }
