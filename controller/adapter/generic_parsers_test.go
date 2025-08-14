@@ -36,7 +36,7 @@ import (
 
 func TestJSONParser_Parse(t *testing.T) {
 	validPayload, validPayloadStr := testutil.CreatePayloadWrapperJSON(t)
-	validPayloadWithActions, validPayloadWithActionsStr := testutil.CreatePayloadWrapperWithActionJSON(
+	validPayloadWithActions, validPayloadWithActionsStr := testutil.CreatePayloadWithAction(
 		t,
 	)
 
