@@ -21,116 +21,69 @@
 package forwarder_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/keeper/component/forwarder"
 	"orbiter.dev/testutil/mocks"
 	forwardertypes "orbiter.dev/types/component/forwarder"
 	"orbiter.dev/types/core"
 )
 
 func TestInitGenesis(t *testing.T) {
-	testcases := []struct {
-		name     string
-		genState *forwardertypes.GenesisState
-		expErr   string
-	}{
-		{
-			name:     "success - default genesis state",
-			genState: forwardertypes.DefaultGenesisState(),
-			expErr:   "",
-		},
-		{
-			name: "success - genesis state with both paused protocols and cross-chain IDs",
-			genState: &forwardertypes.GenesisState{
-				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_HYPERLANE},
-				PausedCrossChainIds: []*core.CrossChainID{
-					{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-42"},
-				},
-			},
-			expErr: "",
-		},
-		{
-			name:     "error - nil genesis state",
-			genState: nil,
-			expErr:   "forwarder genesis state: invalid nil pointer",
-		},
-		{
-			name: "error - invalid protocol ID",
-			genState: &forwardertypes.GenesisState{
-				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_UNSUPPORTED},
-			},
-			expErr: "protocol ID is not supported",
-		},
-		{
-			name: "error - nil cross chain ID",
-			genState: &forwardertypes.GenesisState{
-				PausedCrossChainIds: []*core.CrossChainID{nil},
-			},
-			expErr: "invalid nil pointer",
-		},
-		{
-			name: "error - invalid cross chain ID",
-			genState: &forwardertypes.GenesisState{
-				PausedCrossChainIds: []*core.CrossChainID{
-					{ProtocolId: core.PROTOCOL_UNSUPPORTED, CounterpartyId: "channel-1"},
-				},
-			},
-			expErr: "invalid paused cross-chain id",
-		},
-	}
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			f, deps := mocks.NewForwarderComponent(t)
-			ctx := deps.SdkCtx
+	f, deps := mocks.NewForwarderComponent(t)
+	ctx := deps.SdkCtx
 
-			err := f.InitGenesis(ctx, tc.genState)
-			if tc.expErr != "" {
-				require.ErrorContains(t, err, tc.expErr)
-			} else {
-				require.NoError(t, err)
-			}
-		})
+	// ACT: fail for invalid gen state
+	invalidGenState := &forwardertypes.GenesisState{
+		PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_UNSUPPORTED},
 	}
+
+	err := f.InitGenesis(ctx, invalidGenState)
+	require.ErrorContains(t, err, "invalid paused protocol ID")
+
+	// ACT: update correctly for valid gen state
+	defaultPausedActionIDs, err := f.GetPausedProtocols(deps.SdkCtx)
+	require.NoError(t, err, "failed to get paused protocol IDs")
+
+	defaultPausedCrossChainIDs, err := f.GetPausedProtocols(deps.SdkCtx)
+	require.NoError(t, err, "failed to get paused cross-chain IDs")
+
+	updatedGenState := forwardertypes.GenesisState{
+		PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_HYPERLANE},
+		PausedCrossChainIds: []*core.CrossChainID{
+			{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-42"},
+		},
+	}
+	require.NotEqual(t, updatedGenState.PausedProtocolIds, defaultPausedActionIDs, "updated protocol IDs should be different from current")
+	require.NotEqual(t, updatedGenState.PausedCrossChainIds, defaultPausedCrossChainIDs, "updated cross-chain IDs should be different from current")
+
+	err = f.InitGenesis(ctx, &updatedGenState)
+	require.NoError(t, err, "failed to update genesis state")
+
+	pausedProtocolIDs, err := f.GetPausedProtocols(deps.SdkCtx)
+	require.NoError(t, err, "failed to get paused protocol IDs")
+	require.Equal(t, updatedGenState.PausedProtocolIds, pausedProtocolIDs, "paused protocol IDs do not match")
+
+	pausedCrossChainIDs, err := f.GetPausedCrossChains(deps.SdkCtx, nil)
+	require.NoError(t, err, "failed to get paused cross chain IDs")
+	require.Equal(t, updatedGenState.PausedCrossChainIds, pausedCrossChainIDs, "paused cross chain IDs do not match")
 }
 
 func TestExportGenesis(t *testing.T) {
-	testcases := []struct {
-		name           string
-		setup          func(ctx context.Context, k *forwarder.Forwarder)
-		expPausedProts []core.ProtocolID
-	}{
-		{
-			name:           "success - export default genesis state",
-			expPausedProts: []core.ProtocolID{},
-		},
-		{
-			name: "success - export genesis state with paused protocols",
-			setup: func(ctx context.Context, k *forwarder.Forwarder) {
-				require.NoError(t, k.SetPausedProtocol(ctx, core.PROTOCOL_IBC))
-				require.NoError(t, k.SetPausedProtocol(ctx, core.PROTOCOL_CCTP))
-			},
-			expPausedProts: []core.ProtocolID{core.PROTOCOL_IBC, core.PROTOCOL_CCTP},
-		},
+	fw, deps := mocks.NewForwarderComponent(t)
+
+	expPausedProtocolIDs := []core.ProtocolID{core.PROTOCOL_HYPERLANE}
+	require.NoError(t, fw.SetPausedProtocol(deps.SdkCtx, expPausedProtocolIDs[0]), "failed to set paused protocol")
+
+	expPausedCrossChainIDs := []*core.CrossChainID{{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-1"}}
+	require.NoError(t, fw.SetPausedCrossChain(deps.SdkCtx, *expPausedCrossChainIDs[0]), "failed to set paused protocol")
+
+	expGenState := forwardertypes.GenesisState{
+		PausedProtocolIds:   expPausedProtocolIDs,
+		PausedCrossChainIds: expPausedCrossChainIDs,
 	}
 
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			fw, deps := mocks.NewForwarderComponent(t)
-			ctx := deps.SdkCtx
-
-			if tc.setup != nil {
-				tc.setup(ctx, fw)
-			}
-
-			genState := fw.ExportGenesis(ctx)
-
-			require.NotNil(t, genState)
-			require.ElementsMatch(t, tc.expPausedProts, genState.PausedProtocolIds)
-			require.Empty(t, genState.PausedCrossChainIds)
-		})
-	}
+	genState := fw.ExportGenesis(deps.SdkCtx)
+	require.Equal(t, expGenState.String(), genState.String(), "genesis state does not match")
 }

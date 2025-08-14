@@ -23,6 +23,8 @@ package forwarder
 import (
 	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
+
 	core "orbiter.dev/types/core"
 )
 
@@ -42,17 +44,17 @@ func (g *GenesisState) Validate() error {
 
 	for _, id := range g.PausedProtocolIds {
 		if err := id.Validate(); err != nil {
-			return err
+			return errorsmod.Wrap(err, "invalid paused protocol ID")
 		}
 	}
 
 	for _, id := range g.PausedCrossChainIds {
 		if id == nil {
-			return core.ErrNilPointer.Wrap("invalid cross-chain ID")
+			return core.ErrNilPointer.Wrap("invalid paused cross-chain ID")
 		}
 
 		if err := id.Validate(); err != nil {
-			return fmt.Errorf("invalid paused cross-chain id %q: %w", id, err)
+			return fmt.Errorf("invalid paused cross-chain ID %q: %w", id, err)
 		}
 	}
 

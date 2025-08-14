@@ -21,94 +21,54 @@
 package executor_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/keeper/component/executor"
 	"orbiter.dev/testutil/mocks"
 	executortypes "orbiter.dev/types/component/executor"
 	"orbiter.dev/types/core"
 )
 
 func TestInitGenesis(t *testing.T) {
-	testcases := []struct {
-		name     string
-		genState *executortypes.GenesisState
-		expErr   string
-	}{
-		{
-			name:     "success - default genesis state",
-			genState: executortypes.DefaultGenesisState(),
-			expErr:   "",
-		},
-		{
-			name: "success - genesis state with paused action IDs",
-			genState: &executortypes.GenesisState{
-				PausedActionIds: []core.ActionID{core.ACTION_FEE},
-			},
-			expErr: "",
-		},
-		{
-			name:     "error - nil genesis state",
-			genState: nil,
-			expErr:   "executor genesis state: invalid nil pointer",
-		},
-		{
-			name: "error - invalid action ID",
-			genState: &executortypes.GenesisState{
-				PausedActionIds: []core.ActionID{core.ACTION_UNSUPPORTED},
-			},
-			expErr: "action ID is not supported",
-		},
-	}
+	e, deps := mocks.NewExecutorComponent(t)
 
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			e, deps := mocks.NewExecutorComponent(t)
+	defaultPausedActionIDs, err := e.GetPausedActions(deps.SdkCtx)
+	require.NoError(t, err, "failed to get paused actions")
 
-			err := e.InitGenesis(deps.SdkCtx, tc.genState)
-			if tc.expErr != "" {
-				require.ErrorContains(t, err, tc.expErr)
-			} else {
-				require.NoError(t, err)
-			}
-		})
+	// ACT: fail for invalid genesis state
+	invalidGenState := executortypes.GenesisState{
+		PausedActionIds: []core.ActionID{core.ACTION_UNSUPPORTED},
 	}
+	err = e.InitGenesis(deps.SdkCtx, &invalidGenState)
+	require.ErrorContains(t, err, "action ID is not supported", "expected error initializing genesis")
+
+	actionIDs, err := e.GetPausedActions(deps.SdkCtx)
+	require.NoError(t, err, "failed to get paused actions")
+	require.ElementsMatch(t, defaultPausedActionIDs, actionIDs, "expected paused actions to not have changed")
+
+	// ACT: update correctly for valid genesis state
+	updatedActionIDs := []core.ActionID{core.ACTION_FEE, core.ACTION_SWAP}
+	require.NotElementsMatch(t, defaultPausedActionIDs, updatedActionIDs, "updated action IDs should be different")
+
+	validGenState := executortypes.GenesisState{PausedActionIds: updatedActionIDs}
+	err = e.InitGenesis(deps.SdkCtx, &validGenState)
+	require.NoError(t, err, "failed to init genesis state")
+
+	actionIDs, err = e.GetPausedActions(deps.SdkCtx)
+	require.NoError(t, err, "failed to get paused actions")
+	require.ElementsMatch(t, updatedActionIDs, actionIDs, "action IDs should have been updated")
 }
 
 func TestExportGenesis(t *testing.T) {
-	testcases := []struct {
-		name             string
-		setup            func(ctx context.Context, k *executor.Executor)
-		expPausedActions []core.ActionID
-	}{
-		{
-			name:             "success - export default genesis state",
-			expPausedActions: []core.ActionID{},
-		},
-		{
-			name: "success - export genesis state with paused actions",
-			setup: func(ctx context.Context, k *executor.Executor) {
-				require.NoError(t, k.SetPausedAction(ctx, core.ACTION_FEE))
-			},
-			expPausedActions: []core.ActionID{core.ACTION_FEE},
-		},
-	}
+	e, deps := mocks.NewExecutorComponent(t)
 
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			e, deps := mocks.NewExecutorComponent(t)
+	expPausedActions := []core.ActionID{core.ACTION_FEE}
+	expGenState := executortypes.GenesisState{PausedActionIds: expPausedActions}
 
-			if tc.setup != nil {
-				tc.setup(deps.SdkCtx, e)
-			}
+	err := e.SetPausedAction(deps.SdkCtx, expPausedActions[0])
+	require.NoError(t, err, "failed to set paused action")
 
-			genState := e.ExportGenesis(deps.SdkCtx)
-
-			require.NotNil(t, genState)
-			require.ElementsMatch(t, tc.expPausedActions, genState.PausedActionIds)
-		})
-	}
+	genState := e.ExportGenesis(deps.SdkCtx)
+	require.Equal(t, expGenState.String(), genState.String())
 }

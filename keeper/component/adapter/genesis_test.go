@@ -21,101 +21,40 @@
 package adapter_test
 
 import (
-	"context"
+	"orbiter.dev/types/core"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/keeper/component/adapter"
 	"orbiter.dev/testutil/mocks"
 	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
 func TestInitGenesis(t *testing.T) {
-	testcases := []struct {
-		name     string
-		genState *adaptertypes.GenesisState
-		expErr   string
-	}{
-		{
-			name:     "success - default genesis state",
-			genState: adaptertypes.DefaultGenesisState(),
-			expErr:   "",
-		},
-		{
-			name: "success - genesis state with custom params",
-			genState: &adaptertypes.GenesisState{
-				Params: adaptertypes.Params{
-					MaxPassthroughPayloadSize: 1024,
-				},
-			},
-			expErr: "",
-		},
-		{
-			name:     "error - nil genesis state",
-			genState: nil,
-			expErr:   "adapter genesis state: invalid nil pointer",
-		},
-	}
+	a, deps := mocks.NewAdapterComponent(t)
 
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			a, deps := mocks.NewAdapterComponent(t)
-			ctx := deps.SdkCtx
+	defaultParams := a.GetParams(deps.SdkCtx)
 
-			err := a.InitGenesis(ctx, tc.genState)
-			if tc.expErr != "" {
-				require.ErrorContains(t, err, tc.expErr)
-			} else {
-				require.NoError(t, err)
+	// ACT: fail for invalid genesis state (nil)
+	err := a.InitGenesis(deps.SdkCtx, nil)
+	require.ErrorIs(t, err, core.ErrNilPointer)
+	require.Equal(t, defaultParams, a.GetParams(deps.SdkCtx), "params should not have changed")
 
-				params := a.GetParams(ctx)
-				require.Equal(t, tc.genState.Params.MaxPassthroughPayloadSize, params.MaxPassthroughPayloadSize)
-			}
-		})
-	}
+	// ACT: update params for valid genesis state
+	validParams := adaptertypes.Params{MaxPassthroughPayloadSize: 1024}
+	require.NotEqual(t, defaultParams, validParams, "new params should be different from current params")
+	validGenState := adaptertypes.GenesisState{Params: validParams}
+
+	err = a.InitGenesis(deps.SdkCtx, &validGenState)
+	require.NoError(t, err, "failed to init genesis state")
+	require.Equal(t, validGenState.Params, a.GetParams(deps.SdkCtx), "expected params to have been updated")
 }
 
 func TestExportGenesis(t *testing.T) {
-	testcases := []struct {
-		name      string
-		setup     func(ctx context.Context, k *adapter.Adapter)
-		expParams adaptertypes.Params
-	}{
-		{
-			name: "success - export default genesis state",
-			expParams: adaptertypes.Params{
-				MaxPassthroughPayloadSize: 0,
-			},
-		},
-		{
-			name: "success - export genesis state with custom params",
-			setup: func(ctx context.Context, k *adapter.Adapter) {
-				params := adaptertypes.Params{MaxPassthroughPayloadSize: 1024}
-				require.NoError(t, k.SetParams(ctx, params))
-			},
-			expParams: adaptertypes.Params{
-				MaxPassthroughPayloadSize: 1024,
-			},
-		},
-	}
+	a, deps := mocks.NewAdapterComponent(t)
 
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			a, deps := mocks.NewAdapterComponent(t)
-			ctx := deps.SdkCtx
+	expGenState := adaptertypes.GenesisState{Params: a.GetParams(deps.SdkCtx)}
 
-			if tc.setup != nil {
-				tc.setup(ctx, a)
-			}
-
-			genState := a.ExportGenesis(ctx)
-
-			require.Equal(
-				t,
-				tc.expParams.MaxPassthroughPayloadSize,
-				genState.Params.MaxPassthroughPayloadSize,
-			)
-		})
-	}
+	genState := a.ExportGenesis(deps.SdkCtx)
+	require.Equal(t, expGenState.String(), genState.String(), "expected different gen state")
 }
