@@ -32,5 +32,4 @@ var (
 	ErrParsingPayload      = errors.Register(ModuleName, 7, "parsing payload failed")
 	ErrUnableToPause       = errors.Register(ModuleName, 8, "unable to pause")
 	ErrUnableToUnpause     = errors.Register(ModuleName, 9, "unable to unpause")
-	ErrEmptyString         = errors.Register(ModuleName, 10, "string cannot be nil")
 )
