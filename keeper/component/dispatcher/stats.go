@@ -112,8 +112,8 @@ func (d *Dispatcher) updateDispatchedCounts(
 	sourceID *core.CrossChainID,
 	destID *core.CrossChainID,
 ) error {
-	count := d.GetDispatchedCounts(ctx, sourceID, destID)
-	count++
+	dc := d.GetDispatchedCounts(ctx, sourceID, destID)
+	count := dc.Count + 1
 
 	return d.SetDispatchedCounts(ctx, sourceID, destID, count)
 }

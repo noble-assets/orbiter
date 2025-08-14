@@ -297,14 +297,14 @@ type DispatchedCountsKey = collections.Quad[int32, string, int32, string]
 type DispatchedCountsIndexes struct {
 	// ByDestinationProtocolID keeps track of entries indexes associated
 	// with a single destination protocol ID.
-	ByDestinationProtocolID *indexes.Multi[int32, DispatchedCountsKey, uint32]
+	ByDestinationProtocolID *indexes.Multi[int32, DispatchedCountsKey, uint64]
 }
 
 func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsIndexes {
 	primaryKeyCodec := collections.QuadKeyCodec(
 		collections.Int32Key,  // source protocol ID
 		collections.StringKey, // source counterparty ID
-		collections.Int32Key,  // destinationprotocol ID
+		collections.Int32Key,  // destination protocol ID
 		collections.StringKey, // destination counterparty ID
 	)
 
@@ -315,7 +315,7 @@ func newDispatchedCountsIndexes(sb *collections.SchemaBuilder) DispatchedCountsI
 			core.DispatchedCountsName+"_by_destination_protocol_id",
 			collections.Int32Key,
 			primaryKeyCodec,
-			func(pk DispatchedCountsKey, _ uint32) (int32, error) {
+			func(pk DispatchedCountsKey, _ uint64) (int32, error) {
 				return pk.K3(), nil
 			},
 		),
