@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
+
 	adaptertypes "orbiter.dev/types/component/adapter"
 )
 
