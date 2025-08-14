@@ -19,7 +19,7 @@ service Query {
     option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/{source_protocol_id}/{source_counterparty_id}/{destination_protocol_id}/{destination_counterparty_id}";
   }
 
-  // DispatchedCountsBySourceProtocolID retrieves all the dispatched counts for a specific sorce protocol ID.
+  // DispatchedCountsBySourceProtocolID retrieves all the dispatched counts for a specific source protocol ID.
   rpc DispatchedCountsBySourceProtocolID(QueryDispatchedCountsByProtocolIDRequest) returns (QueryDispatchedCountsResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/by-source/{protocol_id}";
@@ -37,7 +37,7 @@ service Query {
     option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/amounts/{source_protocol_id}/{source_counterparty_id}/{destination_protocol_id}/{destination_counterparty_id}";
   }
 
-  // DispatchedAmountsBySourceProtocolID retrieves all the dispatched amounts for a specific sorce protocol ID.
+  // DispatchedAmountsBySourceProtocolID retrieves all the dispatched amounts for a specific source protocol ID.
   rpc DispatchedAmountsBySourceProtocolID(QueryDispatchedAmountsByProtocolIDRequest) returns (QueryDispatchedAmountsResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/amounts/by-source/{protocol_id}";

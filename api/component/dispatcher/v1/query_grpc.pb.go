@@ -36,13 +36,13 @@ const (
 type QueryClient interface {
 	// DispatchedCounts retrieves the dispatched counts for a specific route.
 	DispatchedCounts(ctx context.Context, in *QueryDispatchedCountsRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error)
-	// DispatchedCountsBySourceProtocolID retrieves all the dispatched counts for a specific sorce protocol ID.
+	// DispatchedCountsBySourceProtocolID retrieves all the dispatched counts for a specific source protocol ID.
 	DispatchedCountsBySourceProtocolID(ctx context.Context, in *QueryDispatchedCountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error)
 	// DispatchedCountsByDestinationProtocolID retrieves all the dispatched counts for a specific destination protocol ID.
 	DispatchedCountsByDestinationProtocolID(ctx context.Context, in *QueryDispatchedCountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error)
 	// DispatchedAmounts retrieves the dispatched amounts for a specific route.
 	DispatchedAmounts(ctx context.Context, in *QueryDispatchedAmountsRequest, opts ...grpc.CallOption) (*QueryDispatchedAmountsResponse, error)
-	// DispatchedAmountsBySourceProtocolID retrieves all the dispatched amounts for a specific sorce protocol ID.
+	// DispatchedAmountsBySourceProtocolID retrieves all the dispatched amounts for a specific source protocol ID.
 	DispatchedAmountsBySourceProtocolID(ctx context.Context, in *QueryDispatchedAmountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedAmountsResponse, error)
 	// DispatchedAmountsByDestinationProtocolID retrieves all the dispatched amounts for a specific destination protocol ID.
 	DispatchedAmountsByDestinationProtocolID(ctx context.Context, in *QueryDispatchedAmountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedAmountsResponse, error)
@@ -125,13 +125,13 @@ func (c *queryClient) DispatchedAmountsByDestinationProtocolID(ctx context.Conte
 type QueryServer interface {
 	// DispatchedCounts retrieves the dispatched counts for a specific route.
 	DispatchedCounts(context.Context, *QueryDispatchedCountsRequest) (*QueryDispatchedCountsResponse, error)
-	// DispatchedCountsBySourceProtocolID retrieves all the dispatched counts for a specific sorce protocol ID.
+	// DispatchedCountsBySourceProtocolID retrieves all the dispatched counts for a specific source protocol ID.
 	DispatchedCountsBySourceProtocolID(context.Context, *QueryDispatchedCountsByProtocolIDRequest) (*QueryDispatchedCountsResponse, error)
 	// DispatchedCountsByDestinationProtocolID retrieves all the dispatched counts for a specific destination protocol ID.
 	DispatchedCountsByDestinationProtocolID(context.Context, *QueryDispatchedCountsByProtocolIDRequest) (*QueryDispatchedCountsResponse, error)
 	// DispatchedAmounts retrieves the dispatched amounts for a specific route.
 	DispatchedAmounts(context.Context, *QueryDispatchedAmountsRequest) (*QueryDispatchedAmountsResponse, error)
-	// DispatchedAmountsBySourceProtocolID retrieves all the dispatched amounts for a specific sorce protocol ID.
+	// DispatchedAmountsBySourceProtocolID retrieves all the dispatched amounts for a specific source protocol ID.
 	DispatchedAmountsBySourceProtocolID(context.Context, *QueryDispatchedAmountsByProtocolIDRequest) (*QueryDispatchedAmountsResponse, error)
 	// DispatchedAmountsByDestinationProtocolID retrieves all the dispatched amounts for a specific destination protocol ID.
 	DispatchedAmountsByDestinationProtocolID(context.Context, *QueryDispatchedAmountsByProtocolIDRequest) (*QueryDispatchedAmountsResponse, error)
