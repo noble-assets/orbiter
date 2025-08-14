@@ -23,7 +23,8 @@ package types
 import (
 	"fmt"
 
-	adapter "orbiter.dev/types/component/adapter"
+	"orbiter.dev/types/component/adapter"
+	"orbiter.dev/types/component/dispatcher"
 	"orbiter.dev/types/component/executor"
 	"orbiter.dev/types/component/forwarder"
 )
@@ -32,9 +33,10 @@ import (
 // initial state.
 func DefaultGenesisState() *GenesisState {
 	return &GenesisState{
-		AdapterGenesis:   adapter.DefaultGenesisState(),
-		ForwarderGenesis: forwarder.DefaultGenesisState(),
-		ExecutorGenesis:  executor.DefaultGenesisState(),
+		AdapterGenesis:    adapter.DefaultGenesisState(),
+		DispatcherGenesis: dispatcher.DefaultGenesisState(),
+		ForwarderGenesis:  forwarder.DefaultGenesisState(),
+		ExecutorGenesis:   executor.DefaultGenesisState(),
 	}
 }
 
@@ -42,6 +44,10 @@ func DefaultGenesisState() *GenesisState {
 func (g *GenesisState) Validate() error {
 	if err := g.AdapterGenesis.Validate(); err != nil {
 		return fmt.Errorf("error validating adapter component genesis state: %w", err)
+	}
+
+	if err := g.DispatcherGenesis.Validate(); err != nil {
+		return fmt.Errorf("error validating dispatcher component genesis state: %w", err)
 	}
 
 	if err := g.ForwarderGenesis.Validate(); err != nil {
