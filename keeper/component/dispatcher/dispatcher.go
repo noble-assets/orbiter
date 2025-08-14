@@ -110,7 +110,7 @@ func (d *Dispatcher) Validate() error {
 		return core.ErrNilPointer.Wrap("forwarding handler is not set")
 	}
 	if d.ActionHandler == nil {
-		return core.ErrNilPointer.Wrap("actions handler is not set")
+		return core.ErrNilPointer.Wrap("action handler is not set")
 	}
 
 	return nil

@@ -46,6 +46,8 @@ type DispatchedAmountsIndexes struct {
 }
 
 func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmountsIndexes {
+	// The third key associated with the destination uses the string from the cross-chain
+	// identifier. The reason for this choice is that the SDK does not support a 5 keys index.
 	primaryKeyCodec := collections.QuadKeyCodec(
 		collections.Int32Key,  // source protocol ID
 		collections.StringKey, // source counterparty ID
@@ -104,10 +106,10 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 
 func (d *Dispatcher) GetDispatchedAmount(
 	ctx context.Context,
-	sourceID core.CrossChainID,
-	destID core.CrossChainID,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
 	denom string,
-) dispatchertypes.AmountDispatched {
+) dispatchertypes.DispatchedAmountEntry {
 	key := collections.Join4(
 		int32(sourceID.GetProtocolId()),
 		sourceID.GetCounterpartyId(),
@@ -115,7 +117,7 @@ func (d *Dispatcher) GetDispatchedAmount(
 		denom,
 	)
 
-	amountDispatched, err := d.dispatchedAmounts.Get(ctx, key)
+	amount, err := d.dispatchedAmounts.Get(ctx, key)
 	if err != nil {
 		d.logger.Error("received an error getting dispatched amounts",
 			"error", err,
@@ -123,23 +125,29 @@ func (d *Dispatcher) GetDispatchedAmount(
 			"dest_id", destID.ID(),
 			"denom", denom,
 		)
-		amountDispatched = dispatchertypes.AmountDispatched{
+		amount = dispatchertypes.AmountDispatched{
 			Incoming: math.ZeroInt(),
 			Outgoing: math.ZeroInt(),
 		}
 	}
 
-	return amountDispatched
+	return dispatchertypes.DispatchedAmountEntry{
+		SourceId:         sourceID,
+		DestinationId:    destID,
+		Denom:            denom,
+		AmountDispatched: amount,
+	}
 }
 
 func (d *Dispatcher) HasDispatchedAmount(
 	ctx context.Context,
-	sourceID core.CrossChainID,
-	destID core.CrossChainID,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
 	denom string,
 ) bool {
-	amountDispatched := d.GetDispatchedAmount(ctx, sourceID, destID, denom)
-	return amountDispatched.IsPositive()
+	da := d.GetDispatchedAmount(ctx, sourceID, destID, denom)
+
+	return da.AmountDispatched.IsPositive()
 }
 
 func (d *Dispatcher) SetDispatchedAmount(
@@ -159,7 +167,7 @@ func (d *Dispatcher) SetDispatchedAmount(
 	return d.dispatchedAmounts.Set(ctx, key, amountDispatched)
 }
 
-func (d *Dispatcher) GetDispatchedAmountsByProtocolID(
+func (d *Dispatcher) GetDispatchedAmountsBySourceProtocolID(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) []dispatchertypes.DispatchedAmountEntry {

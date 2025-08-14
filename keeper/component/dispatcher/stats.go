@@ -92,7 +92,8 @@ func (d *Dispatcher) updateDispatchedAmount(
 	denom string,
 	newAmount dispatchertypes.AmountDispatched,
 ) error {
-	amount := d.GetDispatchedAmount(ctx, *sourceID, *destID, denom)
+	da := d.GetDispatchedAmount(ctx, sourceID, destID, denom)
+	amount := da.AmountDispatched
 
 	if newAmount.Incoming.IsPositive() {
 		amount.Incoming = amount.Incoming.Add(newAmount.Incoming)

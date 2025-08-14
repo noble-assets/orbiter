@@ -26,13 +26,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"cosmossdk.io/math"
+
 	"orbiter.dev/keeper/component/dispatcher"
 	"orbiter.dev/testutil/mocks"
+	dispatchertypes "orbiter.dev/types/component/dispatcher"
 	"orbiter.dev/types/core"
 )
-
-//  "cosmossdk.io/math"
-// dispatchertypes "orbiter.dev/types/component/dispatcher"
 
 const UsdcDenom = "uusdc"
 
@@ -40,392 +40,198 @@ const UsdcDenom = "uusdc"
 // Dispatched Amount
 // ====================================================================================================
 
-// func TestGetDispatchedAmount(t *testing.T) {
-// 	// ARRANGE
-// 	dispatcher, deps := mocks.NewDispatcherComponent(t)
-// 	ctx := deps.SdkCtx
-//
-// 	sourceID := core.CrossChainID{
-// 		ProtocolId:     core.PROTOCOL_IBC,
-// 		CounterpartyId: "channel-1",
-// 	}
-// 	destID := core.CrossChainID{
-// 		ProtocolId:     core.PROTOCOL_CCTP,
-// 		CounterpartyId: "0",
-// 	}
-//
-// 	// ACT: Test getting non-existent dispatch record
-// 	result := dispatcher.GetDispatchedAmount(ctx, sourceID, destID, UsdcDenom)
-// 	require.Equal(t, dispatchertypes.AmountDispatched{
-// 		Incoming: math.ZeroInt(),
-// 		Outgoing: math.ZeroInt(),
-// 	}, result)
-//
-// 	// ARRANGE: Set a dispatch record
-// 	expectedAmount := dispatchertypes.AmountDispatched{
-// 		Incoming: math.NewInt(100),
-// 		Outgoing: math.NewInt(50),
-// 	}
-//
-// 	err := dispatcher.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, expectedAmount)
-// 	require.NoError(t, err)
-//
-// 	// ACT: Test getting existing dispatch record
-// 	result = dispatcher.GetDispatchedAmount(ctx, sourceID, destID, UsdcDenom)
-//
-// 	// ASSERT
-// 	require.Equal(t, expectedAmount, result)
-// }
-//
-// func TestHasDispatchedAmount(t *testing.T) {
-// 	// ARRANGE
-// 	dispatcher, deps := mocks.NewDispatcherComponent(t)
-// 	ctx := deps.SdkCtx
-//
-// 	sourceID := core.CrossChainID{
-// 		ProtocolId:     core.PROTOCOL_IBC,
-// 		CounterpartyId: "channel-1",
-// 	}
-// 	destID := core.CrossChainID{
-// 		ProtocolId:     core.PROTOCOL_CCTP,
-// 		CounterpartyId: "0",
-// 	}
-//
-// 	// ACT
-// 	result := dispatcher.HasDispatchedAmount(ctx, sourceID, destID, UsdcDenom)
-//
-// 	// ASSERT
-// 	require.False(t, result)
-//
-// 	// ARRANGE: Set a dispatch record
-// 	amount := dispatchertypes.AmountDispatched{
-// 		Incoming: math.NewInt(100),
-// 		Outgoing: math.NewInt(50),
-// 	}
-// 	err := dispatcher.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
-// 	require.NoError(t, err)
-//
-// 	// ACT: Test existing dispatch record
-// 	result = dispatcher.HasDispatchedAmount(ctx, sourceID, destID, UsdcDenom)
-//
-// 	// ASSERT
-// 	require.True(t, result)
-// }
-//
-// func TestSetDispatchedAmount(t *testing.T) {
-// 	// ARRANGE
-// 	dispatcher, deps := mocks.NewDispatcherComponent(t)
-// 	ctx := deps.SdkCtx
-//
-// 	sourceID := core.CrossChainID{
-// 		ProtocolId:     core.PROTOCOL_IBC,
-// 		CounterpartyId: "channel-1",
-// 	}
-// 	destID := core.CrossChainID{
-// 		ProtocolId:     core.PROTOCOL_CCTP,
-// 		CounterpartyId: "0",
-// 	}
-//
-// 	amount := dispatchertypes.AmountDispatched{
-// 		Incoming: math.NewInt(200),
-// 		Outgoing: math.NewInt(100),
-// 	}
-//
-// 	// ACT: Test setting dispatch record
-// 	err := dispatcher.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
-//
-// 	// ASSERT
-// 	require.NoError(t, err)
-//
-// 	result := dispatcher.GetDispatchedAmount(ctx, sourceID, destID, UsdcDenom)
-// 	require.Equal(t, amount, result)
-//
-// 	// ARRANGE: Test updating existing dispatch record
-// 	updatedAmount := dispatchertypes.AmountDispatched{
-// 		Incoming: math.NewInt(300),
-// 		Outgoing: math.NewInt(150),
-// 	}
-//
-// 	// ACT
-// 	err = dispatcher.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, updatedAmount)
-//
-// 	// ASSERT
-// 	require.NoError(t, err)
-//
-// 	// Verify the record was updated
-// 	result = dispatcher.GetDispatchedAmount(ctx, sourceID, destID, UsdcDenom)
-// 	require.Equal(t, updatedAmount, result)
-//
-// 	// ARRANGE: set a dispatched amount with an invalid destination protocol ID
-// 	invalidDestID := core.CrossChainID{
-// 		ProtocolId:     0,
-// 		CounterpartyId: "ethereum",
-// 	}
-//
-// 	// ACT
-// 	err = dispatcher.SetDispatchedAmount(ctx, &sourceID, &invalidDestID, UsdcDenom, amount)
-// 	require.ErrorContains(t, err, "error parsing destination cross-chain ID")
-// }
-//
-// func TestGetDispatchedAmountByProtocolID(t *testing.T) {
-// 	// ARRANGE
-// 	dispatcher, deps := mocks.NewDispatcherComponent(t)
-// 	ctx := deps.SdkCtx
-//
-// 	protocolID := core.PROTOCOL_IBC
-//
-// 	// ACT: Test empty protocol (no dispatch records)
-// 	result := dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolID)
-//
-// 	// ASSERT
-// 	require.NotNil(t, result.ChainsAmount())
-// 	require.Empty(t, result.ChainsAmount())
-//
-// 	// ARRANGE: Set up test data
-// 	sourceID1 := core.CrossChainID{
-// 		ProtocolId:     protocolID,
-// 		CounterpartyId: "channel-1",
-// 	}
-// 	sourceID2 := core.CrossChainID{
-// 		ProtocolId:     protocolID,
-// 		CounterpartyId: "channel-2",
-// 	}
-// 	destID := core.CrossChainID{
-// 		ProtocolId:     core.PROTOCOL_CCTP,
-// 		CounterpartyId: "0",
-// 	}
-//
-// 	// Set dispatch records
-// 	amount1 := dispatchertypes.AmountDispatched{
-// 		Incoming: math.NewInt(100),
-// 		Outgoing: math.NewInt(50),
-// 	}
-// 	amount2 := dispatchertypes.AmountDispatched{
-// 		Incoming: math.NewInt(200),
-// 		Outgoing: math.NewInt(100),
-// 	}
-//
-// 	err := dispatcher.SetDispatchedAmount(ctx, &sourceID1, &destID, UsdcDenom, amount1)
-// 	require.NoError(t, err)
-// 	err = dispatcher.SetDispatchedAmount(ctx, &sourceID2, &destID, UsdcDenom, amount2)
-// 	require.NoError(t, err)
-//
-// 	// ACT: Test getting protocol total dispatched
-// 	result = dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolID)
-//
-// 	// ASSERT
-// 	require.NotNil(t, result.ChainsAmount())
-// 	require.Len(t, result.ChainsAmount(), 2)
-//
-// 	// Verify the results contain the expected data
-// 	require.Contains(t, result.ChainsAmount(), "channel-1")
-// 	require.Contains(t, result.ChainsAmount(), "channel-2")
-// 	chainsAmount := result.ChainsAmount()
-// 	channelOne := chainsAmount["channel-1"]
-// 	channelTwo := chainsAmount["channel-2"]
-// 	require.Equal(t, channelOne.CrossChainID(), destID)
-// 	require.Equal(t, channelTwo.CrossChainID(), destID)
-// 	require.Equal(t, channelOne.AmountDispatched(), amount1)
-// 	require.Equal(t, channelTwo.AmountDispatched(), amount2)
-// }
-//
-// func TestDispatchedAmountEmptyStates(t *testing.T) {
-// 	dispatcher, deps := mocks.NewDispatcherComponent(t)
-// 	ctx := deps.SdkCtx
-//
-// 	sourceID := core.CrossChainID{
-// 		ProtocolId:     core.PROTOCOL_IBC,
-// 		CounterpartyId: "channel-1",
-// 	}
-// 	destID := core.CrossChainID{
-// 		ProtocolId:     core.PROTOCOL_CCTP,
-// 		CounterpartyId: "0",
-// 	}
-//
-// 	// Test all methods with empty state
-// 	result := dispatcher.GetDispatchedAmount(ctx, sourceID, destID, UsdcDenom)
-// 	require.Equal(t, dispatchertypes.AmountDispatched{
-// 		Incoming: math.ZeroInt(),
-// 		Outgoing: math.ZeroInt(),
-// 	}, result)
-//
-// 	hasDispatched := dispatcher.HasDispatchedAmount(ctx, sourceID, destID, UsdcDenom)
-// 	require.False(t, hasDispatched)
-//
-// 	totalDispatched := dispatcher.GetDispatchedAmountsByProtocolID(ctx, core.PROTOCOL_IBC)
-// 	require.NotNil(t, totalDispatched.ChainsAmount())
-// 	require.Empty(t, totalDispatched.ChainsAmount())
-//
-// 	// Test iteration with empty state
-// 	called := false
-// 	dispatcher.IterateDispatchedAmountsByProtocolID(
-// 		ctx,
-// 		core.PROTOCOL_IBC,
-// 		func(sourceCounterpartyId string, dispatchedInfo dispatchertypes.ChainAmountDispatched) bool {
-// 			called = true
-//
-// 			return false
-// 		},
-// 	)
-// 	require.False(t, called)
-// }
-//
-// func TestDispatchedAmountMultipleProtocolsAndChains(t *testing.T) {
-// 	dispatcher, deps := mocks.NewDispatcherComponent(t)
-// 	ctx := deps.SdkCtx
-//
-// 	// Test with multiple protocols and chains
-// 	testCases := []struct {
-// 		sourceID core.CrossChainID
-// 		destID   core.CrossChainID
-// 		denom    string
-// 		amount   dispatchertypes.AmountDispatched
-// 	}{
-// 		{
-// 			sourceID: core.CrossChainID{
-// 				ProtocolId:     core.PROTOCOL_IBC,
-// 				CounterpartyId: "channel-1",
-// 			},
-// 			destID: core.CrossChainID{
-// 				ProtocolId:     core.PROTOCOL_CCTP,
-// 				CounterpartyId: "0",
-// 			},
-// 			denom: "uusdc",
-// 			amount: dispatchertypes.AmountDispatched{
-// 				Incoming: math.NewInt(100),
-// 				Outgoing: math.NewInt(50),
-// 			},
-// 		},
-// 		{
-// 			sourceID: core.CrossChainID{
-// 				ProtocolId:     core.PROTOCOL_IBC,
-// 				CounterpartyId: "channel-2",
-// 			},
-// 			destID: core.CrossChainID{
-// 				ProtocolId:     core.PROTOCOL_CCTP,
-// 				CounterpartyId: "1",
-// 			},
-// 			denom: "uusdc",
-// 			amount: dispatchertypes.AmountDispatched{
-// 				Incoming: math.NewInt(200),
-// 				Outgoing: math.NewInt(100),
-// 			},
-// 		},
-// 		{
-// 			sourceID: core.CrossChainID{
-// 				ProtocolId:     core.PROTOCOL_CCTP,
-// 				CounterpartyId: "0",
-// 			},
-// 			destID: core.CrossChainID{
-// 				ProtocolId:     core.PROTOCOL_IBC,
-// 				CounterpartyId: "channel-3",
-// 			},
-// 			denom: "uusdc",
-// 			amount: dispatchertypes.AmountDispatched{
-// 				Incoming: math.NewInt(300),
-// 				Outgoing: math.NewInt(150),
-// 			},
-// 		},
-// 	}
-//
-// 	// Set all dispatch records
-// 	for _, tc := range testCases {
-// 		err := dispatcher.SetDispatchedAmount(ctx, &tc.sourceID, &tc.destID, tc.denom, tc.amount)
-// 		require.NoError(t, err)
-// 	}
-//
-// 	// Verify all records can be retrieved
-// 	for _, tc := range testCases {
-// 		result := dispatcher.GetDispatchedAmount(ctx, tc.sourceID, tc.destID, tc.denom)
-// 		require.Equal(t, tc.amount, result)
-//
-// 		hasDispatched := dispatcher.HasDispatchedAmount(ctx, tc.sourceID, tc.destID, tc.denom)
-// 		require.True(t, hasDispatched)
-// 	}
-//
-// 	// Test protocol-specific queries
-// 	ibcTotal := dispatcher.GetDispatchedAmountsByProtocolID(ctx, core.PROTOCOL_IBC)
-// 	require.Len(t, ibcTotal.ChainsAmount(), 2) // channel-1 and channel-2
-//
-// 	cctpTotal := dispatcher.GetDispatchedAmountsByProtocolID(ctx, core.PROTOCOL_CCTP)
-// 	require.Len(t, cctpTotal.ChainsAmount(), 1) // only counterparty "0"
-// }
-//
-// func TestGetDispatchedAmountByDestinationProtocolID(t *testing.T) {
-// 	// ARRANGE
-// 	dispatcher, deps := mocks.NewDispatcherComponent(t)
-// 	ctx := deps.SdkCtx
-//
-// 	protocolSource1 := core.PROTOCOL_IBC
-// 	protocolSource2 := core.PROTOCOL_HYPERLANE
-// 	protocolDestination := core.PROTOCOL_CCTP
-//
-// 	// ACT: Test empty protocol (no dispatch records)
-// 	result := dispatcher.GetDispatchedAmountsByProtocolID(ctx, protocolSource1)
-//
-// 	// ASSERT
-// 	require.NotNil(t, result.ChainsAmount())
-// 	require.Empty(t, result.ChainsAmount())
-//
-// 	// ARRANGE: Set up test data
-// 	sourceID1 := core.CrossChainID{
-// 		ProtocolId:     protocolSource1,
-// 		CounterpartyId: "channel-1",
-// 	}
-// 	sourceID2 := core.CrossChainID{
-// 		ProtocolId:     protocolSource1,
-// 		CounterpartyId: "channel-2",
-// 	}
-// 	sourceID3 := core.CrossChainID{
-// 		ProtocolId:     protocolSource2,
-// 		CounterpartyId: "ethereum",
-// 	}
-// 	destID := core.CrossChainID{
-// 		ProtocolId:     protocolDestination,
-// 		CounterpartyId: "0",
-// 	}
-// 	denom := "uusdc"
-//
-// 	// Set dispatch records
-// 	amount1 := dispatchertypes.AmountDispatched{
-// 		Incoming: math.NewInt(100),
-// 		Outgoing: math.NewInt(50),
-// 	}
-// 	amount2 := dispatchertypes.AmountDispatched{
-// 		Incoming: math.NewInt(200),
-// 		Outgoing: math.NewInt(100),
-// 	}
-//
-// 	err := dispatcher.SetDispatchedAmount(ctx, &sourceID1, &destID, denom, amount1)
-// 	require.NoError(t, err)
-// 	err = dispatcher.SetDispatchedAmount(ctx, &sourceID2, &destID, denom, amount2)
-// 	require.NoError(t, err)
-// 	err = dispatcher.SetDispatchedAmount(ctx, &sourceID3, &destID, denom, amount2)
-// 	require.NoError(t, err)
-//
-// 	// ACT: Test getting protocol total dispatched
-// 	result = dispatcher.GetDispatchedAmountsByDestinationProtocolID(ctx, protocolDestination)
-//
-// 	// ASSERT
-// 	require.NotNil(t, result.ChainAmount)
-// 	require.Len(t, result.ChainsAmount(), 3)
-//
-// 	// Verify the results contain the expected data
-// 	chainsAmount := result.ChainsAmount()
-// 	require.Contains(t, chainsAmount, "channel-1")
-// 	require.Contains(t, chainsAmount, "channel-2")
-// 	require.Contains(t, chainsAmount, "ethereum")
-//
-// 	channelOne := result.ChainAmount("channel-1")
-// 	channelTwo := result.ChainAmount("channel-2")
-// 	ethereum := result.ChainAmount("ethereum")
-// 	require.Equal(t, channelOne.CrossChainID(), destID)
-// 	require.Equal(t, channelTwo.CrossChainID(), destID)
-// 	require.Equal(t, ethereum.CrossChainID(), destID)
-// 	require.Equal(t, channelOne.AmountDispatched(), amount1)
-// 	require.Equal(t, channelTwo.AmountDispatched(), amount2)
-// 	require.Equal(t, ethereum.AmountDispatched(), amount2)
-// }
+func TestSetHasGetDispatchedAmount(t *testing.T) {
+	// ARRANGE
+	d, deps := mocks.NewDispatcherComponent(t)
+	ctx := deps.SdkCtx
+
+	sourceID := core.CrossChainID{
+		ProtocolId:     core.PROTOCOL_IBC,
+		CounterpartyId: "channel-1",
+	}
+	destID := core.CrossChainID{
+		ProtocolId:     core.PROTOCOL_CCTP,
+		CounterpartyId: "0",
+	}
+
+	// ACT: No dispatched amount records.
+	found := d.HasDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom)
+	da := d.GetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom)
+
+	// ASSERT
+	expAmount := dispatchertypes.AmountDispatched{
+		Incoming: math.ZeroInt(),
+		Outgoing: math.ZeroInt(),
+	}
+	require.False(t, found)
+	require.Equal(t, expAmount, da.AmountDispatched)
+
+	// ARRANGE: Set a dispatch record.
+	expAmount.Incoming = math.NewInt(100)
+	expAmount.Outgoing = math.NewInt(50)
+
+	// ACT
+	err := d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, expAmount)
+
+	// ASSERT
+	require.NoError(t, err)
+
+	// ACT: Get existing dispatch record.
+	found = d.HasDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom)
+	da = d.GetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom)
+
+	// ASSERT
+	require.True(t, found)
+	require.Equal(t, expAmount, da.AmountDispatched)
+
+	// ARRANGE: Update a dispatch record.
+	expAmount.Incoming = math.NewInt(1_000)
+
+	// ACT: Update an existing amount.
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, expAmount)
+
+	// ASSERT
+	require.NoError(t, err)
+
+	// ACT: Get existing dispatch record.
+	found = d.HasDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom)
+	da = d.GetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom)
+
+	// ASSERT
+	require.True(t, found)
+	require.Equal(t, expAmount, da.AmountDispatched)
+}
+
+func createDispatchedAmountEntries(t *testing.T, ctx context.Context, d *dispatcher.Dispatcher) {
+	t.Helper()
+
+	sourceID := core.CrossChainID{
+		ProtocolId:     core.PROTOCOL_IBC,
+		CounterpartyId: "channel-1",
+	}
+	destID := core.CrossChainID{
+		ProtocolId:     core.PROTOCOL_CCTP,
+		CounterpartyId: "0",
+	}
+
+	// Set dispatch records
+	amount := dispatchertypes.AmountDispatched{
+		Incoming: math.NewInt(1),
+		Outgoing: math.NewInt(1),
+	}
+
+	// Set 3 entries for IBC sources.
+	err := d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = "channel-2"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = "channel-3"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
+	require.NoError(t, err)
+
+	// Set 3 entries for Hyperlane sources.
+	sourceID.ProtocolId = core.PROTOCOL_HYPERLANE
+	sourceID.CounterpartyId = "999"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = "8453"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = "1128614981"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
+	require.NoError(t, err)
+
+	// Set 3 entries for CCTP sources.
+	sourceID.ProtocolId = core.PROTOCOL_CCTP
+	sourceID.CounterpartyId = "1"
+	destID.ProtocolId = core.PROTOCOL_IBC
+	destID.CounterpartyId = "channel-0"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = "2"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = "3"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
+	require.NoError(t, err)
+
+	// Set 3 entries for CCTP sources and a different denom
+	sourceID.CounterpartyId = "1"
+	denom := "unoble"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, denom, amount)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = "2"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, denom, amount)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = "3"
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, denom, amount)
+	require.NoError(t, err)
+}
+
+func TestGetDispatchedAmountBySourceProtocolID(t *testing.T) {
+	// ARRANGE
+	d, deps := mocks.NewDispatcherComponent(t)
+	ctx := deps.SdkCtx
+
+	// ACT
+	daIBC := d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_IBC)
+	daHyp := d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_HYPERLANE)
+	daCCTP := d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_CCTP)
+
+	require.Len(t, daIBC, 0)
+	require.Len(t, daHyp, 0)
+	require.Len(t, daCCTP, 0)
+
+	// ARRANGE
+	createDispatchedAmountEntries(t, ctx, d)
+
+	// ACT
+	daIBC = d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_IBC)
+	daHyp = d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_HYPERLANE)
+	daCCTP = d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_CCTP)
+
+	// ASSERT
+	require.Len(t, daIBC, 3)
+	require.Len(t, daHyp, 3)
+	require.Len(t, daCCTP, 6)
+}
+
+func TestGetDispatchedAmountByDestinationProtocolID(t *testing.T) {
+	// ARRANGE
+	d, deps := mocks.NewDispatcherComponent(t)
+	ctx := deps.SdkCtx
+
+	// ACT
+	daIBC := d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_IBC)
+	daHyp := d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_HYPERLANE)
+	daCCTP := d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_CCTP)
+
+	require.Len(t, daIBC, 0)
+	require.Len(t, daHyp, 0)
+	require.Len(t, daCCTP, 0)
+
+	// ARRANGE
+	createDispatchedAmountEntries(t, ctx, d)
+
+	// ACT
+	daIBC = d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_IBC)
+	daHyp = d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_HYPERLANE)
+	daCCTP = d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_CCTP)
+
+	// ASSERT
+	require.Len(t, daIBC, 6)
+	require.Len(t, daHyp, 0)
+	require.Len(t, daCCTP, 6)
+}
 
 // ====================================================================================================
 // Dispatched Counts

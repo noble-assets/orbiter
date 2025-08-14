@@ -38,20 +38,20 @@ import (
 
 func TestUpdateStats(t *testing.T) {
 	testCases := []struct {
-		name           string
-		setup          func(context.Context, *dispatcher.Dispatcher)
-		transferAttr   func() *types.TransferAttributes
-		forwarding     func() *core.Forwarding
-		expErr         string
-		expAmounts     map[string]dispatchertypes.AmountDispatched
-		expectedCounts uint32
+		name       string
+		setup      func(context.Context, *dispatcher.Dispatcher)
+		attr       func() *types.TransferAttributes
+		forwarding func() *core.Forwarding
+		expErr     string
+		expAmounts map[string]dispatchertypes.AmountDispatched
+		expCounts  uint32
 	}{
 		{
-			name:         "error - nil transfer attributes",
-			transferAttr: func() *types.TransferAttributes { return nil },
+			name: "error - nil transfer attributes",
+			attr: func() *types.TransferAttributes { return nil },
 			forwarding: func() *core.Forwarding {
 				return &core.Forwarding{
-					ProtocolId: 2,
+					ProtocolId: core.PROTOCOL_CCTP,
 					Attributes: nil,
 				}
 			},
@@ -59,7 +59,7 @@ func TestUpdateStats(t *testing.T) {
 		},
 		{
 			name: "error - nil forwarding",
-			transferAttr: func() *types.TransferAttributes {
+			attr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 
@@ -70,7 +70,7 @@ func TestUpdateStats(t *testing.T) {
 		},
 		{
 			name: "error - destination protocol ID is not supported",
-			transferAttr: func() *types.TransferAttributes {
+			attr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 
@@ -93,7 +93,7 @@ func TestUpdateStats(t *testing.T) {
 		},
 		{
 			name: "error - invalid forwarding attributes",
-			transferAttr: func() *types.TransferAttributes {
+			attr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 
@@ -109,7 +109,7 @@ func TestUpdateStats(t *testing.T) {
 		},
 		{
 			name: "success - same amount and denom",
-			transferAttr: func() *types.TransferAttributes {
+			attr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 
@@ -130,11 +130,11 @@ func TestUpdateStats(t *testing.T) {
 					Outgoing: math.NewInt(100),
 				},
 			},
-			expectedCounts: 1,
+			expCounts: 1,
 		},
 		{
 			name: "success - same denom and different amount",
-			transferAttr: func() *types.TransferAttributes {
+			attr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(2, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 				ta.SetDestinationAmount(math.NewInt(95))
@@ -156,11 +156,11 @@ func TestUpdateStats(t *testing.T) {
 					Outgoing: math.NewInt(95),
 				},
 			},
-			expectedCounts: 1,
+			expCounts: 1,
 		},
 		{
 			name: "success - different denom",
-			transferAttr: func() *types.TransferAttributes {
+			attr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 				ta.SetDestinationDenom("gwei")
@@ -187,7 +187,7 @@ func TestUpdateStats(t *testing.T) {
 					Outgoing: math.NewInt(50),
 				},
 			},
-			expectedCounts: 1,
+			expCounts: 1,
 		},
 		{
 			name: "success - different denom and previous stored stats",
@@ -215,7 +215,7 @@ func TestUpdateStats(t *testing.T) {
 				err = d.SetDispatchedAmount(ctx, &destID, &sourceID, "uusdc", da)
 				require.NoError(t, err)
 			},
-			transferAttr: func() *types.TransferAttributes {
+			attr: func() *types.TransferAttributes {
 				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 
@@ -243,7 +243,7 @@ func TestUpdateStats(t *testing.T) {
 					Outgoing: math.NewInt(50),
 				},
 			},
-			expectedCounts: 11, // 1 from the test + 10 from the setup
+			expCounts: 11, // 1 from the test + 10 from the setup
 		},
 	}
 
@@ -256,7 +256,7 @@ func TestUpdateStats(t *testing.T) {
 				tC.setup(ctx, dispatcher)
 			}
 
-			transferAttr := tC.transferAttr()
+			transferAttr := tC.attr()
 			forwarding := tC.forwarding()
 			err := dispatcher.UpdateStats(ctx, transferAttr, forwarding)
 
@@ -277,17 +277,17 @@ func TestUpdateStats(t *testing.T) {
 				}
 
 				// Verify amount stats
-				for denom, expectedAmount := range tC.expAmounts {
-					actualAmount := dispatcher.GetDispatchedAmount(ctx, sourceID, destID, denom)
+				for denom, expAmount := range tC.expAmounts {
+					da := dispatcher.GetDispatchedAmount(ctx, &sourceID, &destID, denom)
 
-					require.Equal(t, expectedAmount.Incoming, actualAmount.Incoming)
-					require.Equal(t, expectedAmount.Outgoing, actualAmount.Outgoing)
+					require.Equal(t, expAmount.Incoming, da.AmountDispatched.Incoming)
+					require.Equal(t, expAmount.Outgoing, da.AmountDispatched.Outgoing)
 				}
 
 				// Verify count stats
 				actualCounts := dispatcher.GetDispatchedCounts(ctx, &sourceID, &destID)
 
-				require.Equal(t, tC.expectedCounts, actualCounts)
+				require.Equal(t, tC.expCounts, actualCounts)
 			}
 		})
 	}
