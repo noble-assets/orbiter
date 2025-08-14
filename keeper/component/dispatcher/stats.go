@@ -107,7 +107,7 @@ func (d *Dispatcher) updateDispatchedAmount(
 
 // updateDispatchedCounts updates the counter of the
 // number of dispatches executed between the two cross-chain IDs.
-// ID without consider
+// ID without consider.
 func (d *Dispatcher) updateDispatchedCounts(
 	ctx context.Context,
 	sourceID *core.CrossChainID,
