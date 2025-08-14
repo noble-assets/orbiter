@@ -21,13 +21,13 @@
 package adapter_test
 
 import (
-	"orbiter.dev/types/core"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
 	"orbiter.dev/testutil/mocks"
 	adaptertypes "orbiter.dev/types/component/adapter"
+	"orbiter.dev/types/core"
 )
 
 func TestInitGenesis(t *testing.T) {
@@ -42,12 +42,22 @@ func TestInitGenesis(t *testing.T) {
 
 	// ACT: update params for valid genesis state
 	validParams := adaptertypes.Params{MaxPassthroughPayloadSize: 1024}
-	require.NotEqual(t, defaultParams, validParams, "new params should be different from current params")
+	require.NotEqual(
+		t,
+		defaultParams,
+		validParams,
+		"new params should be different from current params",
+	)
 	validGenState := adaptertypes.GenesisState{Params: validParams}
 
 	err = a.InitGenesis(deps.SdkCtx, &validGenState)
 	require.NoError(t, err, "failed to init genesis state")
-	require.Equal(t, validGenState.Params, a.GetParams(deps.SdkCtx), "expected params to have been updated")
+	require.Equal(
+		t,
+		validGenState.Params,
+		a.GetParams(deps.SdkCtx),
+		"expected params to have been updated",
+	)
 }
 
 func TestExportGenesis(t *testing.T) {

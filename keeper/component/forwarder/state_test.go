@@ -105,7 +105,7 @@ func TestGetPausedCrossChains(t *testing.T) {
 
 	for _, tC := range testCases {
 		t.Run(tC.name, func(t *testing.T) {
-			paused, err := f.GetPausedCrossChains(ctx, tC.protocolID)
+			paused, err := f.GetPausedCrossChainsMap(ctx, tC.protocolID)
 			require.NoError(t, err)
 			require.Len(t, paused, tC.expMapLen)
 

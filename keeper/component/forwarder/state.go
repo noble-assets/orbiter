@@ -23,7 +23,6 @@ package forwarder
 import (
 	"context"
 	"fmt"
-	"sort"
 
 	"cosmossdk.io/collections"
 
@@ -42,6 +41,10 @@ func (f *Forwarder) IsProtocolPaused(
 }
 
 func (f *Forwarder) SetPausedProtocol(ctx context.Context, protocolID core.ProtocolID) error {
+	if err := protocolID.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
@@ -57,6 +60,10 @@ func (f *Forwarder) SetUnpausedProtocol(
 	ctx context.Context,
 	protocolID core.ProtocolID,
 ) error {
+	if err := protocolID.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := f.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return err
@@ -71,29 +78,16 @@ func (f *Forwarder) SetUnpausedProtocol(
 func (f *Forwarder) GetPausedProtocols(
 	ctx context.Context,
 ) ([]core.ProtocolID, error) {
-	iter, err := f.pausedProtocols.Iterate(ctx, nil)
+	paused := make([]core.ProtocolID, 0)
+
+	err := f.pausedProtocols.Walk(ctx, nil, func(key int32) (stop bool, err error) {
+		paused = append(paused, core.ProtocolID(key))
+
+		return false, nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		_ = iter.Close()
-	}()
-
-	var paused []core.ProtocolID
-	for ; iter.Valid(); iter.Next() {
-		k, err := iter.Key()
-		if err != nil {
-			return nil, err
-		}
-
-		id, err := core.NewProtocolID(k)
-		if err != nil {
-			return nil, fmt.Errorf("cannot create protocol ID from iterator key: %w", err)
-		}
-		paused = append(paused, id)
-	}
-
-	sort.Slice(paused, func(i, j int) bool { return paused[i] < paused[j] })
 
 	return paused, nil
 }
@@ -116,6 +110,10 @@ func (f *Forwarder) SetPausedCrossChain(
 	ctx context.Context,
 	ccID core.CrossChainID,
 ) error {
+	if err := ccID.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := f.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
 		return err
@@ -134,6 +132,10 @@ func (f *Forwarder) SetUnpausedCrossChain(
 	ctx context.Context,
 	ccID core.CrossChainID,
 ) error {
+	if err := ccID.Validate(); err != nil {
+		return err
+	}
+
 	paused, err := f.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
 		return err
@@ -148,10 +150,40 @@ func (f *Forwarder) SetUnpausedCrossChain(
 	)
 }
 
-// GetPausedCrossChains returns all the paused cross-chain IDs.
+// GetAllPausedCrossChainIDs returns a slice of all paused cross-chain IDs.
 //
-// NOTE: this method uses maps and is intended to be used only for queries.
-func (f *Forwarder) GetPausedCrossChains(
+// CONTRACT: this assumes that all cross-chain ids in state are VALID!
+func (f *Forwarder) GetAllPausedCrossChainIDs(
+	ctx context.Context,
+) ([]*core.CrossChainID, error) {
+	crossChainIDs := make([]*core.CrossChainID, 0)
+
+	err := f.pausedCrossChains.Walk(
+		ctx,
+		nil,
+		func(key collections.Pair[int32, string]) (stop bool, err error) {
+			ccid := core.CrossChainID{
+				ProtocolId:     core.ProtocolID(key.K1()),
+				CounterpartyId: key.K2(),
+			}
+
+			crossChainIDs = append(crossChainIDs, &ccid)
+
+			return false, nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return crossChainIDs, nil
+}
+
+// GetPausedCrossChainsMap returns all the paused cross-chain IDs in a map for easier display in
+// query results.
+//
+// NOTE: this method is intended to ONLY be used for queries.
+func (f *Forwarder) GetPausedCrossChainsMap(
 	ctx context.Context,
 	protocolID *core.ProtocolID,
 ) (map[int32][]string, error) {

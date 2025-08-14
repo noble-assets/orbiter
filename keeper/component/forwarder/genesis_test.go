@@ -46,7 +46,7 @@ func TestInitGenesis(t *testing.T) {
 	defaultPausedActionIDs, err := f.GetPausedProtocols(deps.SdkCtx)
 	require.NoError(t, err, "failed to get paused protocol IDs")
 
-	defaultPausedCrossChainIDs, err := f.GetPausedProtocols(deps.SdkCtx)
+	defaultPausedCrossChainIDs, err := f.GetAllPausedCrossChainIDs(deps.SdkCtx)
 	require.NoError(t, err, "failed to get paused cross-chain IDs")
 
 	updatedGenState := forwardertypes.GenesisState{
@@ -55,29 +55,60 @@ func TestInitGenesis(t *testing.T) {
 			{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-42"},
 		},
 	}
-	require.NotEqual(t, updatedGenState.PausedProtocolIds, defaultPausedActionIDs, "updated protocol IDs should be different from current")
-	require.NotEqual(t, updatedGenState.PausedCrossChainIds, defaultPausedCrossChainIDs, "updated cross-chain IDs should be different from current")
+	require.NotEqual(
+		t,
+		updatedGenState.PausedProtocolIds,
+		defaultPausedActionIDs,
+		"updated protocol IDs should be different from current",
+	)
+	require.NotEqual(
+		t,
+		updatedGenState.PausedCrossChainIds,
+		defaultPausedCrossChainIDs,
+		"updated cross-chain IDs should be different from current",
+	)
 
 	err = f.InitGenesis(ctx, &updatedGenState)
 	require.NoError(t, err, "failed to update genesis state")
 
 	pausedProtocolIDs, err := f.GetPausedProtocols(deps.SdkCtx)
 	require.NoError(t, err, "failed to get paused protocol IDs")
-	require.Equal(t, updatedGenState.PausedProtocolIds, pausedProtocolIDs, "paused protocol IDs do not match")
+	require.Equal(
+		t,
+		updatedGenState.PausedProtocolIds,
+		pausedProtocolIDs,
+		"paused protocol IDs do not match",
+	)
 
-	pausedCrossChainIDs, err := f.GetPausedCrossChains(deps.SdkCtx, nil)
+	pausedCrossChainIDs, err := f.GetAllPausedCrossChainIDs(deps.SdkCtx)
 	require.NoError(t, err, "failed to get paused cross chain IDs")
-	require.Equal(t, updatedGenState.PausedCrossChainIds, pausedCrossChainIDs, "paused cross chain IDs do not match")
+	require.Equal(
+		t,
+		updatedGenState.PausedCrossChainIds,
+		pausedCrossChainIDs,
+		"paused cross chain IDs do not match",
+	)
 }
 
 func TestExportGenesis(t *testing.T) {
 	fw, deps := mocks.NewForwarderComponent(t)
 
 	expPausedProtocolIDs := []core.ProtocolID{core.PROTOCOL_HYPERLANE}
-	require.NoError(t, fw.SetPausedProtocol(deps.SdkCtx, expPausedProtocolIDs[0]), "failed to set paused protocol")
+	require.NoError(
+		t,
+		fw.SetPausedProtocol(deps.SdkCtx, expPausedProtocolIDs[0]),
+		"failed to set paused protocol",
+	)
 
-	expPausedCrossChainIDs := []*core.CrossChainID{{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-1"}}
-	require.NoError(t, fw.SetPausedCrossChain(deps.SdkCtx, *expPausedCrossChainIDs[0]), "failed to set paused protocol")
+	expPausedCrossChainIDs := []*core.CrossChainID{
+		{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-1"},
+		{ProtocolId: core.PROTOCOL_CCTP, CounterpartyId: "domain-7"},
+		{ProtocolId: core.PROTOCOL_HYPERLANE, CounterpartyId: "hprln"},
+	}
+	for _, id := range expPausedCrossChainIDs {
+		err := fw.SetPausedCrossChain(deps.SdkCtx, *id)
+		require.NoError(t, err, "failed to set paused cross chain")
+	}
 
 	expGenState := forwardertypes.GenesisState{
 		PausedProtocolIds:   expPausedProtocolIDs,
