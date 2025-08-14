@@ -45,7 +45,7 @@ type Dispatcher struct {
 	ActionHandler     types.PacketHandler[*types.ActionPacket]
 	// Stats
 	dispatchedAmounts *collections.IndexedMap[DispatchedAmountsKey, dispatchertypes.AmountDispatched, DispatchedAmountsIndexes]
-	dispatchCounts    *collections.IndexedMap[DispatchedCountsKey, uint64, DispatchedCountsIndexes]
+	dispatchedCounts  *collections.IndexedMap[DispatchedCountsKey, uint64, DispatchedCountsIndexes]
 }
 
 // New creates a new validated instance of a the dispatcher component.
@@ -83,7 +83,7 @@ func New(
 			codec.CollValue[dispatchertypes.AmountDispatched](cdc),
 			newDispatchedAmountsIndexes(sb),
 		),
-		dispatchCounts: collections.NewIndexedMap(
+		dispatchedCounts: collections.NewIndexedMap(
 			sb,
 			core.DispatchedCountsPrefix,
 			core.DispatchedCountsName,

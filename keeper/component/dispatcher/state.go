@@ -344,7 +344,7 @@ func (d *Dispatcher) GetDispatchedCounts(
 		destID.GetCounterpartyId(),
 	)
 
-	counts, err := d.dispatchCounts.Get(ctx, key)
+	counts, err := d.dispatchedCounts.Get(ctx, key)
 	if err != nil {
 		d.logger.Error("received an error getting dispatches count",
 			"error", err,
@@ -384,7 +384,7 @@ func (d *Dispatcher) SetDispatchedCounts(
 		destID.GetCounterpartyId(),
 	)
 
-	return d.dispatchCounts.Set(ctx, key, counts)
+	return d.dispatchedCounts.Set(ctx, key, counts)
 }
 
 func (d *Dispatcher) GetAllDispatchedCounts(
@@ -392,7 +392,7 @@ func (d *Dispatcher) GetAllDispatchedCounts(
 ) []dispatchertypes.DispatchCountEntry {
 	counts := []dispatchertypes.DispatchCountEntry{}
 
-	err := d.dispatchCounts.Walk(
+	err := d.dispatchedCounts.Walk(
 		ctx,
 		nil,
 		func(k DispatchedCountsKey, v uint64) (stop bool, err error) {
@@ -422,7 +422,7 @@ func (d *Dispatcher) GetDispatchedCountsBySourceProtocolID(
 	counts := []*dispatchertypes.DispatchCountEntry{}
 
 	rng := collections.NewPrefixedQuadRange[int32, string, int32, string](int32(id))
-	err := d.dispatchCounts.Walk(
+	err := d.dispatchedCounts.Walk(
 		ctx,
 		rng,
 		func(k DispatchedCountsKey, v uint64) (stop bool, err error) {
@@ -452,7 +452,7 @@ func (d *Dispatcher) GetDispatchedCountsByDestinationProtocolID(
 	counts := []*dispatchertypes.DispatchCountEntry{}
 
 	rng := collections.NewPrefixedPairRange[int32, DispatchedCountsKey](int32(id))
-	err := d.dispatchCounts.Indexes.ByDestinationProtocolID.Walk(
+	err := d.dispatchedCounts.Indexes.ByDestinationProtocolID.Walk(
 		ctx,
 		rng,
 		func(_ int32, k DispatchedCountsKey) (stop bool, err error) {
@@ -481,7 +481,7 @@ func (d *Dispatcher) getDispatchCountEntryFromKey(
 ) (dispatchertypes.DispatchCountEntry, error) {
 	var entry dispatchertypes.DispatchCountEntry
 
-	value, err := d.dispatchCounts.Get(ctx, k)
+	value, err := d.dispatchedCounts.Get(ctx, k)
 	if err != nil {
 		return entry, errors.Wrap(err, "failed to get disptched counts")
 	}
