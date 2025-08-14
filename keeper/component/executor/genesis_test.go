@@ -41,15 +41,30 @@ func TestInitGenesis(t *testing.T) {
 		PausedActionIds: []core.ActionID{core.ACTION_UNSUPPORTED},
 	}
 	err = e.InitGenesis(deps.SdkCtx, &invalidGenState)
-	require.ErrorContains(t, err, "action ID is not supported", "expected error initializing genesis")
+	require.ErrorContains(
+		t,
+		err,
+		"action ID is not supported",
+		"expected error initializing genesis",
+	)
 
 	actionIDs, err := e.GetPausedActions(deps.SdkCtx)
 	require.NoError(t, err, "failed to get paused actions")
-	require.ElementsMatch(t, defaultPausedActionIDs, actionIDs, "expected paused actions to not have changed")
+	require.ElementsMatch(
+		t,
+		defaultPausedActionIDs,
+		actionIDs,
+		"expected paused actions to not have changed",
+	)
 
 	// ACT: update correctly for valid genesis state
 	updatedActionIDs := []core.ActionID{core.ACTION_FEE, core.ACTION_SWAP}
-	require.NotElementsMatch(t, defaultPausedActionIDs, updatedActionIDs, "updated action IDs should be different")
+	require.NotElementsMatch(
+		t,
+		defaultPausedActionIDs,
+		updatedActionIDs,
+		"updated action IDs should be different",
+	)
 
 	validGenState := executortypes.GenesisState{PausedActionIds: updatedActionIDs}
 	err = e.InitGenesis(deps.SdkCtx, &validGenState)

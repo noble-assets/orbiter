@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+
 	"orbiter.dev/types/core"
 )
 
@@ -81,6 +82,7 @@ func (f *Forwarder) GetPausedProtocols(
 
 	err := f.pausedProtocols.Walk(ctx, nil, func(key int32) (stop bool, err error) {
 		paused = append(paused, core.ProtocolID(key))
+
 		return false, nil
 	})
 	if err != nil {
@@ -156,15 +158,20 @@ func (f *Forwarder) GetAllPausedCrossChainIDs(
 ) ([]*core.CrossChainID, error) {
 	crossChainIDs := make([]*core.CrossChainID, 0)
 
-	err := f.pausedCrossChains.Walk(ctx, nil, func(key collections.Pair[int32, string]) (stop bool, err error) {
-		ccid := core.CrossChainID{
-			ProtocolId:     core.ProtocolID(key.K1()),
-			CounterpartyId: key.K2(),
-		}
+	err := f.pausedCrossChains.Walk(
+		ctx,
+		nil,
+		func(key collections.Pair[int32, string]) (stop bool, err error) {
+			ccid := core.CrossChainID{
+				ProtocolId:     core.ProtocolID(key.K1()),
+				CounterpartyId: key.K2(),
+			}
 
-		crossChainIDs = append(crossChainIDs, &ccid)
-		return false, nil
-	})
+			crossChainIDs = append(crossChainIDs, &ccid)
+
+			return false, nil
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +179,8 @@ func (f *Forwarder) GetAllPausedCrossChainIDs(
 	return crossChainIDs, nil
 }
 
-// GetPausedCrossChainsMap returns all the paused cross-chain IDs in a map for easier display in query results.
+// GetPausedCrossChainsMap returns all the paused cross-chain IDs in a map for easier display in
+// query results.
 //
 // NOTE: this method is intended to ONLY be used for queries.
 func (f *Forwarder) GetPausedCrossChainsMap(
