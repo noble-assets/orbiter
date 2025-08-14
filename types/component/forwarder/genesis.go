@@ -36,7 +36,7 @@ func DefaultGenesisState() *GenesisState {
 // Validate returns an error if any of the genesis field is not valid.
 func (g *GenesisState) Validate() error {
 	if g == nil {
-		return core.ErrNilPointer.Wrap("executor genesis state")
+		return core.ErrNilPointer.Wrap("forwarder genesis state")
 	}
 
 	for _, id := range g.PausedProtocolIds {

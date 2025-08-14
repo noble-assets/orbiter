@@ -53,7 +53,7 @@ func TestInitGenesis(t *testing.T) {
 		{
 			name:     "error - nil genesis state",
 			genState: nil,
-			expErr:   "executor genesis: invalid nil pointer",
+			expErr:   "executor genesis state: invalid nil pointer",
 		},
 		{
 			name: "error - invalid action ID",

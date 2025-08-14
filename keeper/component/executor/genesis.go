@@ -22,7 +22,6 @@ package executor
 
 import (
 	"context"
-	errorsmod "cosmossdk.io/errors"
 	"fmt"
 
 	executortypes "orbiter.dev/types/component/executor"
@@ -31,7 +30,7 @@ import (
 // InitGenesis initialize the state of the component with a genesis state.
 func (e *Executor) InitGenesis(ctx context.Context, g *executortypes.GenesisState) error {
 	if err := g.Validate(); err != nil {
-		return errorsmod.Wrap(err, "invalid executor genesis state")
+		return err
 	}
 
 	// NOTE: paused action ids are already validated

@@ -54,7 +54,7 @@ func TestInitGenesis(t *testing.T) {
 		{
 			name:     "error - nil genesis state",
 			genState: nil,
-			expErr:   "adapter genesis: invalid nil pointer",
+			expErr:   "adapter genesis state: invalid nil pointer",
 		},
 	}
 

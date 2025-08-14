@@ -22,7 +22,6 @@ package forwarder
 
 import (
 	"context"
-	errorsmod "cosmossdk.io/errors"
 	"fmt"
 
 	forwardertypes "orbiter.dev/types/component/forwarder"
@@ -32,7 +31,7 @@ import (
 // InitGenesis initialize the state of the component with a genesis state.
 func (f *Forwarder) InitGenesis(ctx context.Context, g *forwardertypes.GenesisState) error {
 	if err := g.Validate(); err != nil {
-		return errorsmod.Wrap(err, "invalid forwarder genesis state")
+		return err
 	}
 
 	for _, id := range g.PausedProtocolIds {

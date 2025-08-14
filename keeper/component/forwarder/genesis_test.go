@@ -56,14 +56,14 @@ func TestInitGenesis(t *testing.T) {
 		{
 			name:     "error - nil genesis state",
 			genState: nil,
-			expErr:   "forwarder genesis: invalid nil pointer",
+			expErr:   "forwarder genesis state: invalid nil pointer",
 		},
 		{
 			name: "error - invalid protocol ID",
 			genState: &forwardertypes.GenesisState{
 				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_UNSUPPORTED},
 			},
-			expErr: "invalid paused protocol ID",
+			expErr: "protocol ID is not supported",
 		},
 		{
 			name: "error - nil cross chain ID",
