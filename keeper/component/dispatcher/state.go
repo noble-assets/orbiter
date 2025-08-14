@@ -109,7 +109,7 @@ func (d *Dispatcher) GetDispatchedAmount(
 	sourceID *core.CrossChainID,
 	destID *core.CrossChainID,
 	denom string,
-) dispatchertypes.DispatchedAmountEntry {
+) *dispatchertypes.DispatchedAmountEntry {
 	key := collections.Join4(
 		int32(sourceID.GetProtocolId()),
 		sourceID.GetCounterpartyId(),
@@ -131,7 +131,7 @@ func (d *Dispatcher) GetDispatchedAmount(
 		}
 	}
 
-	return dispatchertypes.DispatchedAmountEntry{
+	return &dispatchertypes.DispatchedAmountEntry{
 		SourceId:         sourceID,
 		DestinationId:    destID,
 		Denom:            denom,
@@ -170,8 +170,8 @@ func (d *Dispatcher) SetDispatchedAmount(
 func (d *Dispatcher) GetDispatchedAmountsBySourceProtocolID(
 	ctx context.Context,
 	protocolID core.ProtocolID,
-) []dispatchertypes.DispatchedAmountEntry {
-	amounts := []dispatchertypes.DispatchedAmountEntry{}
+) []*dispatchertypes.DispatchedAmountEntry {
+	amounts := []*dispatchertypes.DispatchedAmountEntry{}
 
 	rng := collections.NewPrefixedQuadRange[int32, string, string, string](int32(protocolID))
 
@@ -184,7 +184,7 @@ func (d *Dispatcher) GetDispatchedAmountsBySourceProtocolID(
 				return true, err
 			}
 
-			amounts = append(amounts, entry)
+			amounts = append(amounts, &entry)
 
 			return false, nil
 		},
@@ -196,7 +196,7 @@ func (d *Dispatcher) GetDispatchedAmountsBySourceProtocolID(
 			err,
 		)
 
-		return []dispatchertypes.DispatchedAmountEntry{}
+		return []*dispatchertypes.DispatchedAmountEntry{}
 	}
 
 	return amounts
@@ -205,8 +205,8 @@ func (d *Dispatcher) GetDispatchedAmountsBySourceProtocolID(
 func (d *Dispatcher) GetDispatchedAmountsByDestinationProtocolID(
 	ctx context.Context,
 	protocolID core.ProtocolID,
-) []dispatchertypes.DispatchedAmountEntry {
-	amounts := []dispatchertypes.DispatchedAmountEntry{}
+) []*dispatchertypes.DispatchedAmountEntry {
+	amounts := []*dispatchertypes.DispatchedAmountEntry{}
 
 	rng := collections.NewPrefixedPairRange[int32, DispatchedAmountsKey](int32(protocolID))
 
@@ -219,7 +219,7 @@ func (d *Dispatcher) GetDispatchedAmountsByDestinationProtocolID(
 				return true, err
 			}
 
-			amounts = append(amounts, entry)
+			amounts = append(amounts, &entry)
 
 			return false, nil
 		},
@@ -231,7 +231,7 @@ func (d *Dispatcher) GetDispatchedAmountsByDestinationProtocolID(
 			err,
 		)
 
-		return []dispatchertypes.DispatchedAmountEntry{}
+		return []*dispatchertypes.DispatchedAmountEntry{}
 	}
 
 	return amounts

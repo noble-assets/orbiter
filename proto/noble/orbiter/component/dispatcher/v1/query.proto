@@ -4,7 +4,6 @@ package noble.orbiter.component.dispatcher.v1;
 
 import "amino/amino.proto";
 import "cosmos/query/v1/query.proto";
-import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "noble/orbiter/component/dispatcher/v1/dispatcher.proto";
 import "noble/orbiter/core/v1/id.proto";
@@ -14,7 +13,6 @@ option go_package = "orbiter.dev/types/component/dispatcher";
 // Query defines the gRPC query service for the Orbiter
 // dispatcher component.
 service Query {
-
   // DispatchedCounts retrieves the dispatched counts for a specific route.
   rpc DispatchedCounts(QueryDispatchedCountsRequest) returns (QueryDispatchedCountsResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
@@ -32,7 +30,6 @@ service Query {
     option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http).get = "/noble/orbiter/dispatcher/v1/dispatched/counts/by-destination/{protocol_id}";
   }
-
 
   // DispatchedAmounts retrieves the dispatched amounts for a specific route.
   rpc DispatchedAmounts(QueryDispatchedAmountsRequest) returns (QueryDispatchedAmountsResponse) {
@@ -76,7 +73,6 @@ message QueryDispatchedCountsResponse {
   repeated DispatchCountEntry counts = 1;
 }
 
-
 // QueryDispatchedAmountsRequest is the request type for the Query/DispatchedAmounts RPC method.
 message QueryDispatchedAmountsRequest {
   // source_protocol_id is the source protocol identifier.
@@ -87,6 +83,8 @@ message QueryDispatchedAmountsRequest {
   noble.orbiter.core.v1.ProtocolID destination_protocol_id = 3 [(amino.dont_omitempty) = true];
   // destination_counterparty_id is the destination counterparty identifier.
   string destination_counterparty_id = 4;
+  // denom is the denomination of the amounts requested.
+  string denom = 5;
 }
 
 // QueryDispatchedAmountsByProtocolIDRequest is the request type for the Query/DispatchedAmountsBy* methods.

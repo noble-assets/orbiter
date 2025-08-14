@@ -19,9 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Query_DispatchedCounts_FullMethodName                        = "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCounts"
-	Query_DispatchedCountsBySourceProtocolID_FullMethodName      = "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsBySourceProtocolID"
-	Query_DispatchedCountsByDestinationProtocolID_FullMethodName = "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsByDestinationProtocolID"
+	Query_DispatchedCounts_FullMethodName                         = "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCounts"
+	Query_DispatchedCountsBySourceProtocolID_FullMethodName       = "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsBySourceProtocolID"
+	Query_DispatchedCountsByDestinationProtocolID_FullMethodName  = "/noble.orbiter.component.dispatcher.v1.Query/DispatchedCountsByDestinationProtocolID"
+	Query_DispatchedAmounts_FullMethodName                        = "/noble.orbiter.component.dispatcher.v1.Query/DispatchedAmounts"
+	Query_DispatchedAmountsBySourceProtocolID_FullMethodName      = "/noble.orbiter.component.dispatcher.v1.Query/DispatchedAmountsBySourceProtocolID"
+	Query_DispatchedAmountsByDestinationProtocolID_FullMethodName = "/noble.orbiter.component.dispatcher.v1.Query/DispatchedAmountsByDestinationProtocolID"
 )
 
 // QueryClient is the client API for Query service.
@@ -31,10 +34,18 @@ const (
 // Query defines the gRPC query service for the Orbiter
 // dispatcher component.
 type QueryClient interface {
-	// DispatchedCounts retrieves the dispatch counts for a specific route.
+	// DispatchedCounts retrieves the dispatched counts for a specific route.
 	DispatchedCounts(ctx context.Context, in *QueryDispatchedCountsRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error)
+	// DispatchedCountsBySourceProtocolID retrieves all the dispatched counts for a specific sorce protocol ID.
 	DispatchedCountsBySourceProtocolID(ctx context.Context, in *QueryDispatchedCountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error)
+	// DispatchedCountsByDestinationProtocolID retrieves all the dispatched counts for a specific destination protocol ID.
 	DispatchedCountsByDestinationProtocolID(ctx context.Context, in *QueryDispatchedCountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedCountsResponse, error)
+	// DispatchedAmounts retrieves the dispatched amounts for a specific route.
+	DispatchedAmounts(ctx context.Context, in *QueryDispatchedAmountsRequest, opts ...grpc.CallOption) (*QueryDispatchedAmountsResponse, error)
+	// DispatchedAmountsBySourceProtocolID retrieves all the dispatched amounts for a specific sorce protocol ID.
+	DispatchedAmountsBySourceProtocolID(ctx context.Context, in *QueryDispatchedAmountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedAmountsResponse, error)
+	// DispatchedAmountsByDestinationProtocolID retrieves all the dispatched amounts for a specific destination protocol ID.
+	DispatchedAmountsByDestinationProtocolID(ctx context.Context, in *QueryDispatchedAmountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedAmountsResponse, error)
 }
 
 type queryClient struct {
@@ -75,6 +86,36 @@ func (c *queryClient) DispatchedCountsByDestinationProtocolID(ctx context.Contex
 	return out, nil
 }
 
+func (c *queryClient) DispatchedAmounts(ctx context.Context, in *QueryDispatchedAmountsRequest, opts ...grpc.CallOption) (*QueryDispatchedAmountsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryDispatchedAmountsResponse)
+	err := c.cc.Invoke(ctx, Query_DispatchedAmounts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) DispatchedAmountsBySourceProtocolID(ctx context.Context, in *QueryDispatchedAmountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedAmountsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryDispatchedAmountsResponse)
+	err := c.cc.Invoke(ctx, Query_DispatchedAmountsBySourceProtocolID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) DispatchedAmountsByDestinationProtocolID(ctx context.Context, in *QueryDispatchedAmountsByProtocolIDRequest, opts ...grpc.CallOption) (*QueryDispatchedAmountsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryDispatchedAmountsResponse)
+	err := c.cc.Invoke(ctx, Query_DispatchedAmountsByDestinationProtocolID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -82,10 +123,18 @@ func (c *queryClient) DispatchedCountsByDestinationProtocolID(ctx context.Contex
 // Query defines the gRPC query service for the Orbiter
 // dispatcher component.
 type QueryServer interface {
-	// DispatchedCounts retrieves the dispatch counts for a specific route.
+	// DispatchedCounts retrieves the dispatched counts for a specific route.
 	DispatchedCounts(context.Context, *QueryDispatchedCountsRequest) (*QueryDispatchedCountsResponse, error)
+	// DispatchedCountsBySourceProtocolID retrieves all the dispatched counts for a specific sorce protocol ID.
 	DispatchedCountsBySourceProtocolID(context.Context, *QueryDispatchedCountsByProtocolIDRequest) (*QueryDispatchedCountsResponse, error)
+	// DispatchedCountsByDestinationProtocolID retrieves all the dispatched counts for a specific destination protocol ID.
 	DispatchedCountsByDestinationProtocolID(context.Context, *QueryDispatchedCountsByProtocolIDRequest) (*QueryDispatchedCountsResponse, error)
+	// DispatchedAmounts retrieves the dispatched amounts for a specific route.
+	DispatchedAmounts(context.Context, *QueryDispatchedAmountsRequest) (*QueryDispatchedAmountsResponse, error)
+	// DispatchedAmountsBySourceProtocolID retrieves all the dispatched amounts for a specific sorce protocol ID.
+	DispatchedAmountsBySourceProtocolID(context.Context, *QueryDispatchedAmountsByProtocolIDRequest) (*QueryDispatchedAmountsResponse, error)
+	// DispatchedAmountsByDestinationProtocolID retrieves all the dispatched amounts for a specific destination protocol ID.
+	DispatchedAmountsByDestinationProtocolID(context.Context, *QueryDispatchedAmountsByProtocolIDRequest) (*QueryDispatchedAmountsResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -104,6 +153,15 @@ func (UnimplementedQueryServer) DispatchedCountsBySourceProtocolID(context.Conte
 }
 func (UnimplementedQueryServer) DispatchedCountsByDestinationProtocolID(context.Context, *QueryDispatchedCountsByProtocolIDRequest) (*QueryDispatchedCountsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DispatchedCountsByDestinationProtocolID not implemented")
+}
+func (UnimplementedQueryServer) DispatchedAmounts(context.Context, *QueryDispatchedAmountsRequest) (*QueryDispatchedAmountsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DispatchedAmounts not implemented")
+}
+func (UnimplementedQueryServer) DispatchedAmountsBySourceProtocolID(context.Context, *QueryDispatchedAmountsByProtocolIDRequest) (*QueryDispatchedAmountsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DispatchedAmountsBySourceProtocolID not implemented")
+}
+func (UnimplementedQueryServer) DispatchedAmountsByDestinationProtocolID(context.Context, *QueryDispatchedAmountsByProtocolIDRequest) (*QueryDispatchedAmountsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DispatchedAmountsByDestinationProtocolID not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -180,6 +238,60 @@ func _Query_DispatchedCountsByDestinationProtocolID_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_DispatchedAmounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryDispatchedAmountsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).DispatchedAmounts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_DispatchedAmounts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).DispatchedAmounts(ctx, req.(*QueryDispatchedAmountsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_DispatchedAmountsBySourceProtocolID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryDispatchedAmountsByProtocolIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).DispatchedAmountsBySourceProtocolID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_DispatchedAmountsBySourceProtocolID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).DispatchedAmountsBySourceProtocolID(ctx, req.(*QueryDispatchedAmountsByProtocolIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_DispatchedAmountsByDestinationProtocolID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryDispatchedAmountsByProtocolIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).DispatchedAmountsByDestinationProtocolID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_DispatchedAmountsByDestinationProtocolID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).DispatchedAmountsByDestinationProtocolID(ctx, req.(*QueryDispatchedAmountsByProtocolIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -198,6 +310,18 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DispatchedCountsByDestinationProtocolID",
 			Handler:    _Query_DispatchedCountsByDestinationProtocolID_Handler,
+		},
+		{
+			MethodName: "DispatchedAmounts",
+			Handler:    _Query_DispatchedAmounts_Handler,
+		},
+		{
+			MethodName: "DispatchedAmountsBySourceProtocolID",
+			Handler:    _Query_DispatchedAmountsBySourceProtocolID_Handler,
+		},
+		{
+			MethodName: "DispatchedAmountsByDestinationProtocolID",
+			Handler:    _Query_DispatchedAmountsByDestinationProtocolID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
