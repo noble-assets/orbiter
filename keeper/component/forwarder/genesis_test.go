@@ -46,7 +46,7 @@ func TestInitGenesis(t *testing.T) {
 	defaultPausedActionIDs, err := f.GetPausedProtocols(deps.SdkCtx)
 	require.NoError(t, err, "failed to get paused protocol IDs")
 
-	defaultPausedCrossChainIDs, err := f.GetPausedProtocols(deps.SdkCtx)
+	defaultPausedCrossChainIDs, err := f.GetAllPausedCrossChainIDs(deps.SdkCtx)
 	require.NoError(t, err, "failed to get paused cross-chain IDs")
 
 	updatedGenState := forwardertypes.GenesisState{
