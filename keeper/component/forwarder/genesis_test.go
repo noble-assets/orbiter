@@ -76,8 +76,15 @@ func TestExportGenesis(t *testing.T) {
 	expPausedProtocolIDs := []core.ProtocolID{core.PROTOCOL_HYPERLANE}
 	require.NoError(t, fw.SetPausedProtocol(deps.SdkCtx, expPausedProtocolIDs[0]), "failed to set paused protocol")
 
-	expPausedCrossChainIDs := []*core.CrossChainID{{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-1"}}
-	require.NoError(t, fw.SetPausedCrossChain(deps.SdkCtx, *expPausedCrossChainIDs[0]), "failed to set paused protocol")
+	expPausedCrossChainIDs := []*core.CrossChainID{
+		{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-1"},
+		{ProtocolId: core.PROTOCOL_CCTP, CounterpartyId: "domain-7"},
+		{ProtocolId: core.PROTOCOL_HYPERLANE, CounterpartyId: "hprln"},
+	}
+	for _, id := range expPausedCrossChainIDs {
+		err := fw.SetPausedCrossChain(deps.SdkCtx, *id)
+		require.NoError(t, err, "failed to set paused cross chain")
+	}
 
 	expGenState := forwardertypes.GenesisState{
 		PausedProtocolIds:   expPausedProtocolIDs,
