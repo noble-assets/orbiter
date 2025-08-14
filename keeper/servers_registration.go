@@ -43,7 +43,7 @@ func RegisterMsgServers(cfg module.Configurator, k *Keeper) {
 }
 
 // RegisterQueryServers registers the gRPC query servers for all Orbiter components
-// (Forwarder, Executor, and Adapter) with the module configurator.
+// with the module configurator.
 func RegisterQueryServers(cfg module.Configurator, k *Keeper) {
 	qs := cfg.QueryServer()
 	forwardertypes.RegisterQueryServer(qs, forwarder.NewQueryServer(k.forwarder))

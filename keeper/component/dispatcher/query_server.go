@@ -22,6 +22,7 @@ package dispatcher
 
 import (
 	"context"
+	"fmt"
 
 	"cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -56,6 +57,14 @@ func (q queryServer) DispatchedCounts(
 	destID, err := core.NewCrossChainID(req.DestinationProtocolId, req.DestinationCounterpartyId)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error creating destination cross-chain ID")
+	}
+
+	if !q.HasDispatchedCounts(ctx, &sourceID, &destID) {
+		return nil, fmt.Errorf(
+			"dispatched counts does not exists for source ID %s and destination ID %s",
+			sourceID.String(),
+			destID.String(),
+		)
 	}
 
 	counts := q.GetDispatchedCounts(ctx, &sourceID, &destID)
@@ -120,6 +129,19 @@ func (q queryServer) DispatchedAmounts(
 	destID, err := core.NewCrossChainID(req.DestinationProtocolId, req.DestinationCounterpartyId)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error creating destination cross-chain ID")
+	}
+
+	if req.Denom == "" {
+		return nil, errors.Wrapf(core.ErrEmptyString, "error querying an empty string token denom")
+	}
+
+	if !q.HasDispatchedAmount(ctx, &sourceID, &destID, req.Denom) {
+		return nil, fmt.Errorf(
+			"dispatched amount does not exists for source ID %s, destination ID %s, and denom %s",
+			sourceID.String(),
+			destID.String(),
+			req.Denom,
+		)
 	}
 
 	amounts := q.GetDispatchedAmount(ctx, &sourceID, &destID, req.Denom)

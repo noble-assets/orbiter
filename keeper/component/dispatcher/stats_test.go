@@ -38,6 +38,7 @@ import (
 
 func TestUpdateStats(t *testing.T) {
 	defaultAttr := func() *types.TransferAttributes {
+		t.Helper()
 		ta, err := types.NewTransferAttributes(
 			core.PROTOCOL_IBC,
 			"hyperliquid",
@@ -50,6 +51,7 @@ func TestUpdateStats(t *testing.T) {
 	}
 
 	defaultForwarding := func() *core.Forwarding {
+		t.Helper()
 		attr := &testdata.TestForwardingAttr{
 			Planet: "ethereum",
 		}

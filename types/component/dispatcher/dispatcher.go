@@ -27,7 +27,7 @@ import (
 )
 
 func (a *AmountDispatched) IsPositive() bool {
-	return a.Incoming.IsPositive() && a.Outgoing.IsPositive()
+	return a.Incoming.IsPositive() || a.Outgoing.IsPositive()
 }
 
 func NewAmountDispatched(

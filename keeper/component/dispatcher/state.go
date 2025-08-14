@@ -179,7 +179,7 @@ func (d *Dispatcher) GetDispatchedAmountsBySourceProtocolID(
 		ctx,
 		rng,
 		func(k DispatchedAmountsKey, v dispatchertypes.AmountDispatched) (stop bool, err error) {
-			entry, err := d.GetDispatchedAmountEntryFromKey(ctx, k)
+			entry, err := d.getDispatchedAmountEntryFromKey(ctx, k)
 			if err != nil {
 				return true, err
 			}
@@ -214,7 +214,7 @@ func (d *Dispatcher) GetDispatchedAmountsByDestinationProtocolID(
 		ctx,
 		rng,
 		func(_ int32, k DispatchedAmountsKey) (stop bool, err error) {
-			entry, err := d.GetDispatchedAmountEntryFromKey(ctx, k)
+			entry, err := d.getDispatchedAmountEntryFromKey(ctx, k)
 			if err != nil {
 				return true, err
 			}
@@ -246,7 +246,7 @@ func (d *Dispatcher) GetAllDispatchedAmounts(
 		ctx,
 		nil,
 		func(k DispatchedAmountsKey, v dispatchertypes.AmountDispatched) (stop bool, err error) {
-			entry, err := d.GetDispatchedAmountEntryFromKey(ctx, k)
+			entry, err := d.getDispatchedAmountEntryFromKey(ctx, k)
 			if err != nil {
 				return true, err
 			}
@@ -265,7 +265,7 @@ func (d *Dispatcher) GetAllDispatchedAmounts(
 	return amounts
 }
 
-func (d *Dispatcher) GetDispatchedAmountEntryFromKey(
+func (d *Dispatcher) getDispatchedAmountEntryFromKey(
 	ctx context.Context,
 	k DispatchedAmountsKey,
 ) (dispatchertypes.DispatchedAmountEntry, error) {
@@ -273,7 +273,7 @@ func (d *Dispatcher) GetDispatchedAmountEntryFromKey(
 
 	value, err := d.dispatchedAmounts.Get(ctx, k)
 	if err != nil {
-		return entry, errors.Wrap(err, "failed to get disptched amount")
+		return entry, errors.Wrap(err, "failed to get dispatched amount")
 	}
 
 	sourceID, err := core.NewCrossChainID(core.ProtocolID(k.K1()), k.K2())
@@ -483,7 +483,7 @@ func (d *Dispatcher) getDispatchCountEntryFromKey(
 
 	value, err := d.dispatchedCounts.Get(ctx, k)
 	if err != nil {
-		return entry, errors.Wrap(err, "failed to get disptched counts")
+		return entry, errors.Wrap(err, "failed to get dispatched counts")
 	}
 
 	sourceID, err := core.NewCrossChainID(core.ProtocolID(k.K1()), k.K2())

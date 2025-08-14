@@ -100,15 +100,15 @@ func TestNew(t *testing.T) {
 	}
 
 	for _, tC := range testCases {
-		_, err := dispatcher.New(
-			tC.codec,
-			tC.sb,
-			tC.logger,
-			tC.ForwardingHandler,
-			tC.ActionHandler,
-		)
-
 		t.Run(tC.name, func(t *testing.T) {
+			_, err := dispatcher.New(
+				tC.codec,
+				tC.sb,
+				tC.logger,
+				tC.ForwardingHandler,
+				tC.ActionHandler,
+			)
+
 			if tC.expError != "" {
 				require.ErrorContains(t, err, tC.expError)
 			} else {

@@ -34,7 +34,13 @@ import (
 	"orbiter.dev/types/core"
 )
 
-const UsdcDenom = "uusdc"
+const (
+	UsdcDenom = "uusdc"
+	channel0  = "channel-0"
+	channel1  = "channel-1"
+	channel2  = "channel-2"
+	channel3  = "channel-3"
+)
 
 // ====================================================================================================
 // Dispatched Amount
@@ -47,7 +53,7 @@ func TestSetHasGetDispatchedAmount(t *testing.T) {
 
 	sourceID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_IBC,
-		CounterpartyId: "channel-1",
+		CounterpartyId: channel1,
 	}
 	destID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_CCTP,
@@ -100,6 +106,18 @@ func TestSetHasGetDispatchedAmount(t *testing.T) {
 	// ASSERT
 	require.True(t, found)
 	require.Equal(t, expAmount, da.AmountDispatched)
+
+	// ARRANGE: Set an entry with only one quantity positive
+	sourceID.ProtocolId = core.PROTOCOL_HYPERLANE
+	expAmount.Incoming = math.ZeroInt()
+	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, expAmount)
+	require.NoError(t, err)
+
+	// ACT
+	found = d.HasDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom)
+
+	// ASSERT
+	require.True(t, found)
 }
 
 func createDispatchedAmountEntries(t *testing.T, ctx context.Context, d *dispatcher.Dispatcher) {
@@ -107,7 +125,7 @@ func createDispatchedAmountEntries(t *testing.T, ctx context.Context, d *dispatc
 
 	sourceID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_IBC,
-		CounterpartyId: "channel-1",
+		CounterpartyId: channel1,
 	}
 	destID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_CCTP,
@@ -124,11 +142,11 @@ func createDispatchedAmountEntries(t *testing.T, ctx context.Context, d *dispatc
 	err := d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
 	require.NoError(t, err)
 
-	sourceID.CounterpartyId = "channel-2"
+	sourceID.CounterpartyId = channel2
 	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
 	require.NoError(t, err)
 
-	sourceID.CounterpartyId = "channel-3"
+	sourceID.CounterpartyId = channel3
 	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
 	require.NoError(t, err)
 
@@ -150,7 +168,7 @@ func createDispatchedAmountEntries(t *testing.T, ctx context.Context, d *dispatc
 	sourceID.ProtocolId = core.PROTOCOL_CCTP
 	sourceID.CounterpartyId = "1"
 	destID.ProtocolId = core.PROTOCOL_IBC
-	destID.CounterpartyId = "channel-0"
+	destID.CounterpartyId = channel0
 	err = d.SetDispatchedAmount(ctx, &sourceID, &destID, UsdcDenom, amount)
 	require.NoError(t, err)
 
@@ -244,7 +262,7 @@ func TestSetHasGetDispatchedCounts(t *testing.T) {
 
 	sourceID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_IBC,
-		CounterpartyId: "channel-1",
+		CounterpartyId: channel1,
 	}
 	destID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_CCTP,
@@ -366,7 +384,7 @@ func createDispatchedCountEntries(t *testing.T, ctx context.Context, d *dispatch
 
 	sourceID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_IBC,
-		CounterpartyId: "channel-1",
+		CounterpartyId: channel1,
 	}
 	destID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_CCTP,
@@ -377,11 +395,11 @@ func createDispatchedCountEntries(t *testing.T, ctx context.Context, d *dispatch
 	err := d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
 	require.NoError(t, err)
 
-	sourceID.CounterpartyId = "channel-2"
+	sourceID.CounterpartyId = channel2
 	err = d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
 	require.NoError(t, err)
 
-	sourceID.CounterpartyId = "channel-3"
+	sourceID.CounterpartyId = channel3
 	err = d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
 	require.NoError(t, err)
 
@@ -403,7 +421,7 @@ func createDispatchedCountEntries(t *testing.T, ctx context.Context, d *dispatch
 	sourceID.ProtocolId = core.PROTOCOL_CCTP
 	sourceID.CounterpartyId = "1"
 	destID.ProtocolId = core.PROTOCOL_IBC
-	destID.CounterpartyId = "channel-0"
+	destID.CounterpartyId = channel0
 	err = d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
 	require.NoError(t, err)
 

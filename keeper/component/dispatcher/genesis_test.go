@@ -1,3 +1,23 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright (C) 2025, NASD Inc. All rights reserved.
+// Use of this software is governed by the Business Source License included
+// in the LICENSE file of this repository and at www.mariadb.com/bsl11.
+//
+// ANY USE OF THE LICENSED WORK IN VIOLATION OF THIS LICENSE WILL AUTOMATICALLY
+// TERMINATE YOUR RIGHTS UNDER THIS LICENSE FOR THE CURRENT AND ALL OTHER
+// VERSIONS OF THE LICENSED WORK.
+//
+// THIS LICENSE DOES NOT GRANT YOU ANY RIGHT IN ANY TRADEMARK OR LOGO OF
+// LICENSOR OR ITS AFFILIATES (PROVIDED THAT YOU MAY USE A TRADEMARK OR LOGO OF
+// LICENSOR AS EXPRESSLY REQUIRED BY THIS LICENSE).
+//
+// TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSED WORK IS PROVIDED ON
+// AN "AS IS" BASIS. LICENSOR HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS,
+// EXPRESS OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
+// TITLE.
+
 package dispatcher_test
 
 import (
@@ -117,38 +137,37 @@ func TestInitGenesis(t *testing.T) {
 func TestExportGenesis(t *testing.T) {
 	testCases := []struct {
 		name              string
-		dispatchedAmounts func() []*dispatchertypes.DispatchedAmountEntry
-		dispatchedCounts  func() []*dispatchertypes.DispatchCountEntry
-		expErr            string
+		dispatchedAmounts func() []dispatchertypes.DispatchedAmountEntry
+		dispatchedCounts  func() []dispatchertypes.DispatchCountEntry
+		expEmpty          bool
 	}{
 		{
-			name:   "success - empty state",
-			expErr: "nil",
+			name:     "success - empty state",
+			expEmpty: true,
 		},
 		{
 			name: "success - not empty state",
-			dispatchedAmounts: func() []*dispatchertypes.DispatchedAmountEntry {
-				return []*dispatchertypes.DispatchedAmountEntry{
-					defaultAmounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-1", "chain-2"),
-					defaultAmounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-3", "chain-4"),
-					defaultAmounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-11", "chain-12"),
-					defaultAmounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-13", "chain-14"),
+			dispatchedAmounts: func() []dispatchertypes.DispatchedAmountEntry {
+				return []dispatchertypes.DispatchedAmountEntry{
+					*defaultAmounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-1", "chain-2"),
+					*defaultAmounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-3", "chain-4"),
+					*defaultAmounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-11", "chain-12"),
+					*defaultAmounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-13", "chain-14"),
 				}
 			},
-			dispatchedCounts: func() []*dispatchertypes.DispatchCountEntry {
-				return []*dispatchertypes.DispatchCountEntry{
-					defaultCounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-1", "chain-2"),
-					defaultCounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-3", "chain-4"),
-					defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-11", "chain-12"),
-					defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-13", "chain-14"),
-					defaultCounts(core.PROTOCOL_HYPERLANE, core.PROTOCOL_CCTP, "1", "2"),
-					defaultCounts(core.PROTOCOL_HYPERLANE, core.PROTOCOL_CCTP, "3", "4"),
-					defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_HYPERLANE, "11", "12"),
-					defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_HYPERLANE, "13", "14"),
+			dispatchedCounts: func() []dispatchertypes.DispatchCountEntry {
+				return []dispatchertypes.DispatchCountEntry{
+					*defaultCounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-1", "chain-2"),
+					*defaultCounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-3", "chain-4"),
+					*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-11", "chain-12"),
+					*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-13", "chain-14"),
+					*defaultCounts(core.PROTOCOL_HYPERLANE, core.PROTOCOL_CCTP, "1", "2"),
+					*defaultCounts(core.PROTOCOL_HYPERLANE, core.PROTOCOL_CCTP, "3", "4"),
+					*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_HYPERLANE, "11", "12"),
+					*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_HYPERLANE, "13", "14"),
 				}
 			},
-
-			expErr: "",
+			expEmpty: false,
 		},
 	}
 
@@ -157,7 +176,7 @@ func TestExportGenesis(t *testing.T) {
 			d, deps := mocks.NewDispatcherComponent(t)
 			ctx := deps.SdkCtx
 
-			var da []*dispatchertypes.DispatchedAmountEntry
+			var da []dispatchertypes.DispatchedAmountEntry
 			if tC.dispatchedAmounts != nil {
 				da = tC.dispatchedAmounts()
 			}
@@ -172,7 +191,7 @@ func TestExportGenesis(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			var dc []*dispatchertypes.DispatchCountEntry
+			var dc []dispatchertypes.DispatchCountEntry
 			if tC.dispatchedCounts != nil {
 				dc = tC.dispatchedCounts()
 			}
@@ -188,7 +207,10 @@ func TestExportGenesis(t *testing.T) {
 
 			g := d.ExportGenesis(ctx)
 
-			if tC.expErr != "" {
+			if tC.expEmpty {
+				require.Empty(t, g.DispatchedAmounts)
+				require.Empty(t, g.DispatchedCounts)
+			} else {
 				require.ElementsMatch(t, da, g.DispatchedAmounts)
 				require.ElementsMatch(t, dc, g.DispatchedCounts)
 			}
