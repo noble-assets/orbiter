@@ -82,10 +82,16 @@ vulncheck:
 	@go tool govulncheck ./...
 	@echo "Completed vulnerability check!"
 
+NANCY_VERSION=v1.0
+NANCY_IMAGE=sonatypecommunity/nancy:$(NANCY_VERSION)
 nancy:
 	@echo "==================================================================="
 	@echo "Running Nancy vulnerability scanner..."
-	@go list -json -deps ./... | (cd tool && nancy sleuth --exclude-vulnerability-file ../.nancy-ignore)
+	@go list -json -deps ./... | docker run --rm -i \
+	  --volume "$(PWD)":/workspace \
+	  --workdir /workspace \
+	  $(NANCY_IMAGE) sleuth \
+	  --exclude-vulnerability-file .nancy-ignore
 	@echo "Completed Nancy vulnerability scan!"
 
 #=============================================================================#
