@@ -26,6 +26,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -113,11 +114,7 @@ func (e *Executor) SetRouter(r ActionRouter) error {
 // Pause allows to pause an action controller.
 func (e *Executor) Pause(ctx context.Context, actionID core.ActionID) error {
 	if err := e.SetPausedAction(ctx, actionID); err != nil {
-		return fmt.Errorf(
-			"error pausing action %s: %w",
-			actionID,
-			err,
-		)
+		return errorsmod.Wrapf(err, "error pausing action %s", actionID)
 	}
 
 	return nil
@@ -126,11 +123,7 @@ func (e *Executor) Pause(ctx context.Context, actionID core.ActionID) error {
 // Unpause allows to unpause an action controller.
 func (e *Executor) Unpause(ctx context.Context, actionID core.ActionID) error {
 	if err := e.SetUnpausedAction(ctx, actionID); err != nil {
-		return fmt.Errorf(
-			"error unpausing action %s: %w",
-			actionID,
-			err,
-		)
+		return errorsmod.Wrapf(err, "error unpausing action %s", actionID)
 	}
 
 	return nil
@@ -155,12 +148,12 @@ func (e *Executor) HandlePacket(
 func (e *Executor) validatePacket(ctx context.Context, packet *types.ActionPacket) error {
 	err := packet.Validate()
 	if err != nil {
-		return fmt.Errorf("error validating action packet: %w", err)
+		return errorsmod.Wrap(err, "error validating action packet")
 	}
 
 	err = e.validateController(ctx, packet.Action.ID())
 	if err != nil {
-		return fmt.Errorf("error validating action controller: %w", err)
+		return errorsmod.Wrap(err, "error validating action controller")
 	}
 
 	return nil

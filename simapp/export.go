@@ -2,8 +2,8 @@ package simapp
 
 import (
 	"encoding/json"
-	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
@@ -27,7 +27,7 @@ func (app *SimApp) ExportAppStateAndValidators(
 
 	genState, err := app.ModuleManager.ExportGenesis(ctx, app.appCodec)
 	if err != nil {
-		return servertypes.ExportedApp{}, fmt.Errorf("failed to export genesis state: %w", err)
+		return servertypes.ExportedApp{}, errorsmod.Wrap(err, "failed to export genesis state")
 	}
 
 	appState, err := json.MarshalIndent(genState, "", "  ")

@@ -26,6 +26,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -160,11 +161,11 @@ func ValidateCrossChains(
 	counterpartyIDs []string,
 ) error {
 	if err := protocolID.Validate(); err != nil {
-		return fmt.Errorf("invalid protocol ID: %w", err)
+		return errorsmod.Wrap(err, "invalid protocol ID")
 	}
 	for _, id := range counterpartyIDs {
 		if err := core.ValidateCounterpartyID(id); err != nil {
-			return fmt.Errorf("invalid counterparty ID: %w", err)
+			return errorsmod.Wrap(err, "invalid counterparty ID")
 		}
 	}
 
@@ -208,19 +209,21 @@ func (f *Forwarder) validatePacket(
 ) error {
 	err := packet.Validate()
 	if err != nil {
-		return fmt.Errorf("error validating forwarding packet: %w", err)
+		return errorsmod.Wrap(err, "error validating forwarding packet")
 	}
 
 	attr, err := packet.Forwarding.CachedAttributes()
 	if err != nil {
-		return fmt.Errorf("error getting attributes from forwarding packet: %w", err)
+		return errorsmod.Wrap(err, "error getting attributes from forwarding packet")
 	}
 
 	err = f.ValidateForwarding(ctx, packet.Forwarding.ProtocolID(), attr.CounterpartyID())
 	if err != nil {
-		return fmt.Errorf(
-			"error validating forwarding controller for protocol ID %s and counterparty ID %s: %w",
-			packet.Forwarding.ProtocolID(), attr.CounterpartyID(), err,
+		return errorsmod.Wrapf(
+			err,
+			"error validating forwarding controller for protocol ID %s and counterparty ID %s",
+			packet.Forwarding.ProtocolID(),
+			attr.CounterpartyID(),
 		)
 	}
 
@@ -252,8 +255,12 @@ func (f *Forwarder) validateCrossChain(
 ) error {
 	ccID, err := core.NewCrossChainID(protocolID, counterpartyID)
 	if err != nil {
-		return fmt.Errorf("invalid cross-chain ID for protocol %v and counterparty %s: %w",
-			protocolID, counterpartyID, err)
+		return errorsmod.Wrapf(
+			err,
+			"invalid cross-chain ID for protocol %v and counterparty %s",
+			protocolID,
+			counterpartyID,
+		)
 	}
 	isPaused, err := f.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
@@ -297,11 +304,7 @@ func (f *Forwarder) pauseProtocol(
 	protocolID core.ProtocolID,
 ) error {
 	if err := f.SetPausedProtocol(ctx, protocolID); err != nil {
-		return fmt.Errorf(
-			"error pausing all forwardings for protocol %s: %w",
-			protocolID,
-			err,
-		)
+		return errorsmod.Wrapf(err, "error pausing all forwardings for protocol %s", protocolID)
 	}
 
 	return nil
@@ -315,11 +318,11 @@ func (f *Forwarder) pauseCrossChains(
 	for _, ID := range counterpartyIDs {
 		ccID := core.CrossChainID{ProtocolId: protocolID, CounterpartyId: ID}
 		if err := f.SetPausedCrossChain(ctx, ccID); err != nil {
-			return fmt.Errorf(
-				"error pausing forwarding for protocol %s and counterparty %s: %w",
+			return errorsmod.Wrapf(
+				err,
+				"error pausing forwarding for protocol %s and counterparty %s",
 				protocolID,
 				ID,
-				err,
 			)
 		}
 	}
@@ -332,11 +335,7 @@ func (f *Forwarder) unpauseProtocol(
 	protocolID core.ProtocolID,
 ) error {
 	if err := f.SetUnpausedProtocol(ctx, protocolID); err != nil {
-		return fmt.Errorf(
-			"error unpausing all forwardings for protocol %s: %w",
-			protocolID,
-			err,
-		)
+		return errorsmod.Wrapf(err, "error unpausing all forwardings for protocol %s", protocolID)
 	}
 
 	return nil
@@ -350,11 +349,11 @@ func (f *Forwarder) unpauseCrossChains(
 	for _, ID := range counterpartyIDs {
 		ccID := core.CrossChainID{ProtocolId: protocolID, CounterpartyId: ID}
 		if err := f.SetUnpausedCrossChain(ctx, ccID); err != nil {
-			return fmt.Errorf(
-				"error unpausing forwarding for protocol %s and counterparty %s: %w",
+			return errorsmod.Wrapf(
+				err,
+				"error unpausing forwarding for protocol %s and counterparty %s",
 				protocolID,
 				ID,
-				err,
 			)
 		}
 	}

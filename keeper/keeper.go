@@ -27,6 +27,7 @@ import (
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/store"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -216,22 +217,22 @@ func (k *Keeper) setComponents(
 ) error {
 	executor, err := executorcomp.New(cdc, sb, logger)
 	if err != nil {
-		return fmt.Errorf("error creating a new action component: %w", err)
+		return errorsmod.Wrap(err, "error creating a new action component")
 	}
 
 	forwarder, err := forwardercomp.New(cdc, sb, logger, bankKeeper)
 	if err != nil {
-		return fmt.Errorf("error creating a new forwarding component: %w", err)
+		return errorsmod.Wrap(err, "error creating a new forwarding component")
 	}
 
 	dispatcher, err := dispatchercomp.New(cdc, sb, logger, forwarder, executor)
 	if err != nil {
-		return fmt.Errorf("error creating a new dispatcher component: %w", err)
+		return errorsmod.Wrap(err, "error creating a new dispatcher component")
 	}
 
 	adapter, err := adaptercomp.New(cdc, sb, logger, bankKeeper, dispatcher)
 	if err != nil {
-		return fmt.Errorf("error creating a new adapter component: %w", err)
+		return errorsmod.Wrap(err, "error creating a new adapter component")
 	}
 
 	k.executor = executor

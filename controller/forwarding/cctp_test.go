@@ -129,7 +129,7 @@ func TestHandlePacket(t *testing.T) {
 			},
 		},
 		{
-			name: "error - cctp server returns an error",
+			name: "error - CCTP server returns an error",
 			setup: func() context.Context {
 				return context.WithValue(context.Background(), mocks.FailingContextKey, true)
 			},

@@ -24,6 +24,7 @@ import (
 	"errors"
 	fmt "fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -76,13 +77,13 @@ func (a *TransferAttributes) Validate() error {
 		return err
 	}
 	if err := a.sourceCoin.Validate(); err != nil {
-		return fmt.Errorf("source coin validation error: %w", err)
+		return errorsmod.Wrap(err, "source coin validation error")
 	}
 	if !a.sourceCoin.IsPositive() {
 		return errors.New("source amount must be positive")
 	}
 	if err := a.destinationCoin.Validate(); err != nil {
-		return fmt.Errorf("destination coin validation error: %w", err)
+		return errorsmod.Wrap(err, "destination coin validation error")
 	}
 	if !a.destinationCoin.IsPositive() {
 		return errors.New("destination amount must be positive")

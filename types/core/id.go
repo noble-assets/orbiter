@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	errorsmod "cosmossdk.io/errors"
 )
 
 type IdentifierConstraint interface {
@@ -97,7 +99,7 @@ func NewCrossChainID(
 
 	err := id.Validate()
 	if err != nil {
-		return CrossChainID{}, fmt.Errorf("invalid cross-chain ID: %w", err)
+		return CrossChainID{}, errorsmod.Wrap(err, "invalid cross-chain ID")
 	}
 
 	return id, nil
@@ -152,13 +154,13 @@ func ParseCrossChainID(str string) (CrossChainID, error) {
 
 	id, err := strconv.ParseInt(protocolIDStr, 10, 32)
 	if err != nil {
-		return CrossChainID{}, fmt.Errorf("invalid protocol ID: %w", err)
+		return CrossChainID{}, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
 	protocolID := ProtocolID(int32(id))
 	ccID, err := NewCrossChainID(protocolID, counterpartyID)
 	if err != nil {
-		return CrossChainID{}, fmt.Errorf("invalid cross-chain ID string %s: %w", str, err)
+		return CrossChainID{}, errorsmod.Wrapf(err, "invalid cross-chain ID string %s", str)
 	}
 
 	return ccID, nil

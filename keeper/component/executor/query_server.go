@@ -22,7 +22,6 @@ package executor
 
 import (
 	"context"
-	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -54,7 +53,7 @@ func (s queryServer) IsActionPaused(
 
 	paused, err := s.Executor.IsActionPaused(ctx, req.ActionId)
 	if err != nil {
-		return nil, fmt.Errorf("unable to query action paused status: %w", err)
+		return nil, errorsmod.Wrapf(err, "unable to query action paused status")
 	}
 
 	return &executortypes.QueryIsActionPausedResponse{
@@ -73,7 +72,7 @@ func (s queryServer) PausedActions(
 
 	paused, err := s.GetPausedActions(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("unable to query paused actions: %w", err)
+		return nil, errorsmod.Wrapf(err, "unable to query paused actions")
 	}
 
 	return &executortypes.QueryPausedActionsResponse{

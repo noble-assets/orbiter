@@ -21,7 +21,7 @@
 package types
 
 import (
-	"fmt"
+	errorsmod "cosmossdk.io/errors"
 
 	"orbiter.dev/types/component/adapter"
 	"orbiter.dev/types/component/dispatcher"
@@ -43,19 +43,19 @@ func DefaultGenesisState() *GenesisState {
 // Validate returns an error if any of the genesis fields is not valid.
 func (g *GenesisState) Validate() error {
 	if err := g.AdapterGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating adapter component genesis state: %w", err)
+		return errorsmod.Wrap(err, "error validating adapter component genesis state")
 	}
 
 	if err := g.DispatcherGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating dispatcher component genesis state: %w", err)
+		return errorsmod.Wrap(err, "error validating dispatcher component genesis state")
 	}
 
 	if err := g.ForwarderGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating forwarder component genesis state: %w", err)
+		return errorsmod.Wrap(err, "error validating forwarder component genesis state")
 	}
 
 	if err := g.ExecutorGenesis.Validate(); err != nil {
-		return fmt.Errorf("error validating executor component genesis state: %w", err)
+		return errorsmod.Wrap(err, "error validating executor component genesis state")
 	}
 
 	return nil

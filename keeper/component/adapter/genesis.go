@@ -22,7 +22,6 @@ package adapter
 
 import (
 	"context"
-	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
 
@@ -34,9 +33,8 @@ func (a *Adapter) InitGenesis(ctx context.Context, g *adaptertypes.GenesisState)
 	if err := g.Validate(); err != nil {
 		return errorsmod.Wrap(err, "invalid adapter genesis state")
 	}
-
 	if err := a.SetParams(ctx, g.Params); err != nil {
-		return fmt.Errorf("error setting genesis params: %w", err)
+		return errorsmod.Wrap(err, "error setting genesis params")
 	}
 
 	return nil

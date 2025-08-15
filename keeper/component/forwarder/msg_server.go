@@ -130,7 +130,7 @@ func (s msgServer) ReplaceDepositForBurn(
 
 	controller, found := s.router.Route(core.PROTOCOL_CCTP)
 	if !found {
-		return nil, errors.New("cctp controller not found")
+		return nil, errors.New("CCTP controller not found")
 	}
 
 	cctpController, ok := controller.(*forwarding.CCTPController)

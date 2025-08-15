@@ -22,7 +22,8 @@ package executor
 
 import (
 	"context"
-	"fmt"
+
+	errorsmod "cosmossdk.io/errors"
 
 	executortypes "orbiter.dev/types/component/executor"
 )
@@ -36,7 +37,7 @@ func (e *Executor) InitGenesis(ctx context.Context, g *executortypes.GenesisStat
 	// NOTE: paused action ids are already validated
 	for _, id := range g.PausedActionIds {
 		if err := e.SetPausedAction(ctx, id); err != nil {
-			return fmt.Errorf("error setting genesis paused action ID: %w", err)
+			return errorsmod.Wrap(err, "error setting genesis paused action ID")
 		}
 	}
 

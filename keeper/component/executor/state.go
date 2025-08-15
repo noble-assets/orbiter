@@ -22,7 +22,8 @@ package executor
 
 import (
 	"context"
-	"fmt"
+
+	errorsmod "cosmossdk.io/errors"
 
 	"orbiter.dev/types/core"
 )
@@ -85,7 +86,7 @@ func (e *Executor) GetPausedActions(
 
 		id, err := core.NewActionID(k)
 		if err != nil {
-			return nil, fmt.Errorf("cannot create action ID from iterator key: %w", err)
+			return nil, errorsmod.Wrap(err, "cannot create action ID from iterator key")
 		}
 		paused = append(paused, id)
 	}
