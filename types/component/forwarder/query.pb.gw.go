@@ -22,7 +22,6 @@ import (
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"orbiter.dev/types/core"
 )
 
 // Suppress "imported and not used" errors
@@ -58,7 +57,6 @@ func request_Query_PausedCrossChains_0(ctx context.Context, marshaler runtime.Ma
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -69,13 +67,11 @@ func request_Query_PausedCrossChains_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := client.PausedCrossChains(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -88,7 +84,6 @@ func local_request_Query_PausedCrossChains_0(ctx context.Context, marshaler runt
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -99,13 +94,11 @@ func local_request_Query_PausedCrossChains_0(ctx context.Context, marshaler runt
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := server.PausedCrossChains(ctx, &protoReq)
 	return msg, metadata, err
@@ -118,7 +111,6 @@ func request_Query_IsProtocolPaused_0(ctx context.Context, marshaler runtime.Mar
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -129,13 +121,11 @@ func request_Query_IsProtocolPaused_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := client.IsProtocolPaused(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -148,7 +138,6 @@ func local_request_Query_IsProtocolPaused_0(ctx context.Context, marshaler runti
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -159,13 +148,11 @@ func local_request_Query_IsProtocolPaused_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := server.IsProtocolPaused(ctx, &protoReq)
 	return msg, metadata, err
@@ -178,7 +165,6 @@ func request_Query_IsCrossChainPaused_0(ctx context.Context, marshaler runtime.M
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -189,13 +175,11 @@ func request_Query_IsCrossChainPaused_0(ctx context.Context, marshaler runtime.M
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["counterparty_id"]
 	if !ok {
@@ -219,7 +203,6 @@ func local_request_Query_IsCrossChainPaused_0(ctx context.Context, marshaler run
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -230,13 +213,11 @@ func local_request_Query_IsCrossChainPaused_0(ctx context.Context, marshaler run
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["counterparty_id"]
 	if !ok {

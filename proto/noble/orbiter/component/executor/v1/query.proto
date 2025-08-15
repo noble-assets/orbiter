@@ -29,7 +29,7 @@ message QueryPausedActionsResponse {
 }
 
 message QueryIsActionPausedRequest {
-  noble.orbiter.core.v1.ActionID action_id = 1 [(amino.dont_omitempty) = true];
+  string action_id = 1;
 }
 
 message QueryIsActionPausedResponse {

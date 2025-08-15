@@ -48,7 +48,7 @@ message QueryPausedProtocolsResponse {
 // QueryPausedCrossChainsRequest is the request type for the Query/PausedCrossChains RPC method.
 message QueryPausedCrossChainsRequest {
   // protocol_id is the protocol to query paused counterparties for.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+  string protocol_id = 1;
 }
 
 // QueryPausedCrossChainsResponse is the response type for the Query/PausedCrossChains RPC method.
@@ -60,7 +60,7 @@ message QueryPausedCrossChainsResponse {
 // QueryIsProtocolPausedRequest is the request type for the Query/IsProtocolPaused RPC method.
 message QueryIsProtocolPausedRequest {
   // protocol_id is the protocol to check.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+  string protocol_id = 1;
 }
 
 // QueryIsProtocolPausedResponse is the response type for the Query/IsProtocolPaused RPC method.
@@ -72,7 +72,7 @@ message QueryIsProtocolPausedResponse {
 // QueryIsCrossChainPausedRequest is the request type for the Query/IsCrossChainPaused RPC method.
 message QueryIsCrossChainPausedRequest {
   // protocol_id is the protocol to check.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+  string protocol_id = 1;
   // counterparty_id is the counterparty identifier to check.
   string counterparty_id = 2;
 }

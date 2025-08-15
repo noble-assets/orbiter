@@ -50,13 +50,14 @@ func (s msgServer) PauseAction(
 		return nil, err
 	}
 
-	if err := msg.ActionId.Validate(); err != nil {
+	actionID, err := core.NewActionID(core.ActionID_value[msg.ActionId])
+	if err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
 			"invalid action ID: %s", err.Error(),
 		)
 	}
 
-	if err := s.Pause(ctx, msg.ActionId); err != nil {
+	if err := s.Pause(ctx, actionID); err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
 			"action: %s", err.Error(),
 		)
@@ -74,13 +75,14 @@ func (s msgServer) UnpauseAction(
 		return nil, err
 	}
 
-	if err := msg.ActionId.Validate(); err != nil {
+	actionID, err := core.NewActionID(core.ActionID_value[msg.ActionId])
+	if err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"invalid action ID: %s", err.Error(),
 		)
 	}
 
-	if err := s.Unpause(ctx, msg.ActionId); err != nil {
+	if err := s.Unpause(ctx, actionID); err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"action: %s", err.Error(),
 		)
