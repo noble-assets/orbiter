@@ -77,7 +77,7 @@ func CreatePayloadWrapperJSON(t *testing.T) (*core.Payload, string) {
 	return payloadWrapper.Orbiter, string(bz)
 }
 
-func CreatePayloadWrapperWithActionJSON(t *testing.T) (*core.Payload, string) {
+func CreatePayloadWithAction(t *testing.T) (*core.Payload, string) {
 	t.Helper()
 
 	encCfg := MakeTestEncodingConfig("noble")
@@ -98,18 +98,11 @@ func CreatePayloadWrapperWithActionJSON(t *testing.T) (*core.Payload, string) {
 	)
 	require.NoError(t, err)
 
-	actionAttributes1 := testdata.TestActionAttr{Whatever: "it takes"}
-	action1, err := core.NewAction(core.ACTION_FEE, &actionAttributes1)
+	actionAttributes := testdata.TestActionAttr{Whatever: "it takes"}
+	action, err := core.NewAction(core.ACTION_FEE, &actionAttributes)
 	require.NoError(t, err)
 
-	actionAttributes2 := testdata.TestActionAttr{Whatever: "whatever"}
-	action2, err := core.NewAction(core.ACTION_FEE, &actionAttributes2)
-	require.NoError(t, err)
-
-	payloadWrapper, err := core.NewPayloadWrapper(forwarding, []*core.Action{
-		action1,
-		action2,
-	})
+	payloadWrapper, err := core.NewPayloadWrapper(forwarding, []*core.Action{action})
 	require.NoError(t, err)
 	bz, err := types.MarshalJSON(encCfg.Codec, payloadWrapper)
 	require.NoError(t, err)

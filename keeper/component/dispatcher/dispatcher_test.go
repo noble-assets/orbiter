@@ -30,8 +30,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"orbiter.dev/keeper/component/dispatcher"
+	"orbiter.dev/testutil"
 	"orbiter.dev/testutil/mocks"
+	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
+	"orbiter.dev/types/core"
 )
 
 func TestNew(t *testing.T) {
@@ -114,6 +117,71 @@ func TestNew(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				_, err = tC.sb.Build()
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidatePayload(t *testing.T) {
+	testCases := []struct {
+		name   string
+		setup  func(*core.Payload)
+		expErr string
+	}{
+		{
+			name: "success - valid payload with one action",
+		},
+		{
+			name: "success - valid payload with two actions",
+			setup: func(p *core.Payload) {
+				attr := testdata.TestActionAttr{Whatever: "whatever"}
+				action, err := core.NewAction(core.ACTION_SWAP, &attr)
+				require.NoError(t, err)
+
+				p.PreActions = append(p.PreActions, action)
+			},
+		},
+		{
+			name: "success - valid payload without actions",
+			setup: func(p *core.Payload) {
+				p.PreActions = nil
+			},
+		},
+		{
+			name: "error - invalid payload without forwarding",
+			setup: func(p *core.Payload) {
+				p.Forwarding = nil
+			},
+			expErr: "forwarding is not set",
+		},
+		{
+			name: "error - repeated actions",
+			setup: func(p *core.Payload) {
+				attr := testdata.TestActionAttr{Whatever: "whatever"}
+				action, err := core.NewAction(core.ACTION_FEE, &attr)
+				require.NoError(t, err)
+
+				p.PreActions = append(p.PreActions, action)
+			},
+			expErr: "repeated action",
+		},
+	}
+
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			d, _ := mocks.NewDispatcherComponent(t)
+			p, _ := testutil.CreatePayloadWithAction(t)
+
+			if tC.setup != nil {
+				tC.setup(p)
+			}
+
+			err := d.ValidatePayload(p)
+
+			if tC.expErr != "" {
+				require.ErrorContains(t, err, tC.expErr)
+			} else {
 				require.NoError(t, err)
 			}
 		})

@@ -148,10 +148,21 @@ func (d *Dispatcher) DispatchPayload(
 	return nil
 }
 
-// ValidatePayload checks if the payload is not nil, and calls
-// its validation method.
+// ValidatePayload checks if the payload is valid.
 func (d *Dispatcher) ValidatePayload(payload *core.Payload) error {
-	return payload.Validate()
+	if err := payload.Validate(); err != nil {
+		return err
+	}
+
+	visitedIDs := make(map[int32]any)
+	for _, action := range payload.PreActions {
+		if _, found := visitedIDs[int32(action.Id)]; found {
+			return fmt.Errorf("received repeated action ID: %v", action.ID())
+		}
+		visitedIDs[int32(action.Id)] = nil
+	}
+
+	return nil
 }
 
 // dispatchActions iterates through all the actions, creates
@@ -162,6 +173,7 @@ func (d *Dispatcher) dispatchActions(
 	actions []*core.Action,
 ) error {
 	d.logger.Debug("started actions dispatching", "num_actions", len(actions))
+
 	for _, action := range actions {
 		packet, err := types.NewActionPacket(transferAttr, action)
 		if err != nil {
