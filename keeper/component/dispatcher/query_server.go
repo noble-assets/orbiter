@@ -49,12 +49,14 @@ func (q queryServer) DispatchedCounts(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	sourceID, err := core.NewCrossChainID(req.SourceProtocolId, req.SourceCounterpartyId)
+	sourceProtocolID := core.ProtocolID(core.ProtocolID_value[req.SourceProtocolId])
+	sourceID, err := core.NewCrossChainID(sourceProtocolID, req.SourceCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
 	}
 
-	destID, err := core.NewCrossChainID(req.DestinationProtocolId, req.DestinationCounterpartyId)
+	destProtocolID := core.ProtocolID(core.ProtocolID_value[req.DestinationProtocolId])
+	destID, err := core.NewCrossChainID(destProtocolID, req.DestinationCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
 	}
@@ -127,12 +129,14 @@ func (q queryServer) DispatchedAmounts(
 		)
 	}
 
-	sourceID, err := core.NewCrossChainID(req.SourceProtocolId, req.SourceCounterpartyId)
+	sourceProtocolID := core.ProtocolID(core.ProtocolID_value[req.SourceProtocolId])
+	sourceID, err := core.NewCrossChainID(sourceProtocolID, req.SourceCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
 	}
 
-	destID, err := core.NewCrossChainID(req.DestinationProtocolId, req.DestinationCounterpartyId)
+	destProtocolID := core.ProtocolID(core.ProtocolID_value[req.DestinationProtocolId])
+	destID, err := core.NewCrossChainID(destProtocolID, req.DestinationCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
 	}

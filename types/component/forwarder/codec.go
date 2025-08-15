@@ -30,10 +30,10 @@ import (
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgPauseProtocol{}, "orbiter/forwarder/PauseProtocol", nil)
 	cdc.RegisterConcrete(&MsgUnpauseProtocol{}, "orbiter/forwarder/UnpauseProtocol", nil)
-	cdc.RegisterConcrete(&MsgPauseCrossChain{}, "orbiter/forwarder/PauseCrossChain", nil)
+	cdc.RegisterConcrete(&MsgPauseCrossChains{}, "orbiter/forwarder/PauseCrossChains", nil)
 	cdc.RegisterConcrete(
-		&MsgUnpauseCrossChain{},
-		"orbiter/forwarder/UnpauseCrossChain",
+		&MsgUnpauseCrossChains{},
+		"orbiter/forwarder/UnpauseCrossChains",
 		nil,
 	)
 	// Controllers.
@@ -48,8 +48,8 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgPauseProtocol{},
 		&MsgUnpauseProtocol{},
-		&MsgPauseCrossChain{},
-		&MsgUnpauseCrossChain{},
+		&MsgPauseCrossChains{},
+		&MsgUnpauseCrossChains{},
 		// Controllers.
 		&MsgReplaceDepositForBurn{},
 	)

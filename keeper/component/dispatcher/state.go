@@ -299,7 +299,8 @@ func (d *Dispatcher) getDispatchedAmountEntryFromKey(
 // ====================================================================================================
 
 // DispatchedCountsKey is defined as:
-// (source protocol ID, source counterparty ID, destination protocol ID, destination counterparty ID).
+// (source protocol ID, source counterparty ID, destination protocol ID, destination counterparty
+// ID).
 type DispatchedCountsKey = collections.Quad[int32, string, int32, string]
 
 type DispatchedCountsIndexes struct {

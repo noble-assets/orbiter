@@ -53,11 +53,11 @@ service Query {
 // QueryDispatchedCountsRequest is the request type for the Query/DispatchedCounts RPC method.
 message QueryDispatchedCountsRequest {
   // source_protocol_id is the source protocol identifier.
-  noble.orbiter.core.v1.ProtocolID source_protocol_id = 1 [(amino.dont_omitempty) = true];
+  string source_protocol_id = 1;
   // source_counterparty_id is the source counterparty identifier.
   string source_counterparty_id = 2;
   // destination_protocol_id is the destination protocol identifier.
-  noble.orbiter.core.v1.ProtocolID destination_protocol_id = 3 [(amino.dont_omitempty) = true];
+  string destination_protocol_id = 3;
   // destination_counterparty_id is the destination counterparty identifier.
   string destination_counterparty_id = 4;
 }
@@ -76,11 +76,11 @@ message QueryDispatchedCountsResponse {
 // QueryDispatchedAmountsRequest is the request type for the Query/DispatchedAmounts RPC method.
 message QueryDispatchedAmountsRequest {
   // source_protocol_id is the source protocol identifier.
-  noble.orbiter.core.v1.ProtocolID source_protocol_id = 1 [(amino.dont_omitempty) = true];
+  string source_protocol_id = 1;
   // source_counterparty_id is the source counterparty identifier.
   string source_counterparty_id = 2;
   // destination_protocol_id is the destination protocol identifier.
-  noble.orbiter.core.v1.ProtocolID destination_protocol_id = 3 [(amino.dont_omitempty) = true];
+  string destination_protocol_id = 3;
   // destination_counterparty_id is the destination counterparty identifier.
   string destination_counterparty_id = 4;
   // denom is the denomination of the amounts requested.
