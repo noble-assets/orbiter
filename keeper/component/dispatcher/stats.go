@@ -23,7 +23,7 @@ package dispatcher
 import (
 	"context"
 
-	"cosmossdk.io/errors"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 
 	"orbiter.dev/types"
@@ -51,29 +51,29 @@ func (d *Dispatcher) UpdateStats(
 
 	var sourceID core.CrossChainID
 	if sourceID, err = core.NewCrossChainID(attr.SourceProtocolID(), attr.SourceCounterpartyID()); err != nil {
-		return errors.Wrap(err, "failed to create source cross-chain ID")
+		return errorsmod.Wrap(err, "failed to create source cross-chain ID")
 	}
 
 	var destID core.CrossChainID
 	if destID, err = core.NewCrossChainID(forwarding.ProtocolID(), forwardingAttr.CounterpartyID()); err != nil {
-		return errors.Wrap(err, "failed to create destination cross-chain ID")
+		return errorsmod.Wrap(err, "failed to create destination cross-chain ID")
 	}
 
 	// Since the denom is part of the stored key, if it changed during the execution
 	// of some actions, we will have to store multiple dispatched amount entries.
 	amounts, err := d.BuildDenomDispatchedAmounts(attr)
 	if err != nil {
-		return errors.Wrap(err, "error building denom dispatched amounts")
+		return errorsmod.Wrap(err, "error building denom dispatched amounts")
 	}
 
 	for _, a := range amounts {
 		if err := d.updateDispatchedAmount(ctx, &sourceID, &destID, a.Denom, a.AmountDispatched); err != nil {
-			return errors.Wrap(err, "update dispatched amounts stats failure")
+			return errorsmod.Wrap(err, "update dispatched amounts stats failure")
 		}
 	}
 
 	if err := d.updateDispatchedCounts(ctx, &sourceID, &destID); err != nil {
-		return errors.Wrap(err, "update dispatch counts stats failure")
+		return errorsmod.Wrap(err, "update dispatch counts stats failure")
 	}
 
 	return nil

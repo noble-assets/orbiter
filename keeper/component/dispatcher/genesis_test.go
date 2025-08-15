@@ -137,8 +137,8 @@ func TestInitGenesis(t *testing.T) {
 func TestExportGenesis(t *testing.T) {
 	testCases := []struct {
 		name              string
-		dispatchedAmounts func() []dispatchertypes.DispatchedAmountEntry
-		dispatchedCounts  func() []dispatchertypes.DispatchCountEntry
+		dispatchedAmounts []dispatchertypes.DispatchedAmountEntry
+		dispatchedCounts  []dispatchertypes.DispatchCountEntry
 		expEmpty          bool
 	}{
 		{
@@ -147,25 +147,21 @@ func TestExportGenesis(t *testing.T) {
 		},
 		{
 			name: "success - not empty state",
-			dispatchedAmounts: func() []dispatchertypes.DispatchedAmountEntry {
-				return []dispatchertypes.DispatchedAmountEntry{
-					*defaultAmounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-1", "chain-2"),
-					*defaultAmounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-3", "chain-4"),
-					*defaultAmounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-11", "chain-12"),
-					*defaultAmounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-13", "chain-14"),
-				}
+			dispatchedAmounts: []dispatchertypes.DispatchedAmountEntry{
+				*defaultAmounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-1", "chain-2"),
+				*defaultAmounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-3", "chain-4"),
+				*defaultAmounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-11", "chain-12"),
+				*defaultAmounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-13", "chain-14"),
 			},
-			dispatchedCounts: func() []dispatchertypes.DispatchCountEntry {
-				return []dispatchertypes.DispatchCountEntry{
-					*defaultCounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-1", "chain-2"),
-					*defaultCounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-3", "chain-4"),
-					*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-11", "chain-12"),
-					*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-13", "chain-14"),
-					*defaultCounts(core.PROTOCOL_HYPERLANE, core.PROTOCOL_CCTP, "1", "2"),
-					*defaultCounts(core.PROTOCOL_HYPERLANE, core.PROTOCOL_CCTP, "3", "4"),
-					*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_HYPERLANE, "11", "12"),
-					*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_HYPERLANE, "13", "14"),
-				}
+			dispatchedCounts: []dispatchertypes.DispatchCountEntry{
+				*defaultCounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-1", "chain-2"),
+				*defaultCounts(core.PROTOCOL_IBC, core.PROTOCOL_CCTP, "chain-3", "chain-4"),
+				*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-11", "chain-12"),
+				*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_IBC, "chain-13", "chain-14"),
+				*defaultCounts(core.PROTOCOL_HYPERLANE, core.PROTOCOL_CCTP, "1", "2"),
+				*defaultCounts(core.PROTOCOL_HYPERLANE, core.PROTOCOL_CCTP, "3", "4"),
+				*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_HYPERLANE, "11", "12"),
+				*defaultCounts(core.PROTOCOL_CCTP, core.PROTOCOL_HYPERLANE, "13", "14"),
 			},
 			expEmpty: false,
 		},
@@ -178,7 +174,7 @@ func TestExportGenesis(t *testing.T) {
 
 			var da []dispatchertypes.DispatchedAmountEntry
 			if tC.dispatchedAmounts != nil {
-				da = tC.dispatchedAmounts()
+				da = tC.dispatchedAmounts
 			}
 			for _, amount := range da {
 				err := d.SetDispatchedAmount(
@@ -193,7 +189,7 @@ func TestExportGenesis(t *testing.T) {
 
 			var dc []dispatchertypes.DispatchCountEntry
 			if tC.dispatchedCounts != nil {
-				dc = tC.dispatchedCounts()
+				dc = tC.dispatchedCounts
 			}
 			for _, count := range dc {
 				err := d.SetDispatchedCounts(

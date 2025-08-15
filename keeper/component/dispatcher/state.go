@@ -25,7 +25,7 @@ import (
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/collections/indexes"
-	"cosmossdk.io/errors"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
@@ -65,7 +65,7 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (int32, error) {
 				ccID, err := core.ParseCrossChainID(pk.K3())
 				if err != nil {
-					return 0, errors.Wrap(err, "error parsing destination cross-chain ID")
+					return 0, errorsmod.Wrap(err, "error parsing destination cross-chain ID")
 				}
 
 				return int32(ccID.GetProtocolId()), nil
@@ -84,7 +84,7 @@ func newDispatchedAmountsIndexes(sb *collections.SchemaBuilder) DispatchedAmount
 			func(pk DispatchedAmountsKey, value dispatchertypes.AmountDispatched) (collections.Triple[int32, string, string], error) {
 				ccID, err := core.ParseCrossChainID(pk.K3())
 				if err != nil {
-					return collections.Triple[int32, string, string]{}, errors.Wrap(
+					return collections.Triple[int32, string, string]{}, errorsmod.Wrap(
 						err,
 						"error parsing destination cross-chain ID",
 					)
@@ -273,17 +273,17 @@ func (d *Dispatcher) getDispatchedAmountEntryFromKey(
 
 	value, err := d.dispatchedAmounts.Get(ctx, k)
 	if err != nil {
-		return entry, errors.Wrap(err, "failed to get dispatched amount")
+		return entry, errorsmod.Wrap(err, "failed to get dispatched amount")
 	}
 
 	sourceID, err := core.NewCrossChainID(core.ProtocolID(k.K1()), k.K2())
 	if err != nil {
-		return entry, errors.Wrap(err, "failed to create source cross-chain ID")
+		return entry, errorsmod.Wrap(err, "failed to create source cross-chain ID")
 	}
 
 	destID, err := core.ParseCrossChainID(k.K3())
 	if err != nil {
-		return entry, errors.Wrap(err, "failed to create destination cross-chain ID")
+		return entry, errorsmod.Wrap(err, "failed to create destination cross-chain ID")
 	}
 
 	entry.SourceId = &sourceID
@@ -483,17 +483,17 @@ func (d *Dispatcher) getDispatchCountEntryFromKey(
 
 	value, err := d.dispatchedCounts.Get(ctx, k)
 	if err != nil {
-		return entry, errors.Wrap(err, "failed to get dispatched counts")
+		return entry, errorsmod.Wrap(err, "failed to get dispatched counts")
 	}
 
 	sourceID, err := core.NewCrossChainID(core.ProtocolID(k.K1()), k.K2())
 	if err != nil {
-		return entry, errors.Wrap(err, "failed to create source cross-chain ID")
+		return entry, errorsmod.Wrap(err, "failed to create source cross-chain ID")
 	}
 
 	destID, err := core.NewCrossChainID(core.ProtocolID(k.K3()), k.K4())
 	if err != nil {
-		return entry, errors.Wrap(err, "failed to create destination cross-chain ID")
+		return entry, errorsmod.Wrap(err, "failed to create destination cross-chain ID")
 	}
 
 	entry.SourceId = &sourceID

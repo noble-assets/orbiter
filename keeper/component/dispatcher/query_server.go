@@ -24,7 +24,7 @@ import (
 	"context"
 	"fmt"
 
-	"cosmossdk.io/errors"
+	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	dispatchertypes "orbiter.dev/types/component/dispatcher"
@@ -51,12 +51,12 @@ func (q queryServer) DispatchedCounts(
 
 	sourceID, err := core.NewCrossChainID(req.SourceProtocolId, req.SourceCounterpartyId)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error creating source cross-chain ID")
+		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
 	}
 
 	destID, err := core.NewCrossChainID(req.DestinationProtocolId, req.DestinationCounterpartyId)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error creating destination cross-chain ID")
+		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
 	}
 
 	if !q.HasDispatchedCounts(ctx, &sourceID, &destID) {
@@ -83,7 +83,7 @@ func (q queryServer) DispatchedCountsByDestinationProtocolID(
 	}
 
 	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errors.Wrapf(err, "invalid protocol ID")
+		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
 	}
 
 	counts := q.GetDispatchedCountsByDestinationProtocolID(ctx, req.ProtocolId)
@@ -102,7 +102,7 @@ func (q queryServer) DispatchedCountsBySourceProtocolID(
 	}
 
 	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errors.Wrapf(err, "invalid protocol ID")
+		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
 	}
 
 	counts := q.GetDispatchedCountsBySourceProtocolID(ctx, req.ProtocolId)
@@ -112,7 +112,6 @@ func (q queryServer) DispatchedCountsBySourceProtocolID(
 	}, nil
 }
 
-// DispatchedAmounts implements dispatcher.QueryServer.
 func (q queryServer) DispatchedAmounts(
 	ctx context.Context,
 	req *dispatchertypes.QueryDispatchedAmountsRequest,
@@ -123,16 +122,19 @@ func (q queryServer) DispatchedAmounts(
 
 	sourceID, err := core.NewCrossChainID(req.SourceProtocolId, req.SourceCounterpartyId)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error creating source cross-chain ID")
+		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
 	}
 
 	destID, err := core.NewCrossChainID(req.DestinationProtocolId, req.DestinationCounterpartyId)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error creating destination cross-chain ID")
+		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
 	}
 
 	if req.Denom == "" {
-		return nil, errors.Wrapf(core.ErrEmptyString, "error querying an empty string token denom")
+		return nil, errorsmod.Wrapf(
+			core.ErrEmptyString,
+			"error querying an empty string token denom",
+		)
 	}
 
 	if !q.HasDispatchedAmount(ctx, &sourceID, &destID, req.Denom) {
@@ -151,7 +153,6 @@ func (q queryServer) DispatchedAmounts(
 	}, nil
 }
 
-// DispatchedAmountsByDestinationProtocolID implements dispatcher.QueryServer.
 func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 	ctx context.Context,
 	req *dispatchertypes.QueryDispatchedAmountsByProtocolIDRequest,
@@ -161,7 +162,7 @@ func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 	}
 
 	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errors.Wrapf(err, "invalid protocol ID")
+		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
 	}
 
 	amounts := q.GetDispatchedAmountsByDestinationProtocolID(ctx, req.ProtocolId)
@@ -171,7 +172,6 @@ func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 	}, nil
 }
 
-// DispatchedAmountsBySourceProtocolID implements dispatcher.QueryServer.
 func (q queryServer) DispatchedAmountsBySourceProtocolID(
 	ctx context.Context,
 	req *dispatchertypes.QueryDispatchedAmountsByProtocolIDRequest,
@@ -181,7 +181,7 @@ func (q queryServer) DispatchedAmountsBySourceProtocolID(
 	}
 
 	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errors.Wrapf(err, "invalid protocol ID")
+		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
 	}
 
 	amounts := q.GetDispatchedAmountsBySourceProtocolID(ctx, req.ProtocolId)

@@ -24,7 +24,7 @@ import (
 	"context"
 	"fmt"
 
-	"cosmossdk.io/errors"
+	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	executortypes "orbiter.dev/types/component/executor"
@@ -49,7 +49,7 @@ func (s queryServer) IsActionPaused(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 	if err := req.ActionId.Validate(); err != nil {
-		return nil, errors.Wrapf(err, "invalid action ID")
+		return nil, errorsmod.Wrapf(err, "invalid action ID")
 	}
 
 	paused, err := s.Executor.IsActionPaused(ctx, req.ActionId)

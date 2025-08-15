@@ -25,7 +25,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
-	"cosmossdk.io/errors"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -133,11 +133,11 @@ func (d *Dispatcher) DispatchPayload(
 	}
 
 	if err := d.dispatchActions(ctx, transferAttr, payload.PreActions); err != nil {
-		return errors.Wrap(err, "actions dispatch failed")
+		return errorsmod.Wrap(err, "actions dispatch failed")
 	}
 
 	if err := d.dispatchForwarding(ctx, transferAttr, payload.Forwarding); err != nil {
-		return errors.Wrap(err, "forwarding dispatch failed")
+		return errorsmod.Wrap(err, "forwarding dispatch failed")
 	}
 
 	if err := d.UpdateStats(ctx, transferAttr, payload.Forwarding); err != nil {
@@ -165,7 +165,7 @@ func (d *Dispatcher) dispatchActions(
 	for _, action := range actions {
 		packet, err := types.NewActionPacket(transferAttr, action)
 		if err != nil {
-			return errors.Wrapf(err, "error creating action %s packet", action.ID())
+			return errorsmod.Wrapf(err, "error creating action %s packet", action.ID())
 		}
 
 		d.logger.Debug(
