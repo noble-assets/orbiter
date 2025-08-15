@@ -141,7 +141,7 @@ func (d *Dispatcher) DispatchPayload(
 	}
 
 	if err := d.UpdateStats(ctx, transferAttr, payload.Forwarding); err != nil {
-		// NOTE: we don't want to interrupt a dispatch because stats are not updated.
+		// NOTE: we don't want to interrupt a dispatch in case the stats are not updated.
 		d.logger.Error("Error updating Orbiter statistics", "error", err)
 	}
 
