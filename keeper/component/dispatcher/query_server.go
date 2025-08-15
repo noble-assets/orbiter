@@ -61,7 +61,7 @@ func (q queryServer) DispatchedCounts(
 
 	if !q.HasDispatchedCounts(ctx, &sourceID, &destID) {
 		return nil, fmt.Errorf(
-			"dispatched counts does not exists for source ID %s and destination ID %s",
+			"dispatched counts do not exist for source ID %s and destination ID %s",
 			sourceID.String(),
 			destID.String(),
 		)
