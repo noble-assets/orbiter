@@ -15,8 +15,12 @@ done
 if ! [ -f .orbiter/data/priv_validator_state.json ]; then
 	$SIMD init validator --chain-id "orbiter-1" --home $HOME_DIR &>/dev/null
 
+	# Add authority test key with mnemonic recovery
+	echo "occur subway woman achieve deputy rapid museum point usual appear oil blue rate title claw debate flag gallery level object baby winner erase carbon" | $SIMD keys add authority --recover --home $HOME_DIR --keyring-backend test &>/dev/null
+
 	$SIMD keys add validator --home .orbiter --keyring-backend test &>/dev/null
 	$SIMD genesis add-genesis-account validator 2000000ustake,1000000000uusdc --home $HOME_DIR --keyring-backend test
+	$SIMD genesis add-genesis-account authority 2000000ustake,1000000000uusdc --home $HOME_DIR --keyring-backend test
 
 	touch $TEMP && jq '.app_state.bank.denom_metadata += [{ "description": "Circle USD Coin", "denom_units": [{ "denom": "uusdc", "exponent": 0, "aliases": ["microusdc"] }, { "denom": "usdc", "exponent": 6 }], "base": "uusdc", "display": "usdc", "name": "Circle USD Coin", "symbol": "USDC" }]' $HOME_DIR/config/genesis.json >$TEMP && mv $TEMP $HOME_DIR/config/genesis.json
 	touch $TEMP && jq '.app_state.staking.params.bond_denom = "ustake"' $HOME_DIR/config/genesis.json >$TEMP && mv $TEMP $HOME_DIR/config/genesis.json
