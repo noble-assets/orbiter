@@ -53,7 +53,7 @@ proto-testutil-gen:
 #=============================================================================#
 #                                 Tooling                                     #
 #=============================================================================#
-.PHONY: tool-all license form lint vulncheck nancy
+.PHONY: tool-all license format lint vulncheck nancy
 tool-all : license format lint vulncheck nancy
 
 FILES := $(shell find . -name "*.go" -not -path "./simapp/*" -not -name "*.pb.go" -not -name "*.pb.gw.go" -not -name "*.pulsar.go")
