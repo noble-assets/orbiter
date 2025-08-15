@@ -69,7 +69,7 @@ func (r *Router[ID, T]) AddRoute(route T) error {
 	}
 	routeID := route.ID()
 	if err := routeID.Validate(); err != nil {
-		return errors.New("route id is not valid")
+		return errors.New("route ID is not valid")
 	}
 
 	if r.HasRoute(routeID) {

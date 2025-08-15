@@ -119,7 +119,7 @@ func (s queryServer) PausedCrossChains(
 	}
 	paused, err := s.GetPausedCrossChainsMap(ctx, &id)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "unable to query paused counterparty")
+		return nil, errorsmod.Wrap(err, "unable to query paused cross-chains")
 	}
 
 	return &forwardertypes.QueryPausedCrossChainsResponse{

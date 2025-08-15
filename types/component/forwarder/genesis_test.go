@@ -39,7 +39,7 @@ func TestValidate(t *testing.T) {
 			genState: DefaultGenesisState(),
 		},
 		{
-			name: "success - valid genesis state with protocol and cross-chain ids",
+			name: "success - valid genesis state with protocol and cross-chain IDs",
 			genState: &GenesisState{
 				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_IBC, core.PROTOCOL_CCTP},
 				PausedCrossChainIds: []*core.CrossChainID{
@@ -61,7 +61,7 @@ func TestValidate(t *testing.T) {
 			expErr: "invalid paused protocol ID",
 		},
 		{
-			name: "error - invalid genesis state (nil cross-chain id)",
+			name: "error - invalid genesis state (nil cross-chain ID)",
 			genState: &GenesisState{
 				PausedCrossChainIds: []*core.CrossChainID{nil},
 			},

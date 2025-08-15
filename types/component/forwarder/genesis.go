@@ -52,7 +52,7 @@ func (g *GenesisState) Validate() error {
 		}
 
 		if err := id.Validate(); err != nil {
-			return errorsmod.Wrapf(err, "invalid paused cross-chain ID %q", id)
+			return errorsmod.Wrapf(err, "invalid paused cross-chain ID %v", id)
 		}
 	}
 

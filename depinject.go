@@ -114,7 +114,7 @@ func InjectOrbitControllers(in ComponentsInputs) {
 		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
 	)
 	if err != nil {
-		panic(errorsmod.Wrap(err, "error creating cctp controller"))
+		panic(errorsmod.Wrap(err, "error creating CCTP controller"))
 	}
 
 	in.Orbiters.SetForwardingControllers(cctp)
@@ -138,7 +138,7 @@ func InjectAdapterControllers(in ComponentsInputs) {
 		in.Orbiters.Adapter().Logger(),
 	)
 	if err != nil {
-		panic(errorsmod.Wrap(err, "error creating ibc adapter"))
+		panic(errorsmod.Wrap(err, "error creating IBC adapter"))
 	}
 
 	in.Orbiters.SetAdapterControllers(ibc)

@@ -42,7 +42,7 @@ func (f *Forwarder) InitGenesis(ctx context.Context, g *forwardertypes.GenesisSt
 
 	for _, id := range g.PausedCrossChainIds {
 		if err := f.SetPausedCrossChain(ctx, *id); err != nil {
-			return errorsmod.Wrap(err, "error setting genesis paused cross-chain id")
+			return errorsmod.Wrap(err, "error setting genesis paused cross-chain ID")
 		}
 	}
 
