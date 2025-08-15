@@ -2,9 +2,9 @@ name: Nancy Vulnerability Scanner
 
 on:
   pull_request:
-#    paths:
-#      - 'go.mod'
-#      - 'go.sum'
+    paths:
+      - 'go.mod'
+      - 'go.sum'
 
 jobs:
   nancy-scan:
