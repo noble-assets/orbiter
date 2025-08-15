@@ -26,6 +26,10 @@ import (
 	"orbiter.dev/types/core"
 )
 
+func (a *AmountDispatched) IsPositive() bool {
+	return a.Incoming.IsPositive() || a.Outgoing.IsPositive()
+}
+
 func NewAmountDispatched(
 	incoming math.Int,
 	outgoing math.Int,

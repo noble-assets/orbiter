@@ -104,7 +104,8 @@ test-unit-viz:
 	@go test -cover -coverpkg=./controller/... -coverprofile=coverage_controller.out -race -v ./controller/...
 	@go tool cover -html=coverage_controller.out && go tool cover -func=coverage_controller.out
 	@echo "Running unit tests for types package..."
-	@go test -v ./types/...
+	@go test -cover -coverpkg=./types/... -coverprofile=coverage_types.out -race -v ./types/...
+	@go tool cover -html=coverage_types.out && go tool cover -func=coverage_types.out
 
 local-image:
 	@echo "==================================================================="

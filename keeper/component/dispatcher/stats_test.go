@@ -37,68 +37,65 @@ import (
 )
 
 func TestUpdateStats(t *testing.T) {
+	defaultAttr := func() *types.TransferAttributes {
+		t.Helper()
+		ta, err := types.NewTransferAttributes(
+			core.PROTOCOL_IBC,
+			"hyperliquid",
+			"uusdc",
+			math.NewInt(100),
+		)
+		require.NoError(t, err)
+
+		return ta
+	}
+
+	defaultForwarding := func() *core.Forwarding {
+		t.Helper()
+		attr := &testdata.TestForwardingAttr{
+			Planet: "ethereum",
+		}
+		f, err := core.NewForwarding(core.PROTOCOL_CCTP, attr, []byte{})
+		require.NoError(t, err)
+
+		return f
+	}
+
 	testCases := []struct {
-		name           string
-		setup          func(context.Context, *dispatcher.Dispatcher)
-		transferAttr   func() *types.TransferAttributes
-		forwarding     func() *core.Forwarding
-		expErr         string
-		expAmounts     map[string]dispatchertypes.AmountDispatched
-		expectedCounts uint32
+		name       string
+		setup      func(context.Context, *dispatcher.Dispatcher)
+		attr       func() *types.TransferAttributes // used to create source ID
+		forwarding func() *core.Forwarding          // used to create destination ID
+		expErr     string
+		expAmounts map[string]dispatchertypes.AmountDispatched
+		expCounts  uint64
 	}{
 		{
-			name:         "error - nil transfer attributes",
-			transferAttr: func() *types.TransferAttributes { return nil },
-			forwarding: func() *core.Forwarding {
-				return &core.Forwarding{
-					ProtocolId: 2,
-					Attributes: nil,
-				}
-			},
-			expErr: "nil transfer attributes",
+			name:       "error - nil transfer attributes",
+			attr:       func() *types.TransferAttributes { return nil },
+			forwarding: defaultForwarding,
+			expErr:     "nil transfer attributes",
 		},
 		{
-			name: "error - nil forwarding",
-			transferAttr: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
-				require.NoError(t, err)
-
-				return ta
-			},
+			name:       "error - nil forwarding",
+			attr:       defaultAttr,
 			forwarding: func() *core.Forwarding { return nil },
 			expErr:     "nil forwarding",
 		},
 		{
 			name: "error - destination protocol ID is not supported",
-			transferAttr: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
-				require.NoError(t, err)
-
-				return ta
-			},
+			attr: defaultAttr,
 			forwarding: func() *core.Forwarding {
-				attr := &testdata.TestForwardingAttr{
-					Planet: "ethereum",
-				}
-				forwarding := core.Forwarding{
-					ProtocolId:         0,
-					PassthroughPayload: []byte{},
-				}
-				err := forwarding.SetAttributes(attr)
-				require.NoError(t, err)
+				f := defaultForwarding()
+				f.ProtocolId = core.PROTOCOL_UNSUPPORTED
 
-				return &forwarding
+				return f
 			},
-			expErr: "ID is not supported",
+			expErr: "failed to create destination cross-chain ID",
 		},
 		{
 			name: "error - invalid forwarding attributes",
-			transferAttr: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
-				require.NoError(t, err)
-
-				return ta
-			},
+			attr: defaultAttr,
 			forwarding: func() *core.Forwarding {
 				return &core.Forwarding{
 					ProtocolId: 2,
@@ -108,75 +105,44 @@ func TestUpdateStats(t *testing.T) {
 			expErr: "forwarding attributes are not set",
 		},
 		{
-			name: "success - same amount and denom",
-			transferAttr: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
-				require.NoError(t, err)
-
-				return ta
-			},
-			forwarding: func() *core.Forwarding {
-				attr := &testdata.TestForwardingAttr{
-					Planet: "ethereum",
-				}
-				orbit, err := core.NewForwarding(2, attr, []byte{})
-				require.NoError(t, err)
-
-				return orbit
-			},
+			name:       "success - same amount and denom",
+			attr:       defaultAttr,
+			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(100),
 				},
 			},
-			expectedCounts: 1,
+			expCounts: 1,
 		},
 		{
 			name: "success - same denom and different amount",
-			transferAttr: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(2, "hyperliquid", "uusdc", math.NewInt(100))
-				require.NoError(t, err)
+			attr: func() *types.TransferAttributes {
+				ta := defaultAttr()
 				ta.SetDestinationAmount(math.NewInt(95))
 
 				return ta
 			},
-			forwarding: func() *core.Forwarding {
-				attr := &testdata.TestForwardingAttr{
-					Planet: "ethereum",
-				}
-				orbit, err := core.NewForwarding(1, attr, []byte{})
-				require.NoError(t, err)
-
-				return orbit
-			},
+			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
 					Outgoing: math.NewInt(95),
 				},
 			},
-			expectedCounts: 1,
+			expCounts: 1,
 		},
 		{
 			name: "success - different denom",
-			transferAttr: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
-				require.NoError(t, err)
+			attr: func() *types.TransferAttributes {
+				ta := defaultAttr()
 				ta.SetDestinationDenom("gwei")
 				ta.SetDestinationAmount(math.NewInt(50))
 
 				return ta
 			},
-			forwarding: func() *core.Forwarding {
-				attr := &testdata.TestForwardingAttr{
-					Planet: "ethereum",
-				}
-				orbit, err := core.NewForwarding(1, attr, []byte{})
-				require.NoError(t, err)
-
-				return orbit
-			},
+			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
@@ -187,52 +153,43 @@ func TestUpdateStats(t *testing.T) {
 					Outgoing: math.NewInt(50),
 				},
 			},
-			expectedCounts: 1,
+			expCounts: 1,
 		},
 		{
 			name: "success - different denom and previous stored stats",
 			setup: func(ctx context.Context, d *dispatcher.Dispatcher) {
 				sourceID := core.CrossChainID{
-					ProtocolId:     1,
+					ProtocolId:     core.PROTOCOL_IBC,
 					CounterpartyId: "hyperliquid",
 				}
 
 				destID := core.CrossChainID{
-					ProtocolId:     1,
+					ProtocolId:     core.PROTOCOL_CCTP,
 					CounterpartyId: "ethereum",
 				}
 
-				err := d.SetDispatchedCounts(ctx, sourceID, destID, 10)
+				err := d.SetDispatchedCounts(ctx, &sourceID, &destID, 10)
 				require.NoError(t, err)
 
 				da := dispatchertypes.AmountDispatched{
 					Incoming: math.NewInt(1_000),
 					Outgoing: math.NewInt(1_000),
 				}
-				err = d.SetDispatchedAmount(ctx, sourceID, destID, "uusdc", da)
+				err = d.SetDispatchedAmount(ctx, &sourceID, &destID, "uusdc", da)
 				require.NoError(t, err)
 
-				err = d.SetDispatchedAmount(ctx, destID, sourceID, "uusdc", da)
+				err = d.SetDispatchedAmount(ctx, &destID, &sourceID, "uusdc", da)
 				require.NoError(t, err)
 			},
-			transferAttr: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
-				require.NoError(t, err)
+			attr: func() *types.TransferAttributes {
+				ta := defaultAttr()
 
 				ta.SetDestinationDenom("gwei")
 				ta.SetDestinationAmount(math.NewInt(50))
 
 				return ta
 			},
-			forwarding: func() *core.Forwarding {
-				attr := &testdata.TestForwardingAttr{
-					Planet: "ethereum",
-				}
-				forwarding, err := core.NewForwarding(1, attr, []byte{})
-				require.NoError(t, err)
-
-				return forwarding
-			},
+			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(1_100),
@@ -243,7 +200,7 @@ func TestUpdateStats(t *testing.T) {
 					Outgoing: math.NewInt(50),
 				},
 			},
-			expectedCounts: 11, // 1 from the test + 10 from the setup
+			expCounts: 11, // 1 from the test + 10 from the setup
 		},
 	}
 
@@ -256,9 +213,9 @@ func TestUpdateStats(t *testing.T) {
 				tC.setup(ctx, dispatcher)
 			}
 
-			transferAttr := tC.transferAttr()
+			attr := tC.attr()
 			forwarding := tC.forwarding()
-			err := dispatcher.UpdateStats(ctx, transferAttr, forwarding)
+			err := dispatcher.UpdateStats(ctx, attr, forwarding)
 
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)
@@ -267,8 +224,8 @@ func TestUpdateStats(t *testing.T) {
 
 				// Create expected source and destination info
 				sourceID := core.CrossChainID{
-					ProtocolId:     transferAttr.SourceProtocolID(),
-					CounterpartyId: transferAttr.SourceCounterpartyID(),
+					ProtocolId:     attr.SourceProtocolID(),
+					CounterpartyId: attr.SourceCounterpartyID(),
 				}
 				attr, _ := forwarding.CachedAttributes()
 				destID := core.CrossChainID{
@@ -277,17 +234,17 @@ func TestUpdateStats(t *testing.T) {
 				}
 
 				// Verify amount stats
-				for denom, expectedAmount := range tC.expAmounts {
-					actualAmount := dispatcher.GetDispatchedAmount(ctx, sourceID, destID, denom)
+				for denom, expAmount := range tC.expAmounts {
+					da := dispatcher.GetDispatchedAmount(ctx, &sourceID, &destID, denom)
 
-					require.Equal(t, expectedAmount.Incoming, actualAmount.Incoming)
-					require.Equal(t, expectedAmount.Outgoing, actualAmount.Outgoing)
+					require.Equal(t, expAmount.Incoming, da.AmountDispatched.Incoming)
+					require.Equal(t, expAmount.Outgoing, da.AmountDispatched.Outgoing)
 				}
 
 				// Verify count stats
-				actualCounts := dispatcher.GetDispatchedCounts(ctx, sourceID, destID)
+				actualCounts := dispatcher.GetDispatchedCounts(ctx, &sourceID, &destID)
 
-				require.Equal(t, tC.expectedCounts, actualCounts)
+				require.Equal(t, tC.expCounts, actualCounts.Count)
 			}
 		})
 	}

@@ -224,13 +224,7 @@ func (k *Keeper) setComponents(
 		return fmt.Errorf("error creating a new forwarding component: %w", err)
 	}
 
-	dispatcher, err := dispatchercomp.New(
-		cdc,
-		sb,
-		logger,
-		forwarder,
-		executor,
-	)
+	dispatcher, err := dispatchercomp.New(cdc, sb, logger, forwarder, executor)
 	if err != nil {
 		return fmt.Errorf("error creating a new dispatcher component: %w", err)
 	}

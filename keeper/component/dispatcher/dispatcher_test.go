@@ -34,87 +34,86 @@ import (
 	"orbiter.dev/types"
 )
 
-func TestNewDispatcherComponent(t *testing.T) {
+func TestNew(t *testing.T) {
 	deps := mocks.NewDependencies(t)
 
 	testCases := []struct {
-		name           string
-		codec          codec.Codec
-		logger         log.Logger
-		OrbitsHandler  types.PacketHandler[*types.ForwardingPacket]
-		ActionsHandler types.PacketHandler[*types.ActionPacket]
-		expError       string
-	}{
-		{
-			name:           "success - passing all correct inputs",
-			codec:          deps.EncCfg.Codec,
-			logger:         deps.Logger,
-			OrbitsHandler:  &mocks.ForwardingHandler{},
-			ActionsHandler: &mocks.ActionsHandler{},
-			expError:       "",
-		},
-	}
-
-	for _, tc := range testCases {
-		sb := collections.NewSchemaBuilder(deps.StoreService)
-		_, err := dispatcher.New(
-			tc.codec,
-			sb,
-			tc.logger,
-			tc.OrbitsHandler,
-			tc.ActionsHandler,
-		)
-
-		t.Run(tc.name, func(t *testing.T) {
-			if tc.expError != "" {
-				require.ErrorContains(t, err, tc.expError)
-			} else {
-				require.NoError(t, err)
-				_, err = sb.Build()
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
-func TestValidate_DispatcherComponent(t *testing.T) {
-	testCases := []struct {
 		name              string
+		codec             codec.Codec
+		logger            log.Logger
+		sb                *collections.SchemaBuilder
 		ForwardingHandler types.PacketHandler[*types.ForwardingPacket]
 		ActionHandler     types.PacketHandler[*types.ActionPacket]
 		expError          string
 	}{
 		{
-			name:              "success - all mandatory fields are set",
+			name:              "success - passing all correct inputs",
+			codec:             deps.EncCfg.Codec,
+			sb:                collections.NewSchemaBuilder(deps.StoreService),
+			logger:            deps.Logger,
 			ForwardingHandler: &mocks.ForwardingHandler{},
 			ActionHandler:     &mocks.ActionsHandler{},
 			expError:          "",
 		},
 		{
+			name:              "error - nil codec",
+			sb:                collections.NewSchemaBuilder(deps.StoreService),
+			logger:            deps.Logger,
+			ForwardingHandler: &mocks.ForwardingHandler{},
+			ActionHandler:     &mocks.ActionsHandler{},
+			expError:          "codec cannot be nil",
+		},
+		{
+			name:              "error - nil schema builder",
+			codec:             deps.EncCfg.Codec,
+			logger:            deps.Logger,
+			ForwardingHandler: &mocks.ForwardingHandler{},
+			ActionHandler:     &mocks.ActionsHandler{},
+			expError:          "schema builder cannot be nil",
+		},
+		{
+			name:              "error - nil logger",
+			codec:             deps.EncCfg.Codec,
+			sb:                collections.NewSchemaBuilder(deps.StoreService),
+			ForwardingHandler: &mocks.ForwardingHandler{},
+			ActionHandler:     &mocks.ActionsHandler{},
+			expError:          "logger cannot be nil",
+		},
+		{
 			name:              "error - nil forwarding handler",
+			codec:             deps.EncCfg.Codec,
+			sb:                collections.NewSchemaBuilder(deps.StoreService),
+			logger:            deps.Logger,
 			ForwardingHandler: nil,
 			ActionHandler:     &mocks.ActionsHandler{},
-			expError:          "cannot be nil",
+			expError:          "forwarding handler is not set",
 		},
 		{
 			name:              "error - nil actions handler",
+			codec:             deps.EncCfg.Codec,
+			sb:                collections.NewSchemaBuilder(deps.StoreService),
+			logger:            deps.Logger,
 			ForwardingHandler: &mocks.ForwardingHandler{},
 			ActionHandler:     nil,
-			expError:          "cannot be nil",
+			expError:          "action handler is not set",
 		},
 	}
 
-	for _, tc := range testCases {
-		dispatcher := dispatcher.Dispatcher{
-			ForwardingHandler: tc.ForwardingHandler,
-			ActionHandler:     tc.ActionHandler,
-		}
-		err := dispatcher.Validate()
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			_, err := dispatcher.New(
+				tC.codec,
+				tC.sb,
+				tC.logger,
+				tC.ForwardingHandler,
+				tC.ActionHandler,
+			)
 
-		t.Run(tc.name, func(t *testing.T) {
-			if tc.expError != "" {
-				require.ErrorContains(t, err, tc.expError)
+			if tC.expError != "" {
+				require.ErrorContains(t, err, tC.expError)
 			} else {
+				require.NoError(t, err)
+				_, err = tC.sb.Build()
 				require.NoError(t, err)
 			}
 		})

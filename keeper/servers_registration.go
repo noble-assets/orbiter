@@ -24,9 +24,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"orbiter.dev/keeper/component/adapter"
+	"orbiter.dev/keeper/component/dispatcher"
 	"orbiter.dev/keeper/component/executor"
 	"orbiter.dev/keeper/component/forwarder"
 	adaptertypes "orbiter.dev/types/component/adapter"
+	dispatchertypes "orbiter.dev/types/component/dispatcher"
 	executortypes "orbiter.dev/types/component/executor"
 	forwardertypes "orbiter.dev/types/component/forwarder"
 )
@@ -41,10 +43,11 @@ func RegisterMsgServers(cfg module.Configurator, k *Keeper) {
 }
 
 // RegisterQueryServers registers the gRPC query servers for all Orbiter components
-// (Forwarder, Executor, and Adapter) with the module configurator.
+// with the module configurator.
 func RegisterQueryServers(cfg module.Configurator, k *Keeper) {
 	qs := cfg.QueryServer()
 	forwardertypes.RegisterQueryServer(qs, forwarder.NewQueryServer(k.forwarder))
 	executortypes.RegisterQueryServer(qs, executor.NewQueryServer(k.executor))
 	adaptertypes.RegisterQueryServer(qs, adapter.NewQueryServer(k.adapter))
+	dispatchertypes.RegisterQueryServer(qs, dispatcher.NewQueryServer(k.dispatcher))
 }

@@ -22,8 +22,8 @@ package dispatcher
 
 import (
 	"context"
-	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 
 	"orbiter.dev/types"
@@ -34,111 +34,89 @@ import (
 // UpdateStats updates all the statistics the module keep track of.
 func (d *Dispatcher) UpdateStats(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
+	attr *types.TransferAttributes,
 	forwarding *core.Forwarding,
 ) error {
-	if transferAttr == nil {
+	if attr == nil {
 		return core.ErrNilPointer.Wrap("received nil transfer attributes")
 	}
 	if forwarding == nil {
 		return core.ErrNilPointer.Wrap("received nil forwarding")
 	}
 
-	attr, err := forwarding.CachedAttributes()
+	forwardingAttr, err := forwarding.CachedAttributes()
 	if err != nil {
 		return err
 	}
 
 	var sourceID core.CrossChainID
-	if sourceID, err = core.NewCrossChainID(transferAttr.SourceProtocolID(), transferAttr.SourceCounterpartyID()); err != nil {
-		return fmt.Errorf("failed to create source cross-chain ID: %w", err)
+	if sourceID, err = core.NewCrossChainID(attr.SourceProtocolID(), attr.SourceCounterpartyID()); err != nil {
+		return errorsmod.Wrap(err, "failed to create source cross-chain ID")
 	}
 
 	var destID core.CrossChainID
-	if destID, err = core.NewCrossChainID(forwarding.ProtocolID(), attr.CounterpartyID()); err != nil {
-		return fmt.Errorf("failed to create destination cross-chain ID: %w", err)
+	if destID, err = core.NewCrossChainID(forwarding.ProtocolID(), forwardingAttr.CounterpartyID()); err != nil {
+		return errorsmod.Wrap(err, "failed to create destination cross-chain ID")
 	}
 
-	// Since incoming denom can be different than the outgoing one,
-	// we have to check here how many amount dispatched types to store.
-	// If the denom is not changed, we can set a single type with incoming
-	// and outgoing amount, which could be different too, but are not part
-	// of the key. If the denom changed, we have to set two values with
-	// a different key.
-	denomDispatchedAmounts, err := d.BuildDenomDispatchedAmounts(transferAttr)
+	// Since the denom is part of the stored key, if it changed during the execution
+	// of some actions, we will have to store multiple dispatched amount entries.
+	amounts, err := d.BuildDenomDispatchedAmounts(attr)
 	if err != nil {
-		return err
+		return errorsmod.Wrap(err, "error building denom dispatched amounts")
 	}
 
-	for _, dda := range denomDispatchedAmounts {
-		if err := d.updateDispatchedAmountStats(ctx, &sourceID, &destID, dda.Denom, dda.AmountDispatched); err != nil {
-			return fmt.Errorf("update dispatched amount stats failure: %w", err)
+	for _, a := range amounts {
+		if err := d.updateDispatchedAmount(ctx, &sourceID, &destID, a.Denom, a.AmountDispatched); err != nil {
+			return errorsmod.Wrap(err, "update dispatched amounts stats failure")
 		}
 	}
 
-	if err := d.updateDispatchedCountsStats(ctx, &sourceID, &destID); err != nil {
-		return fmt.Errorf("update dispatch counts stats failure: %w", err)
+	if err := d.updateDispatchedCounts(ctx, &sourceID, &destID); err != nil {
+		return errorsmod.Wrap(err, "update dispatch counts stats failure")
 	}
 
 	return nil
 }
 
-// updateDispatchedAmountStats updates the amount dispatched
+// updateDispatchedAmount updates the amount dispatched
 // values on the store. A boolean flag is used to indicate
 // if the amount to be added is an incoming or outgoing amount.
 // It is important to keep track of incoming and outgoing
 // information because fees, swaps, or other actions can change
 // the coins delivered to the destination chain.
-func (d *Dispatcher) updateDispatchedAmountStats(
+func (d *Dispatcher) updateDispatchedAmount(
 	ctx context.Context,
 	sourceID *core.CrossChainID,
 	destID *core.CrossChainID,
 	denom string,
-	newAmountDispatched dispatchertypes.AmountDispatched,
+	newAmount dispatchertypes.AmountDispatched,
 ) error {
-	amountDispatched := d.GetDispatchedAmount(
-		ctx,
-		*sourceID,
-		*destID,
-		denom,
-	)
+	da := d.GetDispatchedAmount(ctx, sourceID, destID, denom)
+	amount := da.AmountDispatched
 
-	if newAmountDispatched.Incoming.IsPositive() {
-		amountDispatched.Incoming = amountDispatched.Incoming.Add(newAmountDispatched.Incoming)
+	if newAmount.Incoming.IsPositive() {
+		amount.Incoming = amount.Incoming.Add(newAmount.Incoming)
 	}
-	if newAmountDispatched.Outgoing.IsPositive() {
-		amountDispatched.Outgoing = amountDispatched.Outgoing.Add(newAmountDispatched.Outgoing)
+	if newAmount.Outgoing.IsPositive() {
+		amount.Outgoing = amount.Outgoing.Add(newAmount.Outgoing)
 	}
 
-	return d.SetDispatchedAmount(
-		ctx,
-		*sourceID,
-		*destID,
-		denom,
-		amountDispatched,
-	)
+	return d.SetDispatchedAmount(ctx, sourceID, destID, denom, amount)
 }
 
-// updateDispatchedCountsStats updates the counter of the
-// number of dispatches executed.
-func (d *Dispatcher) updateDispatchedCountsStats(
+// updateDispatchedCounts updates the counter of the
+// number of dispatches executed between the two cross-chain IDs.
+// ID without consider.
+func (d *Dispatcher) updateDispatchedCounts(
 	ctx context.Context,
 	sourceID *core.CrossChainID,
 	destID *core.CrossChainID,
 ) error {
-	countDispatches := d.GetDispatchedCounts(
-		ctx,
-		*sourceID,
-		*destID,
-	)
-	countDispatches++
+	dc := d.GetDispatchedCounts(ctx, sourceID, destID)
+	count := dc.Count + 1
 
-	return d.SetDispatchedCounts(
-		ctx,
-		*sourceID,
-		*destID,
-		countDispatches,
-	)
+	return d.SetDispatchedCounts(ctx, sourceID, destID, count)
 }
 
 // ====================================================================================================
@@ -154,20 +132,18 @@ type denomDispatchedAmount struct {
 }
 
 // BuildDenomDispatchedAmounts is an helper method used to
-// extract the amounts dispatched that have to be dumped to state.
+// extract the amounts dispatched that have to be stored in state.
 func (d *Dispatcher) BuildDenomDispatchedAmounts(
-	transferAttributes *types.TransferAttributes,
+	attr *types.TransferAttributes,
 ) ([]denomDispatchedAmount, error) {
-	if transferAttributes == nil {
+	if attr == nil {
 		return nil, core.ErrNilPointer.Wrap("received nil transfer attributes")
 	}
-	sourceDenom := transferAttributes.SourceDenom()
-	sourceAmount := transferAttributes.SourceAmount()
-	destDenom := transferAttributes.DestinationDenom()
-	destAmount := transferAttributes.DestinationAmount()
+	sourceDenom, sourceAmount := attr.SourceDenom(), attr.SourceAmount()
+	destDenom, destAmount := attr.DestinationDenom(), attr.DestinationAmount()
 
+	// We can have at maximum two entries, and at least one.
 	ddas := make([]denomDispatchedAmount, 1, 2)
-
 	ddas[0] = denomDispatchedAmount{
 		Denom: sourceDenom,
 		AmountDispatched: dispatchertypes.AmountDispatched{
@@ -177,11 +153,11 @@ func (d *Dispatcher) BuildDenomDispatchedAmounts(
 	}
 
 	// We can have two situations here:
-	// - An action changed the destination denom (e.g. swap): In this case we have to
-	//   append a new entry in the slice.
 	// - No action changed the destination denom: In this case we have to
 	//   set the destination amount, which can be different than the source
 	//   amount (e.g. fees)
+	// - An action changed the destination denom (e.g. swap): In this case we have to
+	//   append a new entry in the slice.
 	if sourceDenom == destDenom {
 		ddas[0].AmountDispatched.Outgoing = destAmount
 	} else {

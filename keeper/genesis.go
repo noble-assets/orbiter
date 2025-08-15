@@ -34,6 +34,10 @@ func (k *Keeper) InitGenesis(ctx context.Context, g types.GenesisState) {
 		panic(fmt.Errorf("unable to initialize adapter genesis state %w", err))
 	}
 
+	if err := k.dispatcher.InitGenesis(ctx, g.DispatcherGenesis); err != nil {
+		panic(fmt.Errorf("unable to initialize dispatcher genesis state %w", err))
+	}
+
 	if err := k.forwarder.InitGenesis(ctx, g.ForwarderGenesis); err != nil {
 		panic(fmt.Errorf("unable to initialize forwarder genesis state %w", err))
 	}
@@ -47,8 +51,9 @@ func (k *Keeper) InitGenesis(ctx context.Context, g types.GenesisState) {
 // into a genesis state.
 func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
 	return &types.GenesisState{
-		AdapterGenesis:   k.adapter.ExportGenesis(ctx),
-		ForwarderGenesis: k.forwarder.ExportGenesis(ctx),
-		ExecutorGenesis:  k.executor.ExportGenesis(ctx),
+		AdapterGenesis:    k.adapter.ExportGenesis(ctx),
+		DispatcherGenesis: k.dispatcher.ExportGenesis(ctx),
+		ForwarderGenesis:  k.forwarder.ExportGenesis(ctx),
+		ExecutorGenesis:   k.executor.ExportGenesis(ctx),
 	}
 }
