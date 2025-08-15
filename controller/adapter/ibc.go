@@ -22,8 +22,8 @@ package adapter
 
 import (
 	"context"
-	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
@@ -59,7 +59,7 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 
 	parser, err := NewIBCParser(cdc)
 	if err != nil {
-		return nil, fmt.Errorf("error during instantiation of IBC adapter: %w", err)
+		return nil, errorsmod.Wrap(err, "error during instantiation of IBC adapter")
 	}
 
 	return &IBCAdapter{

@@ -22,11 +22,11 @@ package orbiter
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
 	"cosmossdk.io/core/appmodule"
+	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -107,7 +107,7 @@ func (AppModuleBasic) ValidateGenesis(
 ) error {
 	var genesis types.GenesisState
 	if err := cdc.UnmarshalJSON(bz, &genesis); err != nil {
-		return fmt.Errorf("failed to unmarshal x/%s genesis state: %w", core.ModuleName, err)
+		return errorsmod.Wrapf(err, "failed to unmarshal x/%s genesis state", core.ModuleName)
 	}
 
 	return genesis.Validate()

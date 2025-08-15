@@ -22,9 +22,9 @@ package forwarder
 
 import (
 	"context"
-	"fmt"
 
 	"cosmossdk.io/collections"
+	errorsmod "cosmossdk.io/errors"
 
 	"orbiter.dev/types/core"
 )
@@ -209,7 +209,7 @@ func (f *Forwarder) GetPausedCrossChainsMap(
 	for ; iter.Valid(); iter.Next() {
 		key, err := iter.Key()
 		if err != nil {
-			return nil, fmt.Errorf("failed to get key from iterator: %w", err)
+			return nil, errorsmod.Wrap(err, "failed to get key from iterator")
 		}
 
 		pID := key.K1()

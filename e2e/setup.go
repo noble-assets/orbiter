@@ -22,7 +22,6 @@ package e2e
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
@@ -35,6 +34,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -261,10 +261,10 @@ func preGenesis(ctx context.Context, suite *Suite) func(ibc.Chain) error {
 		var err error
 		fiatTfRoles.Pauser, err = nobleVal.BuildRelayerWallet(ctx, "pauser-ftf")
 		if err != nil {
-			return fmt.Errorf("failed to create wallet: %w", err)
+			return errorsmod.Wrap(err, "failed to create wallet")
 		}
 		if err := val.RecoverKey(ctx, fiatTfRoles.Pauser.KeyName(), fiatTfRoles.Pauser.Mnemonic()); err != nil {
-			return fmt.Errorf("failed to restore %s wallet: %w", fiatTfRoles.Pauser.KeyName(), err)
+			return errorsmod.Wrapf(err, "failed to restore %s wallet", fiatTfRoles.Pauser.KeyName())
 		}
 
 		genesisWallet := ibc.WalletAmount{
@@ -283,7 +283,7 @@ func preGenesis(ctx context.Context, suite *Suite) func(ibc.Chain) error {
 
 		fiatTfRoles.TokenMessenger, err = nobleVal.BuildRelayerWallet(ctx, "token-messenger-ftf")
 		if err != nil {
-			return fmt.Errorf("failed to create wallet: %w", err)
+			return errorsmod.Wrap(err, "failed to create wallet")
 		}
 
 		suite.CircleRoles = fiatTfRoles

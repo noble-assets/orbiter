@@ -22,8 +22,8 @@ package forwarder
 
 import (
 	"context"
-	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	forwardertypes "orbiter.dev/types/component/forwarder"
@@ -49,12 +49,12 @@ func (s queryServer) IsProtocolPaused(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, fmt.Errorf("invalid protocol ID: %w", err)
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
 	paused, err := s.Forwarder.IsProtocolPaused(ctx, req.ProtocolId)
 	if err != nil {
-		return nil, fmt.Errorf("unable to query protocol paused status: %w", err)
+		return nil, errorsmod.Wrap(err, "unable to query protocol paused status")
 	}
 
 	return &forwardertypes.QueryIsProtocolPausedResponse{
@@ -73,7 +73,7 @@ func (s queryServer) PausedProtocols(
 
 	paused, err := s.GetPausedProtocols(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("unable to query paused protocols: %w", err)
+		return nil, errorsmod.Wrap(err, "unable to query paused protocols")
 	}
 
 	return &forwardertypes.QueryPausedProtocolsResponse{
@@ -91,12 +91,12 @@ func (s queryServer) IsCrossChainPaused(
 
 	ccID, err := core.NewCrossChainID(req.ProtocolId, req.CounterpartyId)
 	if err != nil {
-		return nil, fmt.Errorf("unable to query cross-chain paused status: %w", err)
+		return nil, errorsmod.Wrap(err, "unable to query cross-chain paused status")
 	}
 
 	paused, err := s.Forwarder.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
-		return nil, fmt.Errorf("unable to query cross-chain paused status: %w", err)
+		return nil, errorsmod.Wrap(err, "unable to query cross-chain paused status")
 	}
 
 	return &forwardertypes.QueryIsCrossChainPausedResponse{
@@ -115,11 +115,11 @@ func (s queryServer) PausedCrossChains(
 
 	id := req.ProtocolId
 	if err := id.Validate(); err != nil {
-		return nil, fmt.Errorf("invalid protocol ID: %w", err)
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 	paused, err := s.GetPausedCrossChainsMap(ctx, &id)
 	if err != nil {
-		return nil, fmt.Errorf("unable to query paused counterparty: %w", err)
+		return nil, errorsmod.Wrap(err, "unable to query paused counterparty")
 	}
 
 	return &forwardertypes.QueryPausedCrossChainsResponse{

@@ -21,8 +21,6 @@
 package forwarder
 
 import (
-	"fmt"
-
 	errorsmod "cosmossdk.io/errors"
 
 	core "orbiter.dev/types/core"
@@ -54,7 +52,7 @@ func (g *GenesisState) Validate() error {
 		}
 
 		if err := id.Validate(); err != nil {
-			return fmt.Errorf("invalid paused cross-chain ID %q: %w", id, err)
+			return errorsmod.Wrapf(err, "invalid paused cross-chain ID %q", id)
 		}
 	}
 

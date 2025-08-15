@@ -22,7 +22,6 @@ package dispatcher
 
 import (
 	"context"
-	"fmt"
 
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
@@ -179,7 +178,7 @@ func (d *Dispatcher) dispatchActions(
 		)
 		err = d.dispatchActionPacket(ctx, packet)
 		if err != nil {
-			return fmt.Errorf("error dispatching action %s packet: %w", action.ID(), err)
+			return errorsmod.Wrapf(err, "error dispatching action %s packet", action.ID())
 		}
 	}
 	d.logger.Debug("completed actions dispatching")
@@ -197,10 +196,10 @@ func (d *Dispatcher) dispatchForwarding(
 	d.logger.Debug("started forwarding dispatching")
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {
-		return fmt.Errorf(
-			"error creating forwarding packet for protocol ID %s: %w",
-			forwarding.ProtocolID(),
+		return errorsmod.Wrapf(
 			err,
+			"error creating forwarding packet for protocol ID %s",
+			forwarding.ProtocolID(),
 		)
 	}
 
@@ -215,10 +214,10 @@ func (d *Dispatcher) dispatchForwarding(
 	)
 	err = d.dispatchForwardingPacket(ctx, packet)
 	if err != nil {
-		return fmt.Errorf(
-			"error dispatching forwarding packet for protocol %s: %w",
-			packet.Forwarding.ProtocolID(),
+		return errorsmod.Wrapf(
 			err,
+			"error dispatching forwarding packet for protocol %s",
+			packet.Forwarding.ProtocolID(),
 		)
 	}
 

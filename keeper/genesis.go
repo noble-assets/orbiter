@@ -22,7 +22,8 @@ package keeper
 
 import (
 	"context"
-	"fmt"
+
+	errorsmod "cosmossdk.io/errors"
 
 	"orbiter.dev/types"
 )
@@ -31,19 +32,19 @@ import (
 // a genesis state.
 func (k *Keeper) InitGenesis(ctx context.Context, g types.GenesisState) {
 	if err := k.adapter.InitGenesis(ctx, g.AdapterGenesis); err != nil {
-		panic(fmt.Errorf("unable to initialize adapter genesis state %w", err))
+		panic(errorsmod.Wrap(err, "unable to initialize adapter genesis state"))
 	}
 
 	if err := k.dispatcher.InitGenesis(ctx, g.DispatcherGenesis); err != nil {
-		panic(fmt.Errorf("unable to initialize dispatcher genesis state %w", err))
+		panic(errorsmod.Wrap(err, "unable to initialize dispatcher genesis state"))
 	}
 
 	if err := k.forwarder.InitGenesis(ctx, g.ForwarderGenesis); err != nil {
-		panic(fmt.Errorf("unable to initialize forwarder genesis state %w", err))
+		panic(errorsmod.Wrap(err, "unable to initialize forwarder genesis state"))
 	}
 
 	if err := k.executor.InitGenesis(ctx, g.ExecutorGenesis); err != nil {
-		panic(fmt.Errorf("unable to initialize executor genesis state %w", err))
+		panic(errorsmod.Wrap(err, "unable to initialize executor genesis state"))
 	}
 }
 

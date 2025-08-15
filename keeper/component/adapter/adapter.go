@@ -26,6 +26,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -151,11 +152,11 @@ func (a *Adapter) BeforeTransferHook(
 	}
 
 	if err := adapter.BeforeTransferHook(ctx, payload); err != nil {
-		return fmt.Errorf("before transfer hook failed: %w", err)
+		return errorsmod.Wrap(err, "before transfer hook failed")
 	}
 
 	if err := a.commonBeforeTransferHook(ctx, payload.Forwarding.PassthroughPayload); err != nil {
-		return fmt.Errorf("generic hook failed: %w", err)
+		return errorsmod.Wrap(err, "generic hook failed")
 	}
 
 	return nil
@@ -176,7 +177,7 @@ func (a *Adapter) AfterTransferHook(
 	}
 
 	if err := adapter.AfterTransferHook(ctx, payload); err != nil {
-		return nil, fmt.Errorf("after transfer hook failed: %w", err)
+		return nil, errorsmod.Wrap(err, "after transfer hook failed")
 	}
 
 	balances := a.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
@@ -191,7 +192,7 @@ func (a *Adapter) AfterTransferHook(
 		balances[0].Amount,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("error creating transfer attributes: %w", err)
+		return nil, errorsmod.Wrap(err, "error creating transfer attributes")
 	}
 
 	return transferAttr, nil
