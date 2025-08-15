@@ -1,0 +1,8 @@
+# CVE-2023-42319 - go-ethereum vulnerability - inherent to protocol, low risk
+CVE-2023-42319
+
+# CVE-2015-20112 - go-ethereum old vulnerability - low severity, affects private networks only
+CVE-2015-20112
+
+# CVE-2021-43668 - goleveldb vulnerability - affects go-ethereum nodes
+CVE-2021-43668

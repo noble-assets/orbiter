@@ -53,8 +53,8 @@ proto-testutil-gen:
 #=============================================================================#
 #                                 Tooling                                     #
 #=============================================================================#
-.PHONY: tool-all license form lint vulncheck
-tool-all : license format lint vulncheck
+.PHONY: tool-all license format lint vulncheck nancy
+tool-all : license format lint vulncheck nancy
 
 FILES := $(shell find . -name "*.go" -not -path "./simapp/*" -not -name "*.pb.go" -not -name "*.pb.gw.go" -not -name "*.pulsar.go")
 license:
@@ -81,6 +81,18 @@ vulncheck:
 	@echo "Running vulnerability check..."
 	@go tool govulncheck ./...
 	@echo "Completed vulnerability check!"
+
+NANCY_VERSION=v1.0
+NANCY_IMAGE=sonatypecommunity/nancy:$(NANCY_VERSION)
+nancy:
+	@echo "==================================================================="
+	@echo "Running Nancy vulnerability scanner..."
+	@go list -json -deps ./... | docker run --rm -i \
+	  --volume "$(PWD)":/workspace \
+	  --workdir /workspace \
+	  $(NANCY_IMAGE) sleuth \
+	  --exclude-vulnerability-file .nancy-ignore
+	@echo "Completed Nancy vulnerability scan!"
 
 #=============================================================================#
 #                                    Test                                     #
