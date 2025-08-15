@@ -137,7 +137,7 @@ func (q queryServer) DispatchedAmounts(
 
 	if !q.HasDispatchedAmount(ctx, &sourceID, &destID, req.Denom) {
 		return nil, fmt.Errorf(
-			"dispatched amount does not exists for source ID %s, destination ID %s, and denom %s",
+			"dispatched amount does not exist for source ID %s, destination ID %s, and denom %s",
 			sourceID.String(),
 			destID.String(),
 			req.Denom,
