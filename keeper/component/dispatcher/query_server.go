@@ -120,6 +120,13 @@ func (q queryServer) DispatchedAmounts(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
+	if req.Denom == "" {
+		return nil, errorsmod.Wrapf(
+			core.ErrEmptyString,
+			"error querying an empty string token denom",
+		)
+	}
+
 	sourceID, err := core.NewCrossChainID(req.SourceProtocolId, req.SourceCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
@@ -128,13 +135,6 @@ func (q queryServer) DispatchedAmounts(
 	destID, err := core.NewCrossChainID(req.DestinationProtocolId, req.DestinationCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
-	}
-
-	if req.Denom == "" {
-		return nil, errorsmod.Wrapf(
-			core.ErrEmptyString,
-			"error querying an empty string token denom",
-		)
 	}
 
 	if !q.HasDispatchedAmount(ctx, &sourceID, &destID, req.Denom) {

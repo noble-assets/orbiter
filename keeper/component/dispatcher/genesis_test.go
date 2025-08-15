@@ -47,7 +47,7 @@ func defaultAmounts(
 		},
 		Denom: "unoble",
 		AmountDispatched: dispatchertypes.AmountDispatched{
-			Incoming: math.NewInt(1),
+			Incoming: math.NewInt(2),
 			Outgoing: math.NewInt(1),
 		},
 	}

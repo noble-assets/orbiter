@@ -283,7 +283,7 @@ func (d *Dispatcher) getDispatchedAmountEntryFromKey(
 
 	destID, err := core.ParseCrossChainID(k.K3())
 	if err != nil {
-		return entry, errorsmod.Wrap(err, "failed to create destination cross-chain ID")
+		return entry, errorsmod.Wrap(err, "failed to parse destination cross-chain ID")
 	}
 
 	entry.SourceId = &sourceID
@@ -299,7 +299,7 @@ func (d *Dispatcher) getDispatchedAmountEntryFromKey(
 // ====================================================================================================
 
 // DispatchedCountsKey is defined as:
-// (source protocol ID, source counterparty ID, destination cross-chain ID).
+// (source protocol ID, source counterparty ID, destination protocol ID, destination counterparty ID).
 type DispatchedCountsKey = collections.Quad[int32, string, int32, string]
 
 type DispatchedCountsIndexes struct {

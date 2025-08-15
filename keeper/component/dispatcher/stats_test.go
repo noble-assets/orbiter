@@ -73,18 +73,18 @@ func TestUpdateStats(t *testing.T) {
 		{
 			name:       "error - nil transfer attributes",
 			attr:       func() *types.TransferAttributes { return nil },
-			forwarding: func() *core.Forwarding { return defaultForwarding() },
+			forwarding: defaultForwarding,
 			expErr:     "nil transfer attributes",
 		},
 		{
 			name:       "error - nil forwarding",
-			attr:       func() *types.TransferAttributes { return defaultAttr() },
+			attr:       defaultAttr,
 			forwarding: func() *core.Forwarding { return nil },
 			expErr:     "nil forwarding",
 		},
 		{
 			name: "error - destination protocol ID is not supported",
-			attr: func() *types.TransferAttributes { return defaultAttr() },
+			attr: defaultAttr,
 			forwarding: func() *core.Forwarding {
 				f := defaultForwarding()
 				f.ProtocolId = core.PROTOCOL_UNSUPPORTED
@@ -95,7 +95,7 @@ func TestUpdateStats(t *testing.T) {
 		},
 		{
 			name: "error - invalid forwarding attributes",
-			attr: func() *types.TransferAttributes { return defaultAttr() },
+			attr: defaultAttr,
 			forwarding: func() *core.Forwarding {
 				return &core.Forwarding{
 					ProtocolId: 2,
@@ -106,8 +106,8 @@ func TestUpdateStats(t *testing.T) {
 		},
 		{
 			name:       "success - same amount and denom",
-			attr:       func() *types.TransferAttributes { return defaultAttr() },
-			forwarding: func() *core.Forwarding { return defaultForwarding() },
+			attr:       defaultAttr,
+			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
@@ -124,7 +124,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *core.Forwarding { return defaultForwarding() },
+			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
@@ -142,7 +142,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *core.Forwarding { return defaultForwarding() },
+			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(100),
@@ -189,7 +189,7 @@ func TestUpdateStats(t *testing.T) {
 
 				return ta
 			},
-			forwarding: func() *core.Forwarding { return defaultForwarding() },
+			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
 					Incoming: math.NewInt(1_100),
