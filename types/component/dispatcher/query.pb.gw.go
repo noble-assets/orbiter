@@ -40,7 +40,6 @@ func request_Query_DispatchedCounts_0(ctx context.Context, marshaler runtime.Mar
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -51,13 +50,11 @@ func request_Query_DispatchedCounts_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "source_protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.SourceProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "source_protocol_id", err)
 	}
-
-	protoReq.SourceProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["source_counterparty_id"]
 	if !ok {
@@ -75,13 +72,11 @@ func request_Query_DispatchedCounts_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "destination_protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.DestinationProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "destination_protocol_id", err)
 	}
-
-	protoReq.DestinationProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["destination_counterparty_id"]
 	if !ok {
@@ -105,7 +100,6 @@ func local_request_Query_DispatchedCounts_0(ctx context.Context, marshaler runti
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -116,13 +110,11 @@ func local_request_Query_DispatchedCounts_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "source_protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.SourceProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "source_protocol_id", err)
 	}
-
-	protoReq.SourceProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["source_counterparty_id"]
 	if !ok {
@@ -140,13 +132,11 @@ func local_request_Query_DispatchedCounts_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "destination_protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.DestinationProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "destination_protocol_id", err)
 	}
-
-	protoReq.DestinationProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["destination_counterparty_id"]
 	if !ok {
@@ -294,7 +284,6 @@ func request_Query_DispatchedAmounts_0(ctx context.Context, marshaler runtime.Ma
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -305,13 +294,11 @@ func request_Query_DispatchedAmounts_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "source_protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.SourceProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "source_protocol_id", err)
 	}
-
-	protoReq.SourceProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["source_counterparty_id"]
 	if !ok {
@@ -329,13 +316,11 @@ func request_Query_DispatchedAmounts_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "destination_protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.DestinationProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "destination_protocol_id", err)
 	}
-
-	protoReq.DestinationProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["destination_counterparty_id"]
 	if !ok {
@@ -366,7 +351,6 @@ func local_request_Query_DispatchedAmounts_0(ctx context.Context, marshaler runt
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -377,13 +361,11 @@ func local_request_Query_DispatchedAmounts_0(ctx context.Context, marshaler runt
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "source_protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.SourceProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "source_protocol_id", err)
 	}
-
-	protoReq.SourceProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["source_counterparty_id"]
 	if !ok {
@@ -401,13 +383,11 @@ func local_request_Query_DispatchedAmounts_0(ctx context.Context, marshaler runt
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "destination_protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.DestinationProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "destination_protocol_id", err)
 	}
-
-	protoReq.DestinationProtocolId = core.ProtocolID(e)
 
 	val, ok = pathParams["destination_counterparty_id"]
 	if !ok {

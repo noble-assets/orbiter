@@ -22,7 +22,6 @@ import (
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"orbiter.dev/types/core"
 )
 
 // Suppress "imported and not used" errors
@@ -58,7 +57,6 @@ func request_Query_IsActionPaused_0(ctx context.Context, marshaler runtime.Marsh
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -69,13 +67,11 @@ func request_Query_IsActionPaused_0(ctx context.Context, marshaler runtime.Marsh
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "action_id")
 	}
 
-	e, err = runtime.Enum(val, core.ActionID_value)
+	protoReq.ActionId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "action_id", err)
 	}
-
-	protoReq.ActionId = core.ActionID(e)
 
 	msg, err := client.IsActionPaused(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -88,7 +84,6 @@ func local_request_Query_IsActionPaused_0(ctx context.Context, marshaler runtime
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -99,13 +94,11 @@ func local_request_Query_IsActionPaused_0(ctx context.Context, marshaler runtime
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "action_id")
 	}
 
-	e, err = runtime.Enum(val, core.ActionID_value)
+	protoReq.ActionId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "action_id", err)
 	}
-
-	protoReq.ActionId = core.ActionID(e)
 
 	msg, err := server.IsActionPaused(ctx, &protoReq)
 	return msg, metadata, err

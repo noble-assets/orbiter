@@ -48,11 +48,13 @@ func (s queryServer) IsProtocolPaused(
 	if req == nil {
 		return nil, sdkerrors.ErrInvalidRequest
 	}
-	if err := req.ProtocolId.Validate(); err != nil {
+
+	protocolID := core.ProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err := protocolID.Validate(); err != nil {
 		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	paused, err := s.Forwarder.IsProtocolPaused(ctx, req.ProtocolId)
+	paused, err := s.Forwarder.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "unable to query protocol paused status")
 	}
@@ -89,7 +91,8 @@ func (s queryServer) IsCrossChainPaused(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	ccID, err := core.NewCrossChainID(req.ProtocolId, req.CounterpartyId)
+	protocolID := core.ProtocolID(core.ProtocolID_value[req.ProtocolId])
+	ccID, err := core.NewCrossChainID(protocolID, req.CounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "unable to query cross-chain paused status")
 	}
@@ -113,16 +116,16 @@ func (s queryServer) PausedCrossChains(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	id := req.ProtocolId
-	if err := id.Validate(); err != nil {
+	protocolID := core.ProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err := protocolID.Validate(); err != nil {
 		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
-	paused, err := s.GetPausedCrossChainsMap(ctx, &id)
+	paused, err := s.GetPausedCrossChainsMap(ctx, &protocolID)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "unable to query paused cross-chains")
 	}
 
 	return &forwardertypes.QueryPausedCrossChainsResponse{
-		CounterpartyIds: paused[int32(id)],
+		CounterpartyIds: paused[int32(protocolID)],
 	}, nil
 }
