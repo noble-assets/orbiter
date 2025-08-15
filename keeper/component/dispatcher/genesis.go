@@ -29,7 +29,7 @@ import (
 	"orbiter.dev/types/core"
 )
 
-// InitGenesis initialize the state of the component with a genesis state.
+// InitGenesis initializes the state of the component with a genesis state.
 func (d *Dispatcher) InitGenesis(ctx context.Context, g *dispatchertypes.GenesisState) error {
 	if g == nil {
 		return core.ErrNilPointer.Wrap("dispatcher genesis")
