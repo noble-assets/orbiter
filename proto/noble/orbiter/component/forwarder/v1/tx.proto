@@ -18,10 +18,10 @@ service Msg {
   rpc PauseProtocol(MsgPauseProtocol) returns (MsgPauseProtocolResponse);
   // UnpauseProtocol resumes an entire forwarding protocol.
   rpc UnpauseProtocol(MsgUnpauseProtocol) returns (MsgUnpauseProtocolResponse);
-  // PauseCrossChain pauses specific counterparty for a protocol.
-  rpc PauseCrossChain(MsgPauseCrossChain) returns (MsgPauseCrossChainResponse);
-  // UnpauseCrossChain resumes specific counterparty pairs for a protocol.
-  rpc UnpauseCrossChain(MsgUnpauseCrossChain) returns (MsgUnpauseCrossChainResponse);
+  // PauseCrossChains pauses specific counterparty for a protocol.
+  rpc PauseCrossChains(MsgPauseCrossChains) returns (MsgPauseCrossChainsResponse);
+  // UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+  rpc UnpauseCrossChains(MsgUnpauseCrossChains) returns (MsgUnpauseCrossChainsResponse);
 
   rpc ReplaceDepositForBurn(MsgReplaceDepositForBurn) returns (MsgReplaceDepositForBurnResponse);
 }
@@ -43,10 +43,10 @@ message MsgPauseProtocol {
 // MsgPauseProtocolResponse is the response type from a MsgPauseProtocol request.
 message MsgPauseProtocolResponse {}
 
-// MsgPauseCrossChain pauses specific counterparty pairs for a protocol.
-message MsgPauseCrossChain {
+// MsgPauseCrossChains pauses specific counterparty pairs for a protocol.
+message MsgPauseCrossChains {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name) = "orbiter/forwarder/PauseCrossChain";
+  option (amino.name) = "orbiter/forwarder/PauseCrossChains";
 
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -59,9 +59,9 @@ message MsgPauseCrossChain {
   repeated string counterparty_ids = 3;
 }
 
-// MsgPauseCrossChainResponse is the response type
-// from a MsgPauseCrossChain request.
-message MsgPauseCrossChainResponse {}
+// MsgPauseCrossChainsResponse is the response type
+// from a MsgPauseCrossChains request.
+message MsgPauseCrossChainsResponse {}
 
 // MsgUnpauseProtocol resumes an entire forwarding protocol.
 message MsgUnpauseProtocol {
@@ -80,10 +80,10 @@ message MsgUnpauseProtocol {
 // MsgUnpauseProtocolResponse is the response type from a MsgUnpauseProtocol request.
 message MsgUnpauseProtocolResponse {}
 
-// MsgUnpauseCrossChain resumes specific counterparty pairs for a protocol.
-message MsgUnpauseCrossChain {
+// MsgUnpauseCrossChains resumes specific counterparty pairs for a protocol.
+message MsgUnpauseCrossChains {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name) = "orbiter/forwarder/UnpauseCrossChain";
+  option (amino.name) = "orbiter/forwarder/UnpauseCrossChains";
 
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -96,9 +96,9 @@ message MsgUnpauseCrossChain {
   repeated string counterparty_ids = 3;
 }
 
-// MsgUnpauseCrossChainResponse is the response type
+// MsgUnpauseCrossChainsResponse is the response type
 // from a MsgUnpauseCrossChain request.
-message MsgUnpauseCrossChainResponse {}
+message MsgUnpauseCrossChainsResponse {}
 
 // MsgReplaceDepositForBurnResponse allows the orbiter authority
 // to replace a sent deposit for burn message.

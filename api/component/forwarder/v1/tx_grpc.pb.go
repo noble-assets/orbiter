@@ -21,8 +21,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Msg_PauseProtocol_FullMethodName         = "/noble.orbiter.component.forwarder.v1.Msg/PauseProtocol"
 	Msg_UnpauseProtocol_FullMethodName       = "/noble.orbiter.component.forwarder.v1.Msg/UnpauseProtocol"
-	Msg_PauseCrossChain_FullMethodName       = "/noble.orbiter.component.forwarder.v1.Msg/PauseCrossChain"
-	Msg_UnpauseCrossChain_FullMethodName     = "/noble.orbiter.component.forwarder.v1.Msg/UnpauseCrossChain"
+	Msg_PauseCrossChains_FullMethodName      = "/noble.orbiter.component.forwarder.v1.Msg/PauseCrossChains"
+	Msg_UnpauseCrossChains_FullMethodName    = "/noble.orbiter.component.forwarder.v1.Msg/UnpauseCrossChains"
 	Msg_ReplaceDepositForBurn_FullMethodName = "/noble.orbiter.component.forwarder.v1.Msg/ReplaceDepositForBurn"
 )
 
@@ -36,10 +36,10 @@ type MsgClient interface {
 	PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error)
 	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error)
-	// PauseCrossChain pauses specific counterparty for a protocol.
-	PauseCrossChain(ctx context.Context, in *MsgPauseCrossChain, opts ...grpc.CallOption) (*MsgPauseCrossChainResponse, error)
-	// UnpauseCrossChain resumes specific counterparty pairs for a protocol.
-	UnpauseCrossChain(ctx context.Context, in *MsgUnpauseCrossChain, opts ...grpc.CallOption) (*MsgUnpauseCrossChainResponse, error)
+	// PauseCrossChains pauses specific counterparty for a protocol.
+	PauseCrossChains(ctx context.Context, in *MsgPauseCrossChains, opts ...grpc.CallOption) (*MsgPauseCrossChainsResponse, error)
+	// UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+	UnpauseCrossChains(ctx context.Context, in *MsgUnpauseCrossChains, opts ...grpc.CallOption) (*MsgUnpauseCrossChainsResponse, error)
 	ReplaceDepositForBurn(ctx context.Context, in *MsgReplaceDepositForBurn, opts ...grpc.CallOption) (*MsgReplaceDepositForBurnResponse, error)
 }
 
@@ -71,20 +71,20 @@ func (c *msgClient) UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol,
 	return out, nil
 }
 
-func (c *msgClient) PauseCrossChain(ctx context.Context, in *MsgPauseCrossChain, opts ...grpc.CallOption) (*MsgPauseCrossChainResponse, error) {
+func (c *msgClient) PauseCrossChains(ctx context.Context, in *MsgPauseCrossChains, opts ...grpc.CallOption) (*MsgPauseCrossChainsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(MsgPauseCrossChainResponse)
-	err := c.cc.Invoke(ctx, Msg_PauseCrossChain_FullMethodName, in, out, cOpts...)
+	out := new(MsgPauseCrossChainsResponse)
+	err := c.cc.Invoke(ctx, Msg_PauseCrossChains_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *msgClient) UnpauseCrossChain(ctx context.Context, in *MsgUnpauseCrossChain, opts ...grpc.CallOption) (*MsgUnpauseCrossChainResponse, error) {
+func (c *msgClient) UnpauseCrossChains(ctx context.Context, in *MsgUnpauseCrossChains, opts ...grpc.CallOption) (*MsgUnpauseCrossChainsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(MsgUnpauseCrossChainResponse)
-	err := c.cc.Invoke(ctx, Msg_UnpauseCrossChain_FullMethodName, in, out, cOpts...)
+	out := new(MsgUnpauseCrossChainsResponse)
+	err := c.cc.Invoke(ctx, Msg_UnpauseCrossChains_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -111,10 +111,10 @@ type MsgServer interface {
 	PauseProtocol(context.Context, *MsgPauseProtocol) (*MsgPauseProtocolResponse, error)
 	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error)
-	// PauseCrossChain pauses specific counterparty for a protocol.
-	PauseCrossChain(context.Context, *MsgPauseCrossChain) (*MsgPauseCrossChainResponse, error)
-	// UnpauseCrossChain resumes specific counterparty pairs for a protocol.
-	UnpauseCrossChain(context.Context, *MsgUnpauseCrossChain) (*MsgUnpauseCrossChainResponse, error)
+	// PauseCrossChains pauses specific counterparty for a protocol.
+	PauseCrossChains(context.Context, *MsgPauseCrossChains) (*MsgPauseCrossChainsResponse, error)
+	// UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+	UnpauseCrossChains(context.Context, *MsgUnpauseCrossChains) (*MsgUnpauseCrossChainsResponse, error)
 	ReplaceDepositForBurn(context.Context, *MsgReplaceDepositForBurn) (*MsgReplaceDepositForBurnResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
@@ -132,11 +132,11 @@ func (UnimplementedMsgServer) PauseProtocol(context.Context, *MsgPauseProtocol) 
 func (UnimplementedMsgServer) UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnpauseProtocol not implemented")
 }
-func (UnimplementedMsgServer) PauseCrossChain(context.Context, *MsgPauseCrossChain) (*MsgPauseCrossChainResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PauseCrossChain not implemented")
+func (UnimplementedMsgServer) PauseCrossChains(context.Context, *MsgPauseCrossChains) (*MsgPauseCrossChainsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseCrossChains not implemented")
 }
-func (UnimplementedMsgServer) UnpauseCrossChain(context.Context, *MsgUnpauseCrossChain) (*MsgUnpauseCrossChainResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UnpauseCrossChain not implemented")
+func (UnimplementedMsgServer) UnpauseCrossChains(context.Context, *MsgUnpauseCrossChains) (*MsgUnpauseCrossChainsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseCrossChains not implemented")
 }
 func (UnimplementedMsgServer) ReplaceDepositForBurn(context.Context, *MsgReplaceDepositForBurn) (*MsgReplaceDepositForBurnResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReplaceDepositForBurn not implemented")
@@ -198,38 +198,38 @@ func _Msg_UnpauseProtocol_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_PauseCrossChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgPauseCrossChain)
+func _Msg_PauseCrossChains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseCrossChains)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).PauseCrossChain(ctx, in)
+		return srv.(MsgServer).PauseCrossChains(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Msg_PauseCrossChain_FullMethodName,
+		FullMethod: Msg_PauseCrossChains_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).PauseCrossChain(ctx, req.(*MsgPauseCrossChain))
+		return srv.(MsgServer).PauseCrossChains(ctx, req.(*MsgPauseCrossChains))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_UnpauseCrossChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgUnpauseCrossChain)
+func _Msg_UnpauseCrossChains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseCrossChains)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).UnpauseCrossChain(ctx, in)
+		return srv.(MsgServer).UnpauseCrossChains(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Msg_UnpauseCrossChain_FullMethodName,
+		FullMethod: Msg_UnpauseCrossChains_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).UnpauseCrossChain(ctx, req.(*MsgUnpauseCrossChain))
+		return srv.(MsgServer).UnpauseCrossChains(ctx, req.(*MsgUnpauseCrossChains))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -268,12 +268,12 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_UnpauseProtocol_Handler,
 		},
 		{
-			MethodName: "PauseCrossChain",
-			Handler:    _Msg_PauseCrossChain_Handler,
+			MethodName: "PauseCrossChains",
+			Handler:    _Msg_PauseCrossChains_Handler,
 		},
 		{
-			MethodName: "UnpauseCrossChain",
-			Handler:    _Msg_UnpauseCrossChain_Handler,
+			MethodName: "UnpauseCrossChains",
+			Handler:    _Msg_UnpauseCrossChains_Handler,
 		},
 		{
 			MethodName: "ReplaceDepositForBurn",

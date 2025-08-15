@@ -110,8 +110,8 @@ func (m *MsgPauseProtocolResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgPauseProtocolResponse proto.InternalMessageInfo
 
-// MsgPauseCrossChain pauses specific counterparty pairs for a protocol.
-type MsgPauseCrossChain struct {
+// MsgPauseCrossChains pauses specific counterparty pairs for a protocol.
+type MsgPauseCrossChains struct {
 	// Address of the signer who is requesting to pause the counterparty pairs.
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
 	// Bridge protocol to pause.
@@ -120,18 +120,18 @@ type MsgPauseCrossChain struct {
 	CounterpartyIds []string `protobuf:"bytes,3,rep,name=counterparty_ids,json=counterpartyIds,proto3" json:"counterparty_ids,omitempty"`
 }
 
-func (m *MsgPauseCrossChain) Reset()         { *m = MsgPauseCrossChain{} }
-func (m *MsgPauseCrossChain) String() string { return proto.CompactTextString(m) }
-func (*MsgPauseCrossChain) ProtoMessage()    {}
-func (*MsgPauseCrossChain) Descriptor() ([]byte, []int) {
+func (m *MsgPauseCrossChains) Reset()         { *m = MsgPauseCrossChains{} }
+func (m *MsgPauseCrossChains) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseCrossChains) ProtoMessage()    {}
+func (*MsgPauseCrossChains) Descriptor() ([]byte, []int) {
 	return fileDescriptor_6d12dabcf7836b4c, []int{2}
 }
-func (m *MsgPauseCrossChain) XXX_Unmarshal(b []byte) error {
+func (m *MsgPauseCrossChains) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgPauseCrossChain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgPauseCrossChains) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgPauseCrossChain.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgPauseCrossChains.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -141,35 +141,35 @@ func (m *MsgPauseCrossChain) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (m *MsgPauseCrossChain) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgPauseCrossChain.Merge(m, src)
+func (m *MsgPauseCrossChains) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseCrossChains.Merge(m, src)
 }
-func (m *MsgPauseCrossChain) XXX_Size() int {
+func (m *MsgPauseCrossChains) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgPauseCrossChain) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgPauseCrossChain.DiscardUnknown(m)
+func (m *MsgPauseCrossChains) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseCrossChains.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgPauseCrossChain proto.InternalMessageInfo
+var xxx_messageInfo_MsgPauseCrossChains proto.InternalMessageInfo
 
-// MsgPauseCrossChainResponse is the response type
-// from a MsgPauseCrossChain request.
-type MsgPauseCrossChainResponse struct {
+// MsgPauseCrossChainsResponse is the response type
+// from a MsgPauseCrossChains request.
+type MsgPauseCrossChainsResponse struct {
 }
 
-func (m *MsgPauseCrossChainResponse) Reset()         { *m = MsgPauseCrossChainResponse{} }
-func (m *MsgPauseCrossChainResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgPauseCrossChainResponse) ProtoMessage()    {}
-func (*MsgPauseCrossChainResponse) Descriptor() ([]byte, []int) {
+func (m *MsgPauseCrossChainsResponse) Reset()         { *m = MsgPauseCrossChainsResponse{} }
+func (m *MsgPauseCrossChainsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgPauseCrossChainsResponse) ProtoMessage()    {}
+func (*MsgPauseCrossChainsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_6d12dabcf7836b4c, []int{3}
 }
-func (m *MsgPauseCrossChainResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgPauseCrossChainsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgPauseCrossChainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgPauseCrossChainsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgPauseCrossChainResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgPauseCrossChainsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -179,17 +179,17 @@ func (m *MsgPauseCrossChainResponse) XXX_Marshal(b []byte, deterministic bool) (
 		return b[:n], nil
 	}
 }
-func (m *MsgPauseCrossChainResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgPauseCrossChainResponse.Merge(m, src)
+func (m *MsgPauseCrossChainsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgPauseCrossChainsResponse.Merge(m, src)
 }
-func (m *MsgPauseCrossChainResponse) XXX_Size() int {
+func (m *MsgPauseCrossChainsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgPauseCrossChainResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgPauseCrossChainResponse.DiscardUnknown(m)
+func (m *MsgPauseCrossChainsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgPauseCrossChainsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgPauseCrossChainResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgPauseCrossChainsResponse proto.InternalMessageInfo
 
 // MsgUnpauseProtocol resumes an entire forwarding protocol.
 type MsgUnpauseProtocol struct {
@@ -269,8 +269,8 @@ func (m *MsgUnpauseProtocolResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUnpauseProtocolResponse proto.InternalMessageInfo
 
-// MsgUnpauseCrossChain resumes specific counterparty pairs for a protocol.
-type MsgUnpauseCrossChain struct {
+// MsgUnpauseCrossChains resumes specific counterparty pairs for a protocol.
+type MsgUnpauseCrossChains struct {
 	// Address of the signer who is requesting to unpause the counterparty pairs.
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
 	// Bridge protocol to unpause.
@@ -279,18 +279,18 @@ type MsgUnpauseCrossChain struct {
 	CounterpartyIds []string `protobuf:"bytes,3,rep,name=counterparty_ids,json=counterpartyIds,proto3" json:"counterparty_ids,omitempty"`
 }
 
-func (m *MsgUnpauseCrossChain) Reset()         { *m = MsgUnpauseCrossChain{} }
-func (m *MsgUnpauseCrossChain) String() string { return proto.CompactTextString(m) }
-func (*MsgUnpauseCrossChain) ProtoMessage()    {}
-func (*MsgUnpauseCrossChain) Descriptor() ([]byte, []int) {
+func (m *MsgUnpauseCrossChains) Reset()         { *m = MsgUnpauseCrossChains{} }
+func (m *MsgUnpauseCrossChains) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseCrossChains) ProtoMessage()    {}
+func (*MsgUnpauseCrossChains) Descriptor() ([]byte, []int) {
 	return fileDescriptor_6d12dabcf7836b4c, []int{6}
 }
-func (m *MsgUnpauseCrossChain) XXX_Unmarshal(b []byte) error {
+func (m *MsgUnpauseCrossChains) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUnpauseCrossChain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgUnpauseCrossChains) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUnpauseCrossChain.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgUnpauseCrossChains.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -300,35 +300,35 @@ func (m *MsgUnpauseCrossChain) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return b[:n], nil
 	}
 }
-func (m *MsgUnpauseCrossChain) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUnpauseCrossChain.Merge(m, src)
+func (m *MsgUnpauseCrossChains) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseCrossChains.Merge(m, src)
 }
-func (m *MsgUnpauseCrossChain) XXX_Size() int {
+func (m *MsgUnpauseCrossChains) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUnpauseCrossChain) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUnpauseCrossChain.DiscardUnknown(m)
+func (m *MsgUnpauseCrossChains) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseCrossChains.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUnpauseCrossChain proto.InternalMessageInfo
+var xxx_messageInfo_MsgUnpauseCrossChains proto.InternalMessageInfo
 
-// MsgUnpauseCrossChainResponse is the response type
+// MsgUnpauseCrossChainsResponse is the response type
 // from a MsgUnpauseCrossChain request.
-type MsgUnpauseCrossChainResponse struct {
+type MsgUnpauseCrossChainsResponse struct {
 }
 
-func (m *MsgUnpauseCrossChainResponse) Reset()         { *m = MsgUnpauseCrossChainResponse{} }
-func (m *MsgUnpauseCrossChainResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgUnpauseCrossChainResponse) ProtoMessage()    {}
-func (*MsgUnpauseCrossChainResponse) Descriptor() ([]byte, []int) {
+func (m *MsgUnpauseCrossChainsResponse) Reset()         { *m = MsgUnpauseCrossChainsResponse{} }
+func (m *MsgUnpauseCrossChainsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUnpauseCrossChainsResponse) ProtoMessage()    {}
+func (*MsgUnpauseCrossChainsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_6d12dabcf7836b4c, []int{7}
 }
-func (m *MsgUnpauseCrossChainResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgUnpauseCrossChainsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUnpauseCrossChainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgUnpauseCrossChainsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUnpauseCrossChainResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgUnpauseCrossChainsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -338,17 +338,17 @@ func (m *MsgUnpauseCrossChainResponse) XXX_Marshal(b []byte, deterministic bool)
 		return b[:n], nil
 	}
 }
-func (m *MsgUnpauseCrossChainResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUnpauseCrossChainResponse.Merge(m, src)
+func (m *MsgUnpauseCrossChainsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnpauseCrossChainsResponse.Merge(m, src)
 }
-func (m *MsgUnpauseCrossChainResponse) XXX_Size() int {
+func (m *MsgUnpauseCrossChainsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUnpauseCrossChainResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUnpauseCrossChainResponse.DiscardUnknown(m)
+func (m *MsgUnpauseCrossChainsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnpauseCrossChainsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUnpauseCrossChainResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgUnpauseCrossChainsResponse proto.InternalMessageInfo
 
 // MsgReplaceDepositForBurnResponse allows the orbiter authority
 // to replace a sent deposit for burn message.
@@ -434,12 +434,12 @@ var xxx_messageInfo_MsgReplaceDepositForBurnResponse proto.InternalMessageInfo
 func init() {
 	proto.RegisterType((*MsgPauseProtocol)(nil), "noble.orbiter.component.forwarder.v1.MsgPauseProtocol")
 	proto.RegisterType((*MsgPauseProtocolResponse)(nil), "noble.orbiter.component.forwarder.v1.MsgPauseProtocolResponse")
-	proto.RegisterType((*MsgPauseCrossChain)(nil), "noble.orbiter.component.forwarder.v1.MsgPauseCrossChain")
-	proto.RegisterType((*MsgPauseCrossChainResponse)(nil), "noble.orbiter.component.forwarder.v1.MsgPauseCrossChainResponse")
+	proto.RegisterType((*MsgPauseCrossChains)(nil), "noble.orbiter.component.forwarder.v1.MsgPauseCrossChains")
+	proto.RegisterType((*MsgPauseCrossChainsResponse)(nil), "noble.orbiter.component.forwarder.v1.MsgPauseCrossChainsResponse")
 	proto.RegisterType((*MsgUnpauseProtocol)(nil), "noble.orbiter.component.forwarder.v1.MsgUnpauseProtocol")
 	proto.RegisterType((*MsgUnpauseProtocolResponse)(nil), "noble.orbiter.component.forwarder.v1.MsgUnpauseProtocolResponse")
-	proto.RegisterType((*MsgUnpauseCrossChain)(nil), "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChain")
-	proto.RegisterType((*MsgUnpauseCrossChainResponse)(nil), "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainResponse")
+	proto.RegisterType((*MsgUnpauseCrossChains)(nil), "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChains")
+	proto.RegisterType((*MsgUnpauseCrossChainsResponse)(nil), "noble.orbiter.component.forwarder.v1.MsgUnpauseCrossChainsResponse")
 	proto.RegisterType((*MsgReplaceDepositForBurn)(nil), "noble.orbiter.component.forwarder.v1.MsgReplaceDepositForBurn")
 	proto.RegisterType((*MsgReplaceDepositForBurnResponse)(nil), "noble.orbiter.component.forwarder.v1.MsgReplaceDepositForBurnResponse")
 }
@@ -449,52 +449,53 @@ func init() {
 }
 
 var fileDescriptor_6d12dabcf7836b4c = []byte{
-	// 715 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x56, 0x4f, 0x6b, 0x13, 0x41,
-	0x1c, 0xcd, 0x34, 0xb6, 0xd0, 0xf1, 0x4f, 0xd3, 0x35, 0xea, 0xba, 0x94, 0x6d, 0x1a, 0x15, 0xdb,
-	0x62, 0x77, 0x4d, 0x15, 0xad, 0x11, 0xac, 0x4d, 0x4b, 0xa1, 0x87, 0x40, 0x59, 0xf1, 0xe2, 0x65,
-	0xd9, 0xee, 0x8e, 0xeb, 0x40, 0x76, 0x66, 0x99, 0x99, 0x26, 0xf6, 0x26, 0x5e, 0x14, 0x41, 0x10,
-	0xfc, 0x00, 0xf6, 0x23, 0xf4, 0xe0, 0x17, 0xf0, 0x20, 0x78, 0xb3, 0x78, 0xf2, 0x28, 0xed, 0xa1,
-	0x9e, 0xc4, 0x83, 0x1f, 0x40, 0xb2, 0xff, 0xd2, 0x6e, 0xb3, 0x90, 0xc4, 0x83, 0x7a, 0x09, 0xd9,
-	0xdf, 0xfb, 0xbd, 0x99, 0xf7, 0xde, 0x64, 0x7e, 0x59, 0x38, 0x47, 0xe8, 0x46, 0x03, 0xe9, 0x94,
-	0x6d, 0x60, 0x81, 0x98, 0x6e, 0x53, 0xcf, 0xa7, 0x04, 0x11, 0xa1, 0x3f, 0xa6, 0xac, 0x65, 0x31,
-	0x07, 0x31, 0xbd, 0x59, 0xd1, 0xc5, 0x53, 0xcd, 0x67, 0x54, 0x50, 0xe9, 0x72, 0xd0, 0xae, 0x45,
-	0xed, 0x5a, 0xd2, 0xae, 0x25, 0xed, 0x5a, 0xb3, 0xa2, 0x8c, 0x5b, 0x1e, 0x26, 0x54, 0x0f, 0x3e,
-	0x43, 0xa2, 0x72, 0xc1, 0xa6, 0xdc, 0xa3, 0x5c, 0xf7, 0xb8, 0xdb, 0x5e, 0xd0, 0xe3, 0x6e, 0x04,
-	0x5c, 0x0c, 0x01, 0x33, 0x78, 0xd2, 0xc3, 0x87, 0x08, 0x2a, 0xba, 0xd4, 0xa5, 0x61, 0xbd, 0xfd,
-	0x2d, 0xaa, 0xaa, 0x69, 0xc5, 0x0c, 0xb5, 0x57, 0xc4, 0x4e, 0x88, 0x97, 0x3f, 0x00, 0x58, 0xa8,
-	0x73, 0x77, 0xdd, 0xda, 0xe4, 0x68, 0xbd, 0x5d, 0xb1, 0x69, 0x43, 0xba, 0x0e, 0x47, 0x38, 0x76,
-	0x09, 0x62, 0x32, 0x28, 0x81, 0xe9, 0xd1, 0x9a, 0xfc, 0xe5, 0xfd, 0x5c, 0x31, 0xda, 0x6c, 0xc9,
-	0x71, 0x18, 0xe2, 0xfc, 0x81, 0x60, 0x98, 0xb8, 0x46, 0xd4, 0x27, 0xd5, 0xe0, 0x49, 0x3f, 0x62,
-	0x9b, 0xd8, 0x91, 0x87, 0x4a, 0x60, 0xfa, 0xcc, 0xfc, 0x94, 0x96, 0xf6, 0xcf, 0x90, 0xd6, 0xac,
-	0x68, 0xf1, 0x3e, 0x6b, 0x2b, 0x06, 0x8c, 0x59, 0x6b, 0x4e, 0xf5, 0xf6, 0xcb, 0xed, 0xc9, 0xdc,
-	0xf7, 0xed, 0xc9, 0xdc, 0xf3, 0x83, 0x9d, 0xd9, 0x68, 0xe1, 0x57, 0x07, 0x3b, 0xb3, 0x93, 0xb1,
-	0xf8, 0x4e, 0xc8, 0x47, 0xe4, 0x96, 0x15, 0x28, 0xa7, 0x2d, 0x18, 0x88, 0xfb, 0x94, 0x70, 0x54,
-	0xfe, 0x09, 0xa0, 0x14, 0x83, 0xcb, 0x8c, 0x72, 0xbe, 0xfc, 0xc4, 0xc2, 0xe4, 0xef, 0x38, 0x94,
-	0x66, 0x60, 0xc1, 0xa6, 0x9b, 0x44, 0x20, 0xe6, 0x5b, 0x4c, 0x6c, 0x99, 0xd8, 0xe1, 0x72, 0xbe,
-	0x94, 0x9f, 0x1e, 0x35, 0xc6, 0x0e, 0xd7, 0xd7, 0x1c, 0x5e, 0xbd, 0x93, 0x11, 0xc6, 0x54, 0x46,
-	0x18, 0x1d, 0x6f, 0xe5, 0x09, 0xa8, 0x1c, 0x77, 0x9c, 0x04, 0xf2, 0x31, 0x0c, 0xe4, 0x21, 0xf1,
-	0xff, 0x81, 0x23, 0xef, 0xc3, 0x65, 0x4a, 0x70, 0xe4, 0x32, 0x55, 0x4d, 0x5c, 0xfe, 0x02, 0xb0,
-	0xd8, 0x81, 0xff, 0xa7, 0x83, 0xbf, 0x9b, 0x11, 0xc9, 0xa5, 0xcc, 0x48, 0x0e, 0x1d, 0xbd, 0x0a,
-	0x27, 0xba, 0xb9, 0x4e, 0x62, 0xf9, 0x3c, 0x14, 0x5c, 0x15, 0x03, 0xf9, 0x0d, 0xcb, 0x46, 0x2b,
-	0xc8, 0xa7, 0x1c, 0x8b, 0x55, 0xca, 0x6a, 0x9b, 0x6c, 0x90, 0x68, 0x66, 0x60, 0x81, 0x32, 0xec,
-	0x62, 0x62, 0x35, 0x4c, 0x0f, 0x71, 0x6e, 0xb9, 0x28, 0xc8, 0xe7, 0x94, 0x31, 0x16, 0xd7, 0xeb,
-	0x61, 0x59, 0xaa, 0xc0, 0x62, 0xd2, 0x6a, 0x09, 0x81, 0xb8, 0xb0, 0x04, 0xa6, 0x44, 0xce, 0x07,
-	0xed, 0x67, 0x63, 0x6c, 0xa9, 0x03, 0x49, 0x37, 0xe1, 0x79, 0x82, 0x5a, 0xa6, 0x83, 0xb8, 0xc0,
-	0x24, 0x28, 0x99, 0xb6, 0xd5, 0x68, 0x20, 0x26, 0x9f, 0x08, 0x48, 0x45, 0x82, 0x5a, 0x2b, 0x1d,
-	0x70, 0x39, 0xc0, 0xa4, 0x6b, 0x50, 0x6a, 0xb3, 0x3c, 0x4c, 0x84, 0xc9, 0x90, 0x8d, 0x7d, 0x8c,
-	0x88, 0x90, 0x87, 0x03, 0x46, 0x81, 0xa0, 0x56, 0x1d, 0x13, 0x61, 0xc4, 0xf5, 0xea, 0x62, 0x46,
-	0xda, 0x57, 0x8f, 0xa7, 0xdd, 0x35, 0xb4, 0x72, 0x19, 0x96, 0xb2, 0x02, 0x8d, 0x53, 0x9f, 0xff,
-	0x31, 0x0c, 0xf3, 0x75, 0xee, 0x4a, 0x2f, 0x00, 0x3c, 0x7d, 0x74, 0xd0, 0xde, 0xd2, 0x7a, 0xf9,
-	0x87, 0xd0, 0xd2, 0xd3, 0x4d, 0xb9, 0x37, 0x18, 0x2f, 0x56, 0x24, 0xbd, 0x06, 0x70, 0x2c, 0x3d,
-	0x01, 0x16, 0x7a, 0x5e, 0x33, 0xc5, 0x54, 0xee, 0x0f, 0xca, 0x3c, 0xa2, 0x27, 0x3d, 0xa2, 0x17,
-	0xfa, 0xf3, 0xd8, 0x61, 0xf6, 0xa1, 0x27, 0x63, 0x48, 0x4a, 0x6f, 0x01, 0x1c, 0x3f, 0x3e, 0x3b,
-	0xaa, 0xfd, 0xfa, 0x3c, 0xa4, 0xa9, 0x36, 0x38, 0x37, 0x51, 0xf5, 0x0e, 0xc0, 0x73, 0xdd, 0xaf,
-	0x6e, 0xef, 0xbf, 0x87, 0xae, 0x7c, 0x65, 0xf5, 0xcf, 0xf8, 0xb1, 0x42, 0x65, 0xf8, 0xd9, 0xc1,
-	0xce, 0x2c, 0xa8, 0x2d, 0x7e, 0xda, 0x53, 0xc1, 0xee, 0x9e, 0x0a, 0xbe, 0xed, 0xa9, 0xe0, 0xcd,
-	0xbe, 0x9a, 0xdb, 0xdd, 0x57, 0x73, 0x5f, 0xf7, 0xd5, 0xdc, 0xa3, 0x2b, 0xf1, 0x0e, 0x0e, 0x6a,
-	0xea, 0x62, 0xcb, 0x47, 0xbc, 0xdb, 0x4b, 0xd4, 0xc6, 0x48, 0x30, 0x3b, 0x6f, 0xfc, 0x0e, 0x00,
-	0x00, 0xff, 0xff, 0x4b, 0x79, 0x73, 0x8d, 0x70, 0x09, 0x00, 0x00,
+	// 730 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x56, 0xb1, 0x6f, 0xd3, 0x4c,
+	0x1c, 0xcd, 0x35, 0x5f, 0x2b, 0xf5, 0xbe, 0xef, 0xa3, 0xc1, 0x4d, 0xc1, 0x18, 0x9a, 0xa4, 0x56,
+	0x11, 0x6d, 0x45, 0x6d, 0x52, 0x10, 0xd0, 0x80, 0x28, 0x4d, 0xaa, 0x4a, 0x1d, 0x22, 0x55, 0x41,
+	0x2c, 0x2c, 0x91, 0x6b, 0x1f, 0xe6, 0xa4, 0xf8, 0xce, 0xba, 0xbb, 0x26, 0x74, 0x43, 0x2c, 0x20,
+	0x24, 0xa4, 0x4e, 0xac, 0xf4, 0x4f, 0xe8, 0xc0, 0x3f, 0xc0, 0x80, 0xc4, 0x46, 0xc5, 0xc4, 0x88,
+	0xda, 0xa1, 0xcc, 0x08, 0x31, 0xa3, 0x38, 0xb6, 0x93, 0x3a, 0xb6, 0xd4, 0xa6, 0x03, 0xb0, 0x44,
+	0xf1, 0xef, 0xfd, 0xde, 0xdd, 0x7b, 0xef, 0x72, 0xbf, 0x18, 0xce, 0x13, 0xba, 0xd1, 0x40, 0x3a,
+	0x65, 0x1b, 0x58, 0x20, 0xa6, 0x9b, 0xd4, 0x71, 0x29, 0x41, 0x44, 0xe8, 0x8f, 0x29, 0x6b, 0x19,
+	0xcc, 0x42, 0x4c, 0x6f, 0x16, 0x75, 0xf1, 0x54, 0x73, 0x19, 0x15, 0x54, 0x9a, 0xf6, 0xda, 0x35,
+	0xbf, 0x5d, 0x0b, 0xdb, 0xb5, 0xb0, 0x5d, 0x6b, 0x16, 0x95, 0xb3, 0x86, 0x83, 0x09, 0xd5, 0xbd,
+	0xcf, 0x0e, 0x51, 0x39, 0x6f, 0x52, 0xee, 0x50, 0xae, 0x3b, 0xdc, 0x6e, 0x2f, 0xe8, 0x70, 0xdb,
+	0x07, 0x2e, 0x74, 0x80, 0xba, 0xf7, 0xa4, 0x77, 0x1e, 0x7c, 0x28, 0x6b, 0x53, 0x9b, 0x76, 0xea,
+	0xed, 0x6f, 0x7e, 0x35, 0x17, 0x55, 0xcc, 0x50, 0x7b, 0x45, 0x6c, 0x75, 0x70, 0xf5, 0x3d, 0x80,
+	0x99, 0x2a, 0xb7, 0xd7, 0x8d, 0x4d, 0x8e, 0xd6, 0xdb, 0x15, 0x93, 0x36, 0xa4, 0x6b, 0x70, 0x84,
+	0x63, 0x9b, 0x20, 0x26, 0x83, 0x02, 0x98, 0x19, 0x2d, 0xcb, 0x9f, 0xdf, 0xcd, 0x67, 0xfd, 0xcd,
+	0x96, 0x2d, 0x8b, 0x21, 0xce, 0x1f, 0x08, 0x86, 0x89, 0x5d, 0xf3, 0xfb, 0xa4, 0x32, 0xfc, 0xd7,
+	0xf5, 0xd9, 0x75, 0x6c, 0xc9, 0x43, 0x05, 0x30, 0x73, 0x66, 0x61, 0x4a, 0x8b, 0xfa, 0x67, 0x48,
+	0x6b, 0x16, 0xb5, 0x60, 0x9f, 0xb5, 0x95, 0x1a, 0x0c, 0x58, 0x6b, 0x56, 0xe9, 0xd6, 0xcb, 0x9d,
+	0x7c, 0xea, 0xdb, 0x4e, 0x3e, 0xf5, 0xfc, 0x70, 0x77, 0xce, 0x5f, 0xf8, 0xd5, 0xe1, 0xee, 0x5c,
+	0x3e, 0x10, 0xdf, 0x0d, 0xf9, 0x88, 0x5c, 0x55, 0x81, 0x72, 0xd4, 0x42, 0x0d, 0x71, 0x97, 0x12,
+	0x8e, 0xd4, 0xef, 0x00, 0x8e, 0x07, 0x60, 0x85, 0x51, 0xce, 0x2b, 0x4f, 0x0c, 0x4c, 0xf8, 0xef,
+	0xb1, 0x28, 0xcd, 0xc2, 0x8c, 0x49, 0x37, 0x89, 0x40, 0xcc, 0x35, 0x98, 0xd8, 0xaa, 0x63, 0x8b,
+	0xcb, 0xe9, 0x42, 0x7a, 0x66, 0xb4, 0x36, 0xd6, 0x5b, 0x5f, 0xb3, 0x78, 0xa9, 0x94, 0x90, 0x86,
+	0x9a, 0x90, 0x46, 0x8f, 0x39, 0x75, 0x12, 0x5e, 0x8c, 0xf1, 0x1c, 0x66, 0xf2, 0x01, 0x40, 0xa9,
+	0xca, 0xed, 0x87, 0xc4, 0xfd, 0x03, 0x4e, 0x7d, 0x31, 0xc1, 0xe7, 0x54, 0xbf, 0xcf, 0x88, 0x60,
+	0xf5, 0x12, 0x54, 0xfa, 0x6d, 0x84, 0x2e, 0x7f, 0x02, 0x38, 0xd1, 0x85, 0xff, 0xaa, 0xb3, 0xbf,
+	0x9b, 0x90, 0xc9, 0x74, 0x62, 0x26, 0xbd, 0xa7, 0x9f, 0x87, 0x93, 0xb1, 0xbe, 0xc3, 0x64, 0x3e,
+	0x0d, 0x79, 0x17, 0xa6, 0x86, 0xdc, 0x86, 0x61, 0xa2, 0x15, 0xe4, 0x52, 0x8e, 0xc5, 0x2a, 0x65,
+	0xe5, 0x4d, 0x46, 0x06, 0x08, 0x67, 0x16, 0x66, 0x28, 0xc3, 0x36, 0x26, 0x46, 0xa3, 0xee, 0x20,
+	0xce, 0x0d, 0x1b, 0x79, 0x09, 0xfd, 0x57, 0x1b, 0x0b, 0xea, 0xd5, 0x4e, 0x59, 0x2a, 0xc2, 0x6c,
+	0xd8, 0x6a, 0x08, 0x81, 0xb8, 0x30, 0x04, 0xa6, 0x44, 0x4e, 0x7b, 0xed, 0xe3, 0x01, 0xb6, 0xdc,
+	0x85, 0xa4, 0x1b, 0xf0, 0x1c, 0x41, 0xad, 0xba, 0x85, 0xb8, 0xc0, 0xc4, 0x2b, 0xd5, 0x4d, 0xa3,
+	0xd1, 0x40, 0x4c, 0xfe, 0xc7, 0x23, 0x65, 0x09, 0x6a, 0xad, 0x74, 0xc1, 0x8a, 0x87, 0x49, 0x57,
+	0xa1, 0xd4, 0x66, 0x39, 0x98, 0x88, 0x3a, 0x43, 0x26, 0x76, 0x31, 0x22, 0x42, 0x1e, 0xf6, 0x18,
+	0x19, 0x82, 0x5a, 0x55, 0x4c, 0x44, 0x2d, 0xa8, 0x97, 0x96, 0x12, 0xf2, 0xbe, 0xd2, 0x9f, 0x77,
+	0x6c, 0x68, 0xaa, 0x0a, 0x0b, 0x49, 0x81, 0x06, 0xa9, 0x2f, 0xfc, 0x18, 0x86, 0xe9, 0x2a, 0xb7,
+	0xa5, 0x17, 0x00, 0xfe, 0x7f, 0x74, 0xdc, 0xde, 0xd4, 0x8e, 0xf3, 0x3f, 0xa1, 0x45, 0x67, 0x9c,
+	0x72, 0x6f, 0x30, 0x5e, 0xa0, 0x48, 0x7a, 0x0d, 0xe0, 0x58, 0x74, 0x08, 0xdc, 0x3e, 0xf6, 0x9a,
+	0x11, 0xa6, 0x72, 0x7f, 0x50, 0x66, 0xa8, 0x67, 0x1b, 0xc0, 0x4c, 0xdf, 0xa0, 0x5e, 0x3c, 0x99,
+	0xc9, 0x1e, 0xaa, 0xb2, 0x3c, 0x30, 0x35, 0x94, 0xf4, 0x06, 0x40, 0x29, 0x66, 0x82, 0xdc, 0x39,
+	0xa9, 0xd7, 0x5e, 0x59, 0x95, 0x53, 0x90, 0x43, 0x61, 0x6f, 0x01, 0x9c, 0x88, 0xbf, 0xc0, 0xc7,
+	0xff, 0x55, 0xc4, 0xf2, 0x95, 0xd5, 0xd3, 0xf1, 0x03, 0x85, 0xca, 0xf0, 0xb3, 0xc3, 0xdd, 0x39,
+	0x50, 0x5e, 0xfa, 0xb8, 0x9f, 0x03, 0x7b, 0xfb, 0x39, 0xf0, 0x75, 0x3f, 0x07, 0xb6, 0x0f, 0x72,
+	0xa9, 0xbd, 0x83, 0x5c, 0xea, 0xcb, 0x41, 0x2e, 0xf5, 0xe8, 0x72, 0xb0, 0x83, 0x85, 0x9a, 0xba,
+	0xd8, 0x72, 0x11, 0x8f, 0x7b, 0xa1, 0xda, 0x18, 0xf1, 0x66, 0xe8, 0xf5, 0x5f, 0x01, 0x00, 0x00,
+	0xff, 0xff, 0x85, 0xc7, 0xb9, 0xa2, 0x7c, 0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -513,10 +514,10 @@ type MsgClient interface {
 	PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error)
 	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error)
-	// PauseCrossChain pauses specific counterparty for a protocol.
-	PauseCrossChain(ctx context.Context, in *MsgPauseCrossChain, opts ...grpc.CallOption) (*MsgPauseCrossChainResponse, error)
-	// UnpauseCrossChain resumes specific counterparty pairs for a protocol.
-	UnpauseCrossChain(ctx context.Context, in *MsgUnpauseCrossChain, opts ...grpc.CallOption) (*MsgUnpauseCrossChainResponse, error)
+	// PauseCrossChains pauses specific counterparty for a protocol.
+	PauseCrossChains(ctx context.Context, in *MsgPauseCrossChains, opts ...grpc.CallOption) (*MsgPauseCrossChainsResponse, error)
+	// UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+	UnpauseCrossChains(ctx context.Context, in *MsgUnpauseCrossChains, opts ...grpc.CallOption) (*MsgUnpauseCrossChainsResponse, error)
 	ReplaceDepositForBurn(ctx context.Context, in *MsgReplaceDepositForBurn, opts ...grpc.CallOption) (*MsgReplaceDepositForBurnResponse, error)
 }
 
@@ -546,18 +547,18 @@ func (c *msgClient) UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol,
 	return out, nil
 }
 
-func (c *msgClient) PauseCrossChain(ctx context.Context, in *MsgPauseCrossChain, opts ...grpc.CallOption) (*MsgPauseCrossChainResponse, error) {
-	out := new(MsgPauseCrossChainResponse)
-	err := c.cc.Invoke(ctx, "/noble.orbiter.component.forwarder.v1.Msg/PauseCrossChain", in, out, opts...)
+func (c *msgClient) PauseCrossChains(ctx context.Context, in *MsgPauseCrossChains, opts ...grpc.CallOption) (*MsgPauseCrossChainsResponse, error) {
+	out := new(MsgPauseCrossChainsResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.component.forwarder.v1.Msg/PauseCrossChains", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *msgClient) UnpauseCrossChain(ctx context.Context, in *MsgUnpauseCrossChain, opts ...grpc.CallOption) (*MsgUnpauseCrossChainResponse, error) {
-	out := new(MsgUnpauseCrossChainResponse)
-	err := c.cc.Invoke(ctx, "/noble.orbiter.component.forwarder.v1.Msg/UnpauseCrossChain", in, out, opts...)
+func (c *msgClient) UnpauseCrossChains(ctx context.Context, in *MsgUnpauseCrossChains, opts ...grpc.CallOption) (*MsgUnpauseCrossChainsResponse, error) {
+	out := new(MsgUnpauseCrossChainsResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.component.forwarder.v1.Msg/UnpauseCrossChains", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -579,10 +580,10 @@ type MsgServer interface {
 	PauseProtocol(context.Context, *MsgPauseProtocol) (*MsgPauseProtocolResponse, error)
 	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error)
-	// PauseCrossChain pauses specific counterparty for a protocol.
-	PauseCrossChain(context.Context, *MsgPauseCrossChain) (*MsgPauseCrossChainResponse, error)
-	// UnpauseCrossChain resumes specific counterparty pairs for a protocol.
-	UnpauseCrossChain(context.Context, *MsgUnpauseCrossChain) (*MsgUnpauseCrossChainResponse, error)
+	// PauseCrossChains pauses specific counterparty for a protocol.
+	PauseCrossChains(context.Context, *MsgPauseCrossChains) (*MsgPauseCrossChainsResponse, error)
+	// UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+	UnpauseCrossChains(context.Context, *MsgUnpauseCrossChains) (*MsgUnpauseCrossChainsResponse, error)
 	ReplaceDepositForBurn(context.Context, *MsgReplaceDepositForBurn) (*MsgReplaceDepositForBurnResponse, error)
 }
 
@@ -596,11 +597,11 @@ func (*UnimplementedMsgServer) PauseProtocol(ctx context.Context, req *MsgPauseP
 func (*UnimplementedMsgServer) UnpauseProtocol(ctx context.Context, req *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnpauseProtocol not implemented")
 }
-func (*UnimplementedMsgServer) PauseCrossChain(ctx context.Context, req *MsgPauseCrossChain) (*MsgPauseCrossChainResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PauseCrossChain not implemented")
+func (*UnimplementedMsgServer) PauseCrossChains(ctx context.Context, req *MsgPauseCrossChains) (*MsgPauseCrossChainsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseCrossChains not implemented")
 }
-func (*UnimplementedMsgServer) UnpauseCrossChain(ctx context.Context, req *MsgUnpauseCrossChain) (*MsgUnpauseCrossChainResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UnpauseCrossChain not implemented")
+func (*UnimplementedMsgServer) UnpauseCrossChains(ctx context.Context, req *MsgUnpauseCrossChains) (*MsgUnpauseCrossChainsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnpauseCrossChains not implemented")
 }
 func (*UnimplementedMsgServer) ReplaceDepositForBurn(ctx context.Context, req *MsgReplaceDepositForBurn) (*MsgReplaceDepositForBurnResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReplaceDepositForBurn not implemented")
@@ -646,38 +647,38 @@ func _Msg_UnpauseProtocol_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_PauseCrossChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgPauseCrossChain)
+func _Msg_PauseCrossChains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgPauseCrossChains)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).PauseCrossChain(ctx, in)
+		return srv.(MsgServer).PauseCrossChains(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/noble.orbiter.component.forwarder.v1.Msg/PauseCrossChain",
+		FullMethod: "/noble.orbiter.component.forwarder.v1.Msg/PauseCrossChains",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).PauseCrossChain(ctx, req.(*MsgPauseCrossChain))
+		return srv.(MsgServer).PauseCrossChains(ctx, req.(*MsgPauseCrossChains))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_UnpauseCrossChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgUnpauseCrossChain)
+func _Msg_UnpauseCrossChains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnpauseCrossChains)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).UnpauseCrossChain(ctx, in)
+		return srv.(MsgServer).UnpauseCrossChains(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/noble.orbiter.component.forwarder.v1.Msg/UnpauseCrossChain",
+		FullMethod: "/noble.orbiter.component.forwarder.v1.Msg/UnpauseCrossChains",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).UnpauseCrossChain(ctx, req.(*MsgUnpauseCrossChain))
+		return srv.(MsgServer).UnpauseCrossChains(ctx, req.(*MsgUnpauseCrossChains))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -714,12 +715,12 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_UnpauseProtocol_Handler,
 		},
 		{
-			MethodName: "PauseCrossChain",
-			Handler:    _Msg_PauseCrossChain_Handler,
+			MethodName: "PauseCrossChains",
+			Handler:    _Msg_PauseCrossChains_Handler,
 		},
 		{
-			MethodName: "UnpauseCrossChain",
-			Handler:    _Msg_UnpauseCrossChain_Handler,
+			MethodName: "UnpauseCrossChains",
+			Handler:    _Msg_UnpauseCrossChains_Handler,
 		},
 		{
 			MethodName: "ReplaceDepositForBurn",
@@ -788,7 +789,7 @@ func (m *MsgPauseProtocolResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgPauseCrossChain) Marshal() (dAtA []byte, err error) {
+func (m *MsgPauseCrossChains) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -798,12 +799,12 @@ func (m *MsgPauseCrossChain) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgPauseCrossChain) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgPauseCrossChains) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgPauseCrossChain) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgPauseCrossChains) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -832,7 +833,7 @@ func (m *MsgPauseCrossChain) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgPauseCrossChainResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgPauseCrossChainsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -842,12 +843,12 @@ func (m *MsgPauseCrossChainResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgPauseCrossChainResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgPauseCrossChainsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgPauseCrossChainResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgPauseCrossChainsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -913,7 +914,7 @@ func (m *MsgUnpauseProtocolResponse) MarshalToSizedBuffer(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUnpauseCrossChain) Marshal() (dAtA []byte, err error) {
+func (m *MsgUnpauseCrossChains) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -923,12 +924,12 @@ func (m *MsgUnpauseCrossChain) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgUnpauseCrossChain) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgUnpauseCrossChains) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUnpauseCrossChain) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgUnpauseCrossChains) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -957,7 +958,7 @@ func (m *MsgUnpauseCrossChain) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUnpauseCrossChainResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgUnpauseCrossChainsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -967,12 +968,12 @@ func (m *MsgUnpauseCrossChainResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgUnpauseCrossChainResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgUnpauseCrossChainsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUnpauseCrossChainResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgUnpauseCrossChainsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1097,7 +1098,7 @@ func (m *MsgPauseProtocolResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgPauseCrossChain) Size() (n int) {
+func (m *MsgPauseCrossChains) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1119,7 +1120,7 @@ func (m *MsgPauseCrossChain) Size() (n int) {
 	return n
 }
 
-func (m *MsgPauseCrossChainResponse) Size() (n int) {
+func (m *MsgPauseCrossChainsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1153,7 +1154,7 @@ func (m *MsgUnpauseProtocolResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgUnpauseCrossChain) Size() (n int) {
+func (m *MsgUnpauseCrossChains) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1175,7 +1176,7 @@ func (m *MsgUnpauseCrossChain) Size() (n int) {
 	return n
 }
 
-func (m *MsgUnpauseCrossChainResponse) Size() (n int) {
+func (m *MsgUnpauseCrossChainsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1379,7 +1380,7 @@ func (m *MsgPauseProtocolResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgPauseCrossChain) Unmarshal(dAtA []byte) error {
+func (m *MsgPauseCrossChains) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1402,10 +1403,10 @@ func (m *MsgPauseCrossChain) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgPauseCrossChain: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgPauseCrossChains: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgPauseCrossChain: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgPauseCrossChains: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1512,7 +1513,7 @@ func (m *MsgPauseCrossChain) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgPauseCrossChainResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgPauseCrossChainsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1535,10 +1536,10 @@ func (m *MsgPauseCrossChainResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgPauseCrossChainResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgPauseCrossChainsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgPauseCrossChainResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgPauseCrossChainsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -1713,7 +1714,7 @@ func (m *MsgUnpauseProtocolResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUnpauseCrossChain) Unmarshal(dAtA []byte) error {
+func (m *MsgUnpauseCrossChains) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1736,10 +1737,10 @@ func (m *MsgUnpauseCrossChain) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUnpauseCrossChain: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgUnpauseCrossChains: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUnpauseCrossChain: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgUnpauseCrossChains: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1846,7 +1847,7 @@ func (m *MsgUnpauseCrossChain) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUnpauseCrossChainResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgUnpauseCrossChainsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1869,10 +1870,10 @@ func (m *MsgUnpauseCrossChainResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUnpauseCrossChainResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgUnpauseCrossChainsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUnpauseCrossChainResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgUnpauseCrossChainsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

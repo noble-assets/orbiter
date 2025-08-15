@@ -47,7 +47,6 @@ func NewMsgServer(f *Forwarder, a types.Authorizer) msgServer {
 	return msgServer{Forwarder: f, Authorizer: a}
 }
 
-// PauseProtocol implements forwarder.MsgServer.
 func (s msgServer) PauseProtocol(
 	ctx context.Context,
 	msg *forwardertypes.MsgPauseProtocol,
@@ -65,7 +64,6 @@ func (s msgServer) PauseProtocol(
 	return &forwardertypes.MsgPauseProtocolResponse{}, nil
 }
 
-// UnpauseProtocol implements forwarder.MsgServer.
 func (s msgServer) UnpauseProtocol(
 	ctx context.Context,
 	msg *forwardertypes.MsgUnpauseProtocol,
@@ -83,11 +81,10 @@ func (s msgServer) UnpauseProtocol(
 	return &forwardertypes.MsgUnpauseProtocolResponse{}, nil
 }
 
-// PauseCounterparties implements forwarder.MsgServer.
-func (s msgServer) PauseCrossChain(
+func (s msgServer) PauseCrossChains(
 	ctx context.Context,
-	msg *forwardertypes.MsgPauseCrossChain,
-) (*forwardertypes.MsgPauseCrossChainResponse, error) {
+	msg *forwardertypes.MsgPauseCrossChains,
+) (*forwardertypes.MsgPauseCrossChainsResponse, error) {
 	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
@@ -98,14 +95,13 @@ func (s msgServer) PauseCrossChain(
 		)
 	}
 
-	return &forwardertypes.MsgPauseCrossChainResponse{}, nil
+	return &forwardertypes.MsgPauseCrossChainsResponse{}, nil
 }
 
-// UnpauseCounterparties implements forwarder.MsgServer.
-func (s msgServer) UnpauseCrossChain(
+func (s msgServer) UnpauseCrossChains(
 	ctx context.Context,
-	msg *forwardertypes.MsgUnpauseCrossChain,
-) (*forwardertypes.MsgUnpauseCrossChainResponse, error) {
+	msg *forwardertypes.MsgUnpauseCrossChains,
+) (*forwardertypes.MsgUnpauseCrossChainsResponse, error) {
 	if err := s.RequireAuthority(msg.Signer); err != nil {
 		return nil, err
 	}
@@ -116,10 +112,9 @@ func (s msgServer) UnpauseCrossChain(
 		)
 	}
 
-	return &forwardertypes.MsgUnpauseCrossChainResponse{}, nil
+	return &forwardertypes.MsgUnpauseCrossChainsResponse{}, nil
 }
 
-// ReplaceDepositForBurn implements forwarder.MsgServer.
 func (s msgServer) ReplaceDepositForBurn(
 	ctx context.Context,
 	msg *forwardertypes.MsgReplaceDepositForBurn,
