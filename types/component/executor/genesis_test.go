@@ -54,7 +54,7 @@ func TestValidate(t *testing.T) {
 			genState: &GenesisState{
 				PausedActionIds: []core.ActionID{core.ACTION_UNSUPPORTED},
 			},
-			expErr: "action ID is not supported",
+			expErr: "ID is not supported",
 		},
 	}
 

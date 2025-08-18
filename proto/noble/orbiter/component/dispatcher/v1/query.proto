@@ -2,11 +2,9 @@ syntax = "proto3";
 
 package noble.orbiter.component.dispatcher.v1;
 
-import "amino/amino.proto";
 import "cosmos/query/v1/query.proto";
 import "google/api/annotations.proto";
 import "noble/orbiter/component/dispatcher/v1/dispatcher.proto";
-import "noble/orbiter/core/v1/id.proto";
 
 option go_package = "orbiter.dev/types/component/dispatcher";
 
@@ -53,11 +51,11 @@ service Query {
 // QueryDispatchedCountsRequest is the request type for the Query/DispatchedCounts RPC method.
 message QueryDispatchedCountsRequest {
   // source_protocol_id is the source protocol identifier.
-  noble.orbiter.core.v1.ProtocolID source_protocol_id = 1 [(amino.dont_omitempty) = true];
+  string source_protocol_id = 1;
   // source_counterparty_id is the source counterparty identifier.
   string source_counterparty_id = 2;
   // destination_protocol_id is the destination protocol identifier.
-  noble.orbiter.core.v1.ProtocolID destination_protocol_id = 3 [(amino.dont_omitempty) = true];
+  string destination_protocol_id = 3;
   // destination_counterparty_id is the destination counterparty identifier.
   string destination_counterparty_id = 4;
 }
@@ -65,7 +63,7 @@ message QueryDispatchedCountsRequest {
 // QueryDispatchedAmountsByProtocolIDRequest is the request type for the Query/DispatchedCountsBy* methods.
 message QueryDispatchedCountsByProtocolIDRequest {
   // source_protocol_id is the protocol identifier.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+  string protocol_id = 1;
 }
 
 // QueryDispatchedCountsResponse is the response type for the Query/DispatchedCounts* RPC methods.
@@ -76,11 +74,11 @@ message QueryDispatchedCountsResponse {
 // QueryDispatchedAmountsRequest is the request type for the Query/DispatchedAmounts RPC method.
 message QueryDispatchedAmountsRequest {
   // source_protocol_id is the source protocol identifier.
-  noble.orbiter.core.v1.ProtocolID source_protocol_id = 1 [(amino.dont_omitempty) = true];
+  string source_protocol_id = 1;
   // source_counterparty_id is the source counterparty identifier.
   string source_counterparty_id = 2;
   // destination_protocol_id is the destination protocol identifier.
-  noble.orbiter.core.v1.ProtocolID destination_protocol_id = 3 [(amino.dont_omitempty) = true];
+  string destination_protocol_id = 3;
   // destination_counterparty_id is the destination counterparty identifier.
   string destination_counterparty_id = 4;
   // denom is the denomination of the amounts requested.
@@ -90,7 +88,7 @@ message QueryDispatchedAmountsRequest {
 // QueryDispatchedAmountsByProtocolIDRequest is the request type for the Query/DispatchedAmountsBy* methods.
 message QueryDispatchedAmountsByProtocolIDRequest {
   // source_protocol_id is the protocol identifier.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+  string protocol_id = 1;
 }
 
 // QueryDispatchedAmountsResponse is the response type for the Query/DispatchedAmounts* RPC methods.

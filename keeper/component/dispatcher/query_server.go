@@ -49,12 +49,14 @@ func (q queryServer) DispatchedCounts(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	sourceID, err := core.NewCrossChainID(req.SourceProtocolId, req.SourceCounterpartyId)
+	sourceProtocolID := core.ProtocolID(core.ProtocolID_value[req.SourceProtocolId])
+	sourceID, err := core.NewCrossChainID(sourceProtocolID, req.SourceCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
 	}
 
-	destID, err := core.NewCrossChainID(req.DestinationProtocolId, req.DestinationCounterpartyId)
+	destProtocolID := core.ProtocolID(core.ProtocolID_value[req.DestinationProtocolId])
+	destID, err := core.NewCrossChainID(destProtocolID, req.DestinationCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
 	}
@@ -82,11 +84,12 @@ func (q queryServer) DispatchedCountsByDestinationProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	counts := q.GetDispatchedCountsByDestinationProtocolID(ctx, req.ProtocolId)
+	counts := q.GetDispatchedCountsByDestinationProtocolID(ctx, protocolID)
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
 		Counts: counts,
@@ -101,11 +104,12 @@ func (q queryServer) DispatchedCountsBySourceProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	counts := q.GetDispatchedCountsBySourceProtocolID(ctx, req.ProtocolId)
+	counts := q.GetDispatchedCountsBySourceProtocolID(ctx, protocolID)
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
 		Counts: counts,
@@ -127,12 +131,14 @@ func (q queryServer) DispatchedAmounts(
 		)
 	}
 
-	sourceID, err := core.NewCrossChainID(req.SourceProtocolId, req.SourceCounterpartyId)
+	sourceProtocolID := core.ProtocolID(core.ProtocolID_value[req.SourceProtocolId])
+	sourceID, err := core.NewCrossChainID(sourceProtocolID, req.SourceCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
 	}
 
-	destID, err := core.NewCrossChainID(req.DestinationProtocolId, req.DestinationCounterpartyId)
+	destProtocolID := core.ProtocolID(core.ProtocolID_value[req.DestinationProtocolId])
+	destID, err := core.NewCrossChainID(destProtocolID, req.DestinationCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
 	}
@@ -161,11 +167,12 @@ func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	amounts := q.GetDispatchedAmountsByDestinationProtocolID(ctx, req.ProtocolId)
+	amounts := q.GetDispatchedAmountsByDestinationProtocolID(ctx, protocolID)
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
 		Amounts: amounts,
@@ -180,11 +187,12 @@ func (q queryServer) DispatchedAmountsBySourceProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	amounts := q.GetDispatchedAmountsBySourceProtocolID(ctx, req.ProtocolId)
+	amounts := q.GetDispatchedAmountsBySourceProtocolID(ctx, protocolID)
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
 		Amounts: amounts,

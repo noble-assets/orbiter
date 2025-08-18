@@ -25,6 +25,7 @@ import (
 	"errors"
 	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -110,10 +111,7 @@ func (c *FeeController) HandlePacket(
 
 	err = c.executeAction(ctx, feesToDistribute.Values)
 	if err != nil {
-		return core.ErrControllerExecution.Wrapf(
-			"an error occurred executing the action %s",
-			err.Error(),
-		)
+		return errorsmod.Wrap(err, "fee controller execution error")
 	}
 
 	transferAttr.SetDestinationAmount(

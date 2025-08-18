@@ -18,18 +18,33 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package core
+package adapter
 
-import errorsmod "cosmossdk.io/errors"
-
-var (
-	ErrUnauthorized      = errorsmod.Register(ModuleName, 1, "signer must be the authority")
-	ErrIDNotSupported    = errorsmod.Register(ModuleName, 2, "ID is not supported")
-	ErrNilPointer        = errorsmod.Register(ModuleName, 3, "invalid nil pointer")
-	ErrEmptyString       = errorsmod.Register(ModuleName, 4, "string cannot be empty")
-	ErrInvalidAttributes = errorsmod.Register(ModuleName, 5, "invalid attributes")
-	ErrValidation        = errorsmod.Register(ModuleName, 6, "validation failed")
-	ErrParsingPayload    = errorsmod.Register(ModuleName, 7, "parsing payload failed")
-	ErrUnableToPause     = errorsmod.Register(ModuleName, 8, "unable to pause")
-	ErrUnableToUnpause   = errorsmod.Register(ModuleName, 9, "unable to unpause")
+import (
+	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 )
+
+func TxCommandOptions() []*autocliv1.RpcCommandOptions {
+	return []*autocliv1.RpcCommandOptions{
+		{
+			RpcMethod: "UpdateParams",
+			Use:       "update-params [params]",
+			Short:     "Update the component's parameters",
+			Long: `Update the component's parameters. This message can only be sent 
+by the authority of the module.`,
+			PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+				{ProtoField: "params"},
+			},
+		},
+	}
+}
+
+func QueryCommandOptions() []*autocliv1.RpcCommandOptions {
+	return []*autocliv1.RpcCommandOptions{
+		{
+			RpcMethod: "Params",
+			Use:       "params",
+			Short:     "Get the component's parameters",
+		},
+	}
+}

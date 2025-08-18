@@ -44,7 +44,7 @@ func TestInitGenesis(t *testing.T) {
 	require.ErrorContains(
 		t,
 		err,
-		"action ID is not supported",
+		"ID is not supported",
 		"expected error initializing genesis",
 	)
 

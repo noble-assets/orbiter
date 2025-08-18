@@ -42,7 +42,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 			name: "error - unauthorized signer",
 			msg: &executortypes.MsgPauseAction{
 				Signer:   "noble1invalid",
-				ActionId: core.ACTION_FEE,
+				ActionId: core.ACTION_FEE.String(),
 			},
 			expErr: core.ErrUnauthorized.Error(),
 		},
@@ -50,15 +50,15 @@ func TestMsgServerPauseAction(t *testing.T) {
 			name: "error - invalid action ID",
 			msg: &executortypes.MsgPauseAction{
 				Signer:   testutil.Authority,
-				ActionId: core.ActionID(99),
+				ActionId: core.ActionID(99).String(),
 			},
-			expErr: "action ID is unknown",
+			expErr: "invalid action ID",
 		},
 		{
 			name: "success - valid pause request",
 			msg: &executortypes.MsgPauseAction{
 				Signer:   testutil.Authority,
-				ActionId: core.ACTION_FEE,
+				ActionId: core.ACTION_FEE.String(),
 			},
 			expErr: "",
 		},
@@ -92,7 +92,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			name: "error - unauthorized signer",
 			msg: &executortypes.MsgUnpauseAction{
 				Signer:   "noble1invalid",
-				ActionId: core.ACTION_FEE,
+				ActionId: core.ACTION_FEE.String(),
 			},
 			expErr: core.ErrUnauthorized.Error(),
 		},
@@ -100,29 +100,29 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			name: "error - invalid action ID",
 			msg: &executortypes.MsgUnpauseAction{
 				Signer:   testutil.Authority,
-				ActionId: core.ActionID(99),
+				ActionId: core.ActionID(99).String(),
 			},
-			expErr: "action ID is unknown",
+			expErr: "invalid action ID",
 		},
 		{
 			name: "success - valid unpause request",
 			msg: &executortypes.MsgUnpauseAction{
 				Signer:   testutil.Authority,
-				ActionId: core.ACTION_FEE,
+				ActionId: core.ACTION_FEE.String(),
 			},
 			expErr: "",
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			msgServer := executor.NewMsgServer(k.Executor(), k)
 
-			resp, err := msgServer.UnpauseAction(ctx, tc.msg)
+			resp, err := msgServer.UnpauseAction(ctx, tC.msg)
 
-			if tc.expErr != "" {
-				require.ErrorContains(t, err, tc.expErr)
+			if tC.expErr != "" {
+				require.ErrorContains(t, err, tC.expErr)
 				require.Nil(t, resp)
 			} else {
 				require.NoError(t, err)

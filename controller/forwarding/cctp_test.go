@@ -147,7 +147,7 @@ func TestHandlePacket(t *testing.T) {
 					TransferAttributes: transferAttr,
 				}
 			},
-			expError: core.ErrControllerExecution.Error(),
+			expError: "CCTP controller execution error",
 		},
 	}
 
