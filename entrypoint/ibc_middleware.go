@@ -21,8 +21,7 @@
 package entrypoint
 
 import (
-	"errors"
-
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
@@ -48,15 +47,15 @@ func NewIBCMiddleware(
 	payloadAdapter types.PayloadAdapter,
 ) IBCMiddleware {
 	if app == nil {
-		panic(errors.New("IBC module cannot be nil"))
+		panic(core.ErrNilPointer.Wrap("IBC module is not set"))
 	}
 
 	if ics4Wrapper == nil {
-		panic(errors.New("ICS4 wrapper cannot be nil"))
+		panic(core.ErrNilPointer.Wrap("ICS4 wrapper module is not set"))
 	}
 
 	if payloadAdapter == nil {
-		panic(errors.New("payload adapter cannot be nil"))
+		panic(core.ErrNilPointer.Wrap("payload adapter is not set"))
 	}
 
 	return IBCMiddleware{
@@ -81,7 +80,7 @@ func (i IBCMiddleware) OnRecvPacket(
 		packet.GetData(),
 	)
 	if err != nil {
-		return channeltypes.NewErrorAcknowledgement(err)
+		return newErrorAcknowledgement(err)
 	}
 
 	if !isOrbiterPayload {
@@ -90,12 +89,12 @@ func (i IBCMiddleware) OnRecvPacket(
 
 	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.SourceChannel)
 	if err != nil {
-		return channeltypes.NewErrorAcknowledgement(err)
+		return newErrorAcknowledgement(err)
 	}
 
 	err = i.payloadAdapter.BeforeTransferHook(ctx, ccID, orbiterPayload)
 	if err != nil {
-		return channeltypes.NewErrorAcknowledgement(err)
+		return newErrorAcknowledgement(err)
 	}
 
 	ack := i.IBCModule.OnRecvPacket(ctx, packet, relayer)
@@ -105,13 +104,21 @@ func (i IBCMiddleware) OnRecvPacket(
 
 	transferAttr, err := i.payloadAdapter.AfterTransferHook(ctx, ccID, orbiterPayload)
 	if err != nil {
-		return channeltypes.NewErrorAcknowledgement(err)
+		return newErrorAcknowledgement(err)
 	}
 
 	err = i.payloadAdapter.ProcessPayload(ctx, transferAttr, orbiterPayload)
 	if err != nil {
-		return channeltypes.NewErrorAcknowledgement(err)
+		return newErrorAcknowledgement(err)
 	}
 
 	return ack
+}
+
+func newErrorAcknowledgement(err error) channeltypes.Acknowledgement {
+	return channeltypes.Acknowledgement{
+		Response: &channeltypes.Acknowledgement_Error{
+			Error: errorsmod.Wrap(err, "orbiter-middleware error").Error(),
+		},
+	}
 }
