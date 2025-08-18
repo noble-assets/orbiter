@@ -96,7 +96,7 @@ message MsgUnpauseCrossChains {
 }
 
 // MsgUnpauseCrossChainsResponse is the response type
-// rom a MsgUnpauseCrossChains request.
+// from a MsgUnpauseCrossChains request.
 message MsgUnpauseCrossChainsResponse {}
 
 // MsgReplaceDepositForBurnResponse allows the orbiter authority
