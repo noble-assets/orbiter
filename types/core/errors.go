@@ -23,14 +23,13 @@ package core
 import errorsmod "cosmossdk.io/errors"
 
 var (
-	ErrUnauthorized        = errorsmod.Register(ModuleName, 1, "signer must be the authority")
-	ErrIDNotSupported      = errorsmod.Register(ModuleName, 2, "ID is not supported")
-	ErrNilPointer          = errorsmod.Register(ModuleName, 3, "invalid nil pointer")
-	ErrControllerExecution = errorsmod.Register(ModuleName, 4, "controller execution failed")
-	ErrInvalidAttributes   = errorsmod.Register(ModuleName, 5, "invalid attributes")
-	ErrValidation          = errorsmod.Register(ModuleName, 6, "validation failed")
-	ErrParsingPayload      = errorsmod.Register(ModuleName, 7, "parsing payload failed")
-	ErrUnableToPause       = errorsmod.Register(ModuleName, 8, "unable to pause")
-	ErrUnableToUnpause     = errorsmod.Register(ModuleName, 9, "unable to unpause")
-	ErrEmptyString         = errorsmod.Register(ModuleName, 10, "string cannot be empty")
+	ErrUnauthorized      = errorsmod.Register(ModuleName, 1, "signer must be the authority")
+	ErrIDNotSupported    = errorsmod.Register(ModuleName, 2, "ID is not supported")
+	ErrNilPointer        = errorsmod.Register(ModuleName, 3, "invalid nil pointer")
+	ErrEmptyString       = errorsmod.Register(ModuleName, 4, "string cannot be empty")
+	ErrInvalidAttributes = errorsmod.Register(ModuleName, 5, "invalid attributes")
+	ErrValidation        = errorsmod.Register(ModuleName, 6, "validation failed")
+	ErrParsingPayload    = errorsmod.Register(ModuleName, 7, "parsing payload failed")
+	ErrUnableToPause     = errorsmod.Register(ModuleName, 8, "unable to pause")
+	ErrUnableToUnpause   = errorsmod.Register(ModuleName, 9, "unable to unpause")
 )

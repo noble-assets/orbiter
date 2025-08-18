@@ -25,6 +25,7 @@ import (
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -105,10 +106,7 @@ func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.Forward
 
 	err = c.executeForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
-		return core.ErrControllerExecution.Wrapf(
-			"an error occurred executing the forwarding: %s",
-			err.Error(),
-		)
+		return errorsmod.Wrap(err, "CCTP controller execution error")
 	}
 
 	return nil

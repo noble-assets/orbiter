@@ -17,7 +17,7 @@ service Msg {
   rpc PauseProtocol(MsgPauseProtocol) returns (MsgPauseProtocolResponse);
   // UnpauseProtocol resumes an entire forwarding protocol.
   rpc UnpauseProtocol(MsgUnpauseProtocol) returns (MsgUnpauseProtocolResponse);
-  // PauseCrossChains pauses specific counterparty for a protocol.
+  //  PauseCrossChains pauses specific counterparties for a protocol.
   rpc PauseCrossChains(MsgPauseCrossChains) returns (MsgPauseCrossChainsResponse);
   // UnpauseCrossChains resumes specific counterparty pairs for a protocol.
   rpc UnpauseCrossChains(MsgUnpauseCrossChains) returns (MsgUnpauseCrossChainsResponse);
@@ -42,7 +42,7 @@ message MsgPauseProtocol {
 // MsgPauseProtocolResponse is the response type from a MsgPauseProtocol request.
 message MsgPauseProtocolResponse {}
 
-// MsgPauseCrossChains pauses specific counterparty pairs for a protocol.
+// MsgPauseCrossChains pauses specific counterparties for a protocol.
 message MsgPauseCrossChains {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "orbiter/forwarder/PauseCrossChains";
@@ -79,7 +79,7 @@ message MsgUnpauseProtocol {
 // MsgUnpauseProtocolResponse is the response type from a MsgUnpauseProtocol request.
 message MsgUnpauseProtocolResponse {}
 
-// MsgUnpauseCrossChains resumes specific counterparty pairs for a protocol.
+// MsgUnpauseCrossChains resumes specific counterparties for a protocol.
 message MsgUnpauseCrossChains {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "orbiter/forwarder/UnpauseCrossChains";
@@ -96,7 +96,7 @@ message MsgUnpauseCrossChains {
 }
 
 // MsgUnpauseCrossChainsResponse is the response type
-// from a MsgUnpauseCrossChain request.
+// rom a MsgUnpauseCrossChains request.
 message MsgUnpauseCrossChainsResponse {}
 
 // MsgReplaceDepositForBurnResponse allows the orbiter authority

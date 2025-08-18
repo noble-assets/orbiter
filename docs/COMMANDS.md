@@ -1,11 +1,11 @@
 # Commands
 
-This document contains the CLI command to execute transactions and queries against the Orbiter
-module in the simapp.
+This document provides CLI commands to execute transactions and queries against the Orbiter module
+in the simapp.
 
 ## Env
 
-Import the aliases:
+Define the aliases:
 
 ```sh
 SIMD="./simapp/build/simd"

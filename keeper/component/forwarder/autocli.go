@@ -41,7 +41,7 @@ and counterparty ID combinations.`,
 		},
 		{
 			RpcMethod: "UnpauseProtocol",
-			Use:       "unpause-protocol [id]",
+			Use:       "unpause-protocol [protocol_id]",
 			Short:     "Resume a paused forwarding protocol by ID",
 			Long: `Resume operations for a previously paused forwarding protocol by its 
 identifier. This will re-enable all forwarding operations for the specified protocol. 
@@ -54,7 +54,7 @@ and counterparty ID combinations.`,
 		},
 		{
 			RpcMethod: "PauseCrossChains",
-			Use:       "pause-cross-chains [protocol_id] [counterparty_ids]",
+			Use:       "pause-cross-chains [protocol_id] [counterparty_ids...]",
 			Short:     "Pause specific counterparties for a protocol",
 			Long: `Pause specific counterparties for a forwarding protocol. This 
 allows selective pausing of forwarding operations to specific destinations while 
@@ -66,7 +66,7 @@ keeping other counterparties active.`,
 		},
 		{
 			RpcMethod: "UnpauseCrossChains",
-			Use:       "unpause-cross-chains [protocol_id] [counterparty_ids]",
+			Use:       "unpause-cross-chains [protocol_id] [counterparty_ids...]",
 			Short:     "Resume specific counterparty pairs for a protocol",
 			Long: `Resume forwarding operations for specific counterparty pairs that 
 were previously paused. This allows selective resumption of forwarding to 
@@ -105,7 +105,7 @@ func QueryCommandOptions() []*autocliv1.RpcCommandOptions {
 		{
 			RpcMethod: "PausedProtocols",
 			Use:       "paused-protocols",
-			Short:     "Get all paused protocols IDs",
+			Short:     "Get all paused protocol IDs",
 		},
 		{
 			RpcMethod: "IsCrossChainPaused",

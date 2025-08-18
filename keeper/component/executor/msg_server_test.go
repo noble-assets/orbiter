@@ -114,15 +114,15 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			msgServer := executor.NewMsgServer(k.Executor(), k)
 
-			resp, err := msgServer.UnpauseAction(ctx, tc.msg)
+			resp, err := msgServer.UnpauseAction(ctx, tC.msg)
 
-			if tc.expErr != "" {
-				require.ErrorContains(t, err, tc.expErr)
+			if tC.expErr != "" {
+				require.ErrorContains(t, err, tC.expErr)
 				require.Nil(t, resp)
 			} else {
 				require.NoError(t, err)
