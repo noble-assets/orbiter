@@ -25,17 +25,17 @@ flowchart TD
 
     subgraph adaptation
       A1["Entrypoint"]
-      B["Adapter Component"]
+      B["Adapter"]
     end
 
     subgraph "state transition"
-      C["Dispatcher Component"]
-      D["Action Component"]
-      E["Orbit Component"]
+      C["Dispatcher"]
+      D["Executor"]
+      E["Forwarder"]
       F["Statistics Storage"]
     end
 
-    Z["Outgoing Transfer<br/>(CCTP, IBC, Hyperlane)"]
+    Z["CCTP, IBC, Hyperlane"]
 
     A -->|incoming transfer</br>with payload| A1
     A1 -->|parse payload| B
@@ -45,8 +45,8 @@ flowchart TD
 
     B -->|dispatch payload| C
 
-    C -->|handle action| D
-    C -->|handle orbit| E
+    C -->|handle actions| D
+    C -->|handle forwarding| E
     C -->|update stats| F
 
     E -->|outgoing transfer</br>with payload| Z
@@ -93,39 +93,39 @@ classDiagram
             AfterTransferHook()
         }
 
-        class OrbitComponentI["OrbitComponent"] {
+        class Forwarder {
             <<interface>>
             Pause()
             Unpause()
         }
 
-        class ActionComponentI["ActionComponent"] {
+        class Executor {
             <<interface>>
             Pause()
             Unpause()
         }
 
-        class DispatcherComponentI["DispatcherComponent"] {
+        class Dispatcher {
             <<interface>>
         }
 
-        class AdapterComponentI["AdapterComponent"] {
+        class Adapter {
             <<interface>>
         }
 
-        class OrbitComponent["OrbitComponent"] {
+        class ForwarderComponent {
             Router
         }
 
-        class ActionComponent["ActionComponent"] {
+        class ExecutorComponent {
             Router
         }
 
-        class DispatcherComponent["DispatcherComponent"] {
+        class DispatcherComponent {
             Router
         }
 
-        class AdapterComponent["AdapterComponent"] {
+        class AdapterComponent {
             Router
         }
     }
@@ -136,29 +136,29 @@ classDiagram
     }
 
     %% Interface relationships
-    Loggable <-- OrbitComponentI : embeds
-    RouterProvider <-- OrbitComponentI : embeds
-    PacketHandler <-- OrbitComponentI : embeds
+    Loggable <-- Forwarder : embeds
+    RouterProvider <-- Forwarder : embeds
+    PacketHandler <-- Forwarder : embeds
 
-    Loggable <-- ActionComponentI : embeds
-    RouterProvider <-- ActionComponentI : embeds
-    PacketHandler <-- ActionComponentI : embeds
+    Loggable <-- Executor : embeds
+    RouterProvider <-- Executor : embeds
+    PacketHandler <-- Executor : embeds
 
-    Loggable <-- DispatcherComponentI : embeds
-    PayloadDispatcher <-- DispatcherComponentI : embeds
+    Loggable <-- Dispatcher : embeds
+    PayloadDispatcher <-- Dispatcher : embeds
 
-    Loggable <-- AdapterComponentI : embeds
-    PayloadAdapter <-- AdapterComponentI : embeds
+    Loggable <-- Adapter : embeds
+    PayloadAdapter <-- Adapter : embeds
 
     %% Implementation relationships
-    ActionComponentI <|.. ActionComponent : implements
-    OrbitComponentI <|.. OrbitComponent : implements
-    DispatcherComponentI <|.. DispatcherComponent : implements
-    AdapterComponentI <|.. AdapterComponent : implements
+    Executor <|.. ExecutorComponent : implements
+    Forwarder <|.. ForwarderComponent : implements
+    Dispatcher <|.. DispatcherComponent : implements
+    Adapter <|.. AdapterComponent : implements
 
     %% Keeper relationships
-    Keeper *-- ActionComponent
-    Keeper *-- OrbitComponent
+    Keeper *-- ExecutorComponent
+    Keeper *-- ForwarderComponent
     Keeper *-- DispatcherComponent
     Keeper *-- AdapterComponent
 
@@ -173,7 +173,7 @@ classDiagram
         class RouterType["Router"] {
         }
 
-        class OrbitRouter {
+        class ForwardingRouter {
         }
 
         class ActionRouter {
@@ -184,17 +184,17 @@ classDiagram
     }
 
     %% Router relationships
-    RouterType <.. ActionComponent
-    RouterType <.. OrbitComponent
+    RouterType <.. ExecutorComponent
+    RouterType <.. ForwarderComponent
     RouterType <.. AdapterComponent
 
-    ControllerOrbit <-- OrbitRouter : orchestrate
+    ControllerForwarding <-- ForwardingRouter : orchestrate
     ControllerAction <-- ActionRouter : orchestrate
     ControllerAdapter <-- AdapterRouter : orchestrate
 
     RouterInterface <|.. RouterType : implements
     RouterType <|-- ActionRouter : instance of
-    RouterType <|-- OrbitRouter : instance of
+    RouterType <|-- ForwardingRouter : instance of
     RouterType <|-- AdapterRouter : instance of
 
     namespace Controllers {
@@ -224,7 +224,7 @@ classDiagram
             <<interface>>
         }
 
-        class ControllerOrbit {
+        class ControllerForwarding {
             <<interface>>
         }
 
@@ -260,8 +260,8 @@ classDiagram
     Controller <-- ControllerAction : embeds
     PacketHandlerC <-- ControllerAction : embeds
 
-    Controller <-- ControllerOrbit : embeds
-    PacketHandlerC <-- ControllerOrbit : embeds
+    Controller <-- ControllerForwarding : embeds
+    PacketHandlerC <-- ControllerForwarding : embeds
 
     %% Controller implementations
     ControllerAdapter <|.. IBCAdapter : implements
@@ -271,9 +271,9 @@ classDiagram
     ControllerAction <|.. FeeController : implements
     ControllerAction <|.. SwapController : implements
 
-    ControllerOrbit <|.. CCTPController : implements
-    ControllerOrbit <|.. IBCController : implements
-    ControllerOrbit <|.. HyperlaneController : implements
+    ControllerForwarding <|.. CCTPController : implements
+    ControllerForwarding <|.. IBCController : implements
+    ControllerForwarding <|.. HyperlaneController : implements
 ```
 
 ## Keeper
@@ -325,36 +325,36 @@ classDiagram
         ProcessPayload()
     }
 
-    class ComponentOrbit["ComponentOrbit"] {
+    class Forwarder {
         <<interface>>
         Pause()
         Unpause()
     }
 
-    class ComponentAction["ComponentAction"] {
+    class Executor {
         <<interface>>
         Pause()
         Unpause()
     }
 
-    class ComponentDispatcher["ComponentDispatcher"] {
+    class Dispatcher {
         <<interface>>
     }
 
-    class ComponentAdapter["ComponentAdapter"] {
+    class Adapter {
         <<interface>>
     }
 
-    class OrbitComponent["OrbitComponent"] {
+    class ForwarderComponent {
     }
 
-    class ActionComponent["ActionComponent"] {
+    class ExecutorComponent {
     }
 
-    class DispatcherComponent["DispatcherComponent"] {
+    class DispatcherComponent {
     }
 
-    class AdapterComponent["AdapterComponent"] {
+    class AdapterComponent {
     }
     }
     namespace Orbiter Keeper{
@@ -363,27 +363,27 @@ classDiagram
     }
 
 
-    Loggable <-- ComponentOrbit : embeds
-    RouterProvider <-- ComponentOrbit : embeds
-    PacketHandler <-- ComponentOrbit : embeds
+    Loggable <-- Forwarder : embeds
+    RouterProvider <-- Forwarder : embeds
+    PacketHandler <-- Forwarder : embeds
 
-    Loggable <-- ComponentAction : embeds
-    RouterProvider <-- ComponentAction : embeds
-    PacketHandler <-- ComponentAction : embeds
+    Loggable <-- Executor : embeds
+    RouterProvider <-- Executor : embeds
+    PacketHandler <-- Executor : embeds
 
-    Loggable <-- ComponentDispatcher : embeds
-    PayloadDispatcher <-- ComponentDispatcher : embeds
+    Loggable <-- Dispatcher : embeds
+    PayloadDispatcher <-- Dispatcher : embeds
 
-    Loggable <-- ComponentAdapter : embeds
-    PayloadAdapter <-- ComponentAdapter : embeds
+    Loggable <-- Adapter : embeds
+    PayloadAdapter <-- Adapter : embeds
 
-    ComponentAction <|.. ActionComponent : implements
-    ComponentOrbit <|.. OrbitComponent : implements
-    ComponentDispatcher <|.. DispatcherComponent : implements
-    ComponentAdapter <|.. AdapterComponent : implements
+    Executor <|.. ExecutorComponent : implements
+    Forwarder <|.. ForwarderComponent : implements
+    Dispatcher <|.. DispatcherComponent : implements
+    Adapter <|.. AdapterComponent : implements
 
-    Keeper *-- ActionComponent
-    Keeper *-- OrbitComponent
+    Keeper *-- ExecutorComponent
+    Keeper *-- ForwarderComponent
     Keeper *-- DispatcherComponent
     Keeper *-- AdapterComponent
 ```
@@ -411,21 +411,21 @@ available adapter controllers and routes the incoming metadata to the correct on
 ### Dispatcher Component
 
 The `DispatcherComponent` (`keeper/components/dispatcher.go`) orchestrates payload execution by
-coordinating actions and orbit operations. This component is created by injecting the action and
-orbit component.
+coordinating actions and forwarding operations. This component is created by injecting the executor
+and forwarder component.
 
 **Key Responsibilities**:
 
 - **Payload Validation**: Ensures payload structure and content validity
 - **Action Dispatching**: Dispatches pre-actions sequentially (fees, swaps, etc.) to the proper
   handler.
-- **Orbit Execution**: Dispatches cross-chain forwarding operations to the proper handler.
+- **Forwarding Execution**: Dispatches cross-chain forwarding operations to the proper handler.
 - **Statistics Tracking**: Maintains dispatch counts and amount metrics.
 
-### Action Component
+### Executor Component
 
-The `ActionComponent` (`keeper/components/action.go`) handles action operations by performing state
-transitions on the Noble chain.
+The `ExecutorComponent` (`keeper/components/executor.go`) handles action operations by performing
+state transitions on the Noble chain.
 
 This component does not execute any actions, but keeps track internally of the available action
 controllers and routes the incoming request to the correct one.
@@ -437,21 +437,21 @@ controllers and routes the incoming request to the correct one.
 - **Action Controllers Routing**: Stores and routes the incoming action request to the proper
   controller.
 
-### Orbit Component
+### Forwarder Component
 
-The `OrbitComponent` (`keeper/components/orbit.go`) handles the outgoing cross-chain transfer by
-forwarding the orbiter balance to the destination. This module operates on the resulting denom and
-amount of all the actions executions.
+The `ForwarderComponent` (`keeper/components/forwarder.go`) handles the outgoing cross-chain
+transfer by forwarding the orbiter balance to the destination. This module operates on the resulting
+denom and amount of all the actions executions.
 
 This component does not execute any cross-chain transfers, but keeps track internally of the
-available orbit controllers and routes the incoming request to the correct one.
+available forwarding controllers and routes the incoming request to the correct one.
 
 **Key Responsibilities**:
 
-- **Packet Handling**: Handles an incoming orbit packet.
-- **Orbit Packet Validation**: Validates if an orbit packet is valid and can be executed.
-- **Orbit Controllers Routing**: Stores and routes the incoming orbit request to the proper
-  controller.
+- **Packet Handling**: Handles an incoming forwarding packet.
+- **Forwarding Packet Validation**: Validates if a forwarding packet is valid and can be executed.
+- **Forwarding Controllers Routing**: Stores and routes the incoming forwarding request to the
+  proper controller.
 
 ## Controllers
 
@@ -512,9 +512,9 @@ classDiagram
     ControllerAction <|.. SwapController : implements
 
 
-    ControllerOrbit <|.. CCTPController : implements
-    ControllerOrbit <|.. IBCController : implements
-    ControllerOrbit <|.. HyperlaneController : implements
+    ControllerForwarding <|.. CCTPController : implements
+    ControllerForwarding <|.. IBCController : implements
+    ControllerForwarding <|.. HyperlaneController : implements
 ```
 
 ## Router
@@ -532,7 +532,7 @@ classDiagram
     class ControllerAction {
         <<interface>>
     }
-    class ControllerOrbit {
+    class ControllerForwarding {
         <<interface>>
     }
 
@@ -554,12 +554,12 @@ classDiagram
     }
 
     %% Relationships
-    ControllerOrbit <-- OrbitRouter : orchestrate
+    ControllerForwarding <-- ForwardingRouter : orchestrate
     ControllerAction <-- ActionRouter : orchestrate
     ControllerAdapter <-- AdapterRouter : orchestrate
 
     RouterInterface <|.. RouterType : implements
     RouterType <|-- ActionRouter : instance of
-    RouterType <|-- OrbitRouter : instance of
+    RouterType <|-- ForwardingRouter : instance of
     RouterType <|-- AdapterRouter : instance of
 ```
