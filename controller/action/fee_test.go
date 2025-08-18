@@ -33,17 +33,17 @@ import (
 	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types"
-	"orbiter.dev/types/controller/action"
+	actiontypes "orbiter.dev/types/controller/action"
 	"orbiter.dev/types/core"
 )
 
-func TestGetAttributesFeeController(t *testing.T) {
+func TestGetAttributes(t *testing.T) {
 	recipient := sdk.AccAddress(testutil.AddressBytes())
 
 	testCases := []struct {
 		name          string
 		action        func() *core.Action
-		expAttributes action.FeeAttributes
+		expAttributes actiontypes.FeeAttributes
 		expErr        string
 	}{
 		{
@@ -83,8 +83,8 @@ func TestGetAttributesFeeController(t *testing.T) {
 			action: func() *core.Action {
 				action, err := core.NewAction(
 					core.ACTION_FEE,
-					&action.FeeAttributes{
-						FeesInfo: []*action.FeeInfo{
+					&actiontypes.FeeAttributes{
+						FeesInfo: []*actiontypes.FeeInfo{
 							{
 								Recipient:   recipient.String(),
 								BasisPoints: 100,
@@ -96,8 +96,8 @@ func TestGetAttributesFeeController(t *testing.T) {
 
 				return action
 			},
-			expAttributes: action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			expAttributes: actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
 						BasisPoints: 100,
@@ -141,22 +141,22 @@ func TestComputeFeesToDistribute(t *testing.T) {
 	testCases := []struct {
 		name               string
 		amount             sdkmath.Int
-		feesInfo           []*action.FeeInfo
-		expFeeToDistribute *action.FeesToDistribute
+		feesInfo           []*actiontypes.FeeInfo
+		expFeeToDistribute *actiontypes.FeesToDistribute
 		expErr             string
 	}{
 		{
 			name:   "success - single fee recipient",
 			amount: sdkmath.NewInt(1_000_000),
-			feesInfo: []*action.FeeInfo{
+			feesInfo: []*actiontypes.FeeInfo{
 				{
 					Recipient:   recipient1.String(),
 					BasisPoints: 100,
 				},
 			},
-			expFeeToDistribute: &action.FeesToDistribute{
+			expFeeToDistribute: &actiontypes.FeesToDistribute{
 				Total: sdkmath.NewInt(10_000), // 1% of 1,000,000 = 10,000
-				Values: []action.RecipientAmount{
+				Values: []actiontypes.RecipientAmount{
 					{
 						Recipient: recipient1,
 						Amount:    sdk.NewCoins(sdk.NewInt64Coin(denom, 10_000)),
@@ -167,7 +167,7 @@ func TestComputeFeesToDistribute(t *testing.T) {
 		{
 			name:   "success - multiple fee recipients",
 			amount: sdkmath.NewInt(1_000_000),
-			feesInfo: []*action.FeeInfo{
+			feesInfo: []*actiontypes.FeeInfo{
 				{
 					Recipient:   recipient1.String(),
 					BasisPoints: 100, // 1%
@@ -177,9 +177,9 @@ func TestComputeFeesToDistribute(t *testing.T) {
 					BasisPoints: 200, // 2%
 				},
 			},
-			expFeeToDistribute: &action.FeesToDistribute{
+			expFeeToDistribute: &actiontypes.FeesToDistribute{
 				Total: sdkmath.NewInt(30_000), // 1% + 2% = 3% of 1,000,000 = 30,000
-				Values: []action.RecipientAmount{
+				Values: []actiontypes.RecipientAmount{
 					{
 						Recipient: recipient1,
 						Amount:    sdk.NewCoins(sdk.NewInt64Coin(denom, 10_000)),
@@ -194,38 +194,38 @@ func TestComputeFeesToDistribute(t *testing.T) {
 		{
 			name:   "success - zero amount input",
 			amount: sdkmath.ZeroInt(),
-			feesInfo: []*action.FeeInfo{
+			feesInfo: []*actiontypes.FeeInfo{
 				{
 					Recipient:   recipient1.String(),
 					BasisPoints: 100,
 				},
 			},
-			expFeeToDistribute: &action.FeesToDistribute{
+			expFeeToDistribute: &actiontypes.FeesToDistribute{
 				Total:  sdkmath.ZeroInt(),
-				Values: []action.RecipientAmount{},
+				Values: []actiontypes.RecipientAmount{},
 			},
 		},
 		{
 			name:     "success - empty fees info",
 			amount:   sdkmath.NewInt(1_000_000),
-			feesInfo: []*action.FeeInfo{},
-			expFeeToDistribute: &action.FeesToDistribute{
+			feesInfo: []*actiontypes.FeeInfo{},
+			expFeeToDistribute: &actiontypes.FeesToDistribute{
 				Total:  sdkmath.ZeroInt(),
-				Values: []action.RecipientAmount{},
+				Values: []actiontypes.RecipientAmount{},
 			},
 		},
 		{
 			name:   "success - maximum basis points",
 			amount: sdkmath.NewInt(1_000_000),
-			feesInfo: []*action.FeeInfo{
+			feesInfo: []*actiontypes.FeeInfo{
 				{
 					Recipient:   recipient1.String(),
 					BasisPoints: core.BPSNormalizer, // 100%
 				},
 			},
-			expFeeToDistribute: &action.FeesToDistribute{
+			expFeeToDistribute: &actiontypes.FeesToDistribute{
 				Total: sdkmath.NewInt(1_000_000), // 100%
-				Values: []action.RecipientAmount{
+				Values: []actiontypes.RecipientAmount{
 					{
 						Recipient: recipient1,
 						Amount:    sdk.NewCoins(sdk.NewInt64Coin(denom, 1_000_000)),
@@ -236,7 +236,7 @@ func TestComputeFeesToDistribute(t *testing.T) {
 		{
 			name:   "success - mixed calculations",
 			amount: sdkmath.NewInt(1_000_000),
-			feesInfo: []*action.FeeInfo{
+			feesInfo: []*actiontypes.FeeInfo{
 				{
 					Recipient:   recipient1.String(),
 					BasisPoints: 100, // Normal calculation
@@ -246,9 +246,9 @@ func TestComputeFeesToDistribute(t *testing.T) {
 					BasisPoints: 1, // Very small basis points
 				},
 			},
-			expFeeToDistribute: &action.FeesToDistribute{
+			expFeeToDistribute: &actiontypes.FeesToDistribute{
 				Total: sdkmath.NewInt(10_100), // 10000 + 100 = 10100
-				Values: []action.RecipientAmount{
+				Values: []actiontypes.RecipientAmount{
 					{
 						Recipient: recipient1,
 						Amount:    sdk.NewCoins(sdk.NewInt64Coin(denom, 10_000)),
@@ -263,29 +263,29 @@ func TestComputeFeesToDistribute(t *testing.T) {
 		{
 			name:   "success - basis points resulting in zero fee",
 			amount: sdkmath.NewInt(50),
-			feesInfo: []*action.FeeInfo{
+			feesInfo: []*actiontypes.FeeInfo{
 				{
 					Recipient:   recipient1.String(),
 					BasisPoints: 1, // 0.01% of 50 = 0.005, which rounds to 0
 				},
 			},
-			expFeeToDistribute: &action.FeesToDistribute{
+			expFeeToDistribute: &actiontypes.FeesToDistribute{
 				Total:  sdkmath.ZeroInt(),
-				Values: []action.RecipientAmount{},
+				Values: []actiontypes.RecipientAmount{},
 			},
 		},
 		{
 			name:   "error - overflow handling returns zero fee",
 			amount: bigNumber,
-			feesInfo: []*action.FeeInfo{
+			feesInfo: []*actiontypes.FeeInfo{
 				{
 					Recipient:   recipient1.String(),
 					BasisPoints: 100,
 				},
 			},
-			expFeeToDistribute: &action.FeesToDistribute{
+			expFeeToDistribute: &actiontypes.FeesToDistribute{
 				Total:  sdkmath.ZeroInt(),
-				Values: []action.RecipientAmount{},
+				Values: []actiontypes.RecipientAmount{},
 			},
 			expErr: "overflow",
 		},
@@ -311,12 +311,12 @@ func TestComputeFeesToDistribute(t *testing.T) {
 	}
 }
 
-func TestValidateAttributesFeeController(t *testing.T) {
+func TestValidateAttributes(t *testing.T) {
 	recipient := sdk.AccAddress(testutil.AddressBytes())
 
 	testCases := []struct {
 		name       string
-		attributes *action.FeeAttributes
+		attributes *actiontypes.FeeAttributes
 		expErr     string
 	}{
 		{
@@ -326,15 +326,15 @@ func TestValidateAttributesFeeController(t *testing.T) {
 		},
 		{
 			name: "success - empty fee info slice",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{},
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{},
 			},
 			expErr: "",
 		},
 		{
 			name: "success - valid single fee",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
 						BasisPoints: 100,
@@ -345,8 +345,8 @@ func TestValidateAttributesFeeController(t *testing.T) {
 		},
 		{
 			name: "success - multiple valid fees",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
 						BasisPoints: 100,
@@ -361,8 +361,8 @@ func TestValidateAttributesFeeController(t *testing.T) {
 		},
 		{
 			name: "error - nil fee info in slice",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
 						BasisPoints: 100,
@@ -374,32 +374,32 @@ func TestValidateAttributesFeeController(t *testing.T) {
 		},
 		{
 			name: "error - zero basis points",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
 						BasisPoints: 0,
 					},
 				},
 			},
-			expErr: "must be greater than zero",
+			expErr: "fee basis point must be > 0 and < 10000",
 		},
 		{
 			name: "error - basis points over maximum",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
 						BasisPoints: core.BPSNormalizer + 1,
 					},
 				},
 			},
-			expErr: "cannot be higher",
+			expErr: "fee basis point must be > 0 and < 10000",
 		},
 		{
 			name: "error - empty recipient address",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   "",
 						BasisPoints: 100,
@@ -410,8 +410,8 @@ func TestValidateAttributesFeeController(t *testing.T) {
 		},
 		{
 			name: "error - invalid bech32 recipient",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   "invalid_address",
 						BasisPoints: 100,
@@ -422,8 +422,8 @@ func TestValidateAttributesFeeController(t *testing.T) {
 		},
 		{
 			name: "error - fails on first invalid fee in multiple fees",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
 						BasisPoints: 100,
@@ -442,8 +442,8 @@ func TestValidateAttributesFeeController(t *testing.T) {
 		},
 		{
 			name: "success - maximum basis points",
-			attributes: &action.FeeAttributes{
-				FeesInfo: []*action.FeeInfo{
+			attributes: &actiontypes.FeeAttributes{
+				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
 						BasisPoints: core.BPSNormalizer,
@@ -472,82 +472,12 @@ func TestValidateAttributesFeeController(t *testing.T) {
 	}
 }
 
-func TestValidateFee(t *testing.T) {
-	testCases := []struct {
-		name    string
-		feeInfo *action.FeeInfo
-		expErr  string
-	}{
-		{
-			name:   "error - nil fee info",
-			expErr: core.ErrNilPointer.Error(),
-		},
-		{
-			name: "error - zero basis points",
-			feeInfo: &action.FeeInfo{
-				Recipient:   "",
-				BasisPoints: 0,
-			},
-			expErr: "must be greater than zero",
-		},
-		{
-			name: "error - over maximum basis points",
-			feeInfo: &action.FeeInfo{
-				Recipient:   "",
-				BasisPoints: core.BPSNormalizer + 1,
-			},
-			expErr: "cannot be higher",
-		},
-		{
-			name: "error - recipient is empty",
-			feeInfo: &action.FeeInfo{
-				Recipient:   "",
-				BasisPoints: 1,
-			},
-			expErr: "empty address",
-		},
-		{
-			name: "error - recipient is not valid address",
-			feeInfo: &action.FeeInfo{
-				Recipient:   "a",
-				BasisPoints: 1,
-			},
-			expErr: "invalid bech32",
-		},
-		{
-			name: "success",
-			feeInfo: &action.FeeInfo{
-				Recipient:   "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
-				BasisPoints: 1,
-			},
-			expErr: "",
-		},
-	}
-
-	deps := mocks.NewDependencies(t)
-	m := mocks.NewMocks()
-	controller, err := controllers.NewFeeController(deps.Logger, m.BankKeeper)
-	require.NoError(t, err)
-
-	for _, tC := range testCases {
-		t.Run(tC.name, func(t *testing.T) {
-			err := controller.ValidateFee(tC.feeInfo)
-
-			if tC.expErr != "" {
-				require.ErrorContains(t, err, tC.expErr)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
-func TestHandlePacketFeeController(t *testing.T) {
+func TestHandlePacket(t *testing.T) {
 	recipient := sdk.AccAddress(testutil.AddressBytes())
 	validAction, err := core.NewAction(
 		core.ACTION_FEE,
-		&action.FeeAttributes{
-			FeesInfo: []*action.FeeInfo{
+		&actiontypes.FeeAttributes{
+			FeesInfo: []*actiontypes.FeeInfo{
 				{
 					Recipient:   recipient.String(),
 					BasisPoints: 10,
