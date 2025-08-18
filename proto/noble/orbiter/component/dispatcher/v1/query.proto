@@ -2,11 +2,9 @@ syntax = "proto3";
 
 package noble.orbiter.component.dispatcher.v1;
 
-import "amino/amino.proto";
 import "cosmos/query/v1/query.proto";
 import "google/api/annotations.proto";
 import "noble/orbiter/component/dispatcher/v1/dispatcher.proto";
-import "noble/orbiter/core/v1/id.proto";
 
 option go_package = "orbiter.dev/types/component/dispatcher";
 
@@ -65,7 +63,7 @@ message QueryDispatchedCountsRequest {
 // QueryDispatchedAmountsByProtocolIDRequest is the request type for the Query/DispatchedCountsBy* methods.
 message QueryDispatchedCountsByProtocolIDRequest {
   // source_protocol_id is the protocol identifier.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+  string protocol_id = 1;
 }
 
 // QueryDispatchedCountsResponse is the response type for the Query/DispatchedCounts* RPC methods.
@@ -90,7 +88,7 @@ message QueryDispatchedAmountsRequest {
 // QueryDispatchedAmountsByProtocolIDRequest is the request type for the Query/DispatchedAmountsBy* methods.
 message QueryDispatchedAmountsByProtocolIDRequest {
   // source_protocol_id is the protocol identifier.
-  noble.orbiter.core.v1.ProtocolID protocol_id = 1 [(amino.dont_omitempty) = true];
+  string protocol_id = 1;
 }
 
 // QueryDispatchedAmountsResponse is the response type for the Query/DispatchedAmounts* RPC methods.

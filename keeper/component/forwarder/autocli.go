@@ -31,10 +31,7 @@ func TxCommandOptions() []*autocliv1.RpcCommandOptions {
 			Use:       "pause-protocol [protocol_id]",
 			Short:     "Pause a specific forwarding protocol by ID",
 			Long: `Pause a specific forwarding protocol by its identifier. This will 
-disable all forwarding operations for the specified protocol until it is unpaused.
-
-Note: This operation does not affect the granular pausing system based on protocol 
-and counterparty ID combinations.`,
+disable all forwarding operations for the specified protocol until it is unpaused.`,
 			PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 				{ProtoField: "protocol_id"},
 			},
@@ -44,10 +41,8 @@ and counterparty ID combinations.`,
 			Use:       "unpause-protocol [protocol_id]",
 			Short:     "Resume a paused forwarding protocol by ID",
 			Long: `Resume operations for a previously paused forwarding protocol by its 
-identifier. This will re-enable all forwarding operations for the specified protocol. 
-
-Note: This operation does not affect the granular pausing system based on protocol 
-and counterparty ID combinations.`,
+identifier. This will re-enable all forwarding operations for the specified protocol, that 
+are not paused based on the granular protocol+counterparty combination.`,
 			PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 				{ProtoField: "protocol_id"},
 			},
@@ -67,8 +62,8 @@ keeping other counterparties active.`,
 		{
 			RpcMethod: "UnpauseCrossChains",
 			Use:       "unpause-cross-chains [protocol_id] [counterparty_ids...]",
-			Short:     "Resume specific counterparty pairs for a protocol",
-			Long: `Resume forwarding operations for specific counterparty pairs that 
+			Short:     "Resume specific counterparties for a protocol",
+			Long: `Resume forwarding operations for specific counterparties that 
 were previously paused. This allows selective resumption of forwarding to 
 specific destinations.`,
 			PositionalArgs: []*autocliv1.PositionalArgDescriptor{

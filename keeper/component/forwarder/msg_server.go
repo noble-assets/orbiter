@@ -94,7 +94,7 @@ func (s msgServer) PauseCrossChains(
 	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
 	if err := s.Pause(ctx, protocolID, msg.CounterpartyIds); err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
-			"counterparties: %s", err.Error(),
+			"cross-chains: %s", err.Error(),
 		)
 	}
 
@@ -112,7 +112,7 @@ func (s msgServer) UnpauseCrossChains(
 	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
 	if err := s.Unpause(ctx, protocolID, msg.CounterpartyIds); err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
-			"counterparties: %s", err.Error(),
+			"cross-chains: %s", err.Error(),
 		)
 	}
 

@@ -36,9 +36,9 @@ type MsgClient interface {
 	PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error)
 	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error)
-	// PauseCrossChains pauses specific counterparty for a protocol.
+	// PauseCrossChains pauses specific counterparties for a protocol.
 	PauseCrossChains(ctx context.Context, in *MsgPauseCrossChains, opts ...grpc.CallOption) (*MsgPauseCrossChainsResponse, error)
-	// UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+	// UnpauseCrossChains resumes specific counterparties for a protocol.
 	UnpauseCrossChains(ctx context.Context, in *MsgUnpauseCrossChains, opts ...grpc.CallOption) (*MsgUnpauseCrossChainsResponse, error)
 	ReplaceDepositForBurn(ctx context.Context, in *MsgReplaceDepositForBurn, opts ...grpc.CallOption) (*MsgReplaceDepositForBurnResponse, error)
 }
@@ -111,9 +111,9 @@ type MsgServer interface {
 	PauseProtocol(context.Context, *MsgPauseProtocol) (*MsgPauseProtocolResponse, error)
 	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error)
-	// PauseCrossChains pauses specific counterparty for a protocol.
+	// PauseCrossChains pauses specific counterparties for a protocol.
 	PauseCrossChains(context.Context, *MsgPauseCrossChains) (*MsgPauseCrossChainsResponse, error)
-	// UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+	// UnpauseCrossChains resumes specific counterparties for a protocol.
 	UnpauseCrossChains(context.Context, *MsgUnpauseCrossChains) (*MsgUnpauseCrossChainsResponse, error)
 	ReplaceDepositForBurn(context.Context, *MsgReplaceDepositForBurn) (*MsgReplaceDepositForBurnResponse, error)
 	mustEmbedUnimplementedMsgServer()

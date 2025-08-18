@@ -19,7 +19,7 @@ service Msg {
   rpc UnpauseProtocol(MsgUnpauseProtocol) returns (MsgUnpauseProtocolResponse);
   //  PauseCrossChains pauses specific counterparties for a protocol.
   rpc PauseCrossChains(MsgPauseCrossChains) returns (MsgPauseCrossChainsResponse);
-  // UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+  // UnpauseCrossChains resumes specific counterparties for a protocol.
   rpc UnpauseCrossChains(MsgUnpauseCrossChains) returns (MsgUnpauseCrossChainsResponse);
 
   rpc ReplaceDepositForBurn(MsgReplaceDepositForBurn) returns (MsgReplaceDepositForBurnResponse);
@@ -50,7 +50,7 @@ message MsgPauseCrossChains {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  // Address of the signer who is requesting to pause the counterparty pairs.
+  // Address of the signer who is requesting to pause the counterparties.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Bridge protocol to pause.
   string protocol_id = 2;
@@ -87,7 +87,7 @@ message MsgUnpauseCrossChains {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  // Address of the signer who is requesting to unpause the counterparty pairs.
+  // Address of the signer who is requesting to unpause the counterparties.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Bridge protocol to unpause.
   string protocol_id = 2;

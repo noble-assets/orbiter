@@ -109,9 +109,9 @@ func (m *MsgPauseProtocolResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgPauseProtocolResponse proto.InternalMessageInfo
 
-// MsgPauseCrossChains pauses specific counterparty pairs for a protocol.
+// MsgPauseCrossChains pauses specific counterparties for a protocol.
 type MsgPauseCrossChains struct {
-	// Address of the signer who is requesting to pause the counterparty pairs.
+	// Address of the signer who is requesting to pause the counterparties.
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
 	// Bridge protocol to pause.
 	ProtocolId string `protobuf:"bytes,2,opt,name=protocol_id,json=protocolId,proto3" json:"protocol_id,omitempty"`
@@ -268,9 +268,9 @@ func (m *MsgUnpauseProtocolResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUnpauseProtocolResponse proto.InternalMessageInfo
 
-// MsgUnpauseCrossChains resumes specific counterparty pairs for a protocol.
+// MsgUnpauseCrossChains resumes specific counterparties for a protocol.
 type MsgUnpauseCrossChains struct {
-	// Address of the signer who is requesting to unpause the counterparty pairs.
+	// Address of the signer who is requesting to unpause the counterparties.
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
 	// Bridge protocol to unpause.
 	ProtocolId string `protobuf:"bytes,2,opt,name=protocol_id,json=protocolId,proto3" json:"protocol_id,omitempty"`
@@ -312,7 +312,7 @@ func (m *MsgUnpauseCrossChains) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgUnpauseCrossChains proto.InternalMessageInfo
 
 // MsgUnpauseCrossChainsResponse is the response type
-// from a MsgUnpauseCrossChain request.
+// rom a MsgUnpauseCrossChains request.
 type MsgUnpauseCrossChainsResponse struct {
 }
 
@@ -511,9 +511,9 @@ type MsgClient interface {
 	PauseProtocol(ctx context.Context, in *MsgPauseProtocol, opts ...grpc.CallOption) (*MsgPauseProtocolResponse, error)
 	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(ctx context.Context, in *MsgUnpauseProtocol, opts ...grpc.CallOption) (*MsgUnpauseProtocolResponse, error)
-	// PauseCrossChains pauses specific counterparty for a protocol.
+	//  PauseCrossChains pauses specific counterparties for a protocol.
 	PauseCrossChains(ctx context.Context, in *MsgPauseCrossChains, opts ...grpc.CallOption) (*MsgPauseCrossChainsResponse, error)
-	// UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+	// UnpauseCrossChains resumes specific counterparties for a protocol.
 	UnpauseCrossChains(ctx context.Context, in *MsgUnpauseCrossChains, opts ...grpc.CallOption) (*MsgUnpauseCrossChainsResponse, error)
 	ReplaceDepositForBurn(ctx context.Context, in *MsgReplaceDepositForBurn, opts ...grpc.CallOption) (*MsgReplaceDepositForBurnResponse, error)
 }
@@ -577,9 +577,9 @@ type MsgServer interface {
 	PauseProtocol(context.Context, *MsgPauseProtocol) (*MsgPauseProtocolResponse, error)
 	// UnpauseProtocol resumes an entire forwarding protocol.
 	UnpauseProtocol(context.Context, *MsgUnpauseProtocol) (*MsgUnpauseProtocolResponse, error)
-	// PauseCrossChains pauses specific counterparty for a protocol.
+	//  PauseCrossChains pauses specific counterparties for a protocol.
 	PauseCrossChains(context.Context, *MsgPauseCrossChains) (*MsgPauseCrossChainsResponse, error)
-	// UnpauseCrossChains resumes specific counterparty pairs for a protocol.
+	// UnpauseCrossChains resumes specific counterparties for a protocol.
 	UnpauseCrossChains(context.Context, *MsgUnpauseCrossChains) (*MsgUnpauseCrossChainsResponse, error)
 	ReplaceDepositForBurn(context.Context, *MsgReplaceDepositForBurn) (*MsgReplaceDepositForBurnResponse, error)
 }

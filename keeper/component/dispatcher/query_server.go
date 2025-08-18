@@ -84,11 +84,12 @@ func (q queryServer) DispatchedCountsByDestinationProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	counts := q.GetDispatchedCountsByDestinationProtocolID(ctx, req.ProtocolId)
+	counts := q.GetDispatchedCountsByDestinationProtocolID(ctx, protocolID)
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
 		Counts: counts,
@@ -103,11 +104,12 @@ func (q queryServer) DispatchedCountsBySourceProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	counts := q.GetDispatchedCountsBySourceProtocolID(ctx, req.ProtocolId)
+	counts := q.GetDispatchedCountsBySourceProtocolID(ctx, protocolID)
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
 		Counts: counts,
@@ -165,11 +167,12 @@ func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	amounts := q.GetDispatchedAmountsByDestinationProtocolID(ctx, req.ProtocolId)
+	amounts := q.GetDispatchedAmountsByDestinationProtocolID(ctx, protocolID)
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
 		Amounts: amounts,
@@ -184,11 +187,12 @@ func (q queryServer) DispatchedAmountsBySourceProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	if err := req.ProtocolId.Validate(); err != nil {
-		return nil, errorsmod.Wrapf(err, "invalid protocol ID")
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	amounts := q.GetDispatchedAmountsBySourceProtocolID(ctx, req.ProtocolId)
+	amounts := q.GetDispatchedAmountsBySourceProtocolID(ctx, protocolID)
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
 		Amounts: amounts,

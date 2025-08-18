@@ -22,7 +22,6 @@ import (
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"orbiter.dev/types/core"
 )
 
 // Suppress "imported and not used" errors
@@ -160,7 +159,6 @@ func request_Query_DispatchedCountsBySourceProtocolID_0(ctx context.Context, mar
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -171,13 +169,11 @@ func request_Query_DispatchedCountsBySourceProtocolID_0(ctx context.Context, mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := client.DispatchedCountsBySourceProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -190,7 +186,6 @@ func local_request_Query_DispatchedCountsBySourceProtocolID_0(ctx context.Contex
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -201,13 +196,11 @@ func local_request_Query_DispatchedCountsBySourceProtocolID_0(ctx context.Contex
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := server.DispatchedCountsBySourceProtocolID(ctx, &protoReq)
 	return msg, metadata, err
@@ -220,7 +213,6 @@ func request_Query_DispatchedCountsByDestinationProtocolID_0(ctx context.Context
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -231,13 +223,11 @@ func request_Query_DispatchedCountsByDestinationProtocolID_0(ctx context.Context
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := client.DispatchedCountsByDestinationProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -250,7 +240,6 @@ func local_request_Query_DispatchedCountsByDestinationProtocolID_0(ctx context.C
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -261,13 +250,11 @@ func local_request_Query_DispatchedCountsByDestinationProtocolID_0(ctx context.C
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := server.DispatchedCountsByDestinationProtocolID(ctx, &protoReq)
 	return msg, metadata, err
@@ -418,7 +405,6 @@ func request_Query_DispatchedAmountsBySourceProtocolID_0(ctx context.Context, ma
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -429,13 +415,11 @@ func request_Query_DispatchedAmountsBySourceProtocolID_0(ctx context.Context, ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := client.DispatchedAmountsBySourceProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -448,7 +432,6 @@ func local_request_Query_DispatchedAmountsBySourceProtocolID_0(ctx context.Conte
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -459,13 +442,11 @@ func local_request_Query_DispatchedAmountsBySourceProtocolID_0(ctx context.Conte
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := server.DispatchedAmountsBySourceProtocolID(ctx, &protoReq)
 	return msg, metadata, err
@@ -478,7 +459,6 @@ func request_Query_DispatchedAmountsByDestinationProtocolID_0(ctx context.Contex
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -489,13 +469,11 @@ func request_Query_DispatchedAmountsByDestinationProtocolID_0(ctx context.Contex
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := client.DispatchedAmountsByDestinationProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -508,7 +486,6 @@ func local_request_Query_DispatchedAmountsByDestinationProtocolID_0(ctx context.
 
 	var (
 		val string
-		e   int32
 		ok  bool
 		err error
 		_   = err
@@ -519,13 +496,11 @@ func local_request_Query_DispatchedAmountsByDestinationProtocolID_0(ctx context.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "protocol_id")
 	}
 
-	e, err = runtime.Enum(val, core.ProtocolID_value)
+	protoReq.ProtocolId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
-
-	protoReq.ProtocolId = core.ProtocolID(e)
 
 	msg, err := server.DispatchedAmountsByDestinationProtocolID(ctx, &protoReq)
 	return msg, metadata, err

@@ -49,8 +49,8 @@ func (s queryServer) IsProtocolPaused(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[req.ProtocolId])
-	if err := protocolID.Validate(); err != nil {
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
 		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
@@ -116,8 +116,8 @@ func (s queryServer) PausedCrossChains(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[req.ProtocolId])
-	if err := protocolID.Validate(); err != nil {
+	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	if err != nil {
 		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 	paused, err := s.GetPausedCrossChainsMap(ctx, &protocolID)

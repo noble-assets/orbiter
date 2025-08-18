@@ -4750,13 +4750,13 @@ func (*MsgPauseProtocolResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_tx_proto_rawDescGZIP(), []int{1}
 }
 
-// MsgPauseCrossChains pauses specific counterparty pairs for a protocol.
+// MsgPauseCrossChains pauses specific counterparties for a protocol.
 type MsgPauseCrossChains struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Address of the signer who is requesting to pause the counterparty pairs.
+	// Address of the signer who is requesting to pause the counterparties.
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
 	// Bridge protocol to pause.
 	ProtocolId string `protobuf:"bytes,2,opt,name=protocol_id,json=protocolId,proto3" json:"protocol_id,omitempty"`
@@ -4906,13 +4906,13 @@ func (*MsgUnpauseProtocolResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_component_forwarder_v1_tx_proto_rawDescGZIP(), []int{5}
 }
 
-// MsgUnpauseCrossChains resumes specific counterparty pairs for a protocol.
+// MsgUnpauseCrossChains resumes specific counterparties for a protocol.
 type MsgUnpauseCrossChains struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Address of the signer who is requesting to unpause the counterparty pairs.
+	// Address of the signer who is requesting to unpause the counterparties.
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
 	// Bridge protocol to unpause.
 	ProtocolId string `protobuf:"bytes,2,opt,name=protocol_id,json=protocolId,proto3" json:"protocol_id,omitempty"`
@@ -4962,7 +4962,7 @@ func (x *MsgUnpauseCrossChains) GetCounterpartyIds() []string {
 }
 
 // MsgUnpauseCrossChainsResponse is the response type
-// from a MsgUnpauseCrossChain request.
+// rom a MsgUnpauseCrossChains request.
 type MsgUnpauseCrossChainsResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
