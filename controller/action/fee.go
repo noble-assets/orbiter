@@ -22,8 +22,6 @@ package action
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
@@ -136,37 +134,9 @@ func (c *FeeController) GetAttributes(action *core.Action) (*actiontypes.FeeAttr
 	return attr, nil
 }
 
-// ValidateAttributes returns an error if the provided fee attributes are
-// not valid.
+// ValidateAttributes returns an error if the provided fee attributes are not valid.
 func (c *FeeController) ValidateAttributes(attr *actiontypes.FeeAttributes) error {
-	if attr == nil {
-		return core.ErrNilPointer.Wrap("fee attributes")
-	}
-	for _, feeInfo := range attr.FeesInfo {
-		if err := c.ValidateFee(feeInfo); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ValidateFee returns an error if the provided fee information are
-// not valid.
-func (c *FeeController) ValidateFee(feeInfo *actiontypes.FeeInfo) error {
-	if feeInfo == nil {
-		return core.ErrNilPointer.Wrap("fee info")
-	}
-	if feeInfo.BasisPoints == 0 {
-		return errors.New("fee basis point must be greater than zero")
-	}
-	if feeInfo.BasisPoints > core.BPSNormalizer {
-		return fmt.Errorf("fee basis point cannot be higher than %d", core.BPSNormalizer)
-	}
-
-	_, err := sdk.AccAddressFromBech32(feeInfo.Recipient)
-
-	return err
+	return attr.Validate()
 }
 
 // ComputeFeesToDistribute computes the fee to distribute based on the

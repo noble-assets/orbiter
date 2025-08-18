@@ -21,9 +21,45 @@
 package action
 
 import (
+	fmt "fmt"
+
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"orbiter.dev/types/core"
 )
+
+func (f *FeeAttributes) Validate() error {
+	if f == nil {
+		return core.ErrNilPointer.Wrap("fee attributes")
+	}
+
+	for _, i := range f.FeesInfo {
+		if err := i.Validate(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (f *FeeInfo) Validate() error {
+	if f == nil {
+		return core.ErrNilPointer.Wrap("fee info")
+	}
+
+	if f.BasisPoints == 0 || f.BasisPoints > core.BPSNormalizer {
+		return fmt.Errorf(
+			"fee basis point must be > 0 and < %d, received %d",
+			core.BPSNormalizer,
+			f.BasisPoints,
+		)
+	}
+
+	_, err := sdk.AccAddressFromBech32(f.Recipient)
+
+	return err
+}
 
 type RecipientAmount struct {
 	Recipient sdk.AccAddress
