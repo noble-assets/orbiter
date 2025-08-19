@@ -102,8 +102,8 @@ go test -v ./e2e/... -run <TEST_NAME>
 
 ## Architecture
 
-See [`ARCHITECTURE.md`](./ARCHITECTURE.md).
+See [`architecture.md`](./docs/architecture.md).
 
 ## Integration
 
-See [`INTEGRATION.md`](./INTEGRATION.md).
+See [`integration.md`](./docs/integration.md).
