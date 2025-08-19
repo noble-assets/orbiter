@@ -334,8 +334,8 @@ func testIbcPassingWithoutActions(
 
 	forwarding, err := forwardingtypes.NewCCTPForwarding(
 		s.destinationDomain,
-		s.mintRecipient.Bytes(),
-		s.destinationCaller.Bytes(),
+		s.mintRecipient,
+		s.destinationCaller,
 		[]byte(""),
 	)
 	require.NoError(t, err)
