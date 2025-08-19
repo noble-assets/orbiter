@@ -27,8 +27,10 @@ import (
 	"testing"
 
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/stretchr/testify/require"
 
+	"cosmossdk.io/math"
 	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/gogoproto/jsonpb"
@@ -115,6 +117,69 @@ func (s *Suite) GetIbcTransferBlockExecution(
 	return 0
 }
 
+func (s *Suite) FundIBCRecipient(
+	t *testing.T,
+	ctx context.Context,
+	amt math.Int,
+	recipient string,
+	fromOrbiterChannelID string,
+	dstUsdcDenom string,
+) {
+	t.Helper()
+
+	transfer := ibc.WalletAmount{
+		Address: recipient,
+		Denom:   Usdc,
+		Amount:  amt,
+	}
+	_, err := s.Chain.SendIBCTransfer(
+		ctx,
+		fromOrbiterChannelID,
+		s.sender.KeyName(),
+		transfer,
+		ibc.TransferOptions{Memo: "pls send them back"},
+	)
+	require.NoError(t, err)
+	s.FlushRelayer(t, ctx, fromOrbiterChannelID)
+
+	dstSenderBal, err := s.IBC.CounterpartyChain.GetBalance(
+		ctx,
+		recipient,
+		dstUsdcDenom,
+	)
+	require.NoError(t, err)
+	require.Equal(t, transfer.Amount, dstSenderBal)
+}
+
+func (s *Suite) FundRecipient(
+	t *testing.T,
+	ctx context.Context,
+	amt math.Int,
+	recipient string,
+) {
+	t.Helper()
+
+	transfer := ibc.WalletAmount{
+		Address: recipient,
+		Denom:   Usdc,
+		Amount:  amt,
+	}
+	err := s.Chain.SendFunds(
+		ctx,
+		s.sender.KeyName(),
+		transfer,
+	)
+	require.NoError(t, err)
+
+	dstSenderBal, err := s.Chain.GetBalance(
+		ctx,
+		recipient,
+		Usdc,
+	)
+	require.NoError(t, err)
+	require.Equal(t, transfer.Amount, dstSenderBal)
+}
+
 func GetTxsResult(
 	t *testing.T,
 	ctx context.Context,
@@ -136,26 +201,29 @@ func GetTxsResult(
 	return &res
 }
 
-// SearchEvents returns true if the slice of ABCI events contains all the event
-// types provided. Returns false otherwise.
-func SearchEvents(events []abci.Event, eventTypes []string) bool {
+// SearchEvents returns true and the searched events if the slice of ABCI events contains all the
+// wanted types.Return false otherwise.
+func SearchEvents(events []abci.Event, eventTypes []string) (bool, map[string]abci.Event) {
 	if len(eventTypes) == 0 {
-		return true
+		return true, nil
 	}
 
-	needed := make(map[string]bool)
+	missing := make(map[string]any, len(eventTypes))
 	for _, t := range eventTypes {
-		needed[t] = true
+		missing[t] = nil
 	}
+
+	e := make(map[string]abci.Event, len(eventTypes))
 
 	for _, event := range events {
-		if needed[event.Type] {
-			delete(needed, event.Type)
-			if len(needed) == 0 {
-				return true
+		if _, found := missing[event.Type]; found {
+			e[event.Type] = event
+			delete(missing, event.Type)
+			if len(missing) == 0 {
+				return true, e
 			}
 		}
 	}
 
-	return false
+	return false, nil
 }

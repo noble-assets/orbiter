@@ -42,7 +42,7 @@ import (
 	"orbiter.dev/types/core"
 )
 
-func TestIbcFailing(t *testing.T) {
+func TestIBCToCCTP(t *testing.T) {
 	t.Parallel()
 
 	testutil.SetSDKConfig()
@@ -50,47 +50,63 @@ func TestIbcFailing(t *testing.T) {
 
 	fromOrbiterChannelID, toOrbiterChannelID := s.GetChannels(t, ctx)
 
-	amountToSend := math.NewInt(OneE6)
-	transfer := ibc.WalletAmount{
-		Address: s.IBC.CounterpartySender.FormattedAddress(),
-		Denom:   Usdc,
-		Amount:  amountToSend,
-	}
-	_, err := s.Chain.SendIBCTransfer(
-		ctx,
-		fromOrbiterChannelID,
-		s.sender.KeyName(),
-		transfer,
-		ibc.TransferOptions{Memo: "pls send them back"},
-	)
-	require.NoError(t, err)
-	s.FlushRelayer(t, ctx, fromOrbiterChannelID)
-
 	srcUsdcTrace := transfertypes.ParseDenomTrace(
 		transfertypes.GetPrefixedDenom("transfer", toOrbiterChannelID, Usdc),
 	)
 	dstUsdcDenom := srcUsdcTrace.IBCDenom()
-	dstSenderBal, err := s.IBC.CounterpartyChain.GetBalance(
-		ctx,
-		s.IBC.CounterpartySender.FormattedAddress(),
-		dstUsdcDenom,
-	)
-	require.NoError(t, err)
-	require.Equal(t, transfer.Amount, dstSenderBal)
 
 	// Register the interfaces to enable marhsal/unmarshal
 	encCfg := testutil.MakeTestEncodingConfig("noble")
 	orbiter.RegisterInterfaces(encCfg.InterfaceRegistry)
 
+	amountToSend := math.NewInt(OneE6)
+
+	ibcRecipient := s.IBC.CounterpartySender.FormattedAddress()
+	s.FundIBCRecipient(t, ctx, amountToSend, ibcRecipient, fromOrbiterChannelID, dstUsdcDenom)
+
 	t.Run("FailingWithoutForwarding", func(t *testing.T) {
-		// Your current test logic here
 		testIbcFailingWithoutForwarding(
 			t,
 			ctx,
 			encCfg.Codec,
 			&s,
 			dstUsdcDenom,
-			dstSenderBal,
+			toOrbiterChannelID,
+		)
+	})
+
+	t.Run("FailingUnsupportedAction", func(t *testing.T) {
+		testIbcFailingUnsupportedAction(
+			t,
+			ctx,
+			encCfg.Codec,
+			&s,
+			dstUsdcDenom,
+			toOrbiterChannelID,
+		)
+	})
+
+	t.Run("PassingWithFeeAction", func(t *testing.T) {
+		testIbcPassingWithFeeAction(
+			t,
+			ctx,
+			encCfg.Codec,
+			&s,
+			dstUsdcDenom,
+			toOrbiterChannelID,
+		)
+	})
+
+	s.FundIBCRecipient(t, ctx, amountToSend, ibcRecipient, fromOrbiterChannelID, dstUsdcDenom)
+	s.FundRecipient(t, ctx, amountToSend, OrbiterModuleAddr)
+
+	t.Run("PassingWithoutActions", func(t *testing.T) {
+		testIbcPassingWithoutActions(
+			t,
+			ctx,
+			encCfg.Codec,
+			&s,
+			dstUsdcDenom,
 			toOrbiterChannelID,
 		)
 	})
@@ -102,17 +118,17 @@ func testIbcFailingWithoutForwarding(
 	cdc codec.Codec,
 	s *Suite,
 	dstUsdcDenom string,
-	dstSenderBal math.Int,
 	toOrbiterChannelID string,
 ) {
 	amountToSend := math.NewInt(OneE6)
 
 	// Create a wrapped payload for the IBC memo without the required forwarding info.
 	feeRecipientAddr := testutil.NewNobleAddress()
-	action, err := actiontypes.NewFeeAction(&actiontypes.FeeInfo{
-		Recipient:   feeRecipientAddr,
-		BasisPoints: 100,
-	},
+	action, err := actiontypes.NewFeeAction(
+		&actiontypes.FeeInfo{
+			Recipient:   feeRecipientAddr,
+			BasisPoints: 100,
+		},
 	)
 	require.NoError(t, err)
 
@@ -170,101 +186,142 @@ func testIbcFailingWithoutForwarding(
 	require.NoError(t, err)
 	require.Equal(
 		t,
-		dstSenderBal,
+		math.NewInt(OneE6),
 		resp,
 		"expected the address on the counterparty chain to have funds unlocked",
 	)
 }
 
-func TestIbc(t *testing.T) {
-	t.Parallel()
-
-	ctx, s := NewSuite(t, true, true)
-
-	fromOrbiterChannelID, toOrbiterChannelID := s.GetChannels(t, ctx)
-
+func testIbcFailingUnsupportedAction(
+	t *testing.T,
+	ctx context.Context,
+	cdc codec.Codec,
+	s *Suite,
+	dstUsdcDenom string,
+	toOrbiterChannelID string,
+) {
 	amountToSend := math.NewInt(OneE6)
 
-	transfer := ibc.WalletAmount{
-		Address: s.IBC.CounterpartySender.FormattedAddress(),
-		Denom:   "uusdc",
-		Amount:  amountToSend,
-	}
-
-	_, err := s.Chain.SendIBCTransfer(
-		ctx,
-		fromOrbiterChannelID,
-		s.sender.KeyName(),
-		transfer,
-		ibc.TransferOptions{},
-	)
-	require.NoError(t, err)
-	require.NoError(
-		t,
-		s.IBC.Relayer.Flush(
-			ctx,
-			s.IBC.RelayerReporter,
-			s.IBC.PathName,
-			fromOrbiterChannelID,
-		),
-		"expected no error relaying MsgRecvPacket & MsgAcknowledgement",
-	)
-
-	srcDenomTrace := transfertypes.ParseDenomTrace(
-		transfertypes.GetPrefixedDenom("transfer", toOrbiterChannelID, "uusdc"),
-	)
-	dstIbcDenom := srcDenomTrace.IBCDenom()
-
-	counterpartyWalletBal, err := s.IBC.CounterpartyChain.GetBalance(
-		ctx,
-		s.IBC.CounterpartySender.FormattedAddress(),
-		dstIbcDenom,
-	)
-	require.NoError(t, err)
-	require.Equal(t, transfer.Amount, counterpartyWalletBal)
-
-	// Generate orbiter payload
-	destinationDomain := uint32(0)
-	mintRecipient := testutil.RandomBytes(32)
-	destinationCaller := testutil.RandomBytes(32)
-	passthroughPayload := []byte("")
-
 	forwarding, err := forwardingtypes.NewCCTPForwarding(
-		destinationDomain,
-		mintRecipient,
-		destinationCaller,
-		passthroughPayload,
+		uint32(0),
+		testutil.RandomBytes(32),
+		testutil.RandomBytes(32),
+		[]byte(""),
 	)
 	require.NoError(t, err)
 
+	// Create a wrapped payload for the IBC memo without the required forwarding info.
 	feeRecipientAddr := testutil.NewNobleAddress()
-	feeAttr := actiontypes.FeeAttributes{
-		FeesInfo: []*actiontypes.FeeInfo{
-			{
-				Recipient:   feeRecipientAddr,
-				BasisPoints: 100,
-			},
+	action, err := actiontypes.NewFeeAction(
+		&actiontypes.FeeInfo{
+			Recipient:   feeRecipientAddr,
+			BasisPoints: 100,
 		},
-	}
-
-	action, err := core.NewAction(core.ACTION_FEE, &feeAttr)
+	)
+	action.Id = core.ACTION_SWAP
 	require.NoError(t, err)
 
-	payload, err := core.NewPayloadWrapper(forwarding, action)
-	require.NoError(t, err)
-
-	encCfg := testutil.MakeTestEncodingConfig("noble")
-	orbiter.RegisterInterfaces(encCfg.InterfaceRegistry)
-	payloadBz, err := types.MarshalJSON(encCfg.Codec, payload)
+	p := core.PayloadWrapper{Orbiter: &core.Payload{
+		PreActions: []*core.Action{action},
+		Forwarding: forwarding,
+	}}
+	payloadBz, err := types.MarshalJSON(cdc, &p)
 	require.NoError(t, err)
 
 	height, err := s.IBC.CounterpartyChain.Height(ctx)
 	require.NoError(t, err)
 
-	// Transfer funds to the orbiter module
-	transfer = ibc.WalletAmount{
+	transfer := ibc.WalletAmount{
 		Address: OrbiterModuleAddr,
-		Denom:   dstIbcDenom,
+		Denom:   dstUsdcDenom,
+		Amount:  amountToSend,
+	}
+	ibcTx, err := s.IBC.CounterpartyChain.SendIBCTransfer(
+		ctx,
+		toOrbiterChannelID,
+		s.IBC.CounterpartySender.KeyName(),
+		transfer,
+		ibc.TransferOptions{
+			Memo: string(payloadBz),
+		},
+	)
+	require.NoError(t, err)
+	s.FlushRelayer(t, ctx, toOrbiterChannelID)
+
+	msg, err := interchainutil.PollForAck(
+		ctx,
+		s.IBC.CounterpartyChain,
+		height,
+		height+10,
+		ibcTx.Packet,
+	)
+	require.NoError(t, err)
+
+	expectedAck := &channeltypes.Acknowledgement{}
+	err = cdc.UnmarshalJSON(msg.Acknowledgement, expectedAck)
+	require.NoError(t, err)
+	require.Contains(
+		t,
+		expectedAck.GetError(),
+		"orbiter-middleware error",
+		"expected the error in the ack to contains the orbiter middleware error",
+	)
+
+	resp, err := s.IBC.CounterpartyChain.GetBalance(
+		ctx,
+		s.IBC.CounterpartySender.FormattedAddress(),
+		dstUsdcDenom,
+	)
+	require.NoError(t, err)
+	require.Equal(
+		t,
+		math.NewInt(OneE6),
+		resp,
+		"expected the address on the counterparty chain to have funds unlocked",
+	)
+}
+
+func testIbcPassingWithFeeAction(
+	t *testing.T,
+	ctx context.Context,
+	cdc codec.Codec,
+	s *Suite,
+	dstUsdcDenom string,
+	toOrbiterChannelID string,
+) {
+	amountToSend := math.NewInt(OneE6)
+
+	forwarding, err := forwardingtypes.NewCCTPForwarding(
+		uint32(0),
+		testutil.RandomBytes(32),
+		testutil.RandomBytes(32),
+		[]byte(""),
+	)
+	require.NoError(t, err)
+
+	// Create a wrapped payload for the IBC memo without the required forwarding info.
+	feeRecipientAddr := testutil.NewNobleAddress()
+	action, err := actiontypes.NewFeeAction(
+		&actiontypes.FeeInfo{
+			Recipient:   feeRecipientAddr,
+			BasisPoints: 100,
+		},
+	)
+	require.NoError(t, err)
+
+	p := core.PayloadWrapper{Orbiter: &core.Payload{
+		PreActions: []*core.Action{action},
+		Forwarding: forwarding,
+	}}
+	payloadBz, err := types.MarshalJSON(cdc, &p)
+	require.NoError(t, err)
+
+	height, err := s.Chain.Height(ctx)
+	require.NoError(t, err)
+
+	transfer := ibc.WalletAmount{
+		Address: OrbiterModuleAddr,
+		Denom:   dstUsdcDenom,
 		Amount:  amountToSend,
 	}
 	_, err = s.IBC.CounterpartyChain.SendIBCTransfer(
@@ -277,22 +334,13 @@ func TestIbc(t *testing.T) {
 		},
 	)
 	require.NoError(t, err)
-	require.NoError(
-		t,
-		s.IBC.Relayer.Flush(
-			ctx,
-			s.IBC.RelayerReporter,
-			s.IBC.PathName,
-			toOrbiterChannelID,
-		),
-		"expected no error relaying MsgRecvPacket & MsgAcknowledgement",
-	)
+	s.FlushRelayer(t, ctx, toOrbiterChannelID)
 
 	ibcHeight := s.GetIbcTransferBlockExecution(t, ctx, height)
 	txsResult := GetTxsResult(t, ctx, s.Chain.Validators[0], strconv.Itoa(int(ibcHeight)))
 	require.Equal(t, txsResult.TotalCount, uint64(1), "expected only one tx")
 
-	found := SearchEvents(txsResult.Txs[0].Events, []string{
+	found, _ := SearchEvents(txsResult.Txs[0].Events, []string{
 		"circle.cctp.v1.DepositForBurn",
 	})
 	require.True(t, found)
@@ -300,4 +348,74 @@ func TestIbc(t *testing.T) {
 	feeAmt, err := s.Chain.BankQueryBalance(ctx, feeRecipientAddr, "uusdc")
 	require.NoError(t, err)
 	require.Equal(t, math.NewInt(10_000).String(), feeAmt.String())
+}
+
+func testIbcPassingWithoutActions(
+	t *testing.T,
+	ctx context.Context,
+	cdc codec.Codec,
+	s *Suite,
+	dstUsdcDenom string,
+	toOrbiterChannelID string,
+) {
+	amountToSend := math.NewInt(OneE6)
+
+	mintRecipient := testutil.RandomBytes(32)
+	destCaller := testutil.RandomBytes(32)
+	forwarding, err := forwardingtypes.NewCCTPForwarding(
+		uint32(0),
+		mintRecipient,
+		destCaller,
+		[]byte(""),
+	)
+	require.NoError(t, err)
+
+	p := core.PayloadWrapper{Orbiter: &core.Payload{
+		PreActions: []*core.Action{},
+		Forwarding: forwarding,
+	}}
+	payloadBz, err := types.MarshalJSON(cdc, &p)
+	require.NoError(t, err)
+
+	height, err := s.Chain.Height(ctx)
+	require.NoError(t, err)
+
+	transfer := ibc.WalletAmount{
+		Address: OrbiterModuleAddr,
+		Denom:   dstUsdcDenom,
+		Amount:  amountToSend,
+	}
+	_, err = s.IBC.CounterpartyChain.SendIBCTransfer(
+		ctx,
+		toOrbiterChannelID,
+		s.IBC.CounterpartySender.KeyName(),
+		transfer,
+		ibc.TransferOptions{
+			Memo: string(payloadBz),
+		},
+	)
+	require.NoError(t, err)
+	s.FlushRelayer(t, ctx, toOrbiterChannelID)
+
+	ibcHeight := s.GetIbcTransferBlockExecution(t, ctx, height)
+	txsResult := GetTxsResult(t, ctx, s.Chain.Validators[0], strconv.Itoa(int(ibcHeight)))
+	require.Equal(t, txsResult.TotalCount, uint64(1), "expected only one tx")
+
+	found, _ := SearchEvents(txsResult.Txs[0].Events, []string{
+		"circle.cctp.v1.DepositForBurn",
+	})
+	require.True(t, found)
+
+	resp, err := s.Chain.GetBalance(
+		ctx,
+		core.DustCollectorAddress.String(),
+		Usdc,
+	)
+	require.NoError(t, err)
+	require.Equal(
+		t,
+		math.NewInt(OneE6),
+		resp,
+		"expected the dust collector to have received orbiter module initial balance",
+	)
 }

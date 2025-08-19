@@ -129,7 +129,7 @@ func (a *Adapter) ParsePayload(
 	id core.ProtocolID,
 	payloadBz []byte,
 ) (bool, *core.Payload, error) {
-	a.logger.Error("started payload parsing", "src_protocol", id.String())
+	a.logger.Debug("started payload parsing", "src_protocol", id.String())
 	adapter, found := a.router.Route(id)
 	if !found {
 		a.logger.Error("adapter for protocol not found", "src_protocol", id.String())
