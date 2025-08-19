@@ -11,7 +11,7 @@ This document provides a detailed overview of the `x/orbiter` module architectur
    payload.
 3. **Hooks Execution**: The adapter component clears previous balances and validates incoming funds
    to create the expected initial condition for the state transition. Based on the incoming protocol
-   used, specific hook can be used.
+   , specific hooks can be used.
 4. **Payload Dispatching**: The **dispatcher component** coordinates the dispatch of the orbiter
    payload content to the **executor component** and the **forwarder component**.
 5. **Action Handling**: The dispatcher dispatches pre-actions sequentially to the executor. For
