@@ -208,7 +208,7 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
 6. Create a wrapped payload:
 
    ```go
-    payload, err := types.NewPayloadWrapper(orbit, []*types.Action{&action})
+    payload, err := types.NewPayloadWrapper(orbit, &action)
    ```
 
 7. Marshal the payload structure into JSON using the codec with registered interfaces:
