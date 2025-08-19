@@ -89,6 +89,12 @@ func testIbcFailingWithoutForwarding(
 ) {
 	cdc := s.Chain.GetCodec()
 	amountToSend := math.NewInt(OneE6)
+	initAmount, err := s.IBC.CounterpartyChain.GetBalance(
+		ctx,
+		s.IBC.CounterpartySender.FormattedAddress(),
+		dstUsdcDenom,
+	)
+	require.NoError(t, err)
 
 	// Create a wrapped payload for the IBC memo without the required forwarding info.
 	feeRecipientAddr := testutil.NewNobleAddress()
@@ -154,7 +160,7 @@ func testIbcFailingWithoutForwarding(
 	require.NoError(t, err)
 	require.Equal(
 		t,
-		amountToSend,
+		initAmount,
 		resp,
 		"expected the address on the counterparty chain to have funds unlocked",
 	)
@@ -169,11 +175,17 @@ func testIbcFailingUnsupportedAction(
 ) {
 	cdc := s.Chain.GetCodec()
 	amountToSend := math.NewInt(OneE6)
+	initAmount, err := s.IBC.CounterpartyChain.GetBalance(
+		ctx,
+		s.IBC.CounterpartySender.FormattedAddress(),
+		dstUsdcDenom,
+	)
+	require.NoError(t, err)
 
 	forwarding, err := forwardingtypes.NewCCTPForwarding(
-		uint32(0),
-		testutil.RandomBytes(32),
-		testutil.RandomBytes(32),
+		s.destinationDomain,
+		s.mintRecipient,
+		s.destinationCaller,
 		[]byte(""),
 	)
 	require.NoError(t, err)
@@ -243,7 +255,7 @@ func testIbcFailingUnsupportedAction(
 	require.NoError(t, err)
 	require.Equal(
 		t,
-		math.NewInt(OneE6),
+		initAmount,
 		resp,
 		"expected the address on the counterparty chain to have funds unlocked",
 	)
