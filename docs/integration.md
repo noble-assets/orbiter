@@ -154,69 +154,71 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
 
 1. Import the required packages from the Orbiter repo:
 
-```go
- "orbiter.dev/types"
- "orbiter.dev/types/controllers/actions"
- "orbiter.dev/types/controllers/orbits"
- "orbiter.dev/testutil"
-```
+   ```go
+   import(
+     "orbiter.dev/types"
+     "orbiter.dev/types/controllers/actions"
+     "orbiter.dev/types/controllers/orbits"
+     "orbiter.dev/testutil"
+   )
+   ```
 
 2. Define the forwarding attributes:
 
-```go
- destinationDomain := uint32(0)
- mintRecipient := testutil.RandomBytes(32)
- destinationCaller := testutil.RandomBytes(32)
- passthroughPayload := []byte("")
-```
+   ```go
+    destinationDomain := uint32(0)
+    mintRecipient := testutil.RandomBytes(32)
+    destinationCaller := testutil.RandomBytes(32)
+    passthroughPayload := []byte("")
+   ```
 
 3. Create an orbit via a factory function:
 
-```go
- orbit, err := orbits.NewCCTPOrbit(
-  destinationDomain,
-  mintRecipient,
-  destinationCaller,
-  passthroughPayload,
- )
-```
+   ```go
+    orbit, err := orbits.NewCCTPOrbit(
+     destinationDomain,
+     mintRecipient,
+     destinationCaller,
+     passthroughPayload,
+    )
+   ```
 
 4. If an action is required, start defining the attributes:
 
-```go
- feeAttr := actions.FeeAttributes{
-  FeesInfo: []*actions.FeeInfo{
-   {
-    Recipient:   feeRecipientAddr,
-    BasisPoints: 100,
-   },
-  },
- }
-```
+   ```go
+    feeAttr := actions.FeeAttributes{
+     FeesInfo: []*actions.FeeInfo{
+      {
+       Recipient:   feeRecipientAddr,
+       BasisPoints: 100,
+      },
+     },
+    }
+   ```
 
 5. Define the action and set the attributes:
 
-```go
- action := types.Action{
-  Id: types.ACTION_FEE,
- }
- err = action.SetAttributes(&feeAttr)
-```
+   ```go
+    action := types.Action{
+     Id: types.ACTION_FEE,
+    }
+    err = action.SetAttributes(&feeAttr)
+   ```
 
 6. Create a wrapped payload:
 
-```go
- payload, err := types.NewPayloadWrapper(orbit, []*types.Action{&action})
-```
+   ```go
+    payload, err := types.NewPayloadWrapper(orbit, &action)
+   ```
 
 7. Marshal the payload structure into JSON using the codec with registered interfaces:
 
-```go
- encCfg := testutil.MakeTestEncodingConfig("noble")
- orbiter.RegisterInterfaces(encCfg.InterfaceRegistry)
- payloadBz, err := types.MarshalJSON(encCfg.Codec, payload)
- payloadStr := string(payloadBz)
-```
+   ```go
+    encCfg := testutil.MakeTestEncodingConfig("noble")
+    orbiter.RegisterInterfaces(encCfg.InterfaceRegistry)
+    payloadBz, err := types.MarshalJSON(encCfg.Codec, payload)
+    payloadStr := string(payloadBz)
+   ```
 
 8. The payload is now ready to be added in the ICS20 memo field.
 

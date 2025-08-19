@@ -115,3 +115,19 @@ The brand-kit colors are defined as:
 
 - Grey 50: #101219
 - Grey 900: #F6F6FE
+
+## Tests
+
+This section describes how tests should be written for the Orbiter module.
+
+Unit tests, should be written using the `testCases` pattern. The name of every test case, should be:
+
+- `success - <DESCRIPTION>`: when the test is evaluating a successful case.
+- `error - <DESCRIPTION>`: when the test is evaluating that an error is returned from the tested
+  function.
+
+When the test does not have any error to test, the prefix can be omitted.
+
+To check that a function returns an error, the test case structure should have a field named
+`expError` of type string, and the check against the error should be
+`require.ErrorContains(t, tC.expError, err)`.
