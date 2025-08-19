@@ -7,8 +7,8 @@
 
 ![Banner](./.assets/banner.png)
 
-Orbiter is a cross-chain routing infrastructure built on Cosmos SDK to enable seamless cross-chain
-composability between different chains connected with Noble.
+Orbiter is a cross-chain routing infrastructure built with the Cosmos SDK to enable seamless
+cross-chain composability between different chains connected with Noble.
 
 ## Description
 
@@ -39,14 +39,23 @@ flowchart LR
 An example application is a user who has _USDC_ on Solana and wants to have _USDN_ on Hyperliquid.
 The orbiter module allows the user to send _USDC_ to Noble Core via CCTP, swap _USDC_ for _USDN_
 through the [Swap module](https://github.com/noble-assets/swap), and finally send the received funds
-to Hyperlane. Everything within a single transaction.
+to Hyperlane. Everything, within a single transaction.
 
 ## Definitions
 
+Payload components:
+
 - **Action**: Represents a generic state transition logic that can be executed on the Noble chain
   through information contained in a cross-chain payload.
-- **Orbit**: Defines the information required to execute a cross-chain transfer from Noble to a
+- **Forwarding**: Defines the information required to execute a cross-chain transfer from Noble to a
   destination chain through a specific bridging protocol.
+
+Identifiers:
+
+- **Action ID**: the identifier for an action.
+- **Protocol ID**: the identifier for a bridge protocol.
+- **Counterparty ID**: the identifier of a chain for a specific bridge protocol.
+- **Cross-chain ID**: the unique identifier of the tuple (protocol ID, counterparty ID).
 
 ## Supported Protocols & Actions
 
@@ -106,4 +115,4 @@ See [`architecture.md`](./docs/architecture.md).
 
 ## Integration
 
-See [`integration.md`](./docs/integration.md).
+See [`integration.md`](./docs/integration.md)
