@@ -16,8 +16,8 @@ This document provides a detailed overview of the `x/orbiter` module architectur
    payload content to the **executor component** and the **forwarder component**.
 5. **Action Handling**: The dispatcher dispatches pre-actions sequentially to the executor. For
    every action, a specific **action controller** is required to execute the business logic.
-6. **Orbit Handling**: The dispatcher dispatches the cross-chain forwarding operation. Similarly to
-   the action processing, every protocol is handled by a specific **forwarding controller**.
+6. **Orbit Handling**: Next, the cross-chain forwarding is dispatched. Similar to the action
+   processing, every protocol is handled by a specific **forwarding controller**.
 7. **Statistics Update**: The dispatcher records metrics for monitoring.
 
 ```mermaid

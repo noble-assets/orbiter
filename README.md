@@ -60,7 +60,8 @@ Identifiers:
 ## Supported Protocols & Actions
 
 The Orbiter module supports a subset of the bridge protocols available in Noble Core. Protocol
-support varies depending on whether they handle incoming or outgoing transfers.
+support varies depending on whether they handle incoming or outgoing transfers. The list of
+protocols and actions will be updated when new bridges and Noble actions will be supported.
 
 ### Bridge Protocols
 
