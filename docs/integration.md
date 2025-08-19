@@ -37,7 +37,7 @@ An example of a JSON structured payload is:
       {
         "id": "ACTION_FEE",
         "attributes": {
-          "@type": "/noble.orbiter.controllers.actions.v1.FeeAttributes",
+          "@type": "/noble.orbiter.controller.action.v1.FeeAttributes",
           "fees_info": [
             {
               "recipient": "noble1shrlcs09fl2gghvystkfemewgzkccpyvudch7y",
@@ -47,14 +47,14 @@ An example of a JSON structured payload is:
         }
       }
     ],
-    "orbit": {
+    "forwarding": {
       "protocol_id": "PROTOCOL_CCTP",
       "attributes": {
-        "@type": "/noble.orbiter.controllers.orbits.v1.CCTPAttributes",
-        // Note: mint_recipient and destination_caller are 32-byte values encoded as base64
+        "@type": "/noble.orbiter.controller.forwarding.v1.CCTPAttributes",
         "destination_domain": 0,
-        "mint_recipient": "PNWAxASH2RPmgMV+/Tb4e78ON1WL8SoFGnwbWWHxfuA=",
-        "destination_caller": "xWtN0TuqjWo90XiknI61JUxYexN2JgZaEaWGxhA/rXE="
+        // Note: mint_recipient and destination_caller are 32-byte values encoded as base64
+        "mint_recipient": "7b6itDboIvromBxhpKmxmV5jBhRgTDa+uBzdEYB4FDA=",
+        "destination_caller": "EtJiMWGCpEspKte/kSZmSmRRu7XrUCEnlMn+G8+2b0U="
       },
       "passthrough_payload": ""
     }
