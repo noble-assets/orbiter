@@ -58,7 +58,7 @@ flowchart TD
 The orbiter module is composed by four core elements:
 
 - The main `Keeper`.
-- The Keeper's `Components`.
+- The keeper's `Components`.
 - Specific `Controllers` for actions and protocols.
 - `Routers` for the controllers.
 
