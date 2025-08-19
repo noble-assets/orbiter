@@ -94,7 +94,7 @@ func (a *NoOpAdapterController) Name() string {
 
 // ParsePayload implements types.AdapterProtocol.
 func (a *NoOpAdapterController) ParsePayload(
-	id core.ProtocolID,
+	_ core.ProtocolID,
 	bz []byte,
 ) (bool, *core.Payload, error) {
 	if string(bz) == "failing" {
