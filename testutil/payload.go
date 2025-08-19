@@ -69,7 +69,7 @@ func CreatePayloadWrapperJSON(t *testing.T) (*core.Payload, string) {
 		[]byte("payload"),
 	)
 	require.NoError(t, err)
-	payloadWrapper, err := core.NewPayloadWrapper(forwarding, []*core.Action{})
+	payloadWrapper, err := core.NewPayloadWrapper(forwarding, []*core.Action{}...)
 	require.NoError(t, err)
 	bz, err := types.MarshalJSON(encCfg.Codec, payloadWrapper)
 	require.NoError(t, err)
@@ -102,7 +102,7 @@ func CreatePayloadWithAction(t *testing.T) (*core.Payload, string) {
 	action, err := core.NewAction(core.ACTION_FEE, &actionAttributes)
 	require.NoError(t, err)
 
-	payloadWrapper, err := core.NewPayloadWrapper(forwarding, []*core.Action{action})
+	payloadWrapper, err := core.NewPayloadWrapper(forwarding, action)
 	require.NoError(t, err)
 	bz, err := types.MarshalJSON(encCfg.Codec, payloadWrapper)
 	require.NoError(t, err)

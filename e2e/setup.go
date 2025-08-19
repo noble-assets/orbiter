@@ -49,11 +49,11 @@ var (
 )
 
 type IBC struct {
-	CounterpartyChain *cosmos.CosmosChain
-	RelayerReporter   *testreporter.RelayerExecReporter
-	Relayer           ibc.Relayer
-	Account           ibc.Wallet
-	PathName          string
+	CounterpartyChain  *cosmos.CosmosChain
+	RelayerReporter    *testreporter.RelayerExecReporter
+	Relayer            ibc.Relayer
+	CounterpartySender ibc.Wallet
+	PathName           string
 }
 
 type Suite struct {
@@ -179,7 +179,7 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 			math.NewInt(1_000_000_000),
 			suite.IBC.CounterpartyChain,
 		)
-		suite.IBC.Account = wallets[0]
+		suite.IBC.CounterpartySender = wallets[0]
 	}
 
 	return ctx, suite

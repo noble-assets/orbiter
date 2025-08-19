@@ -6,6 +6,7 @@ require (
 	cosmossdk.io/client/v2 v2.0.0-beta.3
 	cosmossdk.io/core v0.11.3
 	cosmossdk.io/depinject v1.2.1
+	cosmossdk.io/errors v1.0.2
 	cosmossdk.io/log v1.4.1
 	cosmossdk.io/store v1.1.1
 	cosmossdk.io/tools/confix v0.1.2
@@ -33,7 +34,6 @@ require (
 	cloud.google.com/go/storage v1.53.0 // indirect
 	cosmossdk.io/api v0.9.2 // indirect
 	cosmossdk.io/collections v1.2.1 // indirect
-	cosmossdk.io/errors v1.0.2 // indirect
 	cosmossdk.io/math v1.5.1 // indirect
 	cosmossdk.io/schema v1.1.0 // indirect
 	cosmossdk.io/x/tx v0.13.7 // indirect

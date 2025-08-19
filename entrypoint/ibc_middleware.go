@@ -116,7 +116,9 @@ func (i IBCMiddleware) OnRecvPacket(
 }
 
 func newErrorAcknowledgement(err error) channeltypes.Acknowledgement {
-	return channeltypes.NewErrorAcknowledgement(
-		errorsmod.Wrap(err, "orbiter-middleware error"),
-	)
+	return channeltypes.Acknowledgement{
+		Response: &channeltypes.Acknowledgement_Error{
+			Error: errorsmod.Wrap(err, "orbiter-middleware error").Error(),
+		},
+	}
 }

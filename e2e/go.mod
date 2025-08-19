@@ -3,6 +3,7 @@ module orbiter.dev/e2e
 go 1.24
 
 require (
+	cosmossdk.io/errors v1.0.2
 	cosmossdk.io/math v1.5.1
 	github.com/circlefin/noble-cctp v0.0.0-20241031192117-4285c94ec194
 	github.com/circlefin/noble-fiattokenfactory v0.0.0-20250123235012-5f9bd9dd2c5b
@@ -30,7 +31,6 @@ require (
 	cosmossdk.io/collections v1.2.1 // indirect
 	cosmossdk.io/core v0.11.3 // indirect
 	cosmossdk.io/depinject v1.2.1 // indirect
-	cosmossdk.io/errors v1.0.2 // indirect
 	cosmossdk.io/log v1.4.1 // indirect
 	cosmossdk.io/schema v1.1.0 // indirect
 	cosmossdk.io/store v1.1.1 // indirect

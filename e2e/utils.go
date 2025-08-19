@@ -36,8 +36,10 @@ import (
 )
 
 const (
-	OneE6           = 1_000_000
-	MaxSearchBlocks = 30
+	OrbiterModuleAddr = "noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d"
+	OneE6             = 1_000_000
+	Usdc              = "uusdc"
+	MaxSearchBlocks   = 30
 )
 
 // GetChannels returns the channel IDs of the IBC connection.
@@ -65,6 +67,19 @@ func (s Suite) GetChannels(t *testing.T, ctx context.Context) (string, string) {
 	counterpartyToOrbiterChannelID := counterpartyToOrbiterChannelInfo[0].ChannelID
 
 	return orbiterToCounterpartyChannelID, counterpartyToOrbiterChannelID
+}
+
+func (s *Suite) FlushRelayer(t *testing.T, ctx context.Context, channel string) {
+	require.NoError(
+		t,
+		s.IBC.Relayer.Flush(
+			ctx,
+			s.IBC.RelayerReporter,
+			s.IBC.PathName,
+			channel,
+		),
+		"expected no error relaying MsgRecvPacket & MsgAcknowledgement",
+	)
 }
 
 // GetIbcTransferBlockExecution finds the first block at or after the given height
