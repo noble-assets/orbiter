@@ -130,4 +130,4 @@ When the test does not have any error to test, the prefix can be omitted.
 
 To check that a function returns an error, the test case structure should have a field named
 `expError` of type string, and the check against the error should be
-`require.ErrContains(t, tC.expError, err)`.
+`require.ErrorContains(t, tC.expError, err)`.
