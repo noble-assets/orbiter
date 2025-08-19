@@ -62,7 +62,7 @@ The orbiter module is composed by four core elements:
 - Specific `Controllers` for actions and protocols.
 - `Routers` for the controllers.
 
-The following sections contains a detailed overview of the core elements and their relations.
+The following sections contain a detailed overview of the core elements and their relations.
 
 ### Keeper
 
