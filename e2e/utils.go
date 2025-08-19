@@ -38,10 +38,9 @@ import (
 )
 
 const (
-	OrbiterModuleAddr = "noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d"
-	OneE6             = 1_000_000
-	Usdc              = "uusdc"
-	MaxSearchBlocks   = 30
+	OneE6           = 1_000_000
+	Usdc            = "uusdc"
+	MaxSearchBlocks = 30
 )
 
 // GetChannels returns the channel IDs of the IBC connection.
@@ -107,7 +106,6 @@ func (s *Suite) GetIbcTransferBlockExecution(
 			height,
 			nil,
 		)
-
 		if err == nil {
 			return height
 		}
@@ -202,7 +200,7 @@ func GetTxsResult(
 }
 
 // SearchEvents returns true and the searched events if the slice of ABCI events contains all the
-// wanted types.Return false otherwise.
+// wanted types. Returns false otherwise.
 func SearchEvents(events []abci.Event, eventTypes []string) (bool, map[string]abci.Event) {
 	if len(eventTypes) == 0 {
 		return true, nil
@@ -213,17 +211,17 @@ func SearchEvents(events []abci.Event, eventTypes []string) (bool, map[string]ab
 		missing[t] = nil
 	}
 
-	e := make(map[string]abci.Event, len(eventTypes))
+	wantedEvents := make(map[string]abci.Event, len(eventTypes))
 
 	for _, event := range events {
 		if _, found := missing[event.Type]; found {
-			e[event.Type] = event
+			wantedEvents[event.Type] = event
 			delete(missing, event.Type)
 			if len(missing) == 0 {
-				return true, e
+				return true, wantedEvents
 			}
 		}
 	}
 
-	return false, nil
+	return false, wantedEvents
 }

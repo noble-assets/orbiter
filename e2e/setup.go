@@ -65,8 +65,8 @@ type Suite struct {
 	CircleRoles       CircleRoles
 	sender            ibc.Wallet
 	fallbackRecipient ibc.Wallet
-	mintRecipient     string
-	destinationCaller string
+	mintRecipient     common.Address
+	destinationCaller common.Address
 
 	destinationDomain uint32
 }
@@ -167,9 +167,9 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 	suite.destinationDomain = 0
 
 	addr := testutil.AddressBytes()
-	suite.mintRecipient = common.BytesToAddress(addr).String()
+	suite.mintRecipient = common.BytesToAddress(addr)
 	addr = testutil.AddressBytes()
-	suite.destinationCaller = common.BytesToAddress(addr).String()
+	suite.destinationCaller = common.BytesToAddress(addr)
 
 	if isIBC {
 		wallets := interchaintest.GetAndFundTestUsers(
