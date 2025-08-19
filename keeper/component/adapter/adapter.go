@@ -134,7 +134,7 @@ func (a *Adapter) ParsePayload(
 		return false, nil, fmt.Errorf("adapter not found for protocol ID: %s", id)
 	}
 
-	return adapter.ParsePayload(payloadBz)
+	return adapter.ParsePayload(id, payloadBz)
 }
 
 // BeforeTransferHook implements types.PayloadAdapter.
@@ -143,18 +143,6 @@ func (a *Adapter) BeforeTransferHook(
 	sourceID core.CrossChainID,
 	payload *core.Payload,
 ) error {
-	adapter, found := a.router.Route(sourceID.GetProtocolId())
-	if !found {
-		return fmt.Errorf(
-			"adapter not found for protocol ID: %s",
-			sourceID.GetProtocolId().String(),
-		)
-	}
-
-	if err := adapter.BeforeTransferHook(ctx, payload); err != nil {
-		return errorsmod.Wrap(err, "before transfer hook failed")
-	}
-
 	if err := a.commonBeforeTransferHook(ctx, payload.Forwarding.PassthroughPayload); err != nil {
 		return errorsmod.Wrap(err, "generic hook failed")
 	}
@@ -168,18 +156,6 @@ func (a *Adapter) AfterTransferHook(
 	sourceID core.CrossChainID,
 	payload *core.Payload,
 ) (*types.TransferAttributes, error) {
-	adapter, found := a.router.Route(sourceID.GetProtocolId())
-	if !found {
-		return nil, fmt.Errorf(
-			"adapter not found for protocol ID: %s",
-			sourceID.GetProtocolId().String(),
-		)
-	}
-
-	if err := adapter.AfterTransferHook(ctx, payload); err != nil {
-		return nil, errorsmod.Wrap(err, "after transfer hook failed")
-	}
-
 	balances := a.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
 	if err := a.validateModuleBalance(balances); err != nil {
 		return nil, core.ErrValidation.Wrap(err.Error())

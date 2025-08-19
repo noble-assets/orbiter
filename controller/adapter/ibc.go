@@ -21,8 +21,6 @@
 package adapter
 
 import (
-	"context"
-
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -70,20 +68,11 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 }
 
 // ParsePayload dispatches the payload parsing to the underlying IBC parser.
-func (a *IBCAdapter) ParsePayload(payloadBz []byte) (bool, *core.Payload, error) {
-	return a.parser.ParsePayload(payloadBz)
-}
-
-// BeforeTransferHook run logic before executing the IBC transfer to the
-// orbiter module.
-func (a *IBCAdapter) BeforeTransferHook(context.Context, *core.Payload) error {
-	return nil
-}
-
-// AfterTransferHook run logic after executing the IBC transfer to the orbiter
-// module.
-func (a *IBCAdapter) AfterTransferHook(context.Context, *core.Payload) error {
-	return nil
+func (a *IBCAdapter) ParsePayload(
+	id core.ProtocolID,
+	payloadBz []byte,
+) (bool, *core.Payload, error) {
+	return a.parser.ParsePayload(id, payloadBz)
 }
 
 var _ types.PayloadParser = &IBCParser{}
@@ -113,7 +102,7 @@ func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 // - bool: whether the payload is intended for the Orbiter module.
 // - Payload: the parsed payload.
 // - error: an error, if one occurred during parsing.
-func (p *IBCParser) ParsePayload(payloadBz []byte) (bool, *core.Payload, error) {
+func (p *IBCParser) ParsePayload(_ core.ProtocolID, payloadBz []byte) (bool, *core.Payload, error) {
 	data, err := p.GetICS20PacketData(payloadBz)
 	if err != nil {
 		// Despite the error is not nil, we don't return it. We
