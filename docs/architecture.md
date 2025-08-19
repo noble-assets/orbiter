@@ -214,7 +214,7 @@ available adapter controllers and routes the incoming metadata to the correct on
 - **Payload Parsing**: Validates and parses incoming cross-chain payloads. This phase is required to
   convert cross-chain metadata formatted into different standards based on the bridge, into an
   internal payload type.
-- **Adapter Controllers Routing**: Routes to the correct adapter the incoming data.
+- **Adapter Controllers Routing**: Routes the incoming data to the correct adapter.
 - **Transfer Hooks**: Executes pre/post transfer logic. In this phase, the adapter creates and
   verifies the initial conditions to execute an Orbiter state transition.
 - **Protocol Routing**: Routes operations defined in the payload to the proper forwarding or action
