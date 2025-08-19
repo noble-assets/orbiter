@@ -21,8 +21,6 @@
 package types
 
 import (
-	"context"
-
 	"orbiter.dev/types/core"
 	"orbiter.dev/types/router"
 )
@@ -46,12 +44,6 @@ type ControllerAction interface {
 type ControllerAdapter interface {
 	Controller[core.ProtocolID]
 	PayloadParser
-	// BeforeTransferHook allows to execute logic BEFORE completing
-	// the cross-chain transfer.
-	BeforeTransferHook(context.Context, *core.Payload) error
-	// AfterTransferHook allows to execute logic AFTER completing
-	// the cross-chain transfer.
-	AfterTransferHook(context.Context, *core.Payload) error
 }
 
 // Controller defines the behavior common to

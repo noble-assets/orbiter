@@ -31,5 +31,5 @@ type PayloadParser interface {
 	// orbiter payload. It returns a boolean to inform if
 	// the bytes represent an orbiter payload or not. The
 	// parsing is executed only if the boolean is true.
-	ParsePayload([]byte) (bool, *core.Payload, error)
+	ParsePayload(core.ProtocolID, []byte) (bool, *core.Payload, error)
 }

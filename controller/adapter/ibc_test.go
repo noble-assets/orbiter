@@ -21,7 +21,6 @@
 package adapter_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -30,22 +29,9 @@ import (
 
 	adapterctrl "orbiter.dev/controller/adapter"
 	"orbiter.dev/testutil"
-	"orbiter.dev/testutil/mocks"
 	"orbiter.dev/testutil/testdata"
 	"orbiter.dev/types/core"
 )
-
-func TestHooks(t *testing.T) {
-	deps := mocks.NewDependencies(t)
-	adapter, err := adapterctrl.NewIBCAdapter(deps.EncCfg.Codec, deps.Logger)
-	require.NoError(t, err)
-
-	err = adapter.AfterTransferHook(context.Background(), &core.Payload{})
-	require.NoError(t, err)
-
-	err = adapter.BeforeTransferHook(context.Background(), &core.Payload{})
-	require.NoError(t, err)
-}
 
 func TestNewIBCParser(t *testing.T) {
 	parser, err := adapterctrl.NewIBCParser(nil)
@@ -175,7 +161,7 @@ func TestParsePayload(t *testing.T) {
 			parser, err := adapterctrl.NewIBCParser(encCfg.Codec)
 			require.NoError(t, err)
 
-			isOrbiterPayload, payload, err := parser.ParsePayload(tc.payloadBz)
+			isOrbiterPayload, payload, err := parser.ParsePayload(core.PROTOCOL_IBC, tc.payloadBz)
 
 			require.Equal(t, tc.expectIsOrbiter, isOrbiterPayload)
 			if tc.expectError {

@@ -42,9 +42,7 @@ type TransferHookHandler interface {
 // PayloadAdapter defines the behavior expected by the adapter to handle
 // a generic orbiter payload.
 type PayloadAdapter interface {
-	// ParsePayload allows to parse and validate if the
-	// input bytes represent an orbiter payload.
-	ParsePayload(core.ProtocolID, []byte) (bool, *core.Payload, error)
+	PayloadParser
 	TransferHookHandler
 	// ProcessPayload processes the parsed payload.
 	ProcessPayload(context.Context, *TransferAttributes, *core.Payload) error

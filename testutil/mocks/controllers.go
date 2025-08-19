@@ -92,26 +92,11 @@ func (a *NoOpAdapterController) Name() string {
 	return a.Id.String()
 }
 
-// AfterTransferHook implements types.AdapterProtocol.
-func (a *NoOpAdapterController) AfterTransferHook(ctx context.Context, _ *core.Payload) error {
-	if CheckIfFailing(ctx) {
-		return errors.New("error in after transfer hook")
-	}
-
-	return nil
-}
-
-// BeforeTransferHook implements types.AdapterProtocol.
-func (a *NoOpAdapterController) BeforeTransferHook(ctx context.Context, _ *core.Payload) error {
-	if CheckIfFailing(ctx) {
-		return errors.New("error in before transfer hook")
-	}
-
-	return nil
-}
-
 // ParsePayload implements types.AdapterProtocol.
-func (a *NoOpAdapterController) ParsePayload(bz []byte) (bool, *core.Payload, error) {
+func (a *NoOpAdapterController) ParsePayload(
+	id core.ProtocolID,
+	bz []byte,
+) (bool, *core.Payload, error) {
 	if string(bz) == "failing" {
 		return false, nil, errors.New("error parsing payload")
 	}
