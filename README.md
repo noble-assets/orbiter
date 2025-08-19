@@ -23,7 +23,7 @@ funds enshrined with metadata.
 The composability flow is defined by the 3-steps logic:
 
 1. Funds with a payload are transferred to Noble.
-2. Actions, like swap or fee payment, are handled on Noble if provided.
+2. Actions like swaps or fee payments, if specified, are handled on Noble.
 3. Funds are routed to another chain based on information provided in the payload.
 
 ```mermaid
