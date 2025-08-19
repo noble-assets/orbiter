@@ -42,7 +42,7 @@ func main() {
 	if runModel != nil {
 		m, ok := runModel.(model)
 		if !ok {
-			panic("unexpected model")
+			log.Fatal(fmt.Errorf("unexpected model; got %T", runModel))
 		}
 
 		fmt.Println(m.payload)
