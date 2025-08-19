@@ -33,6 +33,7 @@ import (
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 
+	"orbiter.dev"
 	"orbiter.dev/testutil"
 	"orbiter.dev/types"
 	actiontypes "orbiter.dev/types/controller/action"
@@ -45,6 +46,8 @@ func TestIBCToCCTP(t *testing.T) {
 
 	testutil.SetSDKConfig()
 	ctx, s := NewSuite(t, true, true)
+
+	orbiter.RegisterInterfaces(s.Chain.GetCodec().InterfaceRegistry())
 
 	fromOrbiterChanID, toOrbiterChanlID := s.GetChannels(t, ctx)
 
