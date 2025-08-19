@@ -21,6 +21,7 @@
 package e2e
 
 import (
+	"context"
 	"strconv"
 	"testing"
 
@@ -29,6 +30,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/math"
+	"github.com/cosmos/cosmos-sdk/codec"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 
@@ -76,6 +78,36 @@ func TestIbcFailing(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, transfer.Amount, dstSenderBal)
 
+	// Register the interfaces to enable marhsal/unmarshal
+	encCfg := testutil.MakeTestEncodingConfig("noble")
+	orbiter.RegisterInterfaces(encCfg.InterfaceRegistry)
+
+	t.Run("FailingWithoutForwarding", func(t *testing.T) {
+		// Your current test logic here
+		testIbcFailingWithoutForwarding(
+			t,
+			ctx,
+			encCfg.Codec,
+			&s,
+			dstUsdcDenom,
+			dstSenderBal,
+			toOrbiterChannelID,
+		)
+	})
+}
+
+func testIbcFailingWithoutForwarding(
+	t *testing.T,
+	ctx context.Context,
+	cdc codec.Codec,
+	s *Suite,
+	dstUsdcDenom string,
+	dstSenderBal math.Int,
+	toOrbiterChannelID string,
+) {
+	amountToSend := math.NewInt(OneE6)
+
+	// Create a wrapped payload for the IBC memo without the required forwarding info.
 	feeRecipientAddr := testutil.NewNobleAddress()
 	action, err := actiontypes.NewFeeAction(&actiontypes.FeeInfo{
 		Recipient:   feeRecipientAddr,
@@ -84,23 +116,17 @@ func TestIbcFailing(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	// Create a wrapped payload for the IBC memo without the required forwarding info.
 	p := core.PayloadWrapper{Orbiter: &core.Payload{
 		PreActions: []*core.Action{action},
 		Forwarding: nil,
 	}}
-
-	// Register the interfaces to enable marhsal/unmarshal
-	encCfg := testutil.MakeTestEncodingConfig("noble")
-	orbiter.RegisterInterfaces(encCfg.InterfaceRegistry)
-	payloadBz, err := types.MarshalJSON(encCfg.Codec, &p)
+	payloadBz, err := types.MarshalJSON(cdc, &p)
 	require.NoError(t, err)
 
 	height, err := s.IBC.CounterpartyChain.Height(ctx)
 	require.NoError(t, err)
 
-	// Transfer funds to the orbiter module
-	transfer = ibc.WalletAmount{
+	transfer := ibc.WalletAmount{
 		Address: OrbiterModuleAddr,
 		Denom:   dstUsdcDenom,
 		Amount:  amountToSend,
@@ -117,8 +143,6 @@ func TestIbcFailing(t *testing.T) {
 	require.NoError(t, err)
 	s.FlushRelayer(t, ctx, toOrbiterChannelID)
 
-	// We expect the IBC transfer to fail because the payload does not contains a forwarding
-	// information.
 	msg, err := interchainutil.PollForAck(
 		ctx,
 		s.IBC.CounterpartyChain,
@@ -129,13 +153,13 @@ func TestIbcFailing(t *testing.T) {
 	require.NoError(t, err)
 
 	expectedAck := &channeltypes.Acknowledgement{}
-	err = encCfg.Codec.UnmarshalJSON(msg.Acknowledgement, expectedAck)
+	err = cdc.UnmarshalJSON(msg.Acknowledgement, expectedAck)
 	require.NoError(t, err)
 	require.Contains(
 		t,
 		expectedAck.GetError(),
-		"an error",
-		"expected the error in the ack to contains info about the nil forwarding",
+		"orbiter-middleware error",
+		"expected the error in the ack to contains the orbiter middleware error",
 	)
 
 	resp, err := s.IBC.CounterpartyChain.GetBalance(
