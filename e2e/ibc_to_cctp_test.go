@@ -56,7 +56,7 @@ func TestIBCToCCTP(t *testing.T) {
 	)
 	dstUsdcDenom := srcUsdcTrace.IBCDenom()
 
-	amountToSend := math.NewInt(OneE6)
+	amountToSend := math.NewInt(2 * OneE6)
 
 	// Fund the account on the counterparty chain such that it can
 	// send USDC via IBC to the Orbiter.
@@ -74,9 +74,6 @@ func TestIBCToCCTP(t *testing.T) {
 	t.Run("PassingWithFeeAction", func(t *testing.T) {
 		testIbcPassingWithFeeAction(t, ctx, &s, dstUsdcDenom, toOrbiterChanlID)
 	})
-
-	// We need to fund again the account because empty after the previous test.
-	s.FundIBCRecipient(t, ctx, amountToSend, ibcRecipient, fromOrbiterChanID, dstUsdcDenom)
 
 	t.Run("PassingWithoutActions", func(t *testing.T) {
 		testIbcPassingWithoutActions(t, ctx, &s, dstUsdcDenom, toOrbiterChanlID)

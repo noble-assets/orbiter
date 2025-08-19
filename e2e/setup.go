@@ -26,7 +26,6 @@ import (
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 	fiattokenfactorytypes "github.com/circlefin/noble-fiattokenfactory/x/fiattokenfactory/types"
-	"github.com/ethereum/go-ethereum/common"
 	interchaintest "github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
@@ -65,8 +64,8 @@ type Suite struct {
 	CircleRoles       CircleRoles
 	sender            ibc.Wallet
 	fallbackRecipient ibc.Wallet
-	mintRecipient     common.Address
-	destinationCaller common.Address
+	mintRecipient     []byte
+	destinationCaller []byte
 
 	destinationDomain uint32
 }
@@ -166,10 +165,8 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 
 	suite.destinationDomain = 0
 
-	addr := testutil.AddressBytes()
-	suite.mintRecipient = common.BytesToAddress(addr)
-	addr = testutil.AddressBytes()
-	suite.destinationCaller = common.BytesToAddress(addr)
+	suite.mintRecipient = testutil.RandomBytes(32)
+	suite.destinationCaller = testutil.RandomBytes(32)
 
 	if isIBC {
 		wallets := interchaintest.GetAndFundTestUsers(
