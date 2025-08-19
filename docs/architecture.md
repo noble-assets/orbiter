@@ -204,7 +204,7 @@ classDiagram
 
 The `Adapter` (`keeper/components/adapter.go`) serves as the interface between external cross-chain
 communication protocols and the internal handling of the orbiter packets. The role of this component
-is to create the expected orbiter payload out of the cross-chain metadata received.
+is to create the expected orbiter payload from the received cross-chain metadata.
 
 This component does not directly adapt the incoming metadata, but keeps track internally of the
 available adapter controllers and routes the incoming metadata to the correct one.
