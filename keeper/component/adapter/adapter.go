@@ -133,6 +133,7 @@ func (a *Adapter) ParsePayload(
 	adapter, found := a.router.Route(id)
 	if !found {
 		a.logger.Error("adapter for protocol not found", "src_protocol", id.String())
+
 		return false, nil, fmt.Errorf("adapter not found for protocol ID: %s", id)
 	}
 

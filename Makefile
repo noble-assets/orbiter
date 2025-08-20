@@ -46,7 +46,9 @@ proto-lint:
 proto-testutil-gen:
 	@echo "==================================================================="
 	@echo "Generating code from testutil protobuf..."
-	@cd testutil/testdata && buf generate --template buf.gen.yaml
+	@cd testutil/testdata && \
+		docker run --rm --volume "$(PWD)":/workspace --workdir /workspace \
+		bufbuild/buf:$(BUF_VERSION) generate --template ./buf.gen.yaml
 	@echo "Completed code generation!"
 
 
