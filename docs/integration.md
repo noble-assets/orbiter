@@ -30,7 +30,7 @@ This type is composed of two parts:
 
 An example of a JSON structured payload is:
 
-```json
+```jsonc
 {
   "orbiter": {
     "pre_actions": [
