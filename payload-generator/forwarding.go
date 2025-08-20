@@ -91,8 +91,8 @@ func (m model) initCCTPForwardingInput() model {
 	inputs[3].Width = 70
 
 	m.forwardingInputs = inputs
-	forwardingFocusIndex = 0
 	m.state = cctpForwardingInput
+	focusIndex = 0
 
 	// Focus the first input
 	m.forwardingInputs[0].Focus()
@@ -149,7 +149,14 @@ func (m model) processCCTPForwarding() (tea.Model, tea.Cmd) {
 	}
 
 	m.forwarding = cctpForwarding
-	return m.buildFinalPayload()
+
+	m.payload, err = buildFinalPayload(m.forwarding, m.actions)
+	if err != nil {
+		m.err = fmt.Errorf("failed to build finalPayload: %v", err)
+		return m, nil
+	}
+
+	return m, tea.Quit
 }
 
 func (m model) updateForwardingInputs(msg tea.Msg) tea.Cmd {
@@ -164,16 +171,16 @@ func (m model) updateForwardingInputs(msg tea.Msg) tea.Cmd {
 			s := msg.String()
 
 			// Update focus position
-			if (s == "up" || s == "shift+tab") && forwardingFocusIndex > 0 {
-				forwardingFocusIndex--
-			} else if forwardingFocusIndex < len(m.forwardingInputs)-1 {
-				forwardingFocusIndex++
+			if (s == "up" || s == "shift+tab") && focusIndex > 0 {
+				focusIndex--
+			} else if focusIndex < len(m.forwardingInputs)-1 {
+				focusIndex++
 			}
 
 			// Update focus for all inputs
 			cmds := make([]tea.Cmd, len(m.forwardingInputs))
 			for i := 0; i < len(m.forwardingInputs); i++ {
-				if i == forwardingFocusIndex {
+				if i == focusIndex {
 					cmds[i] = m.forwardingInputs[i].Focus()
 				} else {
 					m.forwardingInputs[i].Blur()

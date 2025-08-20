@@ -65,8 +65,8 @@ func (m model) initFeeActionInput() model {
 	inputs[1].Width = 30
 
 	m.actionInputs = inputs
-	actionFocusIndex = 0
 	m.state = feeActionInput
+	focusIndex = 0
 
 	// Focus the first input
 	m.actionInputs[0].Focus()
@@ -102,6 +102,11 @@ func (m model) processFeeAction() (tea.Model, tea.Cmd) {
 		},
 	}
 
+	if err = feeAttr.Validate(); err != nil {
+		m.err = fmt.Errorf("invalid fee attributes: %v", err)
+		return m, nil
+	}
+
 	feeAction := core.Action{
 		Id: core.ACTION_FEE,
 	}
@@ -112,10 +117,11 @@ func (m model) processFeeAction() (tea.Model, tea.Cmd) {
 	}
 
 	if err = feeAction.Validate(); err != nil {
-		m.err = fmt.Errorf("invalid fee action: %w", err)
+		m.err = fmt.Errorf("invalid fee action: %v", err)
+		return m, nil
 	}
 
-	m.actions = append(m.actions, feeAction)
+	m.actions = append(m.actions, &feeAction)
 	return m.initActionSelection(), nil
 }
 
@@ -154,19 +160,19 @@ func (m model) updateActionInputs(msg tea.Msg) tea.Cmd {
 
 			// Update focus position
 			if s == "up" || s == "shift+tab" {
-				if actionFocusIndex > 0 {
-					actionFocusIndex--
+				if focusIndex > 0 {
+					focusIndex--
 				}
 			} else {
-				if actionFocusIndex < len(m.actionInputs)-1 {
-					actionFocusIndex++
+				if focusIndex < len(m.actionInputs)-1 {
+					focusIndex++
 				}
 			}
 
 			// Update focus for all inputs
 			cmds := make([]tea.Cmd, len(m.actionInputs))
 			for i := 0; i < len(m.actionInputs); i++ {
-				if i == actionFocusIndex {
+				if i == focusIndex {
 					cmds[i] = m.actionInputs[i].Focus()
 				} else {
 					m.actionInputs[i].Blur()

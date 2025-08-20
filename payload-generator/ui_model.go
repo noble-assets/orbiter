@@ -9,9 +9,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	orbiter "orbiter.dev"
-	"orbiter.dev/testutil"
-	"orbiter.dev/types"
 	"orbiter.dev/types/core"
 )
 
@@ -23,7 +20,6 @@ const (
 	feeActionInput
 	forwardingSelection
 	cctpForwardingInput
-	finalPayload
 )
 
 type item struct {
@@ -34,20 +30,18 @@ func (i item) Title() string       { return i.title }
 func (i item) Description() string { return i.desc }
 func (i item) FilterValue() string { return i.title }
 
-var (
-	actionFocusIndex     int
-	forwardingFocusIndex int
-)
+var focusIndex int
 
 // model contains all relevant information and state
 // for the UI to interactively build an Orbiter payload.
 type model struct {
-	state            state
-	list             list.Model
+	state state
+	list  list.Model
+
 	actionInputs     []textinput.Model
 	forwardingInputs []textinput.Model
 
-	actions    []core.Action
+	actions    []*core.Action
 	forwarding *core.Forwarding
 	err        error
 	payload    string
@@ -71,7 +65,7 @@ func initialModel() model {
 	return model{
 		state:   actionSelection,
 		list:    l,
-		actions: []core.Action{},
+		actions: []*core.Action{},
 	}
 }
 
@@ -106,8 +100,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmd = m.updateActionInputs(msg)
 	case cctpForwardingInput:
 		cmd = m.updateForwardingInputs(msg)
-	case finalPayload:
-		// no action required, will quit the program after
 	default:
 		panic(fmt.Errorf("unhandled state: %v", m.state))
 	}
@@ -141,35 +133,7 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 		}
 	case cctpForwardingInput:
 		return m.processCCTPForwarding()
-	case finalPayload:
-		return m, tea.Quit
 	}
-	return m, nil
-}
-
-func (m model) buildFinalPayload() (tea.Model, tea.Cmd) {
-	var actions []*core.Action
-	for i := range m.actions {
-		actions = append(actions, &m.actions[i])
-	}
-
-	payload, err := core.NewPayloadWrapper(m.forwarding, actions)
-	if err != nil {
-		m.err = fmt.Errorf("failed to create payload wrapper: %v", err)
-		return m, nil
-	}
-
-	encCfg := testutil.MakeTestEncodingConfig("noble")
-	orbiter.RegisterInterfaces(encCfg.InterfaceRegistry)
-	payloadStr, err := types.MarshalJSON(encCfg.Codec, payload)
-	if err != nil {
-		m.err = fmt.Errorf("failed to marshal payload: %v", err)
-		return m, nil
-	}
-
-	m.payload = string(payloadStr)
-	m.state = finalPayload
-
 	return m, nil
 }
 
@@ -185,8 +149,6 @@ func (m model) View() string {
 		m.writeFeeActionSelection(&s)
 	case cctpForwardingInput:
 		m.writeCCTPForwardingSelection(&s)
-	case finalPayload:
-		m.writeFinalPayload(&s)
 	}
 
 	if m.err != nil {

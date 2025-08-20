@@ -25,9 +25,15 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
+
+	"orbiter.dev/testutil"
 )
 
 func main() {
+	// NOTE: this is required to be called to correctly set the bech32 prefix
+	testutil.SetSDKConfig()
+
+	// Setup the TUI model and run it
 	m := initialModel()
 	p := tea.NewProgram(m, tea.WithAltScreen())
 	runModel, err := p.Run()
