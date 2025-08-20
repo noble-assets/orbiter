@@ -53,7 +53,7 @@ func (m model) writeCCTPForwardingSelection(s *strings.Builder) {
 	s.WriteString(lipgloss.NewStyle().Bold(true).Render("Configure CCTP Forwarding"))
 	s.WriteString("\n\n")
 	s.WriteString("CCTP enables USDC transfers across chains. Configure the destination details:\n")
-	s.WriteString("• Domain: Chain identifier (0=Ethereum, 1=Avalanche, 2=OP, 3=Arbitrum, 7=Base)\n")
+	s.WriteString("• Domain: Chain identifier (0=Ethereum, 1=Avalanche, 2=OP, 3=Arbitrum, 6=Base)\n")
 	s.WriteString("• Mint Recipient: Address that receives USDC on destination\n")
 	s.WriteString("• Destination Caller: Address that can call functions on destination\n")
 	s.WriteString("• Passthrough Payload: Additional data to pass through (optional)\n\n")
