@@ -23,7 +23,7 @@ package types
 import (
 	"context"
 
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 // PayloadDispatcher defines the expected behavior from a type

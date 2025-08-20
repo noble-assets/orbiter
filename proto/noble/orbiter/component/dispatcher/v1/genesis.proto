@@ -6,7 +6,7 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "noble/orbiter/component/dispatcher/v1/dispatcher.proto";
 
-option go_package = "orbiter.dev/types/component/dispatcher";
+option go_package = "github.com/noble-assets/orbiter/types/component/dispatcher";
 
 // GenesisState defines the dispatcher component genesis state.
 message GenesisState {

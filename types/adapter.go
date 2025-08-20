@@ -23,7 +23,7 @@ package types
 import (
 	"context"
 
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 type TransferHookHandler interface {

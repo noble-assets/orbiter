@@ -4,7 +4,7 @@ package noble.orbiter.v1;
 
 import "cosmos/msg/v1/msg.proto";
 
-option go_package = "orbiter.dev/types";
+option go_package = "github.com/noble-assets/orbiter/types";
 
 // Msg defines the RPC methods for the Orbiter module.
 service Msg {

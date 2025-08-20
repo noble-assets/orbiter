@@ -1,4 +1,4 @@
-module orbiter.dev
+module github.com/noble-assets/orbiter
 
 go 1.24
 

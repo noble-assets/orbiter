@@ -26,7 +26,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"orbiter.dev/types"
+	"github.com/noble-assets/orbiter/types"
 )
 
 var _ types.BankKeeper = (*BankKeeper)(nil)

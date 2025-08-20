@@ -20,7 +20,7 @@
 
 package testdata
 
-import "orbiter.dev/types/core"
+import "github.com/noble-assets/orbiter/types/core"
 
 var (
 	_ core.ForwardingAttributes = &TestForwardingAttr{}

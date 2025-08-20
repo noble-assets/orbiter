@@ -7,8 +7,8 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"orbiter.dev/simapp"
-	"orbiter.dev/simapp/simd/cmd"
+	"github.com/noble-assets/orbiter/simapp"
+	"github.com/noble-assets/orbiter/simapp/simd/cmd"
 )
 
 var (

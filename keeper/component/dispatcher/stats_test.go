@@ -28,12 +28,12 @@ import (
 
 	"cosmossdk.io/math"
 
-	"orbiter.dev/keeper/component/dispatcher"
-	"orbiter.dev/testutil/mocks"
-	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types"
-	dispatchertypes "orbiter.dev/types/component/dispatcher"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
+	"github.com/noble-assets/orbiter/testutil/mocks"
+	"github.com/noble-assets/orbiter/testutil/testdata"
+	"github.com/noble-assets/orbiter/types"
+	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestUpdateStats(t *testing.T) {

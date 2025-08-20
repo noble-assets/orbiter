@@ -25,8 +25,8 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
-	dispatchertypes "orbiter.dev/types/component/dispatcher"
-	"orbiter.dev/types/core"
+	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 // InitGenesis initializes the state of the component with a genesis state.

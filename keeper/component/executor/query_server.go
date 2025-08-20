@@ -26,8 +26,8 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	executortypes "orbiter.dev/types/component/executor"
-	"orbiter.dev/types/core"
+	executortypes "github.com/noble-assets/orbiter/types/component/executor"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ executortypes.QueryServer = &queryServer{}

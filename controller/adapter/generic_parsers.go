@@ -26,8 +26,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 // JSONParser is an utility type capable of parsing

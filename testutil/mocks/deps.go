@@ -38,8 +38,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
-	"orbiter.dev/testutil"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/testutil"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 type Dependencies struct {

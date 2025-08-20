@@ -31,10 +31,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"orbiter.dev/types"
-	adaptertypes "orbiter.dev/types/component/adapter"
-	"orbiter.dev/types/core"
-	"orbiter.dev/types/router"
+	"github.com/noble-assets/orbiter/types"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
+	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/types/router"
 )
 
 type AdapterRouter = *router.Router[core.ProtocolID, types.ControllerAdapter]
@@ -133,6 +133,7 @@ func (a *Adapter) ParsePayload(
 	adapter, found := a.router.Route(id)
 	if !found {
 		a.logger.Error("adapter for protocol not found", "src_protocol", id.String())
+
 		return false, nil, fmt.Errorf("adapter not found for protocol ID: %s", id)
 	}
 

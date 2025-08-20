@@ -25,7 +25,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/errors"
 
-	adaptertypes "orbiter.dev/types/component/adapter"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 )
 
 var _ adaptertypes.QueryServer = &queryServer{}

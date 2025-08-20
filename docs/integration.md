@@ -156,10 +156,10 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
 
    ```go
    import(
-     "orbiter.dev/types"
-     "orbiter.dev/types/controllers/actions"
-     "orbiter.dev/types/controllers/orbits"
-     "orbiter.dev/testutil"
+     "github.com/noble-assets/orbiter/types"
+     "github.com/noble-assets/orbiter/types/controllers/actions"
+     "github.com/noble-assets/orbiter/types/controllers/orbits"
+     "github.com/noble-assets/orbiter/testutil"
    )
    ```
 

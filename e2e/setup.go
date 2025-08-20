@@ -38,7 +38,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"orbiter.dev/testutil"
+	"github.com/noble-assets/orbiter/testutil"
 )
 
 var (

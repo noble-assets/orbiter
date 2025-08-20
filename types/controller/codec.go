@@ -24,8 +24,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"orbiter.dev/types/controller/action"
-	"orbiter.dev/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/types/controller/action"
+	"github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
