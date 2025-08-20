@@ -38,9 +38,10 @@ import (
 )
 
 const (
-	OneE6           = 1_000_000
-	Usdc            = "uusdc"
-	MaxSearchBlocks = 30
+	DepositForBurnEvent = "circle.cctp.v1.DepositForBurn"
+	OneE6               = 1_000_000
+	Usdc                = "uusdc"
+	MaxSearchBlocks     = 30
 )
 
 // GetChannels returns the channel IDs of the IBC connection.
@@ -224,4 +225,17 @@ func SearchEvents(events []abci.Event, eventTypes []string) (bool, map[string]ab
 	}
 
 	return false, wantedEvents
+}
+
+func LeftPadBytes(bz []byte) ([]byte, error) {
+	if len(bz) > 32 {
+		return nil, fmt.Errorf("padding error, expected less than 32 bytes, got %d", len(bz))
+	}
+	if len(bz) == 32 {
+		return bz, nil
+	}
+
+	res := make([]byte, 32)
+	copy(res[32-len(bz):], bz)
+	return res, nil
 }

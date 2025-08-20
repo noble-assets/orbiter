@@ -165,8 +165,15 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 
 	suite.destinationDomain = 0
 
-	suite.mintRecipient = testutil.RandomBytes(32)
-	suite.destinationCaller = testutil.RandomBytes(32)
+	addr := testutil.AddressBytes()
+	bz, err := LeftPadBytes(addr)
+	require.NoError(t, err, "expected no error padding mint recipient address")
+	suite.mintRecipient = bz
+
+	addr = testutil.AddressBytes()
+	bz, err = LeftPadBytes(addr)
+	require.NoError(t, err, "expected no error padding destination caller address")
+	suite.destinationCaller = bz
 
 	if isIBC {
 		wallets := interchaintest.GetAndFundTestUsers(

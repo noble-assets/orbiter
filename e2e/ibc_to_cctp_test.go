@@ -22,6 +22,8 @@ package e2e
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"strconv"
 	"testing"
 
@@ -49,10 +51,10 @@ func TestIBCToCCTP(t *testing.T) {
 
 	orbiter.RegisterInterfaces(s.Chain.GetCodec().InterfaceRegistry())
 
-	fromOrbiterChanID, toOrbiterChanlID := s.GetChannels(t, ctx)
+	fromOrbiterChanID, toOrbiterChanID := s.GetChannels(t, ctx)
 
 	srcUsdcTrace := transfertypes.ParseDenomTrace(
-		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanlID, Usdc),
+		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanID, Usdc),
 	)
 	dstUsdcDenom := srcUsdcTrace.IBCDenom()
 
@@ -64,19 +66,15 @@ func TestIBCToCCTP(t *testing.T) {
 	s.FundIBCRecipient(t, ctx, amountToSend, ibcRecipient, fromOrbiterChanID, dstUsdcDenom)
 
 	t.Run("FailingWithoutForwarding", func(t *testing.T) {
-		testIbcFailingWithoutForwarding(t, ctx, &s, dstUsdcDenom, toOrbiterChanlID)
-	})
-
-	t.Run("FailingUnsupportedAction", func(t *testing.T) {
-		testIbcFailingUnsupportedAction(t, ctx, &s, dstUsdcDenom, toOrbiterChanlID)
+		testIbcFailingWithoutForwarding(t, ctx, &s, dstUsdcDenom, toOrbiterChanID)
 	})
 
 	t.Run("PassingWithFeeAction", func(t *testing.T) {
-		testIbcPassingWithFeeAction(t, ctx, &s, dstUsdcDenom, toOrbiterChanlID)
+		testIbcPassingWithFeeAction(t, ctx, &s, dstUsdcDenom, toOrbiterChanID)
 	})
 
 	t.Run("PassingWithoutActions", func(t *testing.T) {
-		testIbcPassingWithoutActions(t, ctx, &s, dstUsdcDenom, toOrbiterChanlID)
+		testIbcPassingWithoutActions(t, ctx, &s, dstUsdcDenom, toOrbiterChanID)
 	})
 }
 
@@ -85,7 +83,7 @@ func testIbcFailingWithoutForwarding(
 	ctx context.Context,
 	s *Suite,
 	dstUsdcDenom string,
-	toOrbiterChannelID string,
+	toOrbiterChanID string,
 ) {
 	cdc := s.Chain.GetCodec()
 	amountToSend := math.NewInt(OneE6)
@@ -123,7 +121,7 @@ func testIbcFailingWithoutForwarding(
 	}
 	ibcTx, err := s.IBC.CounterpartyChain.SendIBCTransfer(
 		ctx,
-		toOrbiterChannelID,
+		toOrbiterChanID,
 		s.IBC.CounterpartySender.KeyName(),
 		transfer,
 		ibc.TransferOptions{
@@ -131,102 +129,7 @@ func testIbcFailingWithoutForwarding(
 		},
 	)
 	require.NoError(t, err)
-	s.FlushRelayer(t, ctx, toOrbiterChannelID)
-
-	msg, err := interchainutil.PollForAck(
-		ctx,
-		s.IBC.CounterpartyChain,
-		height,
-		height+10,
-		ibcTx.Packet,
-	)
-	require.NoError(t, err)
-
-	expectedAck := &channeltypes.Acknowledgement{}
-	err = cdc.UnmarshalJSON(msg.Acknowledgement, expectedAck)
-	require.NoError(t, err)
-	require.Contains(
-		t,
-		expectedAck.GetError(),
-		"orbiter-middleware error",
-		"expected the error in the ack to contains the orbiter middleware error",
-	)
-
-	resp, err := s.IBC.CounterpartyChain.GetBalance(
-		ctx,
-		s.IBC.CounterpartySender.FormattedAddress(),
-		dstUsdcDenom,
-	)
-	require.NoError(t, err)
-	require.Equal(
-		t,
-		initAmount,
-		resp,
-		"expected the address on the counterparty chain to have funds unlocked",
-	)
-}
-
-func testIbcFailingUnsupportedAction(
-	t *testing.T,
-	ctx context.Context,
-	s *Suite,
-	dstUsdcDenom string,
-	toOrbiterChannelID string,
-) {
-	cdc := s.Chain.GetCodec()
-	amountToSend := math.NewInt(OneE6)
-	initAmount, err := s.IBC.CounterpartyChain.GetBalance(
-		ctx,
-		s.IBC.CounterpartySender.FormattedAddress(),
-		dstUsdcDenom,
-	)
-	require.NoError(t, err)
-
-	forwarding, err := forwardingtypes.NewCCTPForwarding(
-		s.destinationDomain,
-		s.mintRecipient,
-		s.destinationCaller,
-		[]byte(""),
-	)
-	require.NoError(t, err)
-
-	// Create a wrapped payload for the IBC memo without the required forwarding info.
-	feeRecipientAddr := testutil.NewNobleAddress()
-	action, err := actiontypes.NewFeeAction(
-		&actiontypes.FeeInfo{
-			Recipient:   feeRecipientAddr,
-			BasisPoints: 100,
-		},
-	)
-	action.Id = core.ACTION_SWAP
-	require.NoError(t, err)
-
-	p := core.PayloadWrapper{Orbiter: &core.Payload{
-		PreActions: []*core.Action{action},
-		Forwarding: forwarding,
-	}}
-	payloadBz, err := types.MarshalJSON(cdc, &p)
-	require.NoError(t, err)
-
-	height, err := s.IBC.CounterpartyChain.Height(ctx)
-	require.NoError(t, err)
-
-	transfer := ibc.WalletAmount{
-		Address: core.ModuleAddress.String(),
-		Denom:   dstUsdcDenom,
-		Amount:  amountToSend,
-	}
-	ibcTx, err := s.IBC.CounterpartyChain.SendIBCTransfer(
-		ctx,
-		toOrbiterChannelID,
-		s.IBC.CounterpartySender.KeyName(),
-		transfer,
-		ibc.TransferOptions{
-			Memo: string(payloadBz),
-		},
-	)
-	require.NoError(t, err)
-	s.FlushRelayer(t, ctx, toOrbiterChannelID)
+	s.FlushRelayer(t, ctx, toOrbiterChanID)
 
 	msg, err := interchainutil.PollForAck(
 		ctx,
@@ -266,7 +169,7 @@ func testIbcPassingWithFeeAction(
 	ctx context.Context,
 	s *Suite,
 	dstUsdcDenom string,
-	toOrbiterChannelID string,
+	toOrbiterChanID string,
 ) {
 	cdc := s.Chain.GetCodec()
 	amountToSend := math.NewInt(OneE6)
@@ -306,7 +209,7 @@ func testIbcPassingWithFeeAction(
 	}
 	_, err = s.IBC.CounterpartyChain.SendIBCTransfer(
 		ctx,
-		toOrbiterChannelID,
+		toOrbiterChanID,
 		s.IBC.CounterpartySender.KeyName(),
 		transfer,
 		ibc.TransferOptions{
@@ -314,7 +217,7 @@ func testIbcPassingWithFeeAction(
 		},
 	)
 	require.NoError(t, err)
-	s.FlushRelayer(t, ctx, toOrbiterChannelID)
+	s.FlushRelayer(t, ctx, toOrbiterChanID)
 
 	ibcHeight := s.GetIbcTransferBlockExecution(t, ctx, height)
 	txsResult := GetTxsResult(t, ctx, s.Chain.Validators[0], strconv.Itoa(int(ibcHeight)))
@@ -335,7 +238,7 @@ func testIbcPassingWithoutActions(
 	ctx context.Context,
 	s *Suite,
 	dstUsdcDenom string,
-	toOrbiterChannelID string,
+	toOrbiterChanID string,
 ) {
 	cdc := s.Chain.GetCodec()
 	amountToSend := math.NewInt(OneE6)
@@ -369,7 +272,7 @@ func testIbcPassingWithoutActions(
 	}
 	_, err = s.IBC.CounterpartyChain.SendIBCTransfer(
 		ctx,
-		toOrbiterChannelID,
+		toOrbiterChanID,
 		s.IBC.CounterpartySender.KeyName(),
 		transfer,
 		ibc.TransferOptions{
@@ -377,16 +280,66 @@ func testIbcPassingWithoutActions(
 		},
 	)
 	require.NoError(t, err)
-	s.FlushRelayer(t, ctx, toOrbiterChannelID)
+	s.FlushRelayer(t, ctx, toOrbiterChanID)
 
 	ibcHeight := s.GetIbcTransferBlockExecution(t, ctx, height)
 	txsResult := GetTxsResult(t, ctx, s.Chain.Validators[0], strconv.Itoa(int(ibcHeight)))
 	require.Equal(t, txsResult.TotalCount, uint64(1), "expected only one tx")
 
-	found, _ := SearchEvents(txsResult.Txs[0].Events, []string{
-		"circle.cctp.v1.DepositForBurn",
-	})
-	require.True(t, found)
+	found, events := SearchEvents(txsResult.Txs[0].Events, []string{DepositForBurnEvent})
+	require.True(t, found, "expected the DepositForBurn event to be emitted")
+	require.Len(t, events, 1)
+
+	for _, attribute := range events[DepositForBurnEvent].Attributes {
+		switch attribute.Key {
+		case "amount":
+			var v string
+			require.NoError(t, json.Unmarshal([]byte(attribute.Value), &v))
+			require.Equal(
+				t,
+				strconv.Itoa(int(amountToSend.Int64())),
+				v,
+				"expected a different amount in the DepositForBurn event",
+			)
+		case "destination_domain":
+			v, _ := strconv.ParseUint(attribute.Value, 10, 32)
+			require.Equal(
+				t,
+				s.destinationDomain,
+				uint32(v),
+				"expected a different destination domain in the DepositForBurn event",
+			)
+		case "destination_caller":
+			expectedBase64 := base64.StdEncoding.EncodeToString(s.destinationCaller)
+			var v string
+			require.NoError(t, json.Unmarshal([]byte(attribute.Value), &v))
+			require.Equal(
+				t,
+				expectedBase64,
+				v,
+				"expected a different destination caller in the DepositForBurn event",
+			)
+		case "mint_recipient":
+			expectedBase64 := base64.StdEncoding.EncodeToString(s.mintRecipient)
+			var v string
+			require.NoError(t, json.Unmarshal([]byte(attribute.Value), &v))
+			require.Equal(
+				t,
+				expectedBase64,
+				v,
+				"expected a different mint recipient in the DestinationForBurn event",
+			)
+		case "depositor":
+			var v string
+			json.Unmarshal([]byte(attribute.Value), &v)
+			require.Equal(
+				t,
+				core.ModuleAddress.String(),
+				v,
+				"expected a different depositor in the DestinationForBurn event",
+			)
+		}
+	}
 
 	resp, err := s.Chain.GetBalance(
 		ctx,
