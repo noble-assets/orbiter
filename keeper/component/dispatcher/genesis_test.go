@@ -27,9 +27,9 @@ import (
 
 	"cosmossdk.io/math"
 
-	"orbiter.dev/testutil/mocks"
-	dispatchertypes "orbiter.dev/types/component/dispatcher"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/testutil/mocks"
+	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func defaultAmounts(

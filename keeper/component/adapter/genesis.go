@@ -25,7 +25,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
-	adaptertypes "orbiter.dev/types/component/adapter"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 )
 
 // InitGenesis initialize the state of the adapter component with a genesis state.

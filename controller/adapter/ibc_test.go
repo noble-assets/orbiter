@@ -21,16 +21,17 @@
 package adapter_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	adapterctrl "orbiter.dev/controller/adapter"
-	"orbiter.dev/testutil"
-	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types/core"
+	adapterctrl "github.com/noble-assets/orbiter/controller/adapter"
+	"github.com/noble-assets/orbiter/testutil"
+	"github.com/noble-assets/orbiter/testutil/testdata"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestNewIBCParser(t *testing.T) {
@@ -161,6 +162,7 @@ func TestParsePayload(t *testing.T) {
 			parser, err := adapterctrl.NewIBCParser(encCfg.Codec)
 			require.NoError(t, err)
 
+			fmt.Println("len of payload:", len(tc.payloadBz))
 			isOrbiterPayload, payload, err := parser.ParsePayload(core.PROTOCOL_IBC, tc.payloadBz)
 
 			require.Equal(t, tc.expectIsOrbiter, isOrbiterPayload)

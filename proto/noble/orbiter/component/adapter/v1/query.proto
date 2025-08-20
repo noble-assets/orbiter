@@ -8,7 +8,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "noble/orbiter/component/adapter/v1/adapter.proto";
 
-option go_package = "orbiter.dev/types/component/adapter";
+option go_package = "github.com/noble-assets/orbiter/types/component/adapter";
 
 // Query defines the gRPC query service for the Orbiter
 // adapter component.

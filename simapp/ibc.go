@@ -35,7 +35,7 @@ import (
 	soloclient "github.com/cosmos/ibc-go/v8/modules/light-clients/06-solomachine"
 	tmclient "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 
-	"orbiter.dev/entrypoint"
+	"github.com/noble-assets/orbiter/entrypoint"
 )
 
 func (app *SimApp) RegisterIBCModules() error {

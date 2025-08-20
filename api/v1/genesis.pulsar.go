@@ -4,14 +4,11 @@ package orbiterv1
 import (
 	fmt "fmt"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoiface "google.golang.org/protobuf/runtime/protoiface"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	io "io"
-	v1 "orbiter.dev/api/component/adapter/v1"
-	v11 "orbiter.dev/api/component/dispatcher/v1"
-	v13 "orbiter.dev/api/component/executor/v1"
-	v12 "orbiter.dev/api/component/forwarder/v1"
+	v1 "github.com/noble-assets/orbiter/api/component/adapter/v1"
+	v11 "github.com/noble-assets/orbiter/api/component/dispatcher/v1"
+	v13 "github.com/noble-assets/orbiter/api/component/executor/v1"
+	v12 "github.com/noble-assets/orbiter/api/component/forwarder/v1"
+	protoreflect "google.golang.org/p
 	reflect "reflect"
 	sync "sync"
 )

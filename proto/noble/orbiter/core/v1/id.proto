@@ -4,7 +4,7 @@ package noble.orbiter.core.v1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "orbiter.dev/types/core";
+option go_package = "github.com/noble-assets/orbiter/types/core";
 
 // ActionID identifies the type of action to be performed on a transfer.
 //

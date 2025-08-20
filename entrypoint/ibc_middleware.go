@@ -27,8 +27,8 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ porttypes.Middleware = &IBCMiddleware{}

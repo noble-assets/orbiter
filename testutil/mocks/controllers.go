@@ -24,8 +24,8 @@ import (
 	"context"
 	"errors"
 
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ types.ControllerForwarding = &ForwardingController{}

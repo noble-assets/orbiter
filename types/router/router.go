@@ -23,7 +23,7 @@ package router
 import (
 	"errors"
 
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 // Routable defines the behavior required from a component

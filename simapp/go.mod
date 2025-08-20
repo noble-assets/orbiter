@@ -1,4 +1,4 @@
-module orbiter.dev/simapp
+module github.com/noble-assets/orbiter/simapp
 
 go 1.24
 
@@ -20,7 +20,7 @@ require (
 	github.com/cosmos/ibc-go/v8 v8.6.1
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.19.0
-	orbiter.dev v0.0.0-00010101000000-000000000000
+	github.com/noble-assets/orbiter v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -225,5 +225,5 @@ require (
 replace (
 	// use cosmos compatible syndtr/goleveldb
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
-	orbiter.dev => ../
+	github.com/noble-assets/orbiter => ../
 )

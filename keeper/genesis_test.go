@@ -25,11 +25,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	mockorbiter "orbiter.dev/testutil/mocks/orbiter"
-	orbitertypes "orbiter.dev/types"
-	adaptertypes "orbiter.dev/types/component/adapter"
-	executortypes "orbiter.dev/types/component/executor"
-	forwardertypes "orbiter.dev/types/component/forwarder"
+	mockorbiter "github.com/noble-assets/orbiter/testutil/mocks/orbiter"
+	orbitertypes "github.com/noble-assets/orbiter/types"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
+	executortypes "github.com/noble-assets/orbiter/types/component/executor"
+	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
 )
 
 func TestInitGenesis(t *testing.T) {

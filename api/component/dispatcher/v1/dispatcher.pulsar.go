@@ -7,11 +7,12 @@ import (
 	_ "github.com/cosmos/cosmos-proto"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
 	_ "github.com/cosmos/gogoproto/gogoproto"
+	v1 "github.com/noble-assets/orbiter/api/core/v1"
+	protoreflect
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoiface "google.golang.org/protobuf/runtime/protoiface"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	io "io"
-	v1 "orbiter.dev/api/core/v1"
+	v1 "github.com/noble-assets/orbiter/api/core/v1"
 	reflect "reflect"
 	sync "sync"
 )

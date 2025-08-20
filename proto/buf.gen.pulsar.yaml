@@ -3,7 +3,7 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: orbiter.dev/api
+    default: github.com/noble-assets/orbiter/api
     except:
       - buf.build/cosmos/cosmos-proto
       - buf.build/cosmos/gogo-proto

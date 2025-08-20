@@ -27,9 +27,9 @@ import (
 
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
-	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/testutil/testdata"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 // CreateValidIBCPacketData creates a valid IBC FungibleTokenPacketData with given parameters.

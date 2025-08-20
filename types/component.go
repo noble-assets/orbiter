@@ -25,8 +25,8 @@ import (
 
 	"cosmossdk.io/log"
 
-	"orbiter.dev/types/core"
-	"orbiter.dev/types/router"
+	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/types/router"
 )
 
 type Loggable interface {

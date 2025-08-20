@@ -30,9 +30,9 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
-	"orbiter.dev/types/router"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/types/router"
 )
 
 type ActionRouter = *router.Router[core.ActionID, types.ControllerAction]

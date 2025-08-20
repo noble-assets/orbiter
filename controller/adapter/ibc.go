@@ -26,9 +26,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
-	"orbiter.dev/controller"
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/controller"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ types.ControllerAdapter = &IBCAdapter{}

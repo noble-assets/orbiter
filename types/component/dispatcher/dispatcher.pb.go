@@ -10,10 +10,10 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
+	core "github.com/noble-assets/orbiter/types/core"
 	io "io"
 	math "math"
 	math_bits "math/bits"
-	core "orbiter.dev/types/core"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

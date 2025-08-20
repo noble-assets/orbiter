@@ -29,10 +29,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"orbiter.dev/controller"
-	"orbiter.dev/types"
-	actiontypes "orbiter.dev/types/controller/action"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/controller"
+	"github.com/noble-assets/orbiter/types"
+	actiontypes "github.com/noble-assets/orbiter/types/controller/action"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ types.ControllerAction = &FeeController{}

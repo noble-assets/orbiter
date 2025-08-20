@@ -35,12 +35,12 @@ import (
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 
-	"orbiter.dev"
-	"orbiter.dev/testutil"
-	"orbiter.dev/types"
-	actiontypes "orbiter.dev/types/controller/action"
-	forwardingtypes "orbiter.dev/types/controller/forwarding"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter"
+	"github.com/noble-assets/orbiter/testutil"
+	"github.com/noble-assets/orbiter/types"
+	actiontypes "github.com/noble-assets/orbiter/types/controller/action"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestIBCToCCTP(t *testing.T) {

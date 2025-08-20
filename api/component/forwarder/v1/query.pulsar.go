@@ -6,12 +6,12 @@ import (
 	_ "cosmossdk.io/api/cosmos/query/v1"
 	fmt "fmt"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
+	v1 "github.com/noble-assets/orbiter/api/core/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoiface "google.golang.org/protobuf/runtime/protoiface"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	io "io"
-	v1 "orbiter.dev/api/core/v1"
 	reflect "reflect"
 	sync "sync"
 )

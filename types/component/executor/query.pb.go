@@ -10,6 +10,7 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
+	core "github.com/noble-assets/orbiter/types/core"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -17,7 +18,6 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
-	core "orbiter.dev/types/core"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

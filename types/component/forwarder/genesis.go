@@ -23,7 +23,7 @@ package forwarder
 import (
 	errorsmod "cosmossdk.io/errors"
 
-	core "orbiter.dev/types/core"
+	core "github.com/noble-assets/orbiter/types/core"
 )
 
 // DefaultGenesisState returns the default values for the component initial state.

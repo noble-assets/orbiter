@@ -6,13 +6,13 @@ package types
 import (
 	fmt "fmt"
 	proto "github.com/cosmos/gogoproto/proto"
+	adapter "github.com/noble-assets/orbiter/types/component/adapter"
+	dispatcher "github.com/noble-assets/orbiter/types/component/dispatcher"
+	executor "github.com/noble-assets/orbiter/types/component/executor"
+	forwarder "github.com/noble-assets/orbiter/types/component/forwarder"
 	io "io"
 	math "math"
 	math_bits "math/bits"
-	adapter "orbiter.dev/types/component/adapter"
-	dispatcher "orbiter.dev/types/component/dispatcher"
-	executor "orbiter.dev/types/component/executor"
-	forwarder "orbiter.dev/types/component/forwarder"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

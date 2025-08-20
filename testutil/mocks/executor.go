@@ -27,7 +27,7 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"orbiter.dev/keeper/component/executor"
+	"github.com/noble-assets/orbiter/keeper/component/executor"
 )
 
 func NewExecutorComponent(tb testing.TB) (*executor.Executor, *Dependencies) {

@@ -26,8 +26,8 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	forwardertypes "orbiter.dev/types/component/forwarder"
-	"orbiter.dev/types/core"
+	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ forwardertypes.QueryServer = &queryServer{}

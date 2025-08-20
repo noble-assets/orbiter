@@ -48,12 +48,12 @@ import (
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
 
-	"orbiter.dev/controller/forwarding"
-	"orbiter.dev/testutil/mocks"
-	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types"
-	forwardingtypes "orbiter.dev/types/controller/forwarding"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/controller/forwarding"
+	"github.com/noble-assets/orbiter/testutil/mocks"
+	"github.com/noble-assets/orbiter/testutil/testdata"
+	"github.com/noble-assets/orbiter/types"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestNewCCTPController(t *testing.T) {

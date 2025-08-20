@@ -21,7 +21,7 @@
 package adapter
 
 import (
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 // DefaultGenesisState returns the default values for the adapter

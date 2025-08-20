@@ -25,8 +25,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/testutil/mocks"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/testutil/mocks"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestGetPausedCrossChains(t *testing.T) {

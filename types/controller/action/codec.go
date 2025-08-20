@@ -23,7 +23,7 @@ package action
 import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 // RegisterInterfaces registers the actions attributes

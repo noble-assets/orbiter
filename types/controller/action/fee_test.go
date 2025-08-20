@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/testutil"
-	actiontypes "orbiter.dev/types/controller/action"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/testutil"
+	actiontypes "github.com/noble-assets/orbiter/types/controller/action"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestValidateFee(t *testing.T) {
