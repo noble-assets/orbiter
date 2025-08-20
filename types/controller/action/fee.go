@@ -29,6 +29,23 @@ import (
 	"orbiter.dev/types/core"
 )
 
+func NewFeeAction(feesInfo ...*FeeInfo) (*core.Action, error) {
+	attr, err := NewFeeAttributes(feesInfo...)
+	if err != nil {
+		return nil, err
+	}
+
+	return core.NewAction(core.ACTION_FEE, attr)
+}
+
+func NewFeeAttributes(feesInfo ...*FeeInfo) (*FeeAttributes, error) {
+	attr := FeeAttributes{
+		FeesInfo: feesInfo,
+	}
+
+	return &attr, attr.Validate()
+}
+
 func (f *FeeAttributes) Validate() error {
 	if f == nil {
 		return core.ErrNilPointer.Wrap("fee attributes")

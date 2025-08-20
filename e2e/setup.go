@@ -26,7 +26,6 @@ import (
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 	fiattokenfactorytypes "github.com/circlefin/noble-fiattokenfactory/x/fiattokenfactory/types"
-	"github.com/ethereum/go-ethereum/common"
 	interchaintest "github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
@@ -49,11 +48,11 @@ var (
 )
 
 type IBC struct {
-	CounterpartyChain *cosmos.CosmosChain
-	RelayerReporter   *testreporter.RelayerExecReporter
-	Relayer           ibc.Relayer
-	Account           ibc.Wallet
-	PathName          string
+	CounterpartyChain  *cosmos.CosmosChain
+	RelayerReporter    *testreporter.RelayerExecReporter
+	Relayer            ibc.Relayer
+	CounterpartySender ibc.Wallet
+	PathName           string
 }
 
 type Suite struct {
@@ -65,8 +64,8 @@ type Suite struct {
 	CircleRoles       CircleRoles
 	sender            ibc.Wallet
 	fallbackRecipient ibc.Wallet
-	mintRecipient     string
-	destinationCaller string
+	mintRecipient     []byte
+	destinationCaller []byte
 
 	destinationDomain uint32
 }
@@ -167,9 +166,14 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 	suite.destinationDomain = 0
 
 	addr := testutil.AddressBytes()
-	suite.mintRecipient = common.BytesToAddress(addr).String()
+	bz, err := LeftPadBytes(addr)
+	require.NoError(t, err, "expected no error padding mint recipient address")
+	suite.mintRecipient = bz
+
 	addr = testutil.AddressBytes()
-	suite.destinationCaller = common.BytesToAddress(addr).String()
+	bz, err = LeftPadBytes(addr)
+	require.NoError(t, err, "expected no error padding destination caller address")
+	suite.destinationCaller = bz
 
 	if isIBC {
 		wallets := interchaintest.GetAndFundTestUsers(
@@ -179,7 +183,7 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 			math.NewInt(1_000_000_000),
 			suite.IBC.CounterpartyChain,
 		)
-		suite.IBC.Account = wallets[0]
+		suite.IBC.CounterpartySender = wallets[0]
 	}
 
 	return ctx, suite

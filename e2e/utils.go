@@ -27,8 +27,10 @@ import (
 	"testing"
 
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/stretchr/testify/require"
 
+	"cosmossdk.io/math"
 	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/gogoproto/jsonpb"
@@ -36,8 +38,10 @@ import (
 )
 
 const (
-	OneE6           = 1_000_000
-	MaxSearchBlocks = 30
+	DepositForBurnEvent = "circle.cctp.v1.DepositForBurn"
+	OneE6               = 1_000_000
+	Usdc                = "uusdc"
+	MaxSearchBlocks     = 30
 )
 
 // GetChannels returns the channel IDs of the IBC connection.
@@ -67,6 +71,19 @@ func (s Suite) GetChannels(t *testing.T, ctx context.Context) (string, string) {
 	return orbiterToCounterpartyChannelID, counterpartyToOrbiterChannelID
 }
 
+func (s *Suite) FlushRelayer(t *testing.T, ctx context.Context, channel string) {
+	require.NoError(
+		t,
+		s.IBC.Relayer.Flush(
+			ctx,
+			s.IBC.RelayerReporter,
+			s.IBC.PathName,
+			channel,
+		),
+		"expected no error relaying MsgRecvPacket & MsgAcknowledgement",
+	)
+}
+
 // GetIbcTransferBlockExecution finds the first block at or after the given height
 // that contains an IBC transfer (MsgRecvPacket) and returns that block height.
 func (s *Suite) GetIbcTransferBlockExecution(
@@ -90,7 +107,6 @@ func (s *Suite) GetIbcTransferBlockExecution(
 			height,
 			nil,
 		)
-
 		if err == nil {
 			return height
 		}
@@ -98,6 +114,69 @@ func (s *Suite) GetIbcTransferBlockExecution(
 	require.True(t, false, "expected MsgRecvPacket to be found")
 
 	return 0
+}
+
+func (s *Suite) FundIBCRecipient(
+	t *testing.T,
+	ctx context.Context,
+	amt math.Int,
+	recipient string,
+	fromOrbiterChannelID string,
+	dstUsdcDenom string,
+) {
+	t.Helper()
+
+	transfer := ibc.WalletAmount{
+		Address: recipient,
+		Denom:   Usdc,
+		Amount:  amt,
+	}
+	_, err := s.Chain.SendIBCTransfer(
+		ctx,
+		fromOrbiterChannelID,
+		s.sender.KeyName(),
+		transfer,
+		ibc.TransferOptions{Memo: "pls send them back"},
+	)
+	require.NoError(t, err)
+	s.FlushRelayer(t, ctx, fromOrbiterChannelID)
+
+	dstSenderBal, err := s.IBC.CounterpartyChain.GetBalance(
+		ctx,
+		recipient,
+		dstUsdcDenom,
+	)
+	require.NoError(t, err)
+	require.Equal(t, transfer.Amount, dstSenderBal)
+}
+
+func (s *Suite) FundRecipient(
+	t *testing.T,
+	ctx context.Context,
+	amt math.Int,
+	recipient string,
+) {
+	t.Helper()
+
+	transfer := ibc.WalletAmount{
+		Address: recipient,
+		Denom:   Usdc,
+		Amount:  amt,
+	}
+	err := s.Chain.SendFunds(
+		ctx,
+		s.sender.KeyName(),
+		transfer,
+	)
+	require.NoError(t, err)
+
+	dstSenderBal, err := s.Chain.GetBalance(
+		ctx,
+		recipient,
+		Usdc,
+	)
+	require.NoError(t, err)
+	require.Equal(t, transfer.Amount, dstSenderBal)
 }
 
 func GetTxsResult(
@@ -121,26 +200,42 @@ func GetTxsResult(
 	return &res
 }
 
-// SearchEvents returns true if the slice of ABCI events contains all the event
-// types provided. Returns false otherwise.
-func SearchEvents(events []abci.Event, eventTypes []string) bool {
+// SearchEvents returns true and the searched events if the slice of ABCI events contains all the
+// wanted types. Returns false otherwise.
+func SearchEvents(events []abci.Event, eventTypes []string) (bool, map[string]abci.Event) {
 	if len(eventTypes) == 0 {
-		return true
+		return true, nil
 	}
 
-	needed := make(map[string]bool)
+	missing := make(map[string]any, len(eventTypes))
 	for _, t := range eventTypes {
-		needed[t] = true
+		missing[t] = nil
 	}
+
+	wantedEvents := make(map[string]abci.Event, len(eventTypes))
 
 	for _, event := range events {
-		if needed[event.Type] {
-			delete(needed, event.Type)
-			if len(needed) == 0 {
-				return true
+		if _, found := missing[event.Type]; found {
+			wantedEvents[event.Type] = event
+			delete(missing, event.Type)
+			if len(missing) == 0 {
+				return true, wantedEvents
 			}
 		}
 	}
 
-	return false
+	return false, wantedEvents
+}
+
+func LeftPadBytes(bz []byte) ([]byte, error) {
+	if len(bz) > 32 {
+		return nil, fmt.Errorf("padding error, expected less than 32 bytes, got %d", len(bz))
+	}
+	if len(bz) == 32 {
+		return bz, nil
+	}
+
+	res := make([]byte, 32)
+	copy(res[32-len(bz):], bz)
+	return res, nil
 }
