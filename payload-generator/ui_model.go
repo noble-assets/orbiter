@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -58,13 +59,17 @@ type model struct {
 // that is shown when starting the tool.
 func initialModel() model {
 	actionItems := []list.Item{
-		item{title: "ACTION_FEE", desc: "Add fee payment action"},
-		item{title: "ACTION_SWAP", desc: "Add token swap action"},
+		item{title: core.ACTION_FEE.String(), desc: "Add fee payment action"},
+		item{title: core.ACTION_SWAP.String(), desc: "Add token swap action"},
 		item{title: "No more actions", desc: "Proceed to forwarding selection"},
 	}
 
 	l := list.New(actionItems, list.NewDefaultDelegate(), 0, 0)
-	l.Title = "🚀 Orbiter Payload Generator\n\nWelcome! This tool helps you build payloads for cross-chain operations.\nActions are optional operations that run before forwarding (like fee payments).\n\nSelect an action to add:"
+	l.Title = "Orbiter Payload Generator\n\n" +
+		"Welcome! This tool helps you build payloads for cross-chain operations.\n" +
+		"Actions are optional operations that run before forwarding (like fee payments).\n" +
+		"The selected actions will be run sequentially, so bear that in mind.\n\n" +
+		"Select an action to add:"
 
 	return model{
 		state:   actionSelection,
@@ -163,10 +168,10 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 	case actionSelection:
 		selected := m.list.SelectedItem().(item)
 		switch selected.title {
-		case "ACTION_FEE":
+		case core.ACTION_FEE.String():
 			return m.initFeeActionInput(), nil
-		case "ACTION_SWAP":
-			panic("ACTION_SWAP is not implemented yet")
+		case core.ACTION_SWAP.String():
+			panic(fmt.Errorf("%s is not implemented yet", core.ACTION_SWAP))
 		case "No more actions":
 			return m.initForwardingSelection(), nil
 		}
@@ -175,12 +180,12 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 	case forwardingSelection:
 		selected := m.list.SelectedItem().(item)
 		switch selected.title {
-		case "PROTOCOL_CCTP":
+		case core.PROTOCOL_CCTP.String():
 			return m.initCCTPForwardingInput(), nil
-		case "PROTOCOL_IBC":
-			panic("PROTOCOL_IBC is not implemented yet")
-		case "PROTOCOL_HYPERLANE":
-			panic("PROTOCOL_HYPERLANE is not implemented yet")
+		case core.PROTOCOL_IBC.String():
+			panic(fmt.Errorf("%s is not implemented yet", core.PROTOCOL_IBC))
+		case core.PROTOCOL_HYPERLANE.String():
+			panic(fmt.Errorf("%s is not implemented yet", core.PROTOCOL_HYPERLANE))
 		}
 	case cctpForwardingInput:
 		return m.processCCTPForwarding()
@@ -200,7 +205,7 @@ func (m model) initFeeActionInput() model {
 
 	inputs[1] = textinput.New()
 	inputs[1].Placeholder = "Basis points (e.g. 100 for 1%)"
-	inputs[1].CharLimit = 10
+	inputs[1].CharLimit = 5
 	inputs[1].Width = 30
 
 	m.inputs = inputs
@@ -250,14 +255,18 @@ func (m model) processFeeAction() (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
+	if err = feeAction.Validate(); err != nil {
+		m.err = fmt.Errorf("invalid fee action: %w", err)
+	}
+
 	m.actions = append(m.actions, feeAction)
 	return m.initActionSelection(), nil
 }
 
 func (m model) initActionSelection() model {
 	actionItems := []list.Item{
-		item{title: "ACTION_FEE", desc: "Add fee payment action"},
-		item{title: "ACTION_SWAP", desc: "Add token swap action"},
+		item{title: core.ACTION_FEE.String(), desc: "Add fee payment action"},
+		item{title: core.ACTION_SWAP.String(), desc: "Add token swap action"},
 		item{title: "No more actions", desc: "Proceed to forwarding selection"},
 	}
 
@@ -280,13 +289,16 @@ func (m model) initActionSelection() model {
 
 func (m model) initForwardingSelection() model {
 	forwardingItems := []list.Item{
-		item{title: "PROTOCOL_CCTP", desc: "Circle's Cross-Chain Transfer Protocol (USDC transfers)"},
-		item{title: "PROTOCOL_IBC", desc: "Inter-Blockchain Communication (Cosmos ecosystem)"},
-		item{title: "PROTOCOL_HYPERLANE", desc: "Hyperlane interchain protocol"},
+		item{title: core.PROTOCOL_CCTP.String(), desc: "Circle's Cross-Chain Transfer Protocol (USDC transfers)"},
+		item{title: core.PROTOCOL_IBC.String(), desc: "Inter-Blockchain Communication (Cosmos ecosystem)"},
+		item{title: core.PROTOCOL_HYPERLANE.String(), desc: "Hyperlane interchain protocol"},
 	}
 
 	l := list.New(forwardingItems, list.NewDefaultDelegate(), 0, 0)
-	l.Title = "🌉 Select Forwarding Protocol\n\nNow choose how to forward your transaction to the destination chain.\nEach protocol supports different chains and tokens:\n\nSelect a protocol:"
+	l.Title = "Select Forwarding Protocol\n\n" +
+		"Now choose how to forward your transaction to the destination chain.\n" +
+		"Each protocol supports different chains and tokens:\n\n" +
+		"Select a protocol:"
 
 	// Apply stored window dimensions if we have them
 	if m.windowWidth > 0 && m.windowHeight > 0 {
@@ -309,17 +321,17 @@ func (m model) initCCTPForwardingInput() model {
 	inputs[0].Width = 30
 
 	inputs[1] = textinput.New()
-	inputs[1].Placeholder = "Mint recipient (leave empty for random)"
+	inputs[1].Placeholder = "Mint recipient (put 'r' for random)"
 	inputs[1].CharLimit = 128
 	inputs[1].Width = 70
 
 	inputs[2] = textinput.New()
-	inputs[2].Placeholder = "Destination caller (leave empty for random)"
+	inputs[2].Placeholder = "Destination caller (put 'r' for random)"
 	inputs[2].CharLimit = 128
 	inputs[2].Width = 70
 
 	inputs[3] = textinput.New()
-	inputs[3].Placeholder = "Passthrough payload (leave empty)"
+	inputs[3].Placeholder = "Passthrough payload (can be left empty)"
 	inputs[3].CharLimit = 256
 	inputs[3].Width = 70
 
@@ -351,15 +363,17 @@ func (m model) processCCTPForwarding() (tea.Model, tea.Cmd) {
 
 	var mintRecipient []byte
 	if mintRecipientStr == "" {
+		m.err = errors.New("mint recipient cannot be empty")
+	} else if mintRecipientStr == "r" {
 		mintRecipient = testutil.RandomBytes(32)
 	} else {
 		mintRecipient = []byte(mintRecipientStr)
 	}
 
 	var destCaller []byte
-	if destCallerStr == "" {
+	if destCallerStr == "r" {
 		destCaller = testutil.RandomBytes(32)
-	} else {
+	} else if destCallerStr != "" {
 		destCaller = []byte(destCallerStr)
 	}
 
