@@ -44,10 +44,6 @@ func (m model) writeFeeActionSelection(s *strings.Builder) {
 	s.WriteString("Fee actions allow you to collect a percentage of the transaction amount.\n")
 	s.WriteString("The recipient will receive the specified percentage as a fee.\n\n")
 
-	// TODO: remove
-	s.WriteString(fmt.Sprintf("got %d inputs\n", len(m.actionInputs)))
-	s.WriteString(fmt.Sprintf("fee action index: %d\n", actionFocusIndex))
-
 	for _, input := range m.actionInputs {
 		s.WriteString(input.View() + "\n")
 	}

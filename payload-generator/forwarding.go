@@ -38,10 +38,6 @@ func (m model) writeCCTPForwardingSelection(s *strings.Builder) {
 	s.WriteString("• Destination Caller: Address that can call functions on destination\n")
 	s.WriteString("• Passthrough Payload: Additional data to pass through (optional)\n\n")
 
-	// TODO: remove
-	s.WriteString(fmt.Sprintf("got %d inputs", len(m.forwardingInputs)))
-	s.WriteString(fmt.Sprintf("got index %d", forwardingFocusIndex))
-
 	for _, input := range m.forwardingInputs {
 		s.WriteString(input.View() + "\n")
 	}
