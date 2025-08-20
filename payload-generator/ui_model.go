@@ -135,7 +135,7 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 		case core.ACTION_FEE.String():
 			return m.initFeeActionInput(), nil
 		case core.ACTION_SWAP.String():
-			panic(fmt.Errorf("%s is not implemented yet", core.ACTION_SWAP))
+			panic("not implemented yet: " + core.ACTION_SWAP.String())
 		case "No more actions":
 			return m.initForwardingSelection(), nil
 		}
@@ -147,9 +147,9 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 		case core.PROTOCOL_CCTP.String():
 			return m.initCCTPForwardingInput(), nil
 		case core.PROTOCOL_IBC.String():
-			panic(fmt.Errorf("%s is not implemented yet", core.PROTOCOL_IBC))
+			panic("not supported yet: " + core.PROTOCOL_IBC.String())
 		case core.PROTOCOL_HYPERLANE.String():
-			panic(fmt.Errorf("%s is not implemented yet", core.PROTOCOL_HYPERLANE))
+			panic("not implemented yet: " + core.PROTOCOL_HYPERLANE.String())
 		}
 	case cctpForwardingInput:
 		return m.processCCTPForwarding()

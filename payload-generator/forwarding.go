@@ -139,6 +139,7 @@ func (m model) processCCTPForwarding() (tea.Model, tea.Cmd) {
 	var mintRecipient []byte
 	if mintRecipientStr == "" {
 		m.err = errors.New("mint recipient cannot be empty")
+		return m, nil
 	} else if mintRecipientStr == "r" {
 		mintRecipient = testutil.RandomBytes(32)
 	} else {
