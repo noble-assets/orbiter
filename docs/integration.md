@@ -53,8 +53,8 @@ An example of a JSON structured payload is:
         "@type": "/noble.orbiter.controller.forwarding.v1.CCTPAttributes",
         "destination_domain": 0,
         // Note: mint_recipient and destination_caller are 32-byte values encoded as base64
-        "mint_recipient": "7b6itDboIvromBxhpKmxmV5jBhRgTDa+uBzdEYB4FDA=",
-        "destination_caller": "EtJiMWGCpEspKte/kSZmSmRRu7XrUCEnlMn+G8+2b0U="
+        "mint_recipient": "PNWAxASH2RPmgMV+/Tb4e78ON1WL8SoFGnwbWWHxfuA=",
+        "destination_caller": "xWtN0TuqjWo90XiknI61JUxYexN2JgZaEaWGxhA/rXE="
       },
       "passthrough_payload": ""
     }
