@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package noble.orbiter.controller.forwarding.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "amino/amino.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/noble-assets/orbiter/types/controller/forwarding";
+
+// HypAttributes defines the concrete implementation of the
+// ForwardingAttributes interface to execute a cross-chain routing
+// via the Hyperlane protocol.
+message HypAttributes {
+  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ForwardingAttributes";
+
+  // destination_domain represents the Hyperlane destination
+  // domain identifier: https://docs.hyperlane.xyz/docs/reference/domains
+  uint32 destination_domain = 1;
+
+  // recipient 
+  bytes recipient = 2;
+
+  // custom_hook_id
+  bytes custom_hook_id = 3;
+
+  // gas_limit
+  string gas_limit = 4 [
+    (amino.dont_omitempty) = true,
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+
+  // max_fee
+  cosmos.base.v1beta1.Coin max_fee = 5 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins",
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+
+  
+}
