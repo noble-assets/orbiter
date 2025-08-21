@@ -64,6 +64,11 @@ license:
 	@go-license --config .github/license.yaml $(FILES)
 	@echo "Completed license addition!"
 
+check-license:
+	@echo "==================================================================="
+	@echo "Checking files for license..."
+	@go-license --config .github/license.yaml $(FILES) --verify
+
 format:
 	@echo "==================================================================="
 	@echo "Running formatters..."
