@@ -1,3 +1,23 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright (C) 2025, NASD Inc. All rights reserved.
+// Use of this software is governed by the Business Source License included
+// in the LICENSE file of this repository and at www.mariadb.com/bsl11.
+//
+// ANY USE OF THE LICENSED WORK IN VIOLATION OF THIS LICENSE WILL AUTOMATICALLY
+// TERMINATE YOUR RIGHTS UNDER THIS LICENSE FOR THE CURRENT AND ALL OTHER
+// VERSIONS OF THE LICENSED WORK.
+//
+// THIS LICENSE DOES NOT GRANT YOU ANY RIGHT IN ANY TRADEMARK OR LOGO OF
+// LICENSOR OR ITS AFFILIATES (PROVIDED THAT YOU MAY USE A TRADEMARK OR LOGO OF
+// LICENSOR AS EXPRESSLY REQUIRED BY THIS LICENSE).
+//
+// TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSED WORK IS PROVIDED ON
+// AN "AS IS" BASIS. LICENSOR HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS,
+// EXPRESS OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
+// TITLE.
+
 package forwarding
 
 import (
@@ -29,10 +49,10 @@ type HyperlaneController struct {
 // NewHyperlaneController returns a validated instance of the Hyperlane
 // controller.
 func NewHyperlaneController(
-	l log.Logger,
+	logger log.Logger,
 	handler forwardingtypes.HyperlaneHandler,
 ) (*HyperlaneController, error) {
-	if l == nil {
+	if logger == nil {
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
@@ -40,13 +60,17 @@ func NewHyperlaneController(
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "error creating base controller for hyperlane controller")
 	}
-	c := HyperlaneController{
+	c := &HyperlaneController{
 		BaseController: b,
-		logger:         l,
+		logger:         logger,
 		handler:        handler,
 	}
 
-	return &c, c.Validate()
+	if err := c.Validate(); err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }
 
 // Validate returns an error if any of the Hyperlane controller's field is not valid.
@@ -58,24 +82,36 @@ func (c *HyperlaneController) Validate() error {
 		return core.ErrNilPointer.Wrap("base controller is required for the Hyperlane controller")
 	}
 	if c.handler == nil {
-		return core.ErrNilPointer.Wrap("server is required for the Hyperlance controller")
+		return core.ErrNilPointer.Wrap("handler is required for the Hyperlance controller")
 	}
 	return nil
 }
 
 // HandlePacket implements types.ControllerForwarding.
-func (c *HyperlaneController) HandlePacket(ctx context.Context, p *types.ForwardingPacket) error {
-	attr, err := c.ExtractAttributes(p.Forwarding)
-	if err != nil {
-		return core.ErrInvalidAttributes.Wrap(err.Error())
+func (c *HyperlaneController) HandlePacket(
+	ctx context.Context,
+	packet *types.ForwardingPacket,
+) error {
+	if packet == nil {
+		return errorsmod.Wrap(core.ErrNilPointer, "Hyperlane controller received nil packet")
 	}
 
-	err = c.ValidateForwarding(ctx, p.TransferAttributes, attr)
+	attr, err := c.ExtractAttributes(packet.Forwarding)
 	if err != nil {
-		return core.ErrValidation.Wrap(err.Error())
+		return errorsmod.Wrap(err, "error extracting Hyperlane forwarding attributes")
 	}
 
-	err = c.executeForwarding(ctx, p.TransferAttributes, attr, p.Forwarding.PassthroughPayload)
+	err = c.ValidateForwarding(ctx, packet.TransferAttributes, attr)
+	if err != nil {
+		return errorsmod.Wrap(err, "error validating Hyperlane forwarding")
+	}
+
+	err = c.executeForwarding(
+		ctx,
+		packet.TransferAttributes,
+		attr,
+		packet.Forwarding.PassthroughPayload,
+	)
 	if err != nil {
 		return errorsmod.Wrap(err, "Hyperlane controller execution error")
 	}
@@ -86,9 +122,9 @@ func (c *HyperlaneController) HandlePacket(ctx context.Context, p *types.Forward
 // ExtractAttributes returns the hyperlane attributes from the forwarding
 // or an error.
 func (c *HyperlaneController) ExtractAttributes(
-	f *core.Forwarding,
+	forwarding *core.Forwarding,
 ) (*forwardingtypes.HypAttributes, error) {
-	attr, err := f.CachedAttributes()
+	attr, err := forwarding.CachedAttributes()
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "error extracting cached attributes")
 	}
@@ -109,22 +145,22 @@ func (c *HyperlaneController) ExtractAttributes(
 // valid or not.
 func (c *HyperlaneController) ValidateForwarding(
 	ctx context.Context,
-	tAttr *types.TransferAttributes,
-	hAttr *forwardingtypes.HypAttributes,
+	transferAttr *types.TransferAttributes,
+	hypAttr *forwardingtypes.HypAttributes,
 ) error {
-	tokenId := hyperlaneutil.HexAddress(hAttr.GetTokenId())
+	tokenID := hyperlaneutil.HexAddress(hypAttr.GetTokenId())
 	req := warptypes.QueryTokenRequest{
-		Id: tokenId.String(),
+		Id: tokenID.String(),
 	}
 	resp, err := c.handler.Token(ctx, &req)
 	if err != nil {
 		return errorsmod.Wrap(err, "invalid Hyperlane forwarding")
 	}
 
-	if resp.Token.OriginDenom != tAttr.DestinationDenom() {
+	if resp.Token.OriginDenom != transferAttr.DestinationDenom() {
 		return fmt.Errorf(
 			"invalid forwarding token, wanted %s, got %s",
-			resp.Token.OriginDenom, tAttr.DestinationDenom(),
+			resp.Token.OriginDenom, transferAttr.DestinationDenom(),
 		)
 	}
 
@@ -134,20 +170,20 @@ func (c *HyperlaneController) ValidateForwarding(
 // executeForwarding initiate an Hyperlane cross-chain transfer.
 func (c *HyperlaneController) executeForwarding(
 	ctx context.Context,
-	tAttr *types.TransferAttributes,
-	hAttr *forwardingtypes.HypAttributes,
+	transferAttr *types.TransferAttributes,
+	hypAttr *forwardingtypes.HypAttributes,
 	passthroughPayload []byte,
 ) error {
-	hookID := hyperlaneutil.HexAddress(hAttr.CustomHookId)
+	hookID := hyperlaneutil.HexAddress(hypAttr.CustomHookId)
 	_, err := c.handler.RemoteTransfer(ctx, &warptypes.MsgRemoteTransfer{
 		Sender:             core.ModuleAddress.String(),
-		TokenId:            hyperlaneutil.HexAddress(hAttr.GetTokenId()),
-		DestinationDomain:  hAttr.DestinationDomain,
-		Recipient:          hyperlaneutil.HexAddress(hAttr.GetRecipient()),
-		Amount:             tAttr.DestinationAmount(),
+		TokenId:            hyperlaneutil.HexAddress(hypAttr.GetTokenId()),
+		DestinationDomain:  hypAttr.DestinationDomain,
+		Recipient:          hyperlaneutil.HexAddress(hypAttr.GetRecipient()),
+		Amount:             transferAttr.DestinationAmount(),
 		CustomHookId:       &hookID,
-		GasLimit:           hAttr.GasLimit,
-		MaxFee:             hAttr.GetMaxFee(),
+		GasLimit:           hypAttr.GasLimit,
+		MaxFee:             hypAttr.GetMaxFee(),
 		CustomHookMetadata: string(passthroughPayload),
 	})
 	if err != nil {
