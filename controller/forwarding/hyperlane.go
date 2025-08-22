@@ -2,6 +2,7 @@ package forwarding
 
 import (
 	"context"
+	"fmt"
 
 	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
@@ -18,16 +19,18 @@ import (
 
 var _ types.ControllerForwarding = &HyperlaneController{}
 
+// HyperlaneController is the forwarding controller for the Hyperlane protocol.
 type HyperlaneController struct {
 	*controller.BaseController[core.ProtocolID]
-
-	logger log.Logger
-	server forwardingtypes.HyperlaneMsgServer
+	logger  log.Logger
+	handler forwardingtypes.HyperlaneHandler
 }
 
+// NewHyperlaneController returns a validated instance of the Hyperlane
+// controller.
 func NewHyperlaneController(
 	l log.Logger,
-	msgServer forwardingtypes.HyperlaneMsgServer,
+	handler forwardingtypes.HyperlaneHandler,
 ) (*HyperlaneController, error) {
 	if l == nil {
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
@@ -40,12 +43,13 @@ func NewHyperlaneController(
 	c := HyperlaneController{
 		BaseController: b,
 		logger:         l,
-		server:         msgServer,
+		handler:        handler,
 	}
 
 	return &c, c.Validate()
 }
 
+// Validate returns an error if any of the Hyperlane controller's field is not valid.
 func (c *HyperlaneController) Validate() error {
 	if c.logger == nil {
 		return core.ErrNilPointer.Wrap("logger is required for the Hyperlane controller")
@@ -53,7 +57,7 @@ func (c *HyperlaneController) Validate() error {
 	if c.BaseController == nil {
 		return core.ErrNilPointer.Wrap("base controller is required for the Hyperlane controller")
 	}
-	if c.server == nil {
+	if c.handler == nil {
 		return core.ErrNilPointer.Wrap("server is required for the Hyperlance controller")
 	}
 	return nil
@@ -66,12 +70,12 @@ func (c *HyperlaneController) HandlePacket(ctx context.Context, p *types.Forward
 		return core.ErrInvalidAttributes.Wrap(err.Error())
 	}
 
-	err = c.ValidateAttributes(attr)
+	err = c.ValidateForwarding(ctx, p.TransferAttributes, attr)
 	if err != nil {
 		return core.ErrValidation.Wrap(err.Error())
 	}
 
-	err = c.executeForwarding(ctx, p.TransferAttributes, attr)
+	err = c.executeForwarding(ctx, p.TransferAttributes, attr, p.Forwarding.PassthroughPayload)
 	if err != nil {
 		return errorsmod.Wrap(err, "Hyperlane controller execution error")
 	}
@@ -79,6 +83,8 @@ func (c *HyperlaneController) HandlePacket(ctx context.Context, p *types.Forward
 	return nil
 }
 
+// ExtractAttributes returns the hyperlane attributes from the forwarding
+// or an error.
 func (c *HyperlaneController) ExtractAttributes(
 	f *core.Forwarding,
 ) (*forwardingtypes.HypAttributes, error) {
@@ -99,32 +105,53 @@ func (c *HyperlaneController) ExtractAttributes(
 	return hypAttr, nil
 }
 
-func (c *HyperlaneController) ValidateAttributes(
-	a *forwardingtypes.HypAttributes,
-) error {
-	return nil
-}
-
-func (c *HyperlaneController) executeForwarding(
+// ValidateForwarding checks whether the attributes received for execute a forwarding are
+// valid or not.
+func (c *HyperlaneController) ValidateForwarding(
 	ctx context.Context,
 	tAttr *types.TransferAttributes,
 	hAttr *forwardingtypes.HypAttributes,
 ) error {
+	tokenId := hyperlaneutil.HexAddress(hAttr.GetTokenId())
+	req := warptypes.QueryTokenRequest{
+		Id: tokenId.String(),
+	}
+	resp, err := c.handler.Token(ctx, &req)
+	if err != nil {
+		return errorsmod.Wrap(err, "invalid Hyperlane forwarding")
+	}
+
+	if resp.Token.OriginDenom != tAttr.DestinationDenom() {
+		return fmt.Errorf(
+			"invalid forwarding token, wanted %s, got %s",
+			resp.Token.OriginDenom, tAttr.DestinationDenom(),
+		)
+	}
+
+	return nil
+}
+
+// executeForwarding initiate an Hyperlane cross-chain transfer.
+func (c *HyperlaneController) executeForwarding(
+	ctx context.Context,
+	tAttr *types.TransferAttributes,
+	hAttr *forwardingtypes.HypAttributes,
+	passthroughPayload []byte,
+) error {
 	hookID := hyperlaneutil.HexAddress(hAttr.CustomHookId)
-	msg := warptypes.MsgRemoteTransfer{
+	_, err := c.handler.RemoteTransfer(ctx, &warptypes.MsgRemoteTransfer{
 		Sender:             core.ModuleAddress.String(),
-		TokenId:            hyperlaneutil.HexAddress{},
+		TokenId:            hyperlaneutil.HexAddress(hAttr.GetTokenId()),
 		DestinationDomain:  hAttr.DestinationDomain,
-		Recipient:          hyperlaneutil.HexAddress(hAttr.ExternalRecipient),
+		Recipient:          hyperlaneutil.HexAddress(hAttr.GetRecipient()),
 		Amount:             tAttr.DestinationAmount(),
 		CustomHookId:       &hookID,
 		GasLimit:           hAttr.GasLimit,
 		MaxFee:             hAttr.GetMaxFee(),
-		CustomHookMetadata: "",
-	}
-	_, err := c.server.RemoteTransfer(ctx, &msg)
+		CustomHookMetadata: string(passthroughPayload),
+	})
 	if err != nil {
-		return err
+		return errorsmod.Wrap(err, "error executing Hyperlane forwarding")
 	}
 
 	return nil
