@@ -91,6 +91,7 @@ func (a *HypAttributes) Validate() error {
 		a.DestinationDomain == HypNobleTestnetDomain {
 		return fmt.Errorf("destination domain %d is a Noble domain", a.DestinationDomain)
 	}
+
 	return nil
 }
 

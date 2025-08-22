@@ -118,8 +118,8 @@ func TestExtractAttributes_Hyperlane(t *testing.T) {
 				f, err := forwardingtypes.NewHyperlaneForwarding(
 					usdnID,
 					0,
-					[]byte("recipient"),
-					[]byte("custom hook id"),
+					make([]byte, 32),
+					make([]byte, 32),
 					math.NewInt(1),
 					sdk.NewInt64Coin("usdn", 1),
 					[]byte{},
@@ -131,8 +131,8 @@ func TestExtractAttributes_Hyperlane(t *testing.T) {
 			expHypAttr: forwardingtypes.HypAttributes{
 				TokenId:           []byte("token id"),
 				DestinationDomain: 0,
-				Recipient:         []byte("recipient"),
-				CustomHookId:      []byte("custom hook id"),
+				Recipient:         make([]byte, 32),
+				CustomHookId:      make([]byte, 32),
 				GasLimit:          math.NewInt(1),
 				MaxFee:            sdk.NewInt64Coin("usdn", 1),
 			},
@@ -196,8 +196,8 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 			hypAttr: forwardingtypes.HypAttributes{
 				TokenId:           usdnID,
 				DestinationDomain: 0,
-				Recipient:         []byte("recipient"),
-				CustomHookId:      []byte("custom hook id"),
+				Recipient:         make([]byte, 32),
+				CustomHookId:      make([]byte, 32),
 				GasLimit:          math.NewInt(1),
 				MaxFee:            sdk.NewInt64Coin("usdn", 1),
 			},
@@ -220,8 +220,8 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 			hypAttr: forwardingtypes.HypAttributes{
 				TokenId:           usdnID,
 				DestinationDomain: 0,
-				Recipient:         []byte("recipient"),
-				CustomHookId:      []byte("custom hook id"),
+				Recipient:         make([]byte, 32),
+				CustomHookId:      make([]byte, 32),
 				GasLimit:          math.NewInt(1),
 				MaxFee:            sdk.NewInt64Coin("usdn", 1),
 			},
@@ -233,8 +233,8 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 			hypAttr: forwardingtypes.HypAttributes{
 				TokenId:           usdnID,
 				DestinationDomain: 0,
-				Recipient:         []byte("recipient"),
-				CustomHookId:      []byte("custom hook id"),
+				Recipient:         make([]byte, 32),
+				CustomHookId:      make([]byte, 32),
 				GasLimit:          math.NewInt(1),
 				MaxFee:            sdk.NewInt64Coin("usdn", 1),
 			},
@@ -310,8 +310,8 @@ func TestHandlerPacket_Hyperlane(t *testing.T) {
 				f, err := forwardingtypes.NewHyperlaneForwarding(
 					usdnID,
 					0,
-					[]byte{},
-					[]byte{},
+					make([]byte, 32),
+					make([]byte, 32),
 					math.ZeroInt(),
 					sdk.NewCoin("usdn", math.ZeroInt()),
 					[]byte{},
@@ -339,6 +339,7 @@ func TestHandlerPacket_Hyperlane(t *testing.T) {
 				}
 
 				m.Tokens[hypToken.Id] = *hypToken
+
 				return context.WithValue(context.Background(), mocks.FailingContextKey, true)
 			},
 			packet: func() *types.ForwardingPacket {
@@ -382,6 +383,7 @@ func TestHandlerPacket_Hyperlane(t *testing.T) {
 				}
 
 				m.Tokens[hypToken.Id] = *hypToken
+
 				return context.Background()
 			},
 			packet: func() *types.ForwardingPacket {
