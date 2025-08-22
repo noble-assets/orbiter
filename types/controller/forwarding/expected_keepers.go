@@ -39,10 +39,14 @@ type CCTPMsgServer interface {
 	) (*cctptypes.MsgReplaceDepositForBurnResponse, error)
 }
 
-// HyperlaneMsgServer defines the expected behavior for the Hyperlane server.
-type HyperlaneMsgServer interface {
+// HyperlaneHandler defines the expected behavior for the Hyperlane server.
+type HyperlaneHandler interface {
 	RemoteTransfer(
 		ctx context.Context,
 		msg *warptypes.MsgRemoteTransfer,
 	) (*warptypes.MsgRemoteTransferResponse, error)
+	Token(
+		ctx context.Context,
+		request *warptypes.QueryTokenRequest,
+	) (*warptypes.QueryTokenResponse, error)
 }
