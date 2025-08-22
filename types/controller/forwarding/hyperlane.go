@@ -31,11 +31,11 @@ import (
 )
 
 const (
-	HypTokenIDLen    = 32
-	HypRecipientLen  = 32
-	HypCustomHookLen = 32
-	// TODO: ?
-	HypNobleDomain = 0
+	HypTokenIDLen         = 32
+	HypRecipientLen       = 32
+	HypCustomHookLen      = 32
+	HypNobleTestnetDomain = 1196573006
+	HypNobleMainnetDomain = 1313817164
 )
 
 // NewHyperlaneAttributes creates and validates new Hyperlane forwarding attributes.
@@ -87,8 +87,9 @@ func (a *HypAttributes) Validate() error {
 			len(a.CustomHookId),
 		)
 	}
-	if a.DestinationDomain == HypNobleDomain {
-		return fmt.Errorf("destination domain %d is Noble domain", HypNobleDomain)
+	if a.DestinationDomain == HypNobleMainnetDomain ||
+		a.DestinationDomain == HypNobleTestnetDomain {
+		return fmt.Errorf("destination domain %d is a Noble domain", a.DestinationDomain)
 	}
 	return nil
 }
