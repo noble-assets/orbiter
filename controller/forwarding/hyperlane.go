@@ -42,6 +42,7 @@ var _ types.ControllerForwarding = &HyperlaneController{}
 // HyperlaneController is the forwarding controller for the Hyperlane protocol.
 type HyperlaneController struct {
 	*controller.BaseController[core.ProtocolID]
+
 	logger  log.Logger
 	handler forwardingtypes.HyperlaneHandler
 }
@@ -84,6 +85,7 @@ func (c *HyperlaneController) Validate() error {
 	if c.handler == nil {
 		return core.ErrNilPointer.Wrap("handler is required for the Hyperlance controller")
 	}
+
 	return nil
 }
 
