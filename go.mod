@@ -3,7 +3,7 @@ module github.com/noble-assets/orbiter
 go 1.24
 
 require (
-	cosmossdk.io/api v0.9.2
+	cosmossdk.io/api v0.9.1
 	cosmossdk.io/collections v1.2.1
 	cosmossdk.io/core v0.11.3
 	cosmossdk.io/depinject v1.2.1
