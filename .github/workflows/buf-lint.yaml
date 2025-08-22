@@ -5,7 +5,7 @@ on:
       - main
   pull_request:
     paths:
-      - '*.proto'
+      - '**/*.proto'
 
 permissions:
   contents: read
