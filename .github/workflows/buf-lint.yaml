@@ -1,0 +1,24 @@
+name: Lint codebase
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - '*.proto'
+
+permissions:
+  contents: read
+
+jobs:
+  lint-protos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install buf
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Lint protos
+        uses: bufbuild/buf-lint-action@v1
