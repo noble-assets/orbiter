@@ -21,7 +21,6 @@
 package forwarding
 
 import (
-	"errors"
 	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
@@ -29,6 +28,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/noble-assets/orbiter/types/core"
+)
+
+const (
+	HypTokenIDLen    = 32
+	HypRecipientLen  = 32
+	HypCustomHookLen = 32
+	// TODO: ?
+	HypNobleDomain = 0
 )
 
 // NewHyperlaneAttributes creates and validates new Hyperlane forwarding attributes.
@@ -59,8 +66,29 @@ func NewHyperlaneAttributes(
 
 // Validate performs validation on the Hyperlane attributes.
 func (a *HypAttributes) Validate() error {
-	if len(a.TokenId) != 32 {
-		return errors.New("token ID must be 32 bytes")
+	if len(a.TokenId) != HypTokenIDLen {
+		return fmt.Errorf(
+			"token ID must be %d bytes, received %d bytes",
+			HypTokenIDLen,
+			len(a.TokenId),
+		)
+	}
+	if len(a.Recipient) != HypRecipientLen {
+		return fmt.Errorf(
+			"recipient must be %d bytes, received %d bytes",
+			HypRecipientLen,
+			len(a.Recipient),
+		)
+	}
+	if len(a.CustomHookId) != HypCustomHookLen {
+		return fmt.Errorf(
+			"custom hook ID must be %d bytes, received %d bytes",
+			HypCustomHookLen,
+			len(a.CustomHookId),
+		)
+	}
+	if a.DestinationDomain == HypNobleDomain {
+		return fmt.Errorf("destination domain %d is Noble domain", HypNobleDomain)
 	}
 	return nil
 }
