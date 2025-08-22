@@ -1,4 +1,4 @@
-name: Nancy Vulnerability Scanner
+name: Scan Vulnerabilities
 
 on:
   pull_request:
@@ -21,3 +21,18 @@ jobs:
 
     - name: Run Nancy vulnerability scanner
       run: make nancy
+
+  vulncheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Run vulncheck
+        run: go tool govulncheck ./...
