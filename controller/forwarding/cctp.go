@@ -94,6 +94,10 @@ func (c *CCTPController) Validate() error {
 
 // HandlePacket validates and process a CCTP cross-chain transfer.
 func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.ForwardingPacket) error {
+	if packet == nil {
+		return errorsmod.Wrap(core.ErrNilPointer, "CCTP controller received nil packet")
+	}
+
 	attr, err := c.ExtractAttributes(packet.Forwarding)
 	if err != nil {
 		return core.ErrInvalidAttributes.Wrap(err.Error())
