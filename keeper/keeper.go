@@ -229,7 +229,7 @@ func (k *Keeper) setComponents(
 		return errorsmod.Wrap(err, "error creating a new action component")
 	}
 
-	forwarder, err := forwardercomp.New(cdc, sb, logger, bankKeeper)
+	forwarder, err := forwardercomp.New(cdc, sb, logger, eventService, bankKeeper)
 	if err != nil {
 		return errorsmod.Wrap(err, "error creating a new forwarding component")
 	}
