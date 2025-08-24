@@ -26,6 +26,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	"cosmossdk.io/core/event"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -40,7 +41,8 @@ type ActionRouter = *router.Router[core.ActionID, types.ControllerAction]
 var _ types.Executor = &Executor{}
 
 type Executor struct {
-	logger log.Logger
+	logger       log.Logger
+	eventService event.Service
 	// router is an action controllers router.
 	router ActionRouter
 	// PausedActions keeps track of the ids of paused actions.
@@ -52,6 +54,7 @@ func New(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
+	eventService event.Service,
 ) (*Executor, error) {
 	if cdc == nil {
 		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
@@ -62,9 +65,14 @@ func New(
 	if logger == nil {
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
+	if eventService == nil {
+		return nil, core.ErrNilPointer.Wrap("eventService cannot be nil")
+	}
+
 	executor := Executor{
-		logger: logger.With(core.ComponentPrefix, core.ExecutorName),
-		router: router.New[core.ActionID, types.ControllerAction](),
+		logger:       logger.With(core.ComponentPrefix, core.ExecutorName),
+		eventService: eventService,
+		router:       router.New[core.ActionID, types.ControllerAction](),
 		PausedActions: collections.NewKeySet(
 			sb,
 			core.PausedActionsPrefix,

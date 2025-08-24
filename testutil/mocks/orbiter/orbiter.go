@@ -55,6 +55,7 @@ func orbiterKeeperWithMocks(
 		addressCodec,
 		deps.Logger,
 		deps.StoreService,
+		deps.EventService,
 		testutil.Authority,
 		m.BankKeeper,
 	)

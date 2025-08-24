@@ -225,6 +225,7 @@ func testIbcPassingWithFeeAction(
 
 	found, _ := SearchEvents(txsResult.Txs[0].Events, []string{
 		"circle.cctp.v1.DepositForBurn",
+		// TODO: check for action events here?
 	})
 	require.True(t, found)
 

@@ -25,6 +25,7 @@ import (
 
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/core/event"
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/depinject"
 	errorsmod "cosmossdk.io/errors"
@@ -56,6 +57,7 @@ type ModuleInputs struct {
 	AddressCodec address.Codec
 	Logger       log.Logger
 
+	EventService event.Service
 	StoreService store.KVStoreService
 
 	BankKeeper types.BankKeeper
@@ -80,6 +82,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.AddressCodec,
 		in.Logger,
 		in.StoreService,
+		in.EventService,
 		authority.String(),
 		in.BankKeeper,
 	)

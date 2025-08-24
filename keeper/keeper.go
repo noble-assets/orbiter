@@ -26,6 +26,7 @@ import (
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
+	"cosmossdk.io/core/event"
 	"cosmossdk.io/core/store"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
@@ -43,8 +44,9 @@ var _ types.Authorizer = &Keeper{}
 
 // Keeper is the main module keeper.
 type Keeper struct {
-	cdc    codec.Codec
-	logger log.Logger
+	cdc          codec.Codec
+	logger       log.Logger
+	eventService event.Service
 
 	// authority represents the module manager.
 	authority string
@@ -63,22 +65,24 @@ func NewKeeper(
 	addressCdc address.Codec,
 	logger log.Logger,
 	storeService store.KVStoreService,
+	eventService event.Service,
 	authority string,
 	bankKeeper types.BankKeeper,
 ) *Keeper {
-	if err := validateKeeperInputs(cdc, addressCdc, logger, storeService, authority); err != nil {
+	if err := validateKeeperInputs(cdc, addressCdc, logger, storeService, eventService, authority); err != nil {
 		panic(err)
 	}
 
 	sb := collections.NewSchemaBuilder(storeService)
 
 	k := Keeper{
-		cdc:       cdc,
-		logger:    logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
-		authority: authority,
+		cdc:          cdc,
+		eventService: eventService,
+		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
+		authority:    authority,
 	}
 
-	if err := k.setComponents(k.cdc, k.logger, sb, bankKeeper); err != nil {
+	if err := k.setComponents(k.cdc, k.logger, k.eventService, sb, bankKeeper); err != nil {
 		panic(err)
 	}
 
@@ -100,6 +104,7 @@ func validateKeeperInputs(
 	addressCdc address.Codec,
 	logger log.Logger,
 	storeService store.KVStoreService,
+	eventService event.Service,
 	authority string,
 ) error {
 	if cdc == nil {
@@ -110,6 +115,9 @@ func validateKeeperInputs(
 	}
 	if storeService == nil {
 		return errors.New("store service cannot be nil")
+	}
+	if eventService == nil {
+		return errors.New("event service cannot be nil")
 	}
 	if addressCdc == nil {
 		return errors.New("address codec cannot be nil")
@@ -212,10 +220,11 @@ func (k *Keeper) RequireAuthority(signer string) error {
 func (k *Keeper) setComponents(
 	cdc codec.Codec,
 	logger log.Logger,
+	eventService event.Service,
 	sb *collections.SchemaBuilder,
 	bankKeeper types.BankKeeper,
 ) error {
-	executor, err := executorcomp.New(cdc, sb, logger)
+	executor, err := executorcomp.New(cdc, sb, logger, eventService)
 	if err != nil {
 		return errorsmod.Wrap(err, "error creating a new action component")
 	}

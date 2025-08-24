@@ -23,6 +23,8 @@ package executor
 import (
 	"context"
 
+	errorsmod "cosmossdk.io/errors"
+
 	"github.com/noble-assets/orbiter/types"
 	executortypes "github.com/noble-assets/orbiter/types/component/executor"
 	"github.com/noble-assets/orbiter/types/core"
@@ -63,6 +65,19 @@ func (s msgServer) PauseAction(
 		)
 	}
 
+	// TODO: currently this is also emitting an event on a no-op (if already paused), which is not
+	// sensible TODO: should this revert in case of a problem with error emitting? Seems common to
+	// do so in Cosmos SDK
+	// TODO: should this emit a consensus event? or use EmitNonConsensus instead?
+	if err := s.eventService.EventManager(ctx).Emit(
+		ctx,
+		&executortypes.EventPaused{
+			ActionId: actionID,
+		},
+	); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to emit event")
+	}
+
 	return &executortypes.MsgPauseActionResponse{}, nil
 }
 
@@ -86,6 +101,16 @@ func (s msgServer) UnpauseAction(
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"action: %s", err.Error(),
 		)
+	}
+
+	// TODO: currently this is also emitting an event on a no-op, which is not sensible
+	if err := s.eventService.EventManager(ctx).Emit(
+		ctx,
+		&executortypes.EventUnpaused{
+			ActionId: actionID,
+		},
+	); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to emit event")
 	}
 
 	return &executortypes.MsgUnpauseActionResponse{}, nil
