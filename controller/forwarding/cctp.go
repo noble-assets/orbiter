@@ -109,6 +109,8 @@ func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.Forward
 		return errorsmod.Wrap(err, "CCTP controller execution error")
 	}
 
+	// TODO: check if we want to emit another event here? I guess there should already be one for the `MsgDepositForBurn` call.
+
 	return nil
 }
 
