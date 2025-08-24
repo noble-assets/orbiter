@@ -65,9 +65,6 @@ func New(
 	if logger == nil {
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
-	if eventService == nil {
-		return nil, core.ErrNilPointer.Wrap("eventService cannot be nil")
-	}
 
 	executor := Executor{
 		logger:       logger.With(core.ComponentPrefix, core.ExecutorName),
@@ -89,6 +86,9 @@ func (e *Executor) Validate() error {
 	if e.logger == nil {
 		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
+	if e.eventService == nil {
+		return core.ErrNilPointer.Wrap("eventService cannot be nil")
+	}
 	if e.router == nil {
 		return core.ErrNilPointer.Wrap("router cannot be nil")
 	}
@@ -98,6 +98,10 @@ func (e *Executor) Validate() error {
 
 func (e *Executor) Logger() log.Logger {
 	return e.logger
+}
+
+func (e *Executor) EventService() event.Service {
+	return e.eventService
 }
 
 func (e *Executor) Router() ActionRouter {

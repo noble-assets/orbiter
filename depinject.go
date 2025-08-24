@@ -126,6 +126,7 @@ func InjectOrbitControllers(in ComponentsInputs) {
 func InjectActionControllers(in ComponentsInputs) {
 	fee, err := actionctrl.NewFeeController(
 		in.Orbiters.Executor().Logger(),
+		in.Orbiters.Executor().EventService(),
 		in.BankKeeper,
 	)
 	if err != nil {

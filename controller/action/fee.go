@@ -23,6 +23,7 @@ package action
 import (
 	"context"
 
+	"cosmossdk.io/core/event"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
@@ -42,14 +43,16 @@ var _ types.ControllerAction = &FeeController{}
 type FeeController struct {
 	*controller.BaseController[core.ActionID]
 
-	logger     log.Logger
-	BankKeeper actiontypes.BankKeeperFee
+	logger       log.Logger
+	eventService event.Service
+	BankKeeper   actiontypes.BankKeeperFee
 }
 
 // NewFeeController returns a new validated instance of
 // the fee controller.
 func NewFeeController(
 	logger log.Logger,
+	eventService event.Service,
 	bankKeeper actiontypes.BankKeeperFee,
 ) (*FeeController, error) {
 	if logger == nil {
@@ -64,6 +67,7 @@ func NewFeeController(
 
 	feeController := FeeController{
 		logger:         logger.With("action", baseController.Name()),
+		eventService:   eventService,
 		BaseController: baseController,
 		BankKeeper:     bankKeeper,
 	}
@@ -73,6 +77,9 @@ func NewFeeController(
 
 // Validate performs basic validation for the fee controller.
 func (c *FeeController) Validate() error {
+	if c.eventService == nil {
+		return core.ErrNilPointer.Wrap("eventService cannot be nil")
+	}
 	if c.BaseController == nil {
 		return core.ErrNilPointer.Wrap("base controller cannot be nil")
 	}
@@ -115,6 +122,16 @@ func (c *FeeController) HandlePacket(
 	transferAttr.SetDestinationAmount(
 		transferAttr.DestinationAmount().Sub(feesToDistribute.Total),
 	)
+
+	// TODO: is this where we want to emit the event?
+	if err = c.eventService.EventManager(ctx).Emit(
+		ctx,
+		&actiontypes.EventFeeAction{
+			FeesInfo: attr.GetFeesInfo(),
+		},
+	); err != nil {
+		return errorsmod.Wrap(err, "failed to emit event")
+	}
 
 	return nil
 }
