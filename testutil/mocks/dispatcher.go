@@ -75,6 +75,7 @@ func NewDispatcherComponent(tb testing.TB) (*dispatcher.Dispatcher, *Dependencie
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
+		deps.EventService,
 		&ForwardingHandler{},
 		&ActionsHandler{},
 	)

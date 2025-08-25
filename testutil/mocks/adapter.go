@@ -42,6 +42,7 @@ func NewAdapterComponent(tb testing.TB) (*adapter.Adapter, *Dependencies) {
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
+		deps.EventService,
 		&ForwardingHandler{},
 		&ActionsHandler{},
 	)

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package noble.orbiter.component.dispatcher.v1;
+
+import "noble/orbiter/core/v1/orbiter.proto";
+
+option go_package = "github.com/noble-assets/orbiter/types/component/dispatcher";
+
+message EventDispatchSuccessful {
+  noble.orbiter.core.v1.Payload payload = 1;
+}

@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	"cosmossdk.io/core/event"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -39,7 +40,9 @@ var _ types.PayloadDispatcher = &Dispatcher{}
 // Dispatcher is a component used to orchestrate the dispatch of an incoming orbiter
 // packet. The dispatcher keeps track of the statistics associated with the handled dispatches.
 type Dispatcher struct {
-	logger log.Logger
+	logger       log.Logger
+	eventService event.Service
+
 	// Packet elements handlers
 	ForwardingHandler types.PacketHandler[*types.ForwardingPacket]
 	ActionHandler     types.PacketHandler[*types.ActionPacket]
@@ -53,6 +56,7 @@ func New(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
+	eventService event.Service,
 	forwardingHandler types.PacketHandler[*types.ForwardingPacket],
 	actionHandler types.PacketHandler[*types.ActionPacket],
 ) (*Dispatcher, error) {
@@ -68,6 +72,7 @@ func New(
 
 	d := Dispatcher{
 		logger:            logger.With(core.ComponentPrefix, core.DispatcherName),
+		eventService:      eventService,
 		ForwardingHandler: forwardingHandler,
 		ActionHandler:     actionHandler,
 		dispatchedAmounts: collections.NewIndexedMap(
@@ -106,6 +111,9 @@ func (d *Dispatcher) Validate() error {
 	if d.logger == nil {
 		return core.ErrNilPointer.Wrap("logger is not set")
 	}
+	if d.eventService == nil {
+		return core.ErrNilPointer.Wrap("event service is not set")
+	}
 	if d.ForwardingHandler == nil {
 		return core.ErrNilPointer.Wrap("forwarding handler is not set")
 	}
@@ -143,6 +151,15 @@ func (d *Dispatcher) DispatchPayload(
 	if err := d.UpdateStats(ctx, transferAttr, payload.Forwarding); err != nil {
 		// NOTE: we don't want to interrupt a dispatch in case the stats are not updated.
 		d.logger.Error("Error updating Orbiter statistics", "error", err)
+	}
+
+	if err := d.eventService.EventManager(ctx).Emit(
+		ctx,
+		&dispatchertypes.EventDispatchSuccessful{
+			Payload: payload,
+		},
+	); err != nil {
+		return errorsmod.Wrap(err, "failed to emit event")
 	}
 
 	return nil
@@ -193,10 +210,8 @@ func (d *Dispatcher) dispatchActions(
 		if err != nil {
 			return errorsmod.Wrapf(err, "error dispatching action %s packet", action.ID())
 		}
-
-		// TODO: check if event should be emitted on this level? or in executor when actually
-		// handling the packet logic?
 	}
+
 	d.logger.Debug("completed actions dispatching")
 
 	return nil
