@@ -225,9 +225,9 @@ func testIbcPassingWithFeeAction(
 
 	found, _ := SearchEvents(txsResult.Txs[0].Events, []string{
 		"circle.cctp.v1.DepositForBurn",
-		"noble.orbiter.controller.action.fee.v1.EventFeeAction",
+		"noble.orbiter.controller.action.v1.EventFeeAction",
 	})
-	require.True(t, found)
+	require.True(t, found, "expected events not found")
 
 	feeAmt, err := s.Chain.BankQueryBalance(ctx, feeRecipientAddr, "uusdc")
 	require.NoError(t, err)
