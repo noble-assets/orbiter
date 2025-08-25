@@ -81,8 +81,8 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.Codec,
 		in.AddressCodec,
 		in.Logger,
-		in.StoreService,
 		in.EventService,
+		in.StoreService,
 		authority.String(),
 		in.BankKeeper,
 	)

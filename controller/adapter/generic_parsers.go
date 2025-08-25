@@ -22,6 +22,7 @@ package adapter
 
 import (
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/noble-assets/orbiter/types"
