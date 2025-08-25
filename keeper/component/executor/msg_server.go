@@ -65,10 +65,6 @@ func (s msgServer) PauseAction(
 		)
 	}
 
-	// TODO: currently this is also emitting an event on a no-op (if already paused), which is not
-	// sensible TODO: should this revert in case of a problem with error emitting? Seems common to
-	// do so in Cosmos SDK
-	// TODO: should this emit a consensus event? or use EmitNonConsensus instead?
 	if err := s.eventService.EventManager(ctx).Emit(
 		ctx,
 		&executortypes.EventPaused{

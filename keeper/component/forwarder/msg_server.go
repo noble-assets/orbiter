@@ -113,9 +113,6 @@ func (s msgServer) PauseCrossChains(
 		)
 	}
 
-	// TODO: all of the methods in this file are also emitting events on no-ops, could again be
-	// checked if e.g. ErrNoOp was returned
-	// that would also help with abstraction IMO!
 	if err := s.eventService.EventManager(ctx).Emit(
 		ctx,
 		&forwardertypes.EventCrossChainsPaused{

@@ -43,7 +43,7 @@ func (e *Executor) SetPausedAction(ctx context.Context, id core.ActionID) error 
 	}
 	// Already paused, no-op
 	if paused {
-		return nil
+		return core.ErrAlreadySet.Wrapf("paused=%v", paused)
 	}
 
 	return e.PausedActions.Set(ctx, int32(id))
@@ -59,16 +59,8 @@ func (e *Executor) SetUnpausedAction(ctx context.Context, id core.ActionID) erro
 		return err
 	}
 	// Already unpaused, no-op
-	//
-	// TODO: this messes with the event logic -- in case of a no-op there would still be an event
-	// emitted because this is not returning an error; otherwise we'd have to emit the errors down
-	// here which
-	// would be an anti-pattern
-	//
-	// Solution could be to return a given ErrNoOp here for example and then check using
-	// errors.Is(...) on the levels above?
 	if !paused {
-		return nil
+		return core.ErrAlreadySet.Wrapf("paused=%v", paused)
 	}
 
 	return e.PausedActions.Remove(ctx, int32(id))
