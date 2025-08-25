@@ -41,6 +41,7 @@ func NewExecutorComponent(tb testing.TB) (*executor.Executor, *Dependencies) {
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
+		deps.EventService,
 	)
 	require.NoError(tb, err, "failed to create executor component")
 

@@ -225,6 +225,7 @@ func testIbcPassingWithFeeAction(
 
 	found, _ := SearchEvents(txsResult.Txs[0].Events, []string{
 		"circle.cctp.v1.DepositForBurn",
+		"noble.orbiter.controller.action.fee.v1.EventFeeAction",
 	})
 	require.True(t, found)
 

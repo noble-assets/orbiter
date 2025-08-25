@@ -22,7 +22,6 @@ package adapter
 
 import (
 	"encoding/json"
-	"errors"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -40,7 +39,7 @@ type JSONParser struct {
 // NewJSONParser returns a reference to a JSONParser instance.
 func NewJSONParser(cdc codec.Codec) (*JSONParser, error) {
 	if cdc == nil {
-		return nil, errors.New("codec cannot be nil for JSON parser")
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil for JSON parser")
 	}
 
 	return &JSONParser{

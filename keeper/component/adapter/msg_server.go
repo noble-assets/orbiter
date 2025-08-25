@@ -52,5 +52,8 @@ func (s msgServer) UpdateParams(
 		return nil, err
 	}
 
+	// TODO: in the Cosmos SDK native modules the Params update does not emit events -- should we
+	// follow that here too?
+
 	return &adaptertypes.MsgUpdateParamsResponse{}, nil
 }

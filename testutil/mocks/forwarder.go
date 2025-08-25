@@ -41,6 +41,7 @@ func NewForwarderComponent(tb testing.TB) (*forwarder.Forwarder, *Dependencies) 
 		deps.EncCfg.Codec,
 		sb,
 		deps.Logger,
+		deps.EventService,
 		NewBankKeeper(),
 	)
 	require.NoError(tb, err)

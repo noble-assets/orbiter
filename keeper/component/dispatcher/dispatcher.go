@@ -193,6 +193,9 @@ func (d *Dispatcher) dispatchActions(
 		if err != nil {
 			return errorsmod.Wrapf(err, "error dispatching action %s packet", action.ID())
 		}
+
+		// TODO: check if event should be emitted on this level? or in executor when actually
+		// handling the packet logic?
 	}
 	d.logger.Debug("completed actions dispatching")
 

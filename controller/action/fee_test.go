@@ -110,7 +110,7 @@ func TestGetAttributes(t *testing.T) {
 
 	deps := mocks.NewDependencies(t)
 	m := mocks.NewMocks()
-	controller, err := controllers.NewFeeController(deps.Logger, m.BankKeeper)
+	controller, err := controllers.NewFeeController(deps.Logger, deps.EventService, m.BankKeeper)
 	require.NoError(t, err)
 
 	for _, tC := range testCases {
@@ -293,7 +293,7 @@ func TestComputeFeesToDistribute(t *testing.T) {
 
 	deps := mocks.NewDependencies(t)
 	m := mocks.NewMocks()
-	controller, err := controllers.NewFeeController(deps.Logger, m.BankKeeper)
+	controller, err := controllers.NewFeeController(deps.Logger, deps.EventService, m.BankKeeper)
 	require.NoError(t, err)
 
 	for _, tC := range testCases {
@@ -456,7 +456,7 @@ func TestValidateAttributes(t *testing.T) {
 
 	deps := mocks.NewDependencies(t)
 	m := mocks.NewMocks()
-	controller, err := controllers.NewFeeController(deps.Logger, m.BankKeeper)
+	controller, err := controllers.NewFeeController(deps.Logger, deps.EventService, m.BankKeeper)
 	require.NoError(t, err)
 
 	for _, tC := range testCases {
@@ -551,7 +551,7 @@ func TestHandlePacket(t *testing.T) {
 
 	deps := mocks.NewDependencies(t)
 	m := mocks.NewMocks()
-	controller, err := controllers.NewFeeController(deps.Logger, m.BankKeeper)
+	controller, err := controllers.NewFeeController(deps.Logger, deps.EventService, m.BankKeeper)
 	require.NoError(t, err)
 
 	for _, tC := range testCases {
@@ -571,6 +571,10 @@ func TestHandlePacket(t *testing.T) {
 				require.NoError(t, err)
 				tC.postCheck(&m)
 				require.Equal(t, tC.expTransferAttr(), transferAttr)
+
+				events := deps.SdkCtx.EventManager().Events()
+				require.Len(t, events, 1)
+				require.Contains(t, events[0].Type, "EventFeeAction")
 			}
 		})
 	}
