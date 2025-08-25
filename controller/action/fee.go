@@ -66,7 +66,7 @@ func NewFeeController(
 	}
 
 	feeController := FeeController{
-		logger:         logger.With("action", baseController.Name()),
+		logger:         logger.With(core.ActionControllerName, baseController.Name()),
 		eventService:   eventService,
 		BaseController: baseController,
 		BankKeeper:     bankKeeper,
@@ -77,6 +77,9 @@ func NewFeeController(
 
 // Validate performs basic validation for the fee controller.
 func (c *FeeController) Validate() error {
+	if c.logger == nil {
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
+	}
 	if c.eventService == nil {
 		return core.ErrNilPointer.Wrap("event service cannot be nil")
 	}
