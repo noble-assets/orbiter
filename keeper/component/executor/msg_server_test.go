@@ -135,9 +135,6 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 				// ASSERT: should only contain the unpause event
 				events := ctx.EventManager().Events()
 				require.Len(t, events, 1)
-				// TODO: since the messages etc. are also going to be developer / user facing --
-				// should this rather be `Pause` and `Resume`? Or `Disable`/`Enable`? Would be
-				// ebtter english..
 				require.Contains(t, events[0].Type, "EventUnpaused")
 			}
 		})

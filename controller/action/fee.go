@@ -126,7 +126,6 @@ func (c *FeeController) HandlePacket(
 		transferAttr.DestinationAmount().Sub(feesToDistribute.Total),
 	)
 
-	// TODO: is this where we want to emit the event?
 	if err = c.eventService.EventManager(ctx).Emit(
 		ctx,
 		&actiontypes.EventFeeAction{

@@ -190,7 +190,5 @@ func (s msgServer) ReplaceDepositForBurn(
 		return nil, err
 	}
 
-	// TODO: I don't think we need an event for the `MsgReplaceDeposit...` -- clarify?
-
 	return &forwardertypes.MsgReplaceDepositForBurnResponse{}, nil
 }

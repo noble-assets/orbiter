@@ -99,7 +99,6 @@ func (s msgServer) UnpauseAction(
 		)
 	}
 
-	// TODO: currently this is also emitting an event on a no-op, which is not sensible
 	if err := s.eventService.EventManager(ctx).Emit(
 		ctx,
 		&executortypes.EventUnpaused{
