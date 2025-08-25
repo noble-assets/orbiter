@@ -69,7 +69,7 @@ func NewKeeper(
 	authority string,
 	bankKeeper types.BankKeeper,
 ) *Keeper {
-	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, authority); err != nil {
+	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, bankKeeper, authority); err != nil {
 		panic(err)
 	}
 
@@ -105,6 +105,7 @@ func validateKeeperInputs(
 	logger log.Logger,
 	eventService event.Service,
 	storeService store.KVStoreService,
+	bankKeeper types.BankKeeper,
 	authority string,
 ) error {
 	if cdc == nil {
@@ -121,6 +122,9 @@ func validateKeeperInputs(
 	}
 	if addressCdc == nil {
 		return core.ErrNilPointer.Wrap("address codec cannot be nil")
+	}
+	if bankKeeper == nil {
+		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
 	_, err := addressCdc.StringToBytes(authority)
 	if err != nil {

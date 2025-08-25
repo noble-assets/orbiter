@@ -143,7 +143,7 @@ func (s msgServer) UnpauseCrossChains(
 
 	if err := s.eventService.EventManager(ctx).Emit(
 		ctx,
-		&forwardertypes.EventCrossChainsPaused{
+		&forwardertypes.EventCrossChainsUnpaused{
 			ProtocolId:      protocolID,
 			CounterpartyIds: msg.CounterpartyIds,
 		},
