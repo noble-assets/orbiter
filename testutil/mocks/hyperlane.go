@@ -18,35 +18,49 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package forwarding
+package mocks
 
 import (
 	"context"
+	"errors"
 
+	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
-	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
+
+	"github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
-// CCTPMsgServer defines the expected behavior for the CCTP server.
-type CCTPMsgServer interface {
-	DepositForBurnWithCaller(
-		context.Context,
-		*cctptypes.MsgDepositForBurnWithCaller,
-	) (*cctptypes.MsgDepositForBurnWithCallerResponse, error)
-	ReplaceDepositForBurn(
-		context.Context,
-		*cctptypes.MsgReplaceDepositForBurn,
-	) (*cctptypes.MsgReplaceDepositForBurnResponse, error)
+var _ forwarding.HyperlaneHandler = HyperlaneHandler{}
+
+type HyperlaneHandler struct {
+	Tokens map[string]warptypes.WrappedHypToken
 }
 
-// HyperlaneHandler defines the expected behavior for the Hyperlane server.
-type HyperlaneHandler interface {
-	RemoteTransfer(
-		ctx context.Context,
-		msg *warptypes.MsgRemoteTransfer,
-	) (*warptypes.MsgRemoteTransferResponse, error)
-	Token(
-		ctx context.Context,
-		request *warptypes.QueryTokenRequest,
-	) (*warptypes.QueryTokenResponse, error)
+// RemoteTransfer implements forwarding.HyperlaneHandler.
+func (h HyperlaneHandler) RemoteTransfer(
+	ctx context.Context,
+	msg *warptypes.MsgRemoteTransfer,
+) (*warptypes.MsgRemoteTransferResponse, error) {
+	if CheckIfFailing(ctx) {
+		return nil, errors.New("error execuring remote transfer")
+	}
+
+	return &warptypes.MsgRemoteTransferResponse{
+		MessageId: hyperlaneutil.HexAddress{},
+	}, nil
+}
+
+// Token implements forwarding.HyperlaneHandler.
+func (h HyperlaneHandler) Token(
+	ctx context.Context,
+	request *warptypes.QueryTokenRequest,
+) (*warptypes.QueryTokenResponse, error) {
+	t, found := h.Tokens[request.Id]
+	if !found {
+		return nil, errors.New("token does not exist")
+	}
+
+	return &warptypes.QueryTokenResponse{
+		Token: &t,
+	}, nil
 }

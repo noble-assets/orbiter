@@ -29,5 +29,9 @@ import (
 // RegisterInterfaces registers the forwarding attributes
 // satisfying the ForwardingAttributes interface in the module codec.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*core.ForwardingAttributes)(nil), &CCTPAttributes{})
+	registry.RegisterImplementations(
+		(*core.ForwardingAttributes)(nil),
+		&CCTPAttributes{},
+		&HypAttributes{},
+	)
 }

@@ -11,6 +11,7 @@ require (
 	cosmossdk.io/log v1.4.1
 	cosmossdk.io/math v1.5.1
 	cosmossdk.io/store v1.1.1
+	github.com/bcp-innovations/hyperlane-cosmos v1.0.1
 	github.com/circlefin/noble-cctp v0.0.0-20241031192117-4285c94ec194
 	github.com/cometbft/cometbft v0.38.17
 	github.com/cosmos/cosmos-db v1.1.1
@@ -30,7 +31,7 @@ require (
 	cloud.google.com/go v0.121.2 // indirect
 	cloud.google.com/go/storage v1.53.0 // indirect
 	cosmossdk.io/schema v1.1.0 // indirect
-	cosmossdk.io/x/tx v0.13.7 // indirect
+	cosmossdk.io/x/tx v0.13.8 // indirect
 	cosmossdk.io/x/upgrade v0.1.4 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
@@ -126,6 +127,7 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/oasisprotocol/curve25519-voi v0.0.0-20230904125328-1f23a7beb09a // indirect
 	github.com/oklog/run v1.1.0 // indirect
+	github.com/onsi/ginkgo/v2 v2.23.3 // indirect
 	github.com/onsi/gomega v1.37.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/petermattis/goid v0.0.0-20240813172612-4fcff4a6cae7 // indirect
