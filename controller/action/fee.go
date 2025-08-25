@@ -78,7 +78,7 @@ func NewFeeController(
 // Validate performs basic validation for the fee controller.
 func (c *FeeController) Validate() error {
 	if c.eventService == nil {
-		return core.ErrNilPointer.Wrap("eventService cannot be nil")
+		return core.ErrNilPointer.Wrap("event service cannot be nil")
 	}
 	if c.BaseController == nil {
 		return core.ErrNilPointer.Wrap("base controller cannot be nil")

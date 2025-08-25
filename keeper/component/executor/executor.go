@@ -87,7 +87,7 @@ func (e *Executor) Validate() error {
 		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if e.eventService == nil {
-		return core.ErrNilPointer.Wrap("eventService cannot be nil")
+		return core.ErrNilPointer.Wrap("event service cannot be nil")
 	}
 	if e.router == nil {
 		return core.ErrNilPointer.Wrap("router cannot be nil")

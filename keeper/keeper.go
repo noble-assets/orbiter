@@ -64,12 +64,12 @@ func NewKeeper(
 	cdc codec.Codec,
 	addressCdc address.Codec,
 	logger log.Logger,
-	storeService store.KVStoreService,
 	eventService event.Service,
+	storeService store.KVStoreService,
 	authority string,
 	bankKeeper types.BankKeeper,
 ) *Keeper {
-	if err := validateKeeperInputs(cdc, addressCdc, logger, storeService, eventService, authority); err != nil {
+	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, authority); err != nil {
 		panic(err)
 	}
 
@@ -103,24 +103,24 @@ func validateKeeperInputs(
 	cdc codec.Codec,
 	addressCdc address.Codec,
 	logger log.Logger,
-	storeService store.KVStoreService,
 	eventService event.Service,
+	storeService store.KVStoreService,
 	authority string,
 ) error {
 	if cdc == nil {
-		return errors.New("codec cannot be nil")
+		return core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 	if logger == nil {
-		return errors.New("logger cannot be nil")
-	}
-	if storeService == nil {
-		return errors.New("store service cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if eventService == nil {
-		return errors.New("event service cannot be nil")
+		return core.ErrNilPointer.Wrap("event service cannot be nil")
+	}
+	if storeService == nil {
+		return core.ErrNilPointer.Wrap("store service cannot be nil")
 	}
 	if addressCdc == nil {
-		return errors.New("address codec cannot be nil")
+		return core.ErrNilPointer.Wrap("address codec cannot be nil")
 	}
 	_, err := addressCdc.StringToBytes(authority)
 	if err != nil {
@@ -133,10 +133,10 @@ func validateKeeperInputs(
 // Validate returns an error if any of the keeper fields is not valid.
 func (k *Keeper) Validate() error {
 	if k.logger == nil {
-		return errors.New("logger cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if k.cdc == nil {
-		return errors.New("codec cannot be nil")
+		return core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 
 	return nil

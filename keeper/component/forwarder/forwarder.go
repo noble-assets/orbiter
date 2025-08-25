@@ -95,7 +95,7 @@ func (f *Forwarder) Validate() error {
 		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 	if f.eventService == nil {
-		return core.ErrNilPointer.Wrap("eventService cannot be nil")
+		return core.ErrNilPointer.Wrap("event service cannot be nil")
 	}
 	if f.bankKeeper == nil {
 		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
