@@ -109,6 +109,14 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			expErr: "invalid action ID",
 		},
 		{
+			name: "error - already paused",
+			msg: &executortypes.MsgUnpauseAction{
+				Signer:   testutil.Authority,
+				ActionId: core.ACTION_FEE.String(),
+			},
+			expErr: core.ErrAlreadySet.Error(),
+		},
+		{
 			name: "success - valid unpause request",
 			msg: &executortypes.MsgUnpauseAction{
 				Signer:   testutil.Authority,
@@ -123,6 +131,15 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			msgServer := executor.NewMsgServer(k.Executor(), k)
 
+			// ACT: we set it unpaused in the success case to test the unpause behavior
+			if tC.expErr == "" {
+				aID, err := core.NewActionID(core.ActionID_value[tC.msg.ActionId])
+				require.NoError(t, err, "invalid action id")
+				err = msgServer.SetPausedAction(ctx, aID)
+				require.NoError(t, err, "failed to setup test case with paused action")
+			}
+
+			// ASSERT: check if unpausing works
 			resp, err := msgServer.UnpauseAction(ctx, tC.msg)
 
 			if tC.expErr != "" {

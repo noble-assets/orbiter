@@ -96,7 +96,7 @@ func TestNew(t *testing.T) {
 			eventService:      nil,
 			ForwardingHandler: &mocks.ForwardingHandler{},
 			ActionHandler:     &mocks.ActionsHandler{},
-			expError:          "logger cannot be nil",
+			expError:          "event service is not set",
 		},
 		{
 			name:              "error - nil forwarding handler",
