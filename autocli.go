@@ -23,15 +23,15 @@ package orbiter
 import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 
-	orbiterv1 "orbiter.dev/api/v1"
-	"orbiter.dev/keeper/component/adapter"
-	"orbiter.dev/keeper/component/dispatcher"
-	"orbiter.dev/keeper/component/executor"
-	"orbiter.dev/keeper/component/forwarder"
-	adaptertypes "orbiter.dev/types/component/adapter"
-	dispatchertypes "orbiter.dev/types/component/dispatcher"
-	executortypes "orbiter.dev/types/component/executor"
-	forwardertypes "orbiter.dev/types/component/forwarder"
+	orbiterv1 "github.com/noble-assets/orbiter/api/v1"
+	"github.com/noble-assets/orbiter/keeper/component/adapter"
+	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
+	"github.com/noble-assets/orbiter/keeper/component/executor"
+	"github.com/noble-assets/orbiter/keeper/component/forwarder"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
+	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
+	executortypes "github.com/noble-assets/orbiter/types/component/executor"
+	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
 )
 
 func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {

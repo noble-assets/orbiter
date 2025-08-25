@@ -2,6 +2,7 @@
 version: v2
 modules:
   - path: proto
+    name: buf.build/noble-assets/orbiter
 deps:
   - buf.build/cosmos/cosmos-proto:1935555c206d4afb9e94615dfd0fad31
   - buf.build/cosmos/cosmos-sdk:v0.50.0
@@ -11,7 +12,6 @@ lint:
   enum_zero_value_suffix: UNSUPPORTED
   use:
     - STANDARD
-    # - COMMENTS
     - FILE_LOWER_SNAKE_CASE
   except:
     - SERVICE_SUFFIX

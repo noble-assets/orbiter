@@ -27,9 +27,9 @@ import (
 
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
-	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/testutil/testdata"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 // CreateValidIBCPacketData creates a valid IBC FungibleTokenPacketData with given parameters.
@@ -69,7 +69,7 @@ func CreatePayloadWrapperJSON(t *testing.T) (*core.Payload, string) {
 		[]byte("payload"),
 	)
 	require.NoError(t, err)
-	payloadWrapper, err := core.NewPayloadWrapper(forwarding, []*core.Action{})
+	payloadWrapper, err := core.NewPayloadWrapper(forwarding)
 	require.NoError(t, err)
 	bz, err := types.MarshalJSON(encCfg.Codec, payloadWrapper)
 	require.NoError(t, err)
@@ -102,7 +102,7 @@ func CreatePayloadWithAction(t *testing.T) (*core.Payload, string) {
 	action, err := core.NewAction(core.ACTION_FEE, &actionAttributes)
 	require.NoError(t, err)
 
-	payloadWrapper, err := core.NewPayloadWrapper(forwarding, []*core.Action{action})
+	payloadWrapper, err := core.NewPayloadWrapper(forwarding, action)
 	require.NoError(t, err)
 	bz, err := types.MarshalJSON(encCfg.Codec, payloadWrapper)
 	require.NoError(t, err)

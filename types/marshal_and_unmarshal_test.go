@@ -27,10 +27,10 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"orbiter.dev/testutil"
-	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/testutil"
+	"github.com/noble-assets/orbiter/testutil/testdata"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestMarshalUnmarshalJSON(t *testing.T) {

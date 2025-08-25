@@ -24,7 +24,7 @@ import (
 	"errors"
 	"fmt"
 
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ core.ForwardingAttributes = &CCTPAttributes{}

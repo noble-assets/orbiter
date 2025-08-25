@@ -23,7 +23,7 @@ package dispatcher
 import (
 	"cosmossdk.io/math"
 
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func (a *AmountDispatched) IsPositive() bool {

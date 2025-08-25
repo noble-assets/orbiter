@@ -4,7 +4,7 @@ package noble.orbiter.v1;
 
 import "amino/amino.proto";
 
-option go_package = "orbiter.dev/types";
+option go_package = "github.com/noble-assets/orbiter/types";
 
 // AdapterParams represents the adapter components parameters.
 message AdapterParams {

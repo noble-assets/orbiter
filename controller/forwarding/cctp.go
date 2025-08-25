@@ -29,10 +29,10 @@ import (
 	"cosmossdk.io/log"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"orbiter.dev/controller"
-	"orbiter.dev/types"
-	forwardingtypes "orbiter.dev/types/controller/forwarding"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/controller"
+	"github.com/noble-assets/orbiter/types"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ types.ControllerForwarding = &CCTPController{}
@@ -94,6 +94,10 @@ func (c *CCTPController) Validate() error {
 
 // HandlePacket validates and process a CCTP cross-chain transfer.
 func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.ForwardingPacket) error {
+	if packet == nil {
+		return errorsmod.Wrap(core.ErrNilPointer, "CCTP controller received nil packet")
+	}
+
 	attr, err := c.ExtractAttributes(packet.Forwarding)
 	if err != nil {
 		return core.ErrInvalidAttributes.Wrap(err.Error())

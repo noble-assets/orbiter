@@ -1,8 +1,9 @@
-module orbiter.dev/e2e
+module github.com/noble-assets/orbiter/e2e
 
 go 1.24
 
 require (
+	cosmossdk.io/errors v1.0.2
 	cosmossdk.io/math v1.5.1
 	github.com/circlefin/noble-cctp v0.0.0-20241031192117-4285c94ec194
 	github.com/circlefin/noble-fiattokenfactory v0.0.0-20250123235012-5f9bd9dd2c5b
@@ -14,7 +15,7 @@ require (
 	github.com/strangelove-ventures/interchaintest/v8 v8.8.0
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/zap v1.27.0
-	orbiter.dev v0.0.0-00010101000000-000000000000
+	github.com/noble-assets/orbiter v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -30,7 +31,6 @@ require (
 	cosmossdk.io/collections v1.2.1 // indirect
 	cosmossdk.io/core v0.11.3 // indirect
 	cosmossdk.io/depinject v1.2.1 // indirect
-	cosmossdk.io/errors v1.0.2 // indirect
 	cosmossdk.io/log v1.4.1 // indirect
 	cosmossdk.io/schema v1.1.0 // indirect
 	cosmossdk.io/store v1.1.1 // indirect
@@ -303,4 +303,4 @@ replace (
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7
 )
 
-replace orbiter.dev => ../
+replace github.com/noble-assets/orbiter => ../

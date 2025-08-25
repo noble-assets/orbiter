@@ -27,8 +27,8 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"orbiter.dev/keeper/component/adapter"
-	"orbiter.dev/keeper/component/dispatcher"
+	"github.com/noble-assets/orbiter/keeper/component/adapter"
+	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
 )
 
 func NewAdapterComponent(tb testing.TB) (*adapter.Adapter, *Dependencies) {

@@ -46,7 +46,8 @@ proto-lint:
 proto-testutil-gen:
 	@echo "==================================================================="
 	@echo "Generating code from testutil protobuf..."
-	@cd testutil/testdata && buf generate --template buf.gen.yaml
+	@docker run --rm --volume "$(PWD)"/testutil/testdata:/workspace --workdir /workspace \
+		ghcr.io/cosmos/proto-builder:$(BUILDER_VERSION) buf generate --template ./buf.gen.yaml
 	@echo "Completed code generation!"
 
 
@@ -62,6 +63,11 @@ license:
 	@echo "Adding license to files..."
 	@go-license --config .github/license.yaml $(FILES)
 	@echo "Completed license addition!"
+
+check-license:
+	@echo "==================================================================="
+	@echo "Checking files for license..."
+	@go-license --config .github/license.yaml $(FILES) --verify
 
 format:
 	@echo "==================================================================="
@@ -97,6 +103,7 @@ nancy:
 #=============================================================================#
 #                                    Test                                     #
 #=============================================================================#
+.PHONY: test-unit test-unit-viz local-image
 
 test-unit:
 	@echo "==================================================================="

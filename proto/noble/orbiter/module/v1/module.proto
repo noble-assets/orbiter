@@ -6,7 +6,7 @@ import "cosmos/app/v1alpha1/module.proto";
 
 // Module is the configuration object for the Orbiter.
 message Module {
-  option (cosmos.app.v1alpha1.module) = {go_import: "orbiter.dev"};
+  option (cosmos.app.v1alpha1.module) = {go_import: "github.com/noble-assets/orbiter"};
 
   // authority defines the orbiter module authority.
   string authority = 1;

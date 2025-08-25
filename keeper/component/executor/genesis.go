@@ -25,7 +25,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
-	executortypes "orbiter.dev/types/component/executor"
+	executortypes "github.com/noble-assets/orbiter/types/component/executor"
 )
 
 // InitGenesis initialize the state of the component with a genesis state.

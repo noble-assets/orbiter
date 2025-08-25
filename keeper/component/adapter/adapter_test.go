@@ -25,8 +25,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/testutil/mocks"
-	adaptertypes "orbiter.dev/types/component/adapter"
+	"github.com/noble-assets/orbiter/testutil/mocks"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 )
 
 func TestCheckPassthroughPayloadSize(t *testing.T) {

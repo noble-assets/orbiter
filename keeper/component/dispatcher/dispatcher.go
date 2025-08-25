@@ -29,9 +29,9 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"orbiter.dev/types"
-	dispatchertypes "orbiter.dev/types/component/dispatcher"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types"
+	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ types.PayloadDispatcher = &Dispatcher{}

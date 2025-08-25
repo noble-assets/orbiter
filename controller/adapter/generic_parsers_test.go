@@ -28,10 +28,10 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	adapterctrl "orbiter.dev/controller/adapter"
-	"orbiter.dev/testutil"
-	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types/core"
+	adapterctrl "github.com/noble-assets/orbiter/controller/adapter"
+	"github.com/noble-assets/orbiter/testutil"
+	"github.com/noble-assets/orbiter/testutil/testdata"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestJSONParser_Parse(t *testing.T) {

@@ -248,7 +248,7 @@ func (f *Forwarding) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 // an orbiter payload. Empty preActions slice is normalized to nil.
 func NewPayload(
 	forwarding *Forwarding,
-	preActions []*Action,
+	preActions ...*Action,
 ) (*Payload, error) {
 	if len(preActions) == 0 {
 		preActions = nil
@@ -308,9 +308,9 @@ func (p *Payload) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 // to a payload wrapper.
 func NewPayloadWrapper(
 	forwarding *Forwarding,
-	preActions []*Action,
+	preActions ...*Action,
 ) (*PayloadWrapper, error) {
-	payload, err := NewPayload(forwarding, preActions)
+	payload, err := NewPayload(forwarding, preActions...)
 	if err != nil {
 		return nil, err
 	}

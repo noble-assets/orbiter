@@ -7,7 +7,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "noble/orbiter/core/v1/id.proto";
 
-option go_package = "orbiter.dev/types/core";
+option go_package = "github.com/noble-assets/orbiter/types/core";
 
 // Action represents a pre-processing step to be executed on a transfer
 // before routing to the destination counterparty.

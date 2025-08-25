@@ -30,14 +30,14 @@ This type is composed of two parts:
 
 An example of a JSON structured payload is:
 
-```json
+```jsonc
 {
   "orbiter": {
     "pre_actions": [
       {
         "id": "ACTION_FEE",
         "attributes": {
-          "@type": "/noble.orbiter.controllers.actions.v1.FeeAttributes",
+          "@type": "/noble.orbiter.controller.action.v1.FeeAttributes",
           "fees_info": [
             {
               "recipient": "noble1shrlcs09fl2gghvystkfemewgzkccpyvudch7y",
@@ -47,12 +47,12 @@ An example of a JSON structured payload is:
         }
       }
     ],
-    "orbit": {
+    "forwarding": {
       "protocol_id": "PROTOCOL_CCTP",
       "attributes": {
-        "@type": "/noble.orbiter.controllers.orbits.v1.CCTPAttributes",
-        // Note: mint_recipient and destination_caller are 32-byte values encoded as base64
+        "@type": "/noble.orbiter.controller.forwarding.v1.CCTPAttributes",
         "destination_domain": 0,
+        // Note: mint_recipient and destination_caller are 32-byte values encoded as base64
         "mint_recipient": "PNWAxASH2RPmgMV+/Tb4e78ON1WL8SoFGnwbWWHxfuA=",
         "destination_caller": "xWtN0TuqjWo90XiknI61JUxYexN2JgZaEaWGxhA/rXE="
       },
@@ -156,10 +156,10 @@ This section describes how to create a valid IBC payload in Golang for the Orbit
 
    ```go
    import(
-     "orbiter.dev/types"
-     "orbiter.dev/types/controllers/actions"
-     "orbiter.dev/types/controllers/orbits"
-     "orbiter.dev/testutil"
+     "github.com/noble-assets/orbiter/types"
+     "github.com/noble-assets/orbiter/types/controllers/actions"
+     "github.com/noble-assets/orbiter/types/controllers/orbits"
+     "github.com/noble-assets/orbiter/testutil"
    )
    ```
 

@@ -1,4 +1,4 @@
-module orbiter.dev/simapp
+module github.com/noble-assets/orbiter/simapp
 
 go 1.24
 
@@ -6,6 +6,7 @@ require (
 	cosmossdk.io/client/v2 v2.0.0-beta.3
 	cosmossdk.io/core v0.11.3
 	cosmossdk.io/depinject v1.2.1
+	cosmossdk.io/errors v1.0.2
 	cosmossdk.io/log v1.4.1
 	cosmossdk.io/store v1.1.1
 	cosmossdk.io/tools/confix v0.1.2
@@ -19,7 +20,7 @@ require (
 	github.com/cosmos/ibc-go/v8 v8.6.1
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.19.0
-	orbiter.dev v0.0.0-00010101000000-000000000000
+	github.com/noble-assets/orbiter v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -33,7 +34,6 @@ require (
 	cloud.google.com/go/storage v1.53.0 // indirect
 	cosmossdk.io/api v0.9.2 // indirect
 	cosmossdk.io/collections v1.2.1 // indirect
-	cosmossdk.io/errors v1.0.2 // indirect
 	cosmossdk.io/math v1.5.1 // indirect
 	cosmossdk.io/schema v1.1.0 // indirect
 	cosmossdk.io/x/tx v0.13.7 // indirect
@@ -225,5 +225,5 @@ require (
 replace (
 	// use cosmos compatible syndtr/goleveldb
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
-	orbiter.dev => ../
+	github.com/noble-assets/orbiter => ../
 )

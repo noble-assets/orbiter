@@ -32,13 +32,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	modulev1 "orbiter.dev/api/module/v1"
-	actionctrl "orbiter.dev/controller/action"
-	adapterctrl "orbiter.dev/controller/adapter"
-	forwardingctrl "orbiter.dev/controller/forwarding"
-	"orbiter.dev/keeper"
-	"orbiter.dev/types"
-	actiontypes "orbiter.dev/types/controller/action"
+	modulev1 "github.com/noble-assets/orbiter/api/module/v1"
+	actionctrl "github.com/noble-assets/orbiter/controller/action"
+	adapterctrl "github.com/noble-assets/orbiter/controller/adapter"
+	forwardingctrl "github.com/noble-assets/orbiter/controller/forwarding"
+	"github.com/noble-assets/orbiter/keeper"
+	"github.com/noble-assets/orbiter/types"
+	actiontypes "github.com/noble-assets/orbiter/types/controller/action"
 )
 
 func init() {

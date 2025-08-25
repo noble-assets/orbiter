@@ -25,7 +25,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
-	forwardertypes "orbiter.dev/types/component/forwarder"
+	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
 )
 
 // InitGenesis initialize the state of the component with a genesis state.

@@ -25,9 +25,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"orbiter.dev/testutil/mocks"
-	executortypes "orbiter.dev/types/component/executor"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/testutil/mocks"
+	executortypes "github.com/noble-assets/orbiter/types/component/executor"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestInitGenesis(t *testing.T) {

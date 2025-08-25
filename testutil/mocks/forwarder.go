@@ -27,7 +27,7 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"orbiter.dev/keeper/component/forwarder"
+	"github.com/noble-assets/orbiter/keeper/component/forwarder"
 )
 
 func NewForwarderComponent(tb testing.TB) (*forwarder.Forwarder, *Dependencies) {

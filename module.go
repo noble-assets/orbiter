@@ -33,9 +33,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"orbiter.dev/keeper"
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/keeper"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 const ConsensusVersion = 1

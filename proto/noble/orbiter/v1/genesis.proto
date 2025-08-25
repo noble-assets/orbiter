@@ -7,7 +7,7 @@ import "noble/orbiter/component/dispatcher/v1/genesis.proto";
 import "noble/orbiter/component/executor/v1/genesis.proto";
 import "noble/orbiter/component/forwarder/v1/genesis.proto";
 
-option go_package = "orbiter.dev/types";
+option go_package = "github.com/noble-assets/orbiter/types";
 
 // GenesisState represents the genesis state for the Orbiter module.
 message GenesisState {

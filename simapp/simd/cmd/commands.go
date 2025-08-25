@@ -25,7 +25,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
-	"orbiter.dev/simapp"
+	"github.com/noble-assets/orbiter/simapp"
 )
 
 func initRootCmd(

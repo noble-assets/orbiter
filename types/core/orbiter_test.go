@@ -27,8 +27,8 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"orbiter.dev/testutil/testdata"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/testutil/testdata"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestNewForwarding(t *testing.T) {

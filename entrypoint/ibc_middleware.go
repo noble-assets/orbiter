@@ -27,8 +27,8 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 
-	"orbiter.dev/types"
-	"orbiter.dev/types/core"
+	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ porttypes.Middleware = &IBCMiddleware{}
@@ -116,7 +116,9 @@ func (i IBCMiddleware) OnRecvPacket(
 }
 
 func newErrorAcknowledgement(err error) channeltypes.Acknowledgement {
-	return channeltypes.NewErrorAcknowledgement(
-		errorsmod.Wrap(err, "orbiter-middleware error"),
-	)
+	return channeltypes.Acknowledgement{
+		Response: &channeltypes.Acknowledgement_Error{
+			Error: errorsmod.Wrap(err, "orbiter-middleware error").Error(),
+		},
+	}
 }
