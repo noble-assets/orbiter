@@ -42,11 +42,17 @@ modules:
           permissions: [burner, minter]
         - account: cctp
         - account: orbiter
+        - account: orbiter/dust_collector
   - name: bank
     config:
       '@type': cosmos.bank.module.v1.Module
       blocked_module_accounts_override:
-        [auth, bonded_tokens_pool, not_bonded_tokens_pool]
+        [
+          auth,
+          bonded_tokens_pool,
+          not_bonded_tokens_pool,
+          orbiter/dust_collector,
+        ]
   - name: consensus
     config:
       '@type': cosmos.consensus.module.v1.Module
