@@ -82,3 +82,36 @@ func (k BankKeeper) SendCoins(
 
 	return nil
 }
+
+func (k BankKeeper) SendCoinsFromModuleToModule(
+	ctx context.Context,
+	fromModule string,
+	toModule string,
+	amt sdk.Coins,
+) error {
+	if CheckIfFailing(ctx) {
+		return errors.New("error sending coins")
+	}
+
+	fromCoins, found := k.Balances[fromModule]
+	if !found {
+		return errors.New("from account not found")
+	}
+
+	fromFinalCoins, negativeAmt := fromCoins.SafeSub(amt...)
+	if negativeAmt {
+		return errors.New("error during coins deduction")
+	}
+
+	toCoins, found := k.Balances[toModule]
+	if !found {
+		toCoins = sdk.Coins{}
+	}
+
+	toFinalCoins := toCoins.Add(amt...)
+
+	k.Balances[fromModule] = fromFinalCoins
+	k.Balances[toModule] = toFinalCoins
+
+	return nil
+}

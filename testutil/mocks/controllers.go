@@ -31,17 +31,17 @@ import (
 var _ types.ControllerForwarding = &ForwardingController{}
 
 type ForwardingController struct {
-	Id core.ProtocolID
+	protocolID core.ProtocolID
 }
 
 // ID implements core.ForwardingController.
 func (o *ForwardingController) ID() core.ProtocolID {
-	return o.Id
+	return o.protocolID
 }
 
 // Name implements core.ForwardingController.
 func (o *ForwardingController) Name() string {
-	return o.Id.String()
+	return o.protocolID.String()
 }
 
 // HandlePacket implements core.ForwardingController.
@@ -56,17 +56,17 @@ func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.Forwar
 var _ types.ControllerAction = &NoOpActionController{}
 
 type NoOpActionController struct {
-	Id core.ActionID
+	actionID core.ActionID
 }
 
 // ID implements core.ActionController.
 func (a *NoOpActionController) ID() core.ActionID {
-	return a.Id
+	return a.actionID
 }
 
 // Name implements core.ActionController.
 func (a *NoOpActionController) Name() string {
-	return a.Id.String()
+	return a.actionID.String()
 }
 
 // HandlePacket implements core.ActionController.
