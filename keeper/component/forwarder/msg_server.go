@@ -67,7 +67,7 @@ func (s msgServer) PauseProtocol(
 		ctx,
 		&forwardertypes.EventProtocolPaused{ProtocolId: protocolID},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit event")
+		return nil, errorsmod.Wrap(err, "failed to emit protocol paused event")
 	}
 
 	return &forwardertypes.MsgPauseProtocolResponse{}, nil
@@ -92,7 +92,7 @@ func (s msgServer) UnpauseProtocol(
 		ctx,
 		&forwardertypes.EventProtocolUnpaused{ProtocolId: protocolID},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit event")
+		return nil, errorsmod.Wrap(err, "failed to emit protocol unpaused event")
 	}
 
 	return &forwardertypes.MsgUnpauseProtocolResponse{}, nil
@@ -120,7 +120,7 @@ func (s msgServer) PauseCrossChains(
 			CounterpartyIds: msg.CounterpartyIds,
 		},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit event")
+		return nil, errorsmod.Wrap(err, "failed to emit cross-chains paused event")
 	}
 
 	return &forwardertypes.MsgPauseCrossChainsResponse{}, nil
@@ -148,7 +148,7 @@ func (s msgServer) UnpauseCrossChains(
 			CounterpartyIds: msg.CounterpartyIds,
 		},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit event")
+		return nil, errorsmod.Wrap(err, "failed to emit cross-chains unpaused event")
 	}
 
 	return &forwardertypes.MsgUnpauseCrossChainsResponse{}, nil

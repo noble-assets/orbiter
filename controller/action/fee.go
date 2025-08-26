@@ -132,7 +132,7 @@ func (c *FeeController) HandlePacket(
 			FeesInfo: attr.GetFeesInfo(),
 		},
 	); err != nil {
-		return errorsmod.Wrap(err, "failed to emit event")
+		return errorsmod.Wrap(err, "failed to emit fee action event")
 	}
 
 	return nil

@@ -22,9 +22,6 @@ package executor
 
 import (
 	"context"
-
-	errorsmod "cosmossdk.io/errors"
-
 	"github.com/noble-assets/orbiter/types"
 	executortypes "github.com/noble-assets/orbiter/types/component/executor"
 	"github.com/noble-assets/orbiter/types/core"
@@ -65,13 +62,13 @@ func (s msgServer) PauseAction(
 		)
 	}
 
-	if err := s.eventService.EventManager(ctx).Emit(
+	if err = s.eventService.EventManager(ctx).Emit(
 		ctx,
 		&executortypes.EventPaused{
 			ActionId: actionID,
 		},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit event")
+		return nil, core.ErrUnableToPause.Wrapf("failed to emit event: %s", err.Error())
 	}
 
 	return &executortypes.MsgPauseActionResponse{}, nil
@@ -105,7 +102,7 @@ func (s msgServer) UnpauseAction(
 			ActionId: actionID,
 		},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit event")
+		return nil, core.ErrUnableToUnpause.Wrapf("failed to emit event: %s", err.Error())
 	}
 
 	return &executortypes.MsgUnpauseActionResponse{}, nil
