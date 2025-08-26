@@ -51,7 +51,7 @@ func (f *Forwarder) SetPausedProtocol(ctx context.Context, protocolID core.Proto
 	}
 
 	if paused {
-		return core.ErrAlreadySet.Wrapf("paused=%v", paused)
+		return core.ErrAlreadySet.Wrapf("%s is already paused", protocolID.String())
 	}
 
 	return f.pausedProtocols.Set(ctx, int32(protocolID))
@@ -69,8 +69,9 @@ func (f *Forwarder) SetUnpausedProtocol(
 	if err != nil {
 		return err
 	}
+
 	if !paused {
-		return core.ErrAlreadySet.Wrapf("paused=%v", paused)
+		return core.ErrAlreadySet.Wrapf("%s is not paused", protocolID.String())
 	}
 
 	return f.pausedProtocols.Remove(ctx, int32(protocolID))
@@ -119,8 +120,9 @@ func (f *Forwarder) SetPausedCrossChain(
 	if err != nil {
 		return err
 	}
+
 	if paused {
-		return core.ErrAlreadySet.Wrapf("paused=%v", paused)
+		return core.ErrAlreadySet.Wrapf("%s is already paused", ccID.String())
 	}
 
 	return f.pausedCrossChains.Set(
@@ -141,8 +143,9 @@ func (f *Forwarder) SetUnpausedCrossChain(
 	if err != nil {
 		return err
 	}
+
 	if !paused {
-		return core.ErrAlreadySet.Wrapf("paused=%v", paused)
+		return core.ErrAlreadySet.Wrapf("%s is not paused", ccID.String())
 	}
 
 	return f.pausedCrossChains.Remove(

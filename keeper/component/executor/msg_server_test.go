@@ -21,6 +21,7 @@
 package executor_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -35,6 +36,7 @@ import (
 func TestMsgServerPauseAction(t *testing.T) {
 	testCases := []struct {
 		name   string
+		setup  func(ctx context.Context, e *executor.Executor, actionID string)
 		msg    *executortypes.MsgPauseAction
 		expErr string
 	}{
@@ -55,6 +57,21 @@ func TestMsgServerPauseAction(t *testing.T) {
 			expErr: "invalid action ID",
 		},
 		{
+			name: "error - already paused",
+			setup: func(ctx context.Context, e *executor.Executor, actionID string) {
+				aID, err := core.NewActionID(core.ActionID_value[actionID])
+				require.NoError(t, err, "failed to create action ID")
+
+				err = e.SetPausedAction(ctx, aID)
+				require.NoError(t, err, "failed to set paused action")
+			},
+			msg: &executortypes.MsgPauseAction{
+				Signer:   testutil.Authority,
+				ActionId: core.ACTION_FEE.String(),
+			},
+			expErr: "already paused",
+		},
+		{
 			name: "success - valid pause request",
 			msg: &executortypes.MsgPauseAction{
 				Signer:   testutil.Authority,
@@ -68,6 +85,10 @@ func TestMsgServerPauseAction(t *testing.T) {
 		t.Run(tC.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			msgServer := executor.NewMsgServer(k.Executor(), k)
+
+			if tC.setup != nil {
+				tC.setup(ctx, k.Executor(), tC.msg.ActionId)
+			}
 
 			resp, err := msgServer.PauseAction(ctx, tC.msg)
 
@@ -89,6 +110,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 func TestMsgServerUnpauseAction(t *testing.T) {
 	testCases := []struct {
 		name   string
+		setup  func(ctx context.Context, e *executor.Executor, actionID string)
 		msg    *executortypes.MsgUnpauseAction
 		expErr string
 	}{
@@ -109,7 +131,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			expErr: "invalid action ID",
 		},
 		{
-			name: "error - already paused",
+			name: "error - already unpaused",
 			msg: &executortypes.MsgUnpauseAction{
 				Signer:   testutil.Authority,
 				ActionId: core.ACTION_FEE.String(),
@@ -118,6 +140,13 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 		},
 		{
 			name: "success - valid unpause request",
+			setup: func(ctx context.Context, e *executor.Executor, actionID string) {
+				aID, err := core.NewActionID(core.ActionID_value[actionID])
+				require.NoError(t, err, "invalid action id")
+
+				err = e.SetPausedAction(ctx, aID)
+				require.NoError(t, err, "failed to set paused action")
+			},
 			msg: &executortypes.MsgUnpauseAction{
 				Signer:   testutil.Authority,
 				ActionId: core.ACTION_FEE.String(),
@@ -131,17 +160,11 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			msgServer := executor.NewMsgServer(k.Executor(), k)
 
-			// ACT: we set it unpaused in the success case to test the unpause behavior
-			if tC.expErr == "" {
-				aID, err := core.NewActionID(core.ActionID_value[tC.msg.ActionId])
-				require.NoError(t, err, "invalid action id")
-				err = msgServer.SetPausedAction(ctx, aID)
-				require.NoError(t, err, "failed to setup test case with paused action")
+			if tC.setup != nil {
+				tC.setup(ctx, k.Executor(), tC.msg.ActionId)
 			}
 
-			// ASSERT: check if unpausing works
 			resp, err := msgServer.UnpauseAction(ctx, tC.msg)
-
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)
 				require.Nil(t, resp)
