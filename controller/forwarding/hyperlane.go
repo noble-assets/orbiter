@@ -63,7 +63,7 @@ func NewHyperlaneController(
 	}
 	c := &HyperlaneController{
 		BaseController: b,
-		logger:         logger,
+		logger:         logger.With(core.ForwardingControllerName, b.Name()),
 		handler:        handler,
 	}
 
@@ -169,7 +169,7 @@ func (c *HyperlaneController) ValidateForwarding(
 	return nil
 }
 
-// executeForwarding initiate an Hyperlane cross-chain transfer.
+// executeForwarding initiates an Hyperlane cross-chain transfer.
 func (c *HyperlaneController) executeForwarding(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
