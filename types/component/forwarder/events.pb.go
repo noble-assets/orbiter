@@ -67,7 +67,6 @@ func (m *EventProtocolPaused) GetProtocolId() core.ProtocolID {
 	return core.PROTOCOL_UNSUPPORTED
 }
 
-// TODO: potentially also rename to a better wording instead of "Unpause"?
 type EventProtocolUnpaused struct {
 	ProtocolId core.ProtocolID `protobuf:"varint,1,opt,name=protocol_id,json=protocolId,proto3,enum=noble.orbiter.core.v1.ProtocolID" json:"protocol_id,omitempty"`
 }

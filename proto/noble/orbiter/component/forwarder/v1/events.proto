@@ -10,7 +10,6 @@ message EventProtocolPaused {
   noble.orbiter.core.v1.ProtocolID protocol_id = 1;
 }
 
-// TODO: potentially also rename to a better wording instead of "Unpause"?
 message EventProtocolUnpaused {
   noble.orbiter.core.v1.ProtocolID protocol_id = 1;
 }

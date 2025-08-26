@@ -1925,7 +1925,6 @@ func (x *EventProtocolPaused) GetProtocolId() v1.ProtocolID {
 	return v1.ProtocolID(0)
 }
 
-// TODO: potentially also rename to a better wording instead of "Unpause"?
 type EventProtocolUnpaused struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
