@@ -176,14 +176,18 @@ func (c *HyperlaneController) executeForwarding(
 	hypAttr *forwardingtypes.HypAttributes,
 	passthroughPayload []byte,
 ) error {
-	hookID := hyperlaneutil.HexAddress(hypAttr.CustomHookId)
+	var hookAddr hyperlaneutil.HexAddress
+	if len(hypAttr.CustomHookId) != 0 {
+		hookAddr = hyperlaneutil.HexAddress(hypAttr.CustomHookId)
+	}
+
 	_, err := c.handler.RemoteTransfer(ctx, &warptypes.MsgRemoteTransfer{
 		Sender:             core.ModuleAddress.String(),
 		TokenId:            hyperlaneutil.HexAddress(hypAttr.GetTokenId()),
 		DestinationDomain:  hypAttr.DestinationDomain,
 		Recipient:          hyperlaneutil.HexAddress(hypAttr.GetRecipient()),
 		Amount:             transferAttr.DestinationAmount(),
-		CustomHookId:       &hookID,
+		CustomHookId:       &hookAddr,
 		GasLimit:           hypAttr.GasLimit,
 		MaxFee:             hypAttr.GetMaxFee(),
 		CustomHookMetadata: string(passthroughPayload),
