@@ -36,7 +36,7 @@ import (
 func TestMsgServerPauseAction(t *testing.T) {
 	testCases := []struct {
 		name   string
-		setup  func(ctx context.Context, e *executor.Executor, actionID string)
+		setup  func(t *testing.T, ctx context.Context, e *executor.Executor, actionID string)
 		msg    *executortypes.MsgPauseAction
 		expErr string
 	}{
@@ -58,7 +58,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 		},
 		{
 			name: "error - already paused",
-			setup: func(ctx context.Context, e *executor.Executor, actionID string) {
+			setup: func(t *testing.T, ctx context.Context, e *executor.Executor, actionID string) {
 				aID, err := core.NewActionID(core.ActionID_value[actionID])
 				require.NoError(t, err, "failed to create action ID")
 
@@ -87,7 +87,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 			msgServer := executor.NewMsgServer(k.Executor(), k)
 
 			if tC.setup != nil {
-				tC.setup(ctx, k.Executor(), tC.msg.ActionId)
+				tC.setup(t, ctx, k.Executor(), tC.msg.ActionId)
 			}
 
 			resp, err := msgServer.PauseAction(ctx, tC.msg)
@@ -110,7 +110,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 func TestMsgServerUnpauseAction(t *testing.T) {
 	testCases := []struct {
 		name   string
-		setup  func(ctx context.Context, e *executor.Executor, actionID string)
+		setup  func(t *testing.T, ctx context.Context, e *executor.Executor, actionID string)
 		msg    *executortypes.MsgUnpauseAction
 		expErr string
 	}{
@@ -140,7 +140,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 		},
 		{
 			name: "success - valid unpause request",
-			setup: func(ctx context.Context, e *executor.Executor, actionID string) {
+			setup: func(t *testing.T, ctx context.Context, e *executor.Executor, actionID string) {
 				aID, err := core.NewActionID(core.ActionID_value[actionID])
 				require.NoError(t, err, "invalid action id")
 
@@ -161,7 +161,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 			msgServer := executor.NewMsgServer(k.Executor(), k)
 
 			if tC.setup != nil {
-				tC.setup(ctx, k.Executor(), tC.msg.ActionId)
+				tC.setup(t, ctx, k.Executor(), tC.msg.ActionId)
 			}
 
 			resp, err := msgServer.UnpauseAction(ctx, tC.msg)
