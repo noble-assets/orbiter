@@ -46,5 +46,9 @@ type BankKeeperAdapter interface {
 	// Queries
 	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
 	// Txs
-	SendCoinsFromModuleToModule(ctx context.Context, senderModule, recipientModule string, amt sdk.Coins) error
+	SendCoinsFromModuleToModule(
+		ctx context.Context,
+		senderModule, recipientModule string,
+		amt sdk.Coins,
+	) error
 }
