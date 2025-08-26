@@ -31,15 +31,15 @@ import (
 var _ types.ControllerForwarding = &ForwardingController{}
 
 type ForwardingController struct {
-	protocolID core.ProtocolID
+	id core.ProtocolID
 }
 
 func (o *ForwardingController) ID() core.ProtocolID {
-	return o.protocolID
+	return o.id
 }
 
 func (o *ForwardingController) Name() string {
-	return o.protocolID.String()
+	return o.id.String()
 }
 
 func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.ForwardingPacket) error {
@@ -53,15 +53,15 @@ func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.Forwar
 var _ types.ControllerAction = &NoOpActionController{}
 
 type NoOpActionController struct {
-	actionID core.ActionID
+	id core.ActionID
 }
 
 func (a *NoOpActionController) ID() core.ActionID {
-	return a.actionID
+	return a.id
 }
 
 func (a *NoOpActionController) Name() string {
-	return a.actionID.String()
+	return a.id.String()
 }
 
 func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.ActionPacket) error {
@@ -75,15 +75,15 @@ func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.Action
 var _ types.ControllerAdapter = &NoOpAdapterController{}
 
 type NoOpAdapterController struct {
-	Id core.ProtocolID
+	id core.ProtocolID
 }
 
 func (a *NoOpAdapterController) ID() core.ProtocolID {
-	return a.Id
+	return a.id
 }
 
 func (a *NoOpAdapterController) Name() string {
-	return a.Id.String()
+	return a.id.String()
 }
 
 func (a *NoOpAdapterController) ParsePayload(
