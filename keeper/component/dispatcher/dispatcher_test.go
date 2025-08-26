@@ -26,7 +26,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/collections"
-	"cosmossdk.io/core/event"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -45,7 +44,6 @@ func TestNew(t *testing.T) {
 		name              string
 		codec             codec.Codec
 		logger            log.Logger
-		eventService      event.Service
 		sb                *collections.SchemaBuilder
 		ForwardingHandler types.PacketHandler[*types.ForwardingPacket]
 		ActionHandler     types.PacketHandler[*types.ActionPacket]
@@ -56,7 +54,6 @@ func TestNew(t *testing.T) {
 			codec:             deps.EncCfg.Codec,
 			sb:                collections.NewSchemaBuilder(deps.StoreService),
 			logger:            deps.Logger,
-			eventService:      deps.EventService,
 			ForwardingHandler: &mocks.ForwardingHandler{},
 			ActionHandler:     &mocks.ActionsHandler{},
 			expError:          "",
@@ -65,7 +62,6 @@ func TestNew(t *testing.T) {
 			name:              "error - nil codec",
 			sb:                collections.NewSchemaBuilder(deps.StoreService),
 			logger:            deps.Logger,
-			eventService:      deps.EventService,
 			ForwardingHandler: &mocks.ForwardingHandler{},
 			ActionHandler:     &mocks.ActionsHandler{},
 			expError:          "codec cannot be nil",
@@ -74,7 +70,6 @@ func TestNew(t *testing.T) {
 			name:              "error - nil schema builder",
 			codec:             deps.EncCfg.Codec,
 			logger:            deps.Logger,
-			eventService:      deps.EventService,
 			ForwardingHandler: &mocks.ForwardingHandler{},
 			ActionHandler:     &mocks.ActionsHandler{},
 			expError:          "schema builder cannot be nil",
@@ -83,27 +78,15 @@ func TestNew(t *testing.T) {
 			name:              "error - nil logger",
 			codec:             deps.EncCfg.Codec,
 			sb:                collections.NewSchemaBuilder(deps.StoreService),
-			eventService:      deps.EventService,
 			ForwardingHandler: &mocks.ForwardingHandler{},
 			ActionHandler:     &mocks.ActionsHandler{},
 			expError:          "logger cannot be nil",
-		},
-		{
-			name:              "error - nil event service",
-			codec:             deps.EncCfg.Codec,
-			sb:                collections.NewSchemaBuilder(deps.StoreService),
-			logger:            deps.Logger,
-			eventService:      nil,
-			ForwardingHandler: &mocks.ForwardingHandler{},
-			ActionHandler:     &mocks.ActionsHandler{},
-			expError:          "event service is not set",
 		},
 		{
 			name:              "error - nil forwarding handler",
 			codec:             deps.EncCfg.Codec,
 			sb:                collections.NewSchemaBuilder(deps.StoreService),
 			logger:            deps.Logger,
-			eventService:      deps.EventService,
 			ForwardingHandler: nil,
 			ActionHandler:     &mocks.ActionsHandler{},
 			expError:          "forwarding handler is not set",
@@ -112,7 +95,6 @@ func TestNew(t *testing.T) {
 			name:              "error - nil actions handler",
 			codec:             deps.EncCfg.Codec,
 			sb:                collections.NewSchemaBuilder(deps.StoreService),
-			eventService:      deps.EventService,
 			logger:            deps.Logger,
 			ForwardingHandler: &mocks.ForwardingHandler{},
 			ActionHandler:     nil,
@@ -126,7 +108,6 @@ func TestNew(t *testing.T) {
 				tC.codec,
 				tC.sb,
 				tC.logger,
-				tC.eventService,
 				tC.ForwardingHandler,
 				tC.ActionHandler,
 			)

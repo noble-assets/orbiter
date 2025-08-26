@@ -238,12 +238,12 @@ func (k *Keeper) setComponents(
 		return errorsmod.Wrap(err, "error creating a new forwarding component")
 	}
 
-	dispatcher, err := dispatchercomp.New(cdc, sb, logger, eventService, forwarder, executor)
+	dispatcher, err := dispatchercomp.New(cdc, sb, logger, forwarder, executor)
 	if err != nil {
 		return errorsmod.Wrap(err, "error creating a new dispatcher component")
 	}
 
-	adapter, err := adaptercomp.New(cdc, sb, logger, bankKeeper, dispatcher)
+	adapter, err := adaptercomp.New(cdc, sb, logger, eventService, bankKeeper, dispatcher)
 	if err != nil {
 		return errorsmod.Wrap(err, "error creating a new adapter component")
 	}
