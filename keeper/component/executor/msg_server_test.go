@@ -59,6 +59,8 @@ func TestMsgServerPauseAction(t *testing.T) {
 		{
 			name: "error - already paused",
 			setup: func(t *testing.T, ctx context.Context, e *executor.Executor, actionID string) {
+				t.Helper()
+
 				aID, err := core.NewActionID(core.ActionID_value[actionID])
 				require.NoError(t, err, "failed to create action ID")
 
@@ -141,6 +143,8 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 		{
 			name: "success - valid unpause request",
 			setup: func(t *testing.T, ctx context.Context, e *executor.Executor, actionID string) {
+				t.Helper()
+
 				aID, err := core.NewActionID(core.ActionID_value[actionID])
 				require.NoError(t, err, "invalid action id")
 

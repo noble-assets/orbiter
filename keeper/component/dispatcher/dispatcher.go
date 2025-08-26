@@ -129,7 +129,6 @@ func (d *Dispatcher) DispatchPayload(
 	payload *core.Payload,
 ) error {
 	if err := d.ValidatePayload(payload); err != nil {
-		// TODO: look at how it is displayed
 		return core.ErrValidation.Wrap(err.Error())
 	}
 
