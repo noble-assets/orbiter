@@ -34,17 +34,14 @@ type ForwardingController struct {
 	protocolID core.ProtocolID
 }
 
-// ID implements core.ForwardingController.
 func (o *ForwardingController) ID() core.ProtocolID {
 	return o.protocolID
 }
 
-// Name implements core.ForwardingController.
 func (o *ForwardingController) Name() string {
 	return o.protocolID.String()
 }
 
-// HandlePacket implements core.ForwardingController.
 func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.ForwardingPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the forwarding packet")
@@ -59,17 +56,14 @@ type NoOpActionController struct {
 	actionID core.ActionID
 }
 
-// ID implements core.ActionController.
 func (a *NoOpActionController) ID() core.ActionID {
 	return a.actionID
 }
 
-// Name implements core.ActionController.
 func (a *NoOpActionController) Name() string {
 	return a.actionID.String()
 }
 
-// HandlePacket implements core.ActionController.
 func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.ActionPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the action packet")
@@ -92,7 +86,6 @@ func (a *NoOpAdapterController) Name() string {
 	return a.Id.String()
 }
 
-// ParsePayload implements types.AdapterProtocol.
 func (a *NoOpAdapterController) ParsePayload(
 	_ core.ProtocolID,
 	bz []byte,
