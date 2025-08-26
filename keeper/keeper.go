@@ -139,6 +139,9 @@ func (k *Keeper) Validate() error {
 	if k.logger == nil {
 		return core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
+	if k.eventService == nil {
+		return core.ErrNilPointer.Wrap("event service cannot be nil")
+	}
 	if k.cdc == nil {
 		return core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
