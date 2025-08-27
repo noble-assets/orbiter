@@ -21,6 +21,7 @@
 package orbiter
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -35,6 +36,10 @@ import (
 
 	"github.com/noble-assets/orbiter/keeper"
 	"github.com/noble-assets/orbiter/types"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
+	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
+	executortypes "github.com/noble-assets/orbiter/types/component/executor"
+	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -60,7 +65,23 @@ func (a AppModuleBasic) Name() string {
 	return core.ModuleName
 }
 
-func (a AppModuleBasic) RegisterGRPCGatewayRoutes(client.Context, *runtime.ServeMux) {}
+func (a AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
+	if err := adaptertypes.RegisterQueryHandlerClient(context.Background(), mux, adaptertypes.NewQueryClient(clientCtx)); err != nil {
+		panic(err)
+	}
+
+	if err := dispatchertypes.RegisterQueryHandlerClient(context.Background(), mux, dispatchertypes.NewQueryClient(clientCtx)); err != nil {
+		panic(err)
+	}
+
+	if err := executortypes.RegisterQueryHandlerClient(context.Background(), mux, executortypes.NewQueryClient(clientCtx)); err != nil {
+		panic(err)
+	}
+
+	if err := forwardertypes.RegisterQueryHandlerClient(context.Background(), mux, forwardertypes.NewQueryClient(clientCtx)); err != nil {
+		panic(err)
+	}
+}
 
 func (a AppModuleBasic) RegisterInterfaces(reg codectypes.InterfaceRegistry) {
 	RegisterInterfaces(reg)
