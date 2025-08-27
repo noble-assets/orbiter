@@ -32,6 +32,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/math"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 
@@ -341,9 +342,11 @@ func testIbcPassingWithoutActions(
 		}
 	}
 
+	dcAddr := authtypes.NewModuleAddress(core.DustCollectorName)
+
 	resp, err := s.Chain.GetBalance(
 		ctx,
-		core.DustCollectorAddress.String(),
+		dcAddr.String(),
 		Usdc,
 	)
 	require.NoError(t, err)

@@ -36,8 +36,7 @@ const (
 var (
 	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
-	dustCollectorName    = fmt.Sprintf("%s/%s", ModuleName, "dust_collector")
-	DustCollectorAddress = authtypes.NewModuleAddress(dustCollectorName)
+	DustCollectorName = fmt.Sprintf("%s/%s", ModuleName, "dust_collector")
 )
 
 // ====================================================================================================

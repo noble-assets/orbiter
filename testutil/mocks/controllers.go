@@ -31,20 +31,17 @@ import (
 var _ types.ControllerForwarding = &ForwardingController{}
 
 type ForwardingController struct {
-	Id core.ProtocolID
+	id core.ProtocolID
 }
 
-// ID implements core.ForwardingController.
 func (o *ForwardingController) ID() core.ProtocolID {
-	return o.Id
+	return o.id
 }
 
-// Name implements core.ForwardingController.
 func (o *ForwardingController) Name() string {
-	return o.Id.String()
+	return o.id.String()
 }
 
-// HandlePacket implements core.ForwardingController.
 func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.ForwardingPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the forwarding packet")
@@ -56,20 +53,17 @@ func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.Forwar
 var _ types.ControllerAction = &NoOpActionController{}
 
 type NoOpActionController struct {
-	Id core.ActionID
+	id core.ActionID
 }
 
-// ID implements core.ActionController.
 func (a *NoOpActionController) ID() core.ActionID {
-	return a.Id
+	return a.id
 }
 
-// Name implements core.ActionController.
 func (a *NoOpActionController) Name() string {
-	return a.Id.String()
+	return a.id.String()
 }
 
-// HandlePacket implements core.ActionController.
 func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.ActionPacket) error {
 	if CheckIfFailing(ctx) {
 		return errors.New("error dispatching the action packet")
@@ -81,18 +75,17 @@ func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.Action
 var _ types.ControllerAdapter = &NoOpAdapterController{}
 
 type NoOpAdapterController struct {
-	Id core.ProtocolID
+	id core.ProtocolID
 }
 
 func (a *NoOpAdapterController) ID() core.ProtocolID {
-	return a.Id
+	return a.id
 }
 
 func (a *NoOpAdapterController) Name() string {
-	return a.Id.String()
+	return a.id.String()
 }
 
-// ParsePayload implements types.AdapterProtocol.
 func (a *NoOpAdapterController) ParsePayload(
 	_ core.ProtocolID,
 	bz []byte,

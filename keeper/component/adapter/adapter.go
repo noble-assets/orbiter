@@ -233,7 +233,12 @@ func (a *Adapter) clearOrbiterBalances(ctx context.Context) error {
 		return nil
 	}
 
-	return a.bankKeeper.SendCoins(ctx, core.ModuleAddress, core.DustCollectorAddress, coins)
+	return a.bankKeeper.SendCoinsFromModuleToModule(
+		ctx,
+		core.ModuleName,
+		core.DustCollectorName,
+		coins,
+	)
 }
 
 func (a *Adapter) validateModuleBalance(coins sdk.Coins) error {
