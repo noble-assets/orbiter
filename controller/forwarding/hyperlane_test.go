@@ -173,10 +173,11 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 	copy(usdnID, "usdn id")
 
 	testCases := []struct {
-		name     string
-		setup    func(*mocks.HyperlaneHandler)
-		hypAttr  forwardingtypes.HypAttributes
-		expError string
+		name         string
+		setup        func(*mocks.HyperlaneHandler)
+		hypAttr      *forwardingtypes.HypAttributes
+		transferAttr *types.TransferAttributes
+		expError     string
 	}{
 		{
 			name: "success - when the attributes are valid",
@@ -193,7 +194,8 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 
 				m.Tokens[hypToken.Id] = *hypToken
 			},
-			hypAttr: forwardingtypes.HypAttributes{
+			transferAttr: transferAttr,
+			hypAttr: &forwardingtypes.HypAttributes{
 				TokenId:           usdnID,
 				DestinationDomain: 0,
 				Recipient:         make([]byte, 32),
@@ -217,7 +219,8 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 
 				m.Tokens[hypToken.Id] = *hypToken
 			},
-			hypAttr: forwardingtypes.HypAttributes{
+			transferAttr: transferAttr,
+			hypAttr: &forwardingtypes.HypAttributes{
 				TokenId:           usdnID,
 				DestinationDomain: 0,
 				Recipient:         make([]byte, 32),
@@ -228,9 +231,31 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 			expError: "invalid forwarding token",
 		},
 		{
-			name:  "error - when the token does not exist",
-			setup: func(m *mocks.HyperlaneHandler) {},
-			hypAttr: forwardingtypes.HypAttributes{
+			name:         "error - when hyperlane attributes are nil",
+			setup:        func(m *mocks.HyperlaneHandler) {},
+			transferAttr: transferAttr,
+			hypAttr:      nil,
+			expError:     "invalid Hyperlane attributes",
+		},
+		{
+			name:         "error - when transfer attributes are nil",
+			setup:        func(m *mocks.HyperlaneHandler) {},
+			transferAttr: nil,
+			hypAttr: &forwardingtypes.HypAttributes{
+				TokenId:           usdnID,
+				DestinationDomain: 0,
+				Recipient:         make([]byte, 32),
+				CustomHookId:      make([]byte, 32),
+				GasLimit:          math.NewInt(1),
+				MaxFee:            sdk.NewInt64Coin("usdn", 1),
+			},
+			expError: "invalid transfer attributes",
+		},
+		{
+			name:         "error - when the token does not exist",
+			setup:        func(m *mocks.HyperlaneHandler) {},
+			transferAttr: transferAttr,
+			hypAttr: &forwardingtypes.HypAttributes{
 				TokenId:           usdnID,
 				DestinationDomain: 0,
 				Recipient:         make([]byte, 32),
@@ -258,8 +283,8 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 
 			err = controller.ValidateForwarding(
 				context.Background(),
-				transferAttr,
-				&tC.hypAttr,
+				tC.transferAttr,
+				tC.hypAttr,
 			)
 
 			if tC.expError != "" {

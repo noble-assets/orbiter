@@ -150,6 +150,14 @@ func (c *HyperlaneController) ValidateForwarding(
 	transferAttr *types.TransferAttributes,
 	hypAttr *forwardingtypes.HypAttributes,
 ) error {
+	if err := transferAttr.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid transfer attributes")
+	}
+
+	if err := hypAttr.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid Hyperlane attributes")
+	}
+
 	tokenID := hyperlaneutil.HexAddress(hypAttr.GetTokenId())
 	req := warptypes.QueryTokenRequest{
 		Id: tokenID.String(),
@@ -176,6 +184,7 @@ func (c *HyperlaneController) executeForwarding(
 	hypAttr *forwardingtypes.HypAttributes,
 	_ []byte,
 ) error {
+	// If the len on bytes is zero, we want to use nil in the msg construction.
 	var hookAddr hyperlaneutil.HexAddress
 	if len(hypAttr.CustomHookId) != 0 {
 		hookAddr = hyperlaneutil.HexAddress(hypAttr.CustomHookId)

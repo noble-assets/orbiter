@@ -66,6 +66,10 @@ func NewHyperlaneAttributes(
 
 // Validate performs validation on the Hyperlane attributes.
 func (a *HypAttributes) Validate() error {
+	if a == nil {
+		return core.ErrNilPointer.Wrap("Hyperlane attributes are not set")
+	}
+
 	if len(a.TokenId) != HypTokenIDLen {
 		return fmt.Errorf(
 			"token ID must be %d bytes, received %d bytes",
