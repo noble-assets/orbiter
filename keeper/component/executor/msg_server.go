@@ -63,6 +63,15 @@ func (s msgServer) PauseAction(
 		)
 	}
 
+	if err = s.eventService.EventManager(ctx).Emit(
+		ctx,
+		&executortypes.EventPaused{
+			ActionId: actionID,
+		},
+	); err != nil {
+		return nil, core.ErrUnableToPause.Wrapf("failed to emit event: %s", err.Error())
+	}
+
 	return &executortypes.MsgPauseActionResponse{}, nil
 }
 
@@ -86,6 +95,15 @@ func (s msgServer) UnpauseAction(
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"action: %s", err.Error(),
 		)
+	}
+
+	if err := s.eventService.EventManager(ctx).Emit(
+		ctx,
+		&executortypes.EventUnpaused{
+			ActionId: actionID,
+		},
+	); err != nil {
+		return nil, core.ErrUnableToUnpause.Wrapf("failed to emit event: %s", err.Error())
 	}
 
 	return &executortypes.MsgUnpauseActionResponse{}, nil

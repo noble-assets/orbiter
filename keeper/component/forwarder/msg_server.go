@@ -26,6 +26,7 @@ import (
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 
+	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/controller/forwarding"
@@ -62,6 +63,13 @@ func (s msgServer) PauseProtocol(
 		)
 	}
 
+	if err := s.eventService.EventManager(ctx).Emit(
+		ctx,
+		&forwardertypes.EventProtocolPaused{ProtocolId: protocolID},
+	); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to emit protocol paused event")
+	}
+
 	return &forwardertypes.MsgPauseProtocolResponse{}, nil
 }
 
@@ -78,6 +86,13 @@ func (s msgServer) UnpauseProtocol(
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"protocol: %s", err.Error(),
 		)
+	}
+
+	if err := s.eventService.EventManager(ctx).Emit(
+		ctx,
+		&forwardertypes.EventProtocolUnpaused{ProtocolId: protocolID},
+	); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to emit protocol unpaused event")
 	}
 
 	return &forwardertypes.MsgUnpauseProtocolResponse{}, nil
@@ -98,6 +113,16 @@ func (s msgServer) PauseCrossChains(
 		)
 	}
 
+	if err := s.eventService.EventManager(ctx).Emit(
+		ctx,
+		&forwardertypes.EventCrossChainsPaused{
+			ProtocolId:      protocolID,
+			CounterpartyIds: msg.CounterpartyIds,
+		},
+	); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to emit cross-chains paused event")
+	}
+
 	return &forwardertypes.MsgPauseCrossChainsResponse{}, nil
 }
 
@@ -114,6 +139,16 @@ func (s msgServer) UnpauseCrossChains(
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"cross-chains: %s", err.Error(),
 		)
+	}
+
+	if err := s.eventService.EventManager(ctx).Emit(
+		ctx,
+		&forwardertypes.EventCrossChainsUnpaused{
+			ProtocolId:      protocolID,
+			CounterpartyIds: msg.CounterpartyIds,
+		},
+	); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to emit cross-chains unpaused event")
 	}
 
 	return &forwardertypes.MsgUnpauseCrossChainsResponse{}, nil

@@ -41,9 +41,9 @@ func (e *Executor) SetPausedAction(ctx context.Context, id core.ActionID) error 
 	if err != nil {
 		return err
 	}
-	// Already paused, no-op
+
 	if paused {
-		return nil
+		return core.ErrAlreadySet.Wrapf("%s is already paused", id.String())
 	}
 
 	return e.PausedActions.Set(ctx, int32(id))
@@ -58,9 +58,9 @@ func (e *Executor) SetUnpausedAction(ctx context.Context, id core.ActionID) erro
 	if err != nil {
 		return err
 	}
-	// Already unpaused, no-op
+
 	if !paused {
-		return nil
+		return core.ErrAlreadySet.Wrapf("%s is not paused", id.String())
 	}
 
 	return e.PausedActions.Remove(ctx, int32(id))

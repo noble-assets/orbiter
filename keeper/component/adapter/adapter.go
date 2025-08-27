@@ -26,6 +26,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	"cosmossdk.io/core/event"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -42,7 +43,9 @@ type AdapterRouter = *router.Router[core.ProtocolID, types.ControllerAdapter]
 var _ types.Adapter = &Adapter{}
 
 type Adapter struct {
-	logger log.Logger
+	logger       log.Logger
+	eventService event.Service
+
 	// router is an adapter controllers router.
 	router     AdapterRouter
 	bankKeeper types.BankKeeperAdapter
@@ -54,6 +57,7 @@ func New(
 	cdc codec.BinaryCodec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
+	eventService event.Service,
 	bankKeeper types.BankKeeperAdapter,
 	dispatcher types.PayloadDispatcher,
 ) (*Adapter, error) {
@@ -68,10 +72,11 @@ func New(
 	}
 
 	adaptersKeeper := Adapter{
-		logger:     logger.With(core.ComponentPrefix, core.AdapterName),
-		router:     router.New[core.ProtocolID, types.ControllerAdapter](),
-		bankKeeper: bankKeeper,
-		dispatcher: dispatcher,
+		logger:       logger.With(core.ComponentPrefix, core.AdapterName),
+		eventService: eventService,
+		router:       router.New[core.ProtocolID, types.ControllerAdapter](),
+		bankKeeper:   bankKeeper,
+		dispatcher:   dispatcher,
 		params: collections.NewItem(
 			sb,
 			core.AdapterParamsPrefix,
@@ -87,6 +92,9 @@ func New(
 func (a *Adapter) Validate() error {
 	if a.logger == nil {
 		return core.ErrNilPointer.Wrap("logger cannot be nil")
+	}
+	if a.eventService == nil {
+		return core.ErrNilPointer.Wrap("event service cannot be nil")
 	}
 	if a.bankKeeper == nil {
 		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
@@ -183,7 +191,20 @@ func (a *Adapter) ProcessPayload(
 	transferAttr *types.TransferAttributes,
 	payload *core.Payload,
 ) error {
-	return a.dispatcher.DispatchPayload(ctx, transferAttr, payload)
+	if err := a.dispatcher.DispatchPayload(ctx, transferAttr, payload); err != nil {
+		return errorsmod.Wrap(err, "failed to dispatch payload")
+	}
+
+	if err := a.eventService.EventManager(ctx).Emit(
+		ctx,
+		&adaptertypes.EventPayloadProcessed{
+			Payload: payload,
+		},
+	); err != nil {
+		return errorsmod.Wrap(err, "failed to emit payload processed event")
+	}
+
+	return nil
 }
 
 // CheckPassthroughPayloadSize checks that the passthrough payload

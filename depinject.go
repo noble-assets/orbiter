@@ -25,6 +25,7 @@ import (
 
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/core/event"
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/depinject"
 	errorsmod "cosmossdk.io/errors"
@@ -56,6 +57,7 @@ type ModuleInputs struct {
 	AddressCodec address.Codec
 	Logger       log.Logger
 
+	EventService event.Service
 	StoreService store.KVStoreService
 
 	BankKeeper types.BankKeeper
@@ -79,6 +81,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.Codec,
 		in.AddressCodec,
 		in.Logger,
+		in.EventService,
 		in.StoreService,
 		authority.String(),
 		in.BankKeeper,
@@ -123,6 +126,7 @@ func InjectOrbitControllers(in ComponentsInputs) {
 func InjectActionControllers(in ComponentsInputs) {
 	fee, err := actionctrl.NewFeeController(
 		in.Orbiters.Executor().Logger(),
+		in.Orbiters.Executor().EventService(),
 		in.BankKeeper,
 	)
 	if err != nil {

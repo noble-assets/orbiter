@@ -40,6 +40,7 @@ var _ types.PayloadDispatcher = &Dispatcher{}
 // packet. The dispatcher keeps track of the statistics associated with the handled dispatches.
 type Dispatcher struct {
 	logger log.Logger
+
 	// Packet elements handlers
 	ForwardingHandler types.PacketHandler[*types.ForwardingPacket]
 	ActionHandler     types.PacketHandler[*types.ActionPacket]
@@ -128,7 +129,6 @@ func (d *Dispatcher) DispatchPayload(
 	payload *core.Payload,
 ) error {
 	if err := d.ValidatePayload(payload); err != nil {
-		// TODO: look at how it is displayed
 		return core.ErrValidation.Wrap(err.Error())
 	}
 
@@ -194,6 +194,7 @@ func (d *Dispatcher) dispatchActions(
 			return errorsmod.Wrapf(err, "error dispatching action %s packet", action.ID())
 		}
 	}
+
 	d.logger.Debug("completed actions dispatching")
 
 	return nil

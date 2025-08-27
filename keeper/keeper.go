@@ -26,6 +26,7 @@ import (
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
+	"cosmossdk.io/core/event"
 	"cosmossdk.io/core/store"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
@@ -43,8 +44,9 @@ var _ types.Authorizer = &Keeper{}
 
 // Keeper is the main module keeper.
 type Keeper struct {
-	cdc    codec.Codec
-	logger log.Logger
+	cdc          codec.Codec
+	logger       log.Logger
+	eventService event.Service
 
 	// authority represents the module manager.
 	authority string
@@ -62,23 +64,25 @@ func NewKeeper(
 	cdc codec.Codec,
 	addressCdc address.Codec,
 	logger log.Logger,
+	eventService event.Service,
 	storeService store.KVStoreService,
 	authority string,
 	bankKeeper types.BankKeeper,
 ) *Keeper {
-	if err := validateKeeperInputs(cdc, addressCdc, logger, storeService, authority); err != nil {
+	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, bankKeeper, authority); err != nil {
 		panic(err)
 	}
 
 	sb := collections.NewSchemaBuilder(storeService)
 
 	k := Keeper{
-		cdc:       cdc,
-		logger:    logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
-		authority: authority,
+		cdc:          cdc,
+		eventService: eventService,
+		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
+		authority:    authority,
 	}
 
-	if err := k.setComponents(k.cdc, k.logger, sb, bankKeeper); err != nil {
+	if err := k.setComponents(k.cdc, k.logger, k.eventService, sb, bankKeeper); err != nil {
 		panic(err)
 	}
 
@@ -99,20 +103,28 @@ func validateKeeperInputs(
 	cdc codec.Codec,
 	addressCdc address.Codec,
 	logger log.Logger,
+	eventService event.Service,
 	storeService store.KVStoreService,
+	bankKeeper types.BankKeeper,
 	authority string,
 ) error {
 	if cdc == nil {
-		return errors.New("codec cannot be nil")
+		return core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 	if logger == nil {
-		return errors.New("logger cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
+	}
+	if eventService == nil {
+		return core.ErrNilPointer.Wrap("event service cannot be nil")
 	}
 	if storeService == nil {
-		return errors.New("store service cannot be nil")
+		return core.ErrNilPointer.Wrap("store service cannot be nil")
 	}
 	if addressCdc == nil {
-		return errors.New("address codec cannot be nil")
+		return core.ErrNilPointer.Wrap("address codec cannot be nil")
+	}
+	if bankKeeper == nil {
+		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
 	_, err := addressCdc.StringToBytes(authority)
 	if err != nil {
@@ -125,10 +137,13 @@ func validateKeeperInputs(
 // Validate returns an error if any of the keeper fields is not valid.
 func (k *Keeper) Validate() error {
 	if k.logger == nil {
-		return errors.New("logger cannot be nil")
+		return core.ErrNilPointer.Wrap("logger cannot be nil")
+	}
+	if k.eventService == nil {
+		return core.ErrNilPointer.Wrap("event service cannot be nil")
 	}
 	if k.cdc == nil {
-		return errors.New("codec cannot be nil")
+		return core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 
 	return nil
@@ -212,15 +227,16 @@ func (k *Keeper) RequireAuthority(signer string) error {
 func (k *Keeper) setComponents(
 	cdc codec.Codec,
 	logger log.Logger,
+	eventService event.Service,
 	sb *collections.SchemaBuilder,
 	bankKeeper types.BankKeeper,
 ) error {
-	executor, err := executorcomp.New(cdc, sb, logger)
+	executor, err := executorcomp.New(cdc, sb, logger, eventService)
 	if err != nil {
 		return errorsmod.Wrap(err, "error creating a new action component")
 	}
 
-	forwarder, err := forwardercomp.New(cdc, sb, logger, bankKeeper)
+	forwarder, err := forwardercomp.New(cdc, sb, logger, eventService, bankKeeper)
 	if err != nil {
 		return errorsmod.Wrap(err, "error creating a new forwarding component")
 	}
@@ -230,7 +246,7 @@ func (k *Keeper) setComponents(
 		return errorsmod.Wrap(err, "error creating a new dispatcher component")
 	}
 
-	adapter, err := adaptercomp.New(cdc, sb, logger, bankKeeper, dispatcher)
+	adapter, err := adaptercomp.New(cdc, sb, logger, eventService, bankKeeper, dispatcher)
 	if err != nil {
 		return errorsmod.Wrap(err, "error creating a new adapter component")
 	}
