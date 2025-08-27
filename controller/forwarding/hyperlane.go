@@ -174,7 +174,7 @@ func (c *HyperlaneController) executeForwarding(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	hypAttr *forwardingtypes.HypAttributes,
-	passthroughPayload []byte,
+	_ []byte,
 ) error {
 	var hookAddr hyperlaneutil.HexAddress
 	if len(hypAttr.CustomHookId) != 0 {
@@ -190,7 +190,7 @@ func (c *HyperlaneController) executeForwarding(
 		CustomHookId:       &hookAddr,
 		GasLimit:           hypAttr.GasLimit,
 		MaxFee:             hypAttr.GetMaxFee(),
-		CustomHookMetadata: string(passthroughPayload),
+		CustomHookMetadata: hypAttr.GetCustomHookMetadata(),
 	})
 	if err != nil {
 		return errorsmod.Wrap(err, "error executing Hyperlane forwarding")
