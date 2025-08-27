@@ -22,6 +22,7 @@ package forwarding
 
 import (
 	"fmt"
+	"strings"
 
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
@@ -34,6 +35,7 @@ const (
 	HypTokenIDLen         = 32
 	HypRecipientLen       = 32
 	HypCustomHookLen      = 32
+	HypHookMetadataPrefix = "0x"
 	HypNobleTestnetDomain = 1196573006
 	HypNobleMainnetDomain = 1313817164
 )
@@ -94,6 +96,14 @@ func (a *HypAttributes) Validate() error {
 	if a.DestinationDomain == HypNobleMainnetDomain ||
 		a.DestinationDomain == HypNobleTestnetDomain {
 		return fmt.Errorf("destination domain %d is a Noble domain", a.DestinationDomain)
+	}
+
+	if !strings.HasPrefix(a.CustomHookMetadata, HypHookMetadataPrefix) {
+		return fmt.Errorf(
+			"hook metadata must have the %s prefix, got: %s",
+			HypHookMetadataPrefix,
+			a.CustomHookMetadata,
+		)
 	}
 
 	return nil
