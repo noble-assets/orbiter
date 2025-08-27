@@ -27,10 +27,13 @@ message HypAttributes {
   // destination domain.
   bytes recipient = 3;
 
-  // custom_hook_id
+  // custom_hook_id is the optional ID of the custom hook used instead of the
+  // default hook of the mailbox. This hook is executed after the maiblox
+  // required hook.
   bytes custom_hook_id = 4;
 
-  // gas_limit
+  // gas_limit is the maximum gas allowed for the execution of the
+  // destination transaction.
   string gas_limit = 5 [
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true,
@@ -38,11 +41,15 @@ message HypAttributes {
     (gogoproto.customtype) = "cosmossdk.io/math.Int"
   ];
 
-  // max_fee
+  // max_fee is the maximum fee allowed for the execution of post disptch hooks.
   cosmos.base.v1beta1.Coin max_fee = 6 [
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true,
     (amino.encoding) = "legacy_coins",
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
   ];
+
+  // custom_hook_metadata is the HEX encoded metaedata passed to the Hyperlane
+  // post dispatch hook.
+  string custom_hook_metadata = 7;
 }
