@@ -2,28 +2,47 @@
 
 ## Forwarding
 
-Forwarding controllers are the software components implementing the `ControllerForwarding` interface
-and responsible for handling forwarding packets. A forwarding packet is composed of 2 kinds of
-information:
+Forwarding controllers are the software components implementing the
+[`ControllerForwarding`](https://github.com/noble-assets/orbiter/blob/a6b63eec228df8d7b79829f73c8e9fec40574f1e/types/controller.go#L30-L33)
+interface responsible for handling forwarding packets.
 
-- General information associated with the cross-chain transfer.
-- Specific information associated with the protocol that should be used to complete the forwarding
-  step.
+```go
+type ControllerForwarding interface {
+ Controller[core.ProtocolID]
+ PacketHandler[*ForwardingPacket]
+}
+```
 
-The forwarding step is completely defined by the core `Forwarding` type, which allows a user to
-specify:
+A
+[`ForwardingPacket`](https://github.com/noble-assets/orbiter/blob/a6b63eec228df8d7b79829f73c8e9fec40574f1e/types/packet.go#L171-L174)
+is composed by two parts:
+
+```go
+type ForwardingPacket struct {
+ TransferAttributes *TransferAttributes
+ Forwarding         *core.Forwarding
+}
+```
+
+- **Transfer attributes**: General information associated with the cross-chain transfer.
+- **Forwarding attributes**: Specific information associated with the protocol that should be used
+  to complete the forwarding step.
+
+The forwarding step is completely defined by the core
+[`Forwarding`](https://github.com/noble-assets/orbiter/blob/a6b63eec228df8d7b79829f73c8e9fec40574f1e/types/core/orbiter.pb.go#L79-L91)
+type, which allows a user to specify:
 
 1. The cross-chain protocol to use for the forwarding.
 2. The cross-chain protocol specific information.
 3. Passthrough metadata that has to be attached to the cross-chain transfer.
 
-Forwarding controllers are elements of the Orbiter module used to interpret the protocol-specific
-information and use them to forward funds. This specific information is contained in a type
-implementing the `ForwardingAttributes` interface. For additional details on the implementation,
-please refer to the
+The cross-chain protocol specific information is encoded with the `Attributes` field with an any
+type that implements the `ForwardingAttributes` interface. For additional details on the
+implementation, please refer to the
 [proto definition](https://github.com/noble-assets/orbiter/blob/ad5061a010ae61a5e62699e5bf35e7016f198765/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55)
 
-Controllers enable users to perform:
+Forwarding controllers are elements of the Orbiter module used to interpret the protocol-specific
+information and use them to forward funds. Controllers enable users to perform:
 
 - AutoCCTP
 - AutoLane
