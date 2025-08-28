@@ -30,7 +30,7 @@ The composability flow is defined by the 3-steps logic:
 flowchart LR
    subgraph Noble
      direction LR
-      a(Actions) --> o(Orbit)
+      a(Actions) --> f(Forwarding)
    end
     S((Sender)) -- cross-chain transfer -->  Noble
     Noble -- cross-chain transfer --> R((Recipient))
