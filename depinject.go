@@ -61,6 +61,7 @@ type ModuleInputs struct {
 	StoreService store.KVStoreService
 
 	BankKeeper types.BankKeeper
+	CCTPKeeper *cctpkeeper.Keeper
 }
 
 type ModuleOutputs struct {
@@ -85,6 +86,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.StoreService,
 		authority.String(),
 		in.BankKeeper,
+		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
 	)
 	m := NewAppModule(k)
 
@@ -137,6 +139,14 @@ func InjectActionControllers(in ComponentsInputs) {
 }
 
 func InjectAdapterControllers(in ComponentsInputs) {
+	cctp, err := adapterctrl.NewCCTPAdapter(
+		in.Orbiters.Codec(),
+		in.Orbiters.Adapter().Logger(),
+	)
+	if err != nil {
+		panic(errorsmod.Wrap(err, "error creating CCTP adapter"))
+	}
+
 	ibc, err := adapterctrl.NewIBCAdapter(
 		in.Orbiters.Codec(),
 		in.Orbiters.Adapter().Logger(),
@@ -145,5 +155,5 @@ func InjectAdapterControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating IBC adapter"))
 	}
 
-	in.Orbiters.SetAdapterControllers(ibc)
+	in.Orbiters.SetAdapterControllers(cctp, ibc)
 }

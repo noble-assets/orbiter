@@ -31,7 +31,10 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ types.ControllerAdapter = &IBCAdapter{}
+var (
+	_ types.ControllerAdapter = &IBCAdapter{}
+	_ types.PayloadParser     = &IBCParser{}
+)
 
 // IBCAdapter is the type component in charge of adapting the
 // memo of an IBC ICS20 transfer to the common payload type
@@ -61,8 +64,8 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	}
 
 	return &IBCAdapter{
-		logger:         logger.With(core.AdapterControllerName, baseController.Name()),
 		BaseController: baseController,
+		logger:         logger.With(core.AdapterControllerName, baseController.Name()),
 		parser:         parser,
 	}, nil
 }
@@ -75,8 +78,7 @@ func (a *IBCAdapter) ParsePayload(
 	return a.parser.ParsePayload(id, payloadBz)
 }
 
-var _ types.PayloadParser = &IBCParser{}
-
+// IBCParser ... TODO
 type IBCParser struct {
 	JSONParser
 }
@@ -97,7 +99,7 @@ func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 	}, nil
 }
 
-// ParsePayload parses the payload from an IBC transfer to retrieve the orbiter
+// ParsePayload parses the payload from an IBC transfer to retrieve the Orbiter
 // payload. It returns:
 // - bool: whether the payload is intended for the Orbiter module.
 // - Payload: the parsed payload.

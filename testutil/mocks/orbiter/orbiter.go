@@ -58,6 +58,7 @@ func orbiterKeeperWithMocks(
 		deps.StoreService,
 		testutil.Authority,
 		m.BankKeeper,
+		m.CCTPMsgServer,
 	)
 
 	return k, deps.SdkCtx

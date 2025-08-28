@@ -37,6 +37,7 @@ import (
 	executorcomp "github.com/noble-assets/orbiter/keeper/component/executor"
 	forwardercomp "github.com/noble-assets/orbiter/keeper/component/forwarder"
 	"github.com/noble-assets/orbiter/types"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -68,6 +69,7 @@ func NewKeeper(
 	storeService store.KVStoreService,
 	authority string,
 	bankKeeper types.BankKeeper,
+	cctpServer adaptertypes.CCTPMsgServer,
 ) *Keeper {
 	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, bankKeeper, authority); err != nil {
 		panic(err)
@@ -82,7 +84,7 @@ func NewKeeper(
 		authority:    authority,
 	}
 
-	if err := k.setComponents(k.cdc, k.logger, k.eventService, sb, bankKeeper); err != nil {
+	if err := k.setComponents(k.cdc, k.logger, k.eventService, sb, bankKeeper, cctpServer); err != nil {
 		panic(err)
 	}
 
@@ -230,6 +232,7 @@ func (k *Keeper) setComponents(
 	eventService event.Service,
 	sb *collections.SchemaBuilder,
 	bankKeeper types.BankKeeper,
+	cctpServer adaptertypes.CCTPMsgServer,
 ) error {
 	executor, err := executorcomp.New(cdc, sb, logger, eventService)
 	if err != nil {
@@ -246,7 +249,15 @@ func (k *Keeper) setComponents(
 		return errorsmod.Wrap(err, "error creating a new dispatcher component")
 	}
 
-	adapter, err := adaptercomp.New(cdc, sb, logger, eventService, bankKeeper, dispatcher)
+	adapter, err := adaptercomp.New(
+		cdc,
+		sb,
+		logger,
+		eventService,
+		bankKeeper,
+		cctpServer,
+		dispatcher,
+	)
 	if err != nil {
 		return errorsmod.Wrap(err, "error creating a new adapter component")
 	}

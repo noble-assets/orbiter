@@ -43,12 +43,14 @@ type AdapterRouter = *router.Router[core.ProtocolID, types.ControllerAdapter]
 var _ types.Adapter = &Adapter{}
 
 type Adapter struct {
+	cdc          codec.BinaryCodec
 	logger       log.Logger
 	eventService event.Service
 
 	// router is an adapter controllers router.
 	router     AdapterRouter
 	bankKeeper types.BankKeeperAdapter
+	cctpServer adaptertypes.CCTPMsgServer
 	dispatcher types.PayloadDispatcher
 	params     collections.Item[adaptertypes.Params]
 }
@@ -59,6 +61,7 @@ func New(
 	logger log.Logger,
 	eventService event.Service,
 	bankKeeper types.BankKeeperAdapter,
+	cctpServer adaptertypes.CCTPMsgServer,
 	dispatcher types.PayloadDispatcher,
 ) (*Adapter, error) {
 	if cdc == nil {
@@ -72,10 +75,12 @@ func New(
 	}
 
 	adaptersKeeper := Adapter{
+		cdc:          cdc,
 		logger:       logger.With(core.ComponentPrefix, core.AdapterName),
 		eventService: eventService,
 		router:       router.New[core.ProtocolID, types.ControllerAdapter](),
 		bankKeeper:   bankKeeper,
+		cctpServer:   cctpServer,
 		dispatcher:   dispatcher,
 		params: collections.NewItem(
 			sb,

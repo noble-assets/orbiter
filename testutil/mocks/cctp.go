@@ -26,10 +26,14 @@ import (
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 
+	"github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
-var _ forwarding.CCTPMsgServer = CCTPMsgServer{}
+var (
+	_ adapter.CCTPMsgServer    = CCTPMsgServer{}
+	_ forwarding.CCTPMsgServer = CCTPMsgServer{}
+)
 
 type CCTPMsgServer struct{}
 
@@ -42,6 +46,17 @@ func (c CCTPMsgServer) DepositForBurnWithCaller(
 	}
 
 	return &cctptypes.MsgDepositForBurnWithCallerResponse{}, nil
+}
+
+func (c CCTPMsgServer) ReceiveMessage(
+	ctx context.Context,
+	msg *cctptypes.MsgReceiveMessage,
+) (*cctptypes.MsgReceiveMessageResponse, error) {
+	if CheckIfFailing(ctx) {
+		return nil, errors.New("error calling receive message api")
+	}
+
+	return &cctptypes.MsgReceiveMessageResponse{}, nil
 }
 
 // ReplaceDepositForBurn implements forwarding.CCTPMsgServer.

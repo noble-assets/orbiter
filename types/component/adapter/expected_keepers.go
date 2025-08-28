@@ -18,48 +18,19 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package mocks
+package adapter
 
 import (
-	"testing"
+	"context"
 
-	"github.com/stretchr/testify/require"
-
-	"cosmossdk.io/collections"
-
-	"github.com/noble-assets/orbiter/keeper/component/adapter"
-	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
+	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 )
 
-func NewAdapterComponent(tb testing.TB) (*adapter.Adapter, *Dependencies) {
-	tb.Helper()
-
-	deps := NewDependencies(tb)
-
-	sb := collections.NewSchemaBuilder(deps.StoreService)
-
-	d, err := dispatcher.New(
-		deps.EncCfg.Codec,
-		sb,
-		deps.Logger,
-		&ForwardingHandler{},
-		&ActionsHandler{},
-	)
-	require.NoError(tb, err)
-
-	a, err := adapter.New(
-		deps.EncCfg.Codec,
-		sb,
-		deps.Logger,
-		deps.EventService,
-		&BankKeeper{},
-		&CCTPMsgServer{},
-		d,
-	)
-	require.NoError(tb, err)
-
-	_, err = sb.Build()
-	require.NoError(tb, err)
-
-	return a, &deps
+// CCTPMsgServer defines the expected behavior for the CCTP server to
+// be used in the CCTP adapter.
+type CCTPMsgServer interface {
+	ReceiveMessage(
+		context.Context,
+		*cctptypes.MsgReceiveMessage,
+	) (*cctptypes.MsgReceiveMessageResponse, error)
 }

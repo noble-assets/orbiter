@@ -12,6 +12,7 @@ import (
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
+	core "github.com/noble-assets/orbiter/types/core"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -121,9 +122,133 @@ func (m *MsgUpdateParamsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUpdateParamsResponse proto.InternalMessageInfo
 
+// MsgCCTPEntrypoint ... TODO
+type MsgCCTPEntrypoint struct {
+	Signer              string        `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	TransferMessage     []byte        `protobuf:"bytes,2,opt,name=transfer_message,json=transferMessage,proto3" json:"transfer_message,omitempty"`
+	TransferAttestation []byte        `protobuf:"bytes,3,opt,name=transfer_attestation,json=transferAttestation,proto3" json:"transfer_attestation,omitempty"`
+	PayloadMessage      []byte        `protobuf:"bytes,4,opt,name=payload_message,json=payloadMessage,proto3" json:"payload_message,omitempty"`
+	PayloadAttestation  []byte        `protobuf:"bytes,5,opt,name=payload_attestation,json=payloadAttestation,proto3" json:"payload_attestation,omitempty"`
+	Payload             *core.Payload `protobuf:"bytes,6,opt,name=payload,proto3" json:"payload,omitempty"`
+}
+
+func (m *MsgCCTPEntrypoint) Reset()         { *m = MsgCCTPEntrypoint{} }
+func (m *MsgCCTPEntrypoint) String() string { return proto.CompactTextString(m) }
+func (*MsgCCTPEntrypoint) ProtoMessage()    {}
+func (*MsgCCTPEntrypoint) Descriptor() ([]byte, []int) {
+	return fileDescriptor_022041eeae34db08, []int{2}
+}
+func (m *MsgCCTPEntrypoint) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCCTPEntrypoint) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCCTPEntrypoint.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCCTPEntrypoint) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCCTPEntrypoint.Merge(m, src)
+}
+func (m *MsgCCTPEntrypoint) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCCTPEntrypoint) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCCTPEntrypoint.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCCTPEntrypoint proto.InternalMessageInfo
+
+func (m *MsgCCTPEntrypoint) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgCCTPEntrypoint) GetTransferMessage() []byte {
+	if m != nil {
+		return m.TransferMessage
+	}
+	return nil
+}
+
+func (m *MsgCCTPEntrypoint) GetTransferAttestation() []byte {
+	if m != nil {
+		return m.TransferAttestation
+	}
+	return nil
+}
+
+func (m *MsgCCTPEntrypoint) GetPayloadMessage() []byte {
+	if m != nil {
+		return m.PayloadMessage
+	}
+	return nil
+}
+
+func (m *MsgCCTPEntrypoint) GetPayloadAttestation() []byte {
+	if m != nil {
+		return m.PayloadAttestation
+	}
+	return nil
+}
+
+func (m *MsgCCTPEntrypoint) GetPayload() *core.Payload {
+	if m != nil {
+		return m.Payload
+	}
+	return nil
+}
+
+// MsgCCTPEntrypointResponse is the response to the MsgCCTPEntrypoint.
+type MsgCCTPEntrypointResponse struct {
+}
+
+func (m *MsgCCTPEntrypointResponse) Reset()         { *m = MsgCCTPEntrypointResponse{} }
+func (m *MsgCCTPEntrypointResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCCTPEntrypointResponse) ProtoMessage()    {}
+func (*MsgCCTPEntrypointResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_022041eeae34db08, []int{3}
+}
+func (m *MsgCCTPEntrypointResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCCTPEntrypointResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCCTPEntrypointResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCCTPEntrypointResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCCTPEntrypointResponse.Merge(m, src)
+}
+func (m *MsgCCTPEntrypointResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCCTPEntrypointResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCCTPEntrypointResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCCTPEntrypointResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgUpdateParams)(nil), "noble.orbiter.component.adapter.v1.MsgUpdateParams")
 	proto.RegisterType((*MsgUpdateParamsResponse)(nil), "noble.orbiter.component.adapter.v1.MsgUpdateParamsResponse")
+	proto.RegisterType((*MsgCCTPEntrypoint)(nil), "noble.orbiter.component.adapter.v1.MsgCCTPEntrypoint")
+	proto.RegisterType((*MsgCCTPEntrypointResponse)(nil), "noble.orbiter.component.adapter.v1.MsgCCTPEntrypointResponse")
 }
 
 func init() {
@@ -131,30 +256,41 @@ func init() {
 }
 
 var fileDescriptor_022041eeae34db08 = []byte{
-	// 368 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xd2, 0xce, 0xcb, 0x4f, 0xca,
-	0x49, 0xd5, 0xcf, 0x2f, 0x4a, 0xca, 0x2c, 0x49, 0x2d, 0xd2, 0x4f, 0xce, 0xcf, 0x2d, 0xc8, 0xcf,
-	0x4b, 0xcd, 0x2b, 0xd1, 0x4f, 0x4c, 0x49, 0x2c, 0x00, 0x89, 0x94, 0x19, 0xea, 0x97, 0x54, 0xe8,
-	0x15, 0x14, 0xe5, 0x97, 0xe4, 0x0b, 0x29, 0x81, 0x15, 0xeb, 0x41, 0x15, 0xeb, 0xc1, 0x15, 0xeb,
-	0x41, 0x15, 0xeb, 0x95, 0x19, 0x4a, 0x09, 0x26, 0xe6, 0x66, 0xe6, 0xe5, 0xeb, 0x83, 0x49, 0x88,
-	0x36, 0x29, 0xf1, 0xe4, 0xfc, 0xe2, 0xdc, 0xfc, 0x62, 0xfd, 0xdc, 0xe2, 0x74, 0x90, 0x71, 0xb9,
-	0xc5, 0xe9, 0x50, 0x09, 0x49, 0x88, 0x44, 0x3c, 0x98, 0xa7, 0x0f, 0xe1, 0x40, 0xa5, 0x44, 0xd2,
-	0xf3, 0xd3, 0xf3, 0x21, 0xe2, 0x20, 0x16, 0x54, 0xd4, 0x80, 0x08, 0xd7, 0xc2, 0xdc, 0x02, 0xd6,
-	0xa1, 0x74, 0x8d, 0x91, 0x8b, 0xdf, 0xb7, 0x38, 0x3d, 0xb4, 0x20, 0x25, 0xb1, 0x24, 0x35, 0x20,
-	0xb1, 0x28, 0x31, 0xb7, 0x58, 0xc8, 0x80, 0x8b, 0xad, 0x38, 0x33, 0x3d, 0x2f, 0xb5, 0x48, 0x82,
-	0x51, 0x81, 0x51, 0x83, 0xd3, 0x49, 0xe2, 0xd2, 0x16, 0x5d, 0x11, 0xa8, 0xed, 0x8e, 0x29, 0x29,
-	0x45, 0xa9, 0xc5, 0xc5, 0xc1, 0x25, 0x45, 0x99, 0x79, 0xe9, 0x41, 0x50, 0x75, 0x42, 0xbe, 0x5c,
-	0x6c, 0x05, 0x60, 0xbd, 0x12, 0x4c, 0x0a, 0x8c, 0x1a, 0xdc, 0x46, 0x5a, 0x7a, 0x84, 0x43, 0x42,
-	0x0f, 0x62, 0x9b, 0x13, 0xe7, 0x89, 0x7b, 0xf2, 0x0c, 0x2b, 0x9e, 0x6f, 0xd0, 0x62, 0x0c, 0x82,
-	0x1a, 0x62, 0xe5, 0xd4, 0xf4, 0x7c, 0x83, 0x16, 0xd4, 0xec, 0xae, 0xe7, 0x1b, 0xb4, 0x8c, 0x88,
-	0xf0, 0x16, 0x9a, 0x27, 0x94, 0x24, 0xb9, 0xc4, 0xd1, 0x84, 0x82, 0x52, 0x8b, 0x0b, 0xf2, 0xf3,
-	0x8a, 0x53, 0x8d, 0xfa, 0x19, 0xb9, 0x98, 0x7d, 0x8b, 0xd3, 0x85, 0x1a, 0x18, 0xb9, 0x78, 0x50,
-	0x3c, 0x6e, 0x4c, 0x8c, 0xb3, 0xd1, 0x4c, 0x95, 0xb2, 0x26, 0x43, 0x13, 0xcc, 0x29, 0x52, 0xac,
-	0x0d, 0x20, 0x8f, 0x3b, 0x05, 0x9e, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47,
-	0x72, 0x8c, 0x13, 0x1e, 0xcb, 0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94,
-	0x79, 0x7a, 0x66, 0x49, 0x46, 0x69, 0x12, 0xc8, 0x54, 0x7d, 0xb0, 0x3d, 0xba, 0x89, 0xc5, 0xc5,
-	0xa9, 0x25, 0xc5, 0xf0, 0xc0, 0x28, 0xa9, 0x2c, 0x48, 0x2d, 0xc6, 0x0c, 0x92, 0x24, 0x36, 0x70,
-	0xfc, 0x1a, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0xd9, 0xb0, 0x6e, 0x1c, 0xc1, 0x02, 0x00, 0x00,
+	// 544 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0xb1, 0x6f, 0xd3, 0x4e,
+	0x18, 0xcd, 0xa5, 0xbf, 0xe6, 0xa7, 0x1e, 0x55, 0x43, 0xdd, 0x48, 0x4d, 0x82, 0x64, 0xaa, 0x30,
+	0x50, 0x82, 0x6a, 0x37, 0x29, 0x08, 0x54, 0xc4, 0xd0, 0x14, 0xc6, 0x48, 0x25, 0xc0, 0xc2, 0x52,
+	0x5d, 0xea, 0xe3, 0xb0, 0x54, 0xdf, 0x59, 0xf7, 0x1d, 0x15, 0xd9, 0x2a, 0x06, 0x06, 0x26, 0x46,
+	0xfe, 0x04, 0xc6, 0x0c, 0xfc, 0x11, 0x1d, 0x2b, 0x06, 0xc4, 0x84, 0x50, 0x32, 0xe4, 0xaf, 0x40,
+	0x42, 0x3e, 0xdf, 0x85, 0xc6, 0x19, 0xb0, 0xb2, 0x58, 0xbe, 0xf7, 0xbd, 0xf7, 0xee, 0xfb, 0xee,
+	0x9d, 0x8d, 0xef, 0x72, 0xd1, 0x3f, 0xa5, 0xbe, 0x90, 0xfd, 0x50, 0x51, 0xe9, 0x9f, 0x88, 0x28,
+	0x16, 0x9c, 0x72, 0xe5, 0x93, 0x80, 0xc4, 0x09, 0x72, 0xd6, 0xf2, 0xd5, 0x3b, 0x2f, 0x96, 0x42,
+	0x09, 0xa7, 0xa1, 0xc9, 0x9e, 0x21, 0x7b, 0x53, 0xb2, 0x67, 0xc8, 0xde, 0x59, 0xab, 0xbe, 0x4e,
+	0xa2, 0x90, 0x0b, 0x5f, 0x3f, 0x53, 0x59, 0x7d, 0xf3, 0x44, 0x40, 0x24, 0xc0, 0x8f, 0x80, 0x25,
+	0x76, 0x11, 0x30, 0x53, 0xa8, 0xa5, 0x85, 0x63, 0xbd, 0xf2, 0xd3, 0x85, 0x29, 0x55, 0x98, 0x60,
+	0x22, 0xc5, 0x93, 0x37, 0x83, 0xee, 0xe6, 0xe8, 0xd6, 0xf6, 0x92, 0x2a, 0x6e, 0x65, 0x15, 0x92,
+	0x26, 0x24, 0x3b, 0x82, 0x26, 0x35, 0xbe, 0x23, 0x5c, 0xee, 0x02, 0x7b, 0x19, 0x07, 0x44, 0xd1,
+	0x23, 0x22, 0x49, 0x04, 0xce, 0x2e, 0x2e, 0x41, 0xc8, 0x38, 0x95, 0x55, 0xb4, 0x85, 0xb6, 0x57,
+	0x3a, 0xd5, 0x6f, 0x5f, 0x77, 0x2a, 0xa6, 0xc5, 0x83, 0x20, 0x90, 0x14, 0xe0, 0xb9, 0x92, 0x21,
+	0x67, 0x3d, 0xc3, 0x73, 0xba, 0xb8, 0x14, 0x6b, 0x6d, 0xb5, 0xb8, 0x85, 0xb6, 0xaf, 0xb5, 0x9b,
+	0xde, 0xbf, 0x8f, 0xcb, 0x4b, 0x77, 0xeb, 0xac, 0x5c, 0xfc, 0xbc, 0x59, 0xf8, 0x32, 0x19, 0x36,
+	0x51, 0xcf, 0x98, 0xec, 0x77, 0xde, 0x4f, 0x86, 0x4d, 0xe3, 0xfd, 0x71, 0x32, 0x6c, 0xb6, 0x73,
+	0xcc, 0x9e, 0x19, 0xa2, 0x51, 0xc3, 0x9b, 0x19, 0xa8, 0x47, 0x21, 0x16, 0x1c, 0x68, 0xe3, 0x77,
+	0x11, 0xaf, 0x77, 0x81, 0x1d, 0x1e, 0xbe, 0x38, 0x7a, 0xca, 0x95, 0x1c, 0xc4, 0x22, 0xe4, 0x6a,
+	0x81, 0xa9, 0xef, 0xe0, 0xeb, 0x4a, 0x12, 0x0e, 0xaf, 0xa9, 0x3c, 0x8e, 0x28, 0x00, 0x61, 0x54,
+	0xcf, 0xbf, 0xda, 0x2b, 0x5b, 0xbc, 0x9b, 0xc2, 0x4e, 0x0b, 0x57, 0xa6, 0x54, 0xa2, 0x14, 0x05,
+	0x45, 0x54, 0x28, 0x78, 0x75, 0x49, 0xd3, 0x37, 0x6c, 0xed, 0xe0, 0x6f, 0xc9, 0xb9, 0x8d, 0xcb,
+	0x31, 0x19, 0x9c, 0x0a, 0x12, 0x4c, 0xcd, 0xff, 0xd3, 0xec, 0x35, 0x03, 0x5b, 0x6f, 0x1f, 0x6f,
+	0x58, 0xe2, 0x55, 0xeb, 0x65, 0x4d, 0x76, 0x4c, 0xe9, 0xaa, 0xf3, 0x43, 0xfc, 0xbf, 0x41, 0xab,
+	0x25, 0x1d, 0x97, 0x3b, 0x17, 0x97, 0xa4, 0x69, 0x42, 0x9a, 0xd5, 0xb3, 0xf4, 0xfd, 0x27, 0x99,
+	0x60, 0xee, 0xe5, 0x0b, 0x66, 0xf6, 0xa4, 0x1b, 0x37, 0x70, 0x6d, 0x0e, 0xb4, 0xe1, 0xb4, 0x3f,
+	0x17, 0xf1, 0x52, 0x17, 0x98, 0x73, 0x8e, 0xf0, 0xea, 0xcc, 0xad, 0xdc, 0xcb, 0x73, 0xa7, 0x32,
+	0x91, 0xd7, 0x1f, 0x2d, 0x20, 0xb2, 0xad, 0x38, 0x1f, 0x10, 0x5e, 0xcb, 0x5c, 0x92, 0xfb, 0x39,
+	0xfd, 0x66, 0x65, 0xf5, 0xc7, 0x0b, 0xc9, 0x6c, 0x23, 0xf5, 0xe5, 0xf3, 0xe4, 0xf3, 0xe8, 0x3c,
+	0xbb, 0x18, 0xb9, 0xe8, 0x72, 0xe4, 0xa2, 0x5f, 0x23, 0x17, 0x7d, 0x1a, 0xbb, 0x85, 0xcb, 0xb1,
+	0x5b, 0xf8, 0x31, 0x76, 0x0b, 0xaf, 0x1e, 0xb0, 0x50, 0xbd, 0x79, 0xdb, 0x4f, 0x7c, 0x7d, 0xbd,
+	0xd3, 0x0e, 0x01, 0xa0, 0x0a, 0xa6, 0xc9, 0xa8, 0x41, 0x4c, 0x61, 0x3e, 0x9f, 0x7e, 0x49, 0xff,
+	0x05, 0xf6, 0xfe, 0x04, 0x00, 0x00, 0xff, 0xff, 0x6e, 0x4a, 0x76, 0xb0, 0x0c, 0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -171,6 +307,8 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	// UpdateParams updates the Adapter component params.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
+	//
+	CCTPEntrypoint(ctx context.Context, in *MsgCCTPEntrypoint, opts ...grpc.CallOption) (*MsgCCTPEntrypointResponse, error)
 }
 
 type msgClient struct {
@@ -190,10 +328,21 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts 
 	return out, nil
 }
 
+func (c *msgClient) CCTPEntrypoint(ctx context.Context, in *MsgCCTPEntrypoint, opts ...grpc.CallOption) (*MsgCCTPEntrypointResponse, error) {
+	out := new(MsgCCTPEntrypointResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.component.adapter.v1.Msg/CCTPEntrypoint", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// UpdateParams updates the Adapter component params.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
+	//
+	CCTPEntrypoint(context.Context, *MsgCCTPEntrypoint) (*MsgCCTPEntrypointResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -202,6 +351,9 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) UpdateParams(ctx context.Context, req *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateParams not implemented")
+}
+func (*UnimplementedMsgServer) CCTPEntrypoint(ctx context.Context, req *MsgCCTPEntrypoint) (*MsgCCTPEntrypointResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CCTPEntrypoint not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -226,6 +378,24 @@ func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_CCTPEntrypoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCCTPEntrypoint)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CCTPEntrypoint(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/noble.orbiter.component.adapter.v1.Msg/CCTPEntrypoint",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CCTPEntrypoint(ctx, req.(*MsgCCTPEntrypoint))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var Msg_serviceDesc = _Msg_serviceDesc
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "noble.orbiter.component.adapter.v1.Msg",
@@ -234,6 +404,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateParams",
 			Handler:    _Msg_UpdateParams_Handler,
+		},
+		{
+			MethodName: "CCTPEntrypoint",
+			Handler:    _Msg_CCTPEntrypoint_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -303,6 +477,99 @@ func (m *MsgUpdateParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgCCTPEntrypoint) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCCTPEntrypoint) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCCTPEntrypoint) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Payload != nil {
+		{
+			size, err := m.Payload.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.PayloadAttestation) > 0 {
+		i -= len(m.PayloadAttestation)
+		copy(dAtA[i:], m.PayloadAttestation)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.PayloadAttestation)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.PayloadMessage) > 0 {
+		i -= len(m.PayloadMessage)
+		copy(dAtA[i:], m.PayloadMessage)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.PayloadMessage)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.TransferAttestation) > 0 {
+		i -= len(m.TransferAttestation)
+		copy(dAtA[i:], m.TransferAttestation)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.TransferAttestation)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.TransferMessage) > 0 {
+		i -= len(m.TransferMessage)
+		copy(dAtA[i:], m.TransferMessage)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.TransferMessage)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCCTPEntrypointResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCCTPEntrypointResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCCTPEntrypointResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -330,6 +597,48 @@ func (m *MsgUpdateParams) Size() (n int) {
 }
 
 func (m *MsgUpdateParamsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgCCTPEntrypoint) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.TransferMessage)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.TransferAttestation)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.PayloadMessage)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.PayloadAttestation)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Payload != nil {
+		l = m.Payload.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgCCTPEntrypointResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -486,6 +795,310 @@ func (m *MsgUpdateParamsResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgUpdateParamsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCCTPEntrypoint) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCCTPEntrypoint: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCCTPEntrypoint: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TransferMessage", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TransferMessage = append(m.TransferMessage[:0], dAtA[iNdEx:postIndex]...)
+			if m.TransferMessage == nil {
+				m.TransferMessage = []byte{}
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TransferAttestation", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TransferAttestation = append(m.TransferAttestation[:0], dAtA[iNdEx:postIndex]...)
+			if m.TransferAttestation == nil {
+				m.TransferAttestation = []byte{}
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PayloadMessage", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PayloadMessage = append(m.PayloadMessage[:0], dAtA[iNdEx:postIndex]...)
+			if m.PayloadMessage == nil {
+				m.PayloadMessage = []byte{}
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PayloadAttestation", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PayloadAttestation = append(m.PayloadAttestation[:0], dAtA[iNdEx:postIndex]...)
+			if m.PayloadAttestation == nil {
+				m.PayloadAttestation = []byte{}
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Payload", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Payload == nil {
+				m.Payload = &core.Payload{}
+			}
+			if err := m.Payload.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCCTPEntrypointResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCCTPEntrypointResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCCTPEntrypointResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
