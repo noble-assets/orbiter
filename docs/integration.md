@@ -156,7 +156,7 @@ For ease of use, we have provided a terminal utility that you can check out at h
 
 ![img.png](images/orbgen.png)
 
-### Manual Process - IBC
+### Manual Process
 
 This section describes how to create a valid IBC payload in Golang for the Orbiter module:
 
