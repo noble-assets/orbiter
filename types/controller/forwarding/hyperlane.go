@@ -47,16 +47,18 @@ func NewHyperlaneAttributes(
 	destinationDomain uint32,
 	recipient []byte,
 	customHookID []byte,
+	customHookMetadata string,
 	gasLimit math.Int,
 	maxFee sdk.Coin,
 ) (*HypAttributes, error) {
 	attr := &HypAttributes{
-		TokenId:           tokenID,
-		DestinationDomain: destinationDomain,
-		Recipient:         recipient,
-		CustomHookId:      customHookID,
-		GasLimit:          gasLimit,
-		MaxFee:            maxFee,
+		TokenId:            tokenID,
+		DestinationDomain:  destinationDomain,
+		Recipient:          recipient,
+		CustomHookId:       customHookID,
+		CustomHookMetadata: customHookMetadata,
+		GasLimit:           gasLimit,
+		MaxFee:             maxFee,
 	}
 
 	if err := attr.Validate(); err != nil {
@@ -98,7 +100,8 @@ func (a *HypAttributes) Validate() error {
 		return fmt.Errorf("destination domain %d is a Noble domain", a.DestinationDomain)
 	}
 
-	if !strings.HasPrefix(a.CustomHookMetadata, HypHookMetadataPrefix) {
+	if a.CustomHookMetadata != "" &&
+		!strings.HasPrefix(a.CustomHookMetadata, HypHookMetadataPrefix) {
 		return fmt.Errorf(
 			"hook metadata must have the %s prefix, got: %s",
 			HypHookMetadataPrefix,
@@ -124,6 +127,7 @@ func NewHyperlaneForwarding(
 	destinationDomain uint32,
 	recipient []byte,
 	customHookID []byte,
+	customHookMetadata string,
 	gasLimit math.Int,
 	maxFee sdk.Coin,
 	passthroughPayload []byte,
@@ -133,6 +137,7 @@ func NewHyperlaneForwarding(
 		destinationDomain,
 		recipient,
 		customHookID,
+		customHookMetadata,
 		gasLimit,
 		maxFee,
 	)
