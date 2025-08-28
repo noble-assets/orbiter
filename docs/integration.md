@@ -148,7 +148,15 @@ const (
 
 ## Payload Creation
 
-### IBC
+This section describes how to create a corresponding orbiter payload.
+
+### CLI
+
+For ease of use, we have provided a terminal utility that you can check out at https://github.com/noble-assets/orbgen/.
+
+![img.png](images/orbgen.png)
+
+### Manual Process - IBC
 
 This section describes how to create a valid IBC payload in Golang for the Orbiter module:
 
