@@ -32,9 +32,13 @@ message HypAttributes {
   // required hook.
   bytes custom_hook_id = 4;
 
+  // custom_hook_metadata is the HEX encoded metaedata passed to the Hyperlane
+  // post dispatch hook.
+  string custom_hook_metadata = 5;
+
   // gas_limit is the maximum gas allowed for the execution of the
   // destination transaction.
-  string gas_limit = 5 [
+  string gas_limit = 6 [
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true,
     (cosmos_proto.scalar) = "cosmos.Int",
@@ -42,14 +46,10 @@ message HypAttributes {
   ];
 
   // max_fee is the maximum fee allowed for the execution of post disptch hooks.
-  cosmos.base.v1beta1.Coin max_fee = 6 [
+  cosmos.base.v1beta1.Coin max_fee = 7 [
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true,
     (amino.encoding) = "legacy_coins",
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
   ];
-
-  // custom_hook_metadata is the HEX encoded metaedata passed to the Hyperlane
-  // post dispatch hook.
-  string custom_hook_metadata = 7;
 }

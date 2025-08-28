@@ -120,6 +120,7 @@ func TestExtractAttributes_Hyperlane(t *testing.T) {
 					0,
 					make([]byte, 32),
 					make([]byte, 32),
+					"",
 					math.NewInt(1),
 					sdk.NewInt64Coin("usdn", 1),
 					[]byte{},
@@ -296,7 +297,7 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 	}
 }
 
-func TestHandlerPacket_Hyperlane(t *testing.T) {
+func TestHandlePacket_Hyperlane(t *testing.T) {
 	usdnID := make([]byte, 32)
 	copy(usdnID, "usdn id")
 
@@ -337,6 +338,7 @@ func TestHandlerPacket_Hyperlane(t *testing.T) {
 					0,
 					make([]byte, 32),
 					make([]byte, 32),
+					"",
 					math.ZeroInt(),
 					sdk.NewCoin("usdn", math.ZeroInt()),
 					[]byte{},
@@ -381,6 +383,7 @@ func TestHandlerPacket_Hyperlane(t *testing.T) {
 					0,
 					make([]byte, 32),
 					make([]byte, 32),
+					"",
 					math.ZeroInt(),
 					sdk.NewCoin("usdn", math.ZeroInt()),
 					[]byte{},
@@ -425,6 +428,7 @@ func TestHandlerPacket_Hyperlane(t *testing.T) {
 					0,
 					make([]byte, 32),
 					make([]byte, 32),
+					"",
 					math.ZeroInt(),
 					sdk.NewCoin("usdn", math.ZeroInt()),
 					[]byte{},
