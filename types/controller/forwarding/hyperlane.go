@@ -81,6 +81,7 @@ func (a *HypAttributes) Validate() error {
 			len(a.TokenId),
 		)
 	}
+
 	if len(a.Recipient) != HypRecipientLen {
 		return fmt.Errorf(
 			"recipient must be %d bytes, received %d bytes",
@@ -88,13 +89,15 @@ func (a *HypAttributes) Validate() error {
 			len(a.Recipient),
 		)
 	}
-	if len(a.CustomHookId) != HypCustomHookLen {
+
+	if l := len(a.CustomHookId); l != 0 && l != HypCustomHookLen {
 		return fmt.Errorf(
-			"custom hook ID must be %d bytes, received %d bytes",
+			"custom hook ID must be %d bytes when set, received %d bytes",
 			HypCustomHookLen,
-			len(a.CustomHookId),
+			l,
 		)
 	}
+
 	if a.DestinationDomain == HypNobleMainnetDomain ||
 		a.DestinationDomain == HypNobleTestnetDomain {
 		return fmt.Errorf("destination domain %d is a Noble domain", a.DestinationDomain)

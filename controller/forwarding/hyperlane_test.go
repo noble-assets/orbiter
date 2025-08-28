@@ -156,6 +156,11 @@ func TestExtractAttributes_Hyperlane(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, hypAttr)
+				require.Equal(t, tC.expHypAttr.DestinationDomain, hypAttr.DestinationDomain)
+				require.Equal(t, len(tC.expHypAttr.Recipient), len(hypAttr.Recipient))
+				require.Equal(t, len(tC.expHypAttr.CustomHookId), len(hypAttr.CustomHookId))
+				require.True(t, tC.expHypAttr.GasLimit.Equal(hypAttr.GasLimit))
+				require.Equal(t, tC.expHypAttr.MaxFee, hypAttr.MaxFee)
 			}
 		})
 	}
