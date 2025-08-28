@@ -83,7 +83,7 @@ func (c *HyperlaneController) Validate() error {
 		return core.ErrNilPointer.Wrap("base controller is required for the Hyperlane controller")
 	}
 	if c.handler == nil {
-		return core.ErrNilPointer.Wrap("handler is required for the Hyperlance controller")
+		return core.ErrNilPointer.Wrap("handler is required for the Hyperlane controller")
 	}
 
 	return nil
@@ -184,10 +184,11 @@ func (c *HyperlaneController) executeForwarding(
 	hypAttr *forwardingtypes.HypAttributes,
 	_ []byte,
 ) error {
-	// If the len of bytes is zero, we want to use nil in the msg construction.
-	var hookAddr hyperlaneutil.HexAddress
+	// If the len of bytes is zero, we pass nil in the msg construction.
+	var hookAddrPtr *hyperlaneutil.HexAddress
 	if len(hypAttr.CustomHookId) != 0 {
-		hookAddr = hyperlaneutil.HexAddress(hypAttr.CustomHookId)
+		h := hyperlaneutil.HexAddress(hypAttr.CustomHookId)
+		hookAddrPtr = &h
 	}
 
 	_, err := c.handler.RemoteTransfer(ctx, &warptypes.MsgRemoteTransfer{
@@ -196,7 +197,7 @@ func (c *HyperlaneController) executeForwarding(
 		DestinationDomain:  hypAttr.DestinationDomain,
 		Recipient:          hyperlaneutil.HexAddress(hypAttr.GetRecipient()),
 		Amount:             transferAttr.DestinationAmount(),
-		CustomHookId:       &hookAddr,
+		CustomHookId:       hookAddrPtr,
 		GasLimit:           hypAttr.GasLimit,
 		MaxFee:             hypAttr.GetMaxFee(),
 		CustomHookMetadata: hypAttr.GetCustomHookMetadata(),

@@ -41,16 +41,16 @@ type HypAttributes struct {
 	// destination domain.
 	Recipient []byte `protobuf:"bytes,3,opt,name=recipient,proto3" json:"recipient,omitempty"`
 	// custom_hook_id is the optional ID of the custom hook used instead of the
-	// default hook of the mailbox. This hook is executed after the maiblox
+	// default hook of the mailbox. This hook is executed after the mailbox
 	// required hook.
 	CustomHookId []byte `protobuf:"bytes,4,opt,name=custom_hook_id,json=customHookId,proto3" json:"custom_hook_id,omitempty"`
-	// custom_hook_metadata is the HEX encoded metaedata passed to the Hyperlane
+	// custom_hook_metadata is the HEX encoded metadata passed to the Hyperlane
 	// post dispatch hook.
 	CustomHookMetadata string `protobuf:"bytes,5,opt,name=custom_hook_metadata,json=customHookMetadata,proto3" json:"custom_hook_metadata,omitempty"`
 	// gas_limit is the maximum gas allowed for the execution of the
 	// destination transaction.
 	GasLimit cosmossdk_io_math.Int `protobuf:"bytes,6,opt,name=gas_limit,json=gasLimit,proto3,customtype=cosmossdk.io/math.Int" json:"gas_limit"`
-	// max_fee is the maximum fee allowed for the execution of post disptch hooks.
+	// max_fee is the maximum fee allowed for the execution of post dispatch hooks.
 	MaxFee types.Coin `protobuf:"bytes,7,opt,name=max_fee,json=maxFee,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"max_fee"`
 }
 
