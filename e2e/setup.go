@@ -41,6 +41,12 @@ import (
 	"github.com/noble-assets/orbiter/testutil"
 )
 
+const (
+	nobleHyperlaneDomain = "1313817164" // TODO: check if correct?
+	usdcDenom            = "usdc"
+	uusdcDenom           = "uusdc"
+)
+
 var (
 	numValidators = 1
 	numFullNodes  = 0
@@ -72,7 +78,7 @@ type Suite struct {
 
 // TODO: add the hyperlane akin to how it's done in the dollar e2e tests:
 // https://github.com/noble-assets/dollar/blob/v2.1.0/e2e/utils.go#L179-L206
-func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite) {
+func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.Context, Suite) {
 	ctx := context.Background()
 	logger := zaptest.NewLogger(t)
 
@@ -188,6 +194,47 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 		suite.IBC.CounterpartySender = wallets[0]
 	}
 
+	if isHyperlane {
+		// TODO: add required setup for the hyperlane integration here
+		// This should include the mailbox, ISM and setting hooks?
+
+		// Create the ISM -- for testing purposes it's enough to use the No-Op ISM
+		node := suite.Chain.GetNode()
+		// TODO: okay that this is the suite.sender? Or should we create a separate key for this to keep everything clean?
+		hyperlaneKey := suite.sender.KeyName()
+
+		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "ism", "create-noop")
+		require.NoError(t, err, "failed to create noop ism")
+		ism, err := getHyperlaneNoOpISM(ctx, node)
+		require.NoError(t, err, "unexpected result getting hyperlane ISM")
+		require.NotNil(t, ism, "expected result getting hyperlane ISM")
+
+		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "hooks", "noop", "create")
+		require.NoError(t, err, "failed to create hyperlane hook")
+		hook, err := getHyperlaneNoOpHook(ctx, node)
+		require.NoError(t, err, "failed to get hyperlane hook")
+
+		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "mailbox", "create", ism.Id.String(), nobleHyperlaneDomain)
+		require.NoError(t, err, "failed to create mailbox")
+		mailbox, err := getHyperlaneMailbox(ctx, node)
+		require.NoError(t, err, "failed to get hyperlane mailbox")
+
+		// TODO: do we need to set `--default-ism` here? It's not done on dollar tests but available in the cmd
+		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "mailbox", "set", mailbox.Id.String(), "--default-ism", ism.Id.String(), "--required-hook", hook.Id.String(), "--default-hook", hook.Id.String())
+		require.NoError(t, err, "failed to create noop ism")
+
+		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane-transfer", "create-collateral-token", mailbox.Id.String(), uusdcDenom)
+		require.NoError(t, err, "failed to create noop ism")
+		collateralToken, err := getHyperlaneCollateralToken(ctx, node)
+		require.NoError(t, err, "failed to get hyperlane collateral token")
+
+		receiverDomain := "1"
+		receiverContract := "0x0000000000000000000000000000000000000000000000000000000000000000"
+		gasAmount := "0"
+		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane-transfer", "enroll-remote-router", collateralToken.Id, receiverDomain, receiverContract, gasAmount)
+		require.NoError(t, err, "failed to create enroll remote router for token")
+	}
+
 	return ctx, suite
 }
 
@@ -195,22 +242,22 @@ var DenomMetadataUsdc = banktypes.Metadata{
 	Description: "USD Coin",
 	DenomUnits: []*banktypes.DenomUnit{
 		{
-			Denom:    "uusdc",
+			Denom:    uusdcDenom,
 			Exponent: 0,
 			Aliases: []string{
 				"microusdc",
 			},
 		},
 		{
-			Denom:    "usdc",
+			Denom:    usdcDenom,
 			Exponent: 6,
 			Aliases:  []string{},
 		},
 	},
-	Base:    "uusdc",
-	Display: "usdc",
-	Name:    "usdc",
-	Symbol:  "USDC",
+	Base:    uusdcDenom,
+	Display: usdcDenom,
+	Name:    usdcDenom,
+	Symbol:  usdcDenom,
 }
 
 type CircleRoles struct {
@@ -245,7 +292,7 @@ func createOrbiterChainSpec(
 			ChainID:        "orbiter-1",
 			Bin:            "simd",
 			Bech32Prefix:   "noble",
-			Denom:          "uusdc",
+			Denom:          uusdcDenom,
 			GasPrices:      gasPrices,
 			GasAdjustment:  1.5,
 			TrustingPeriod: "504h",
@@ -275,7 +322,7 @@ func preGenesis(ctx context.Context, suite *Suite) func(ibc.Chain) error {
 
 		genesisWallet := ibc.WalletAmount{
 			Address: fiatTfRoles.Pauser.FormattedAddress(),
-			Denom:   "uusdc",
+			Denom:   uusdcDenom,
 			Amount:  math.NewIntFromUint64(1_000_000_000),
 		}
 		err = val.AddGenesisAccount(
