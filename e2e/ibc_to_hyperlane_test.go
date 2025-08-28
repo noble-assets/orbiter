@@ -19,3 +19,15 @@
 // TITLE.
 
 package e2e
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
+
+func TestIBCToHyperlane(t *testing.T) {
+	ctx, s := NewSuite(t, true, false, true)
+	require.NotNil(t, ctx, "failed to create context") // TODO: nonsense, remove
+	require.NotNil(t, s, "failed to create test suite")
+}

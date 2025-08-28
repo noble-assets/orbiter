@@ -200,7 +200,8 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 
 		// Create the ISM -- for testing purposes it's enough to use the No-Op ISM
 		node := suite.Chain.GetNode()
-		// TODO: okay that this is the suite.sender? Or should we create a separate key for this to keep everything clean?
+		// TODO: okay that this is the suite.sender? Or should we create a separate key for this to
+		// keep everything clean?
 		hyperlaneKey := suite.sender.KeyName()
 
 		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "ism", "create-noop")
@@ -214,16 +215,45 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 		hook, err := getHyperlaneNoOpHook(ctx, node)
 		require.NoError(t, err, "failed to get hyperlane hook")
 
-		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "mailbox", "create", ism.Id.String(), nobleHyperlaneDomain)
+		_, err = node.ExecTx(
+			ctx,
+			hyperlaneKey,
+			"hyperlane",
+			"mailbox",
+			"create",
+			ism.Id.String(),
+			nobleHyperlaneDomain,
+		)
 		require.NoError(t, err, "failed to create mailbox")
 		mailbox, err := getHyperlaneMailbox(ctx, node)
 		require.NoError(t, err, "failed to get hyperlane mailbox")
 
-		// TODO: do we need to set `--default-ism` here? It's not done on dollar tests but available in the cmd
-		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "mailbox", "set", mailbox.Id.String(), "--default-ism", ism.Id.String(), "--required-hook", hook.Id.String(), "--default-hook", hook.Id.String())
+		// TODO: do we need to set `--default-ism` here? It's not done on dollar tests but available
+		// in the cmd
+		_, err = node.ExecTx(
+			ctx,
+			hyperlaneKey,
+			"hyperlane",
+			"mailbox",
+			"set",
+			mailbox.Id.String(),
+			"--default-ism",
+			ism.Id.String(),
+			"--required-hook",
+			hook.Id.String(),
+			"--default-hook",
+			hook.Id.String(),
+		)
 		require.NoError(t, err, "failed to create noop ism")
 
-		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane-transfer", "create-collateral-token", mailbox.Id.String(), uusdcDenom)
+		_, err = node.ExecTx(
+			ctx,
+			hyperlaneKey,
+			"hyperlane-transfer",
+			"create-collateral-token",
+			mailbox.Id.String(),
+			uusdcDenom,
+		)
 		require.NoError(t, err, "failed to create noop ism")
 		collateralToken, err := getHyperlaneCollateralToken(ctx, node)
 		require.NoError(t, err, "failed to get hyperlane collateral token")
@@ -231,7 +261,16 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 		receiverDomain := "1"
 		receiverContract := "0x0000000000000000000000000000000000000000000000000000000000000000"
 		gasAmount := "0"
-		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane-transfer", "enroll-remote-router", collateralToken.Id, receiverDomain, receiverContract, gasAmount)
+		_, err = node.ExecTx(
+			ctx,
+			hyperlaneKey,
+			"hyperlane-transfer",
+			"enroll-remote-router",
+			collateralToken.Id,
+			receiverDomain,
+			receiverContract,
+			gasAmount,
+		)
 		require.NoError(t, err, "failed to create enroll remote router for token")
 	}
 

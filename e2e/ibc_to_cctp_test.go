@@ -48,7 +48,7 @@ func TestIBCToCCTP(t *testing.T) {
 	t.Parallel()
 
 	testutil.SetSDKConfig()
-	ctx, s := NewSuite(t, true, true)
+	ctx, s := NewSuite(t, true, true, false)
 
 	orbiter.RegisterInterfaces(s.Chain.GetCodec().InterfaceRegistry())
 
