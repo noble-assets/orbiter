@@ -70,6 +70,8 @@ type Suite struct {
 	destinationDomain uint32
 }
 
+// TODO: add the hyperlane akin to how it's done in the dollar e2e tests:
+// https://github.com/noble-assets/dollar/blob/v2.1.0/e2e/utils.go#L179-L206
 func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite) {
 	ctx := context.Background()
 	logger := zaptest.NewLogger(t)

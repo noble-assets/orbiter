@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	hyperlanekeeper "github.com/bcp-innovations/hyperlane-cosmos/x/core/keeper"
+	warpkeeper "github.com/bcp-innovations/hyperlane-cosmos/x/warp/keeper"
 	cctpkeeper "github.com/circlefin/noble-cctp/x/cctp/keeper"
 	ftfkeeper "github.com/circlefin/noble-fiattokenfactory/x/fiattokenfactory/keeper"
 
@@ -35,6 +37,8 @@ import (
 
 	_ "cosmossdk.io/x/upgrade"
 	_ "embed"
+	_ "github.com/bcp-innovations/hyperlane-cosmos/x/core" // dummy import for protos
+	_ "github.com/bcp-innovations/hyperlane-cosmos/x/warp" // dummy import for protos
 	_ "github.com/circlefin/noble-cctp/x/cctp"
 	_ "github.com/circlefin/noble-fiattokenfactory/x/fiattokenfactory"
 	_ "github.com/cosmos/cosmos-sdk/x/auth"
@@ -83,6 +87,10 @@ type SimApp struct {
 	// Circle Modules
 	CCTPKeeper *cctpkeeper.Keeper
 	FTFKeeper  *ftfkeeper.Keeper
+
+	// Hyperlane Modules
+	HyperlaneKeeper *hyperlanekeeper.Keeper
+	WarpKeeper      warpkeeper.Keeper
 
 	// Custom Modules
 	OrbiterKeeper *orbiterkeeper.Keeper
@@ -151,6 +159,10 @@ func NewSimApp(
 		// Circle Modules
 		&app.CCTPKeeper,
 		&app.FTFKeeper,
+
+		// Hyperlane Modules
+		&app.HyperlaneKeeper,
+		&app.WarpKeeper,
 
 		// Custom Modules
 		&app.OrbiterKeeper,

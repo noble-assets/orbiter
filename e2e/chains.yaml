@@ -4,3 +4,4 @@
   build-dir: simapp
   binaries:
     - simapp/build/simd
+# TODO: add Noble chain here to have something to run hyperlane-cosmos
