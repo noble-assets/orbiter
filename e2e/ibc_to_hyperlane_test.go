@@ -21,7 +21,6 @@
 package e2e
 
 import (
-	"fmt"
 	"strconv"
 	"testing"
 
@@ -46,15 +45,11 @@ import (
 // NOTE: here we are not testing any actions or general failure cases as those
 // are sufficiently covered in the IBC-to-CCTP case.
 func TestIBCToHyperlane(t *testing.T) {
-	// TODO: data race when testing in parallel?
-	//t.Parallel()
-	//
 	testutil.SetSDKConfig()
 	// NOTE: this has to also include an IBC connected chain which is used to send the orbiter
 	// payload to the module.
 	ctx, s := NewSuite(t, true, true, true)
 
-	// TODO: check why this is necessary and not already done in the setup of the suite?
 	orbiter.RegisterInterfaces(s.Chain.GetCodec().InterfaceRegistry())
 
 	fromOrbiterChannelID, toOrbiterChannelID := s.GetChannels(t, ctx)
@@ -84,25 +79,19 @@ func TestIBCToHyperlane(t *testing.T) {
 	unwrappedTokenID, err := hyperlaneutil.DecodeHexAddress(s.hyperlaneToken.Id)
 	require.NoError(t, err, "failed to decode token id")
 
-	// TODO: commented out for now
-	// decodedCustomHookID, err := hyperlaneutil.DecodeHexAddress(s.hyperlaneHook.Id.String())
-	// require.NoError(t, err, "failed to decode custom hook id")
-
 	customHookID := []byte{}
 	customHookMetadata := ""
+	passthroughPayload := []byte{}
 
 	forwarding, err := forwardingtypes.NewHyperlaneForwarding(
 		unwrappedTokenID.Bytes(),
-		// TODO: check value here
 		s.hyperlaneDestinationDomain,
 		s.mintRecipient,
 		customHookID,
 		customHookMetadata,
 		sdkmath.ZeroInt(),
 		sdk.NewInt64Coin(uusdcDenom, 1e4),
-		// []byte("some payload to pass through"), // check with passthrough payload? // TODO:
-		// payload passthrough required to be zero by default
-		[]byte{}, // check with passthrough payload?
+		passthroughPayload,
 	)
 	require.NoError(t, err, "failed to create hyperlane forwarding")
 
@@ -121,11 +110,6 @@ func TestIBCToHyperlane(t *testing.T) {
 		Denom:   fundedIBCCoin.Denom,
 		Amount:  amountToSend,
 	}
-
-	fmt.Println(
-		"=================================\n\nSending payload:\n\n=================================",
-		string(payloadBytes),
-	)
 
 	_, err = s.IBC.CounterpartyChain.SendIBCTransfer(
 		ctx,

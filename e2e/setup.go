@@ -42,12 +42,12 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/noble-assets/orbiter/testutil"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
 const (
-	nobleHyperlaneDomain = "1313817164" // TODO: check if correct?
-	usdcDenom            = "usdc"
-	uusdcDenom           = "uusdc"
+	usdcDenom  = "usdc"
+	uusdcDenom = "uusdc"
 )
 
 var (
@@ -174,10 +174,12 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 		math.NewInt(1_000_000_000),
 		suite.Chain,
 		suite.Chain,
+		suite.Chain,
 	)
 
 	suite.sender = wallets[0]
 	suite.fallbackRecipient = wallets[1]
+	hyperlaneWallet := wallets[2]
 
 	suite.destinationDomain = 0
 
@@ -203,20 +205,15 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 	}
 
 	if isHyperlane {
-		// TODO: add required setup for the hyperlane integration here
-		// This should include the mailbox, ISM and setting hooks?
-
 		// Create the ISM -- for testing purposes it's enough to use the No-Op ISM
 		node := suite.Chain.GetNode()
-		// TODO: okay that this is the suite.sender? Or should we create a separate key for this to
-		// keep everything clean?
-		hyperlaneKey := suite.sender.KeyName()
+		hyperlaneKey := hyperlaneWallet.KeyName()
 
 		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "ism", "create-noop")
 		require.NoError(t, err, "failed to create noop ism")
 		ism, err := getHyperlaneNoOpISM(ctx, node)
 		require.NoError(t, err, "unexpected result getting hyperlane ISM")
-		require.NotNil(t, ism, "expected result getting hyperlane ISM")
+		require.NotNil(t, ism, "expected hyperlane ISM to be in state")
 
 		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "hooks", "noop", "create")
 		require.NoError(t, err, "failed to create hyperlane hook")
@@ -232,14 +229,12 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 			"mailbox",
 			"create",
 			ism.Id.String(),
-			nobleHyperlaneDomain,
+			strconv.FormatInt(forwardingtypes.HypNobleMainnetDomain, 10),
 		)
 		require.NoError(t, err, "failed to create mailbox")
 		mailbox, err := getHyperlaneMailbox(ctx, node)
 		require.NoError(t, err, "failed to get hyperlane mailbox")
 
-		// TODO: do we need to set `--default-ism` here? It's not done on dollar tests but available
-		// in the cmd
 		_, err = node.ExecTx(
 			ctx,
 			hyperlaneKey,
@@ -254,7 +249,7 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 			"--default-hook",
 			hook.Id.String(),
 		)
-		require.NoError(t, err, "failed to create noop ism")
+		require.NoError(t, err, "failed to create set mailbox")
 
 		_, err = node.ExecTx(
 			ctx,
@@ -264,7 +259,7 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 			mailbox.Id.String(),
 			uusdcDenom,
 		)
-		require.NoError(t, err, "failed to create noop ism")
+		require.NoError(t, err, "failed to create collateral token")
 		collateralToken, err := getHyperlaneCollateralToken(ctx, node)
 		require.NoError(t, err, "failed to get hyperlane collateral token")
 

@@ -37,8 +37,8 @@ import (
 
 	_ "cosmossdk.io/x/upgrade"
 	_ "embed"
-	_ "github.com/bcp-innovations/hyperlane-cosmos/x/core" // dummy import for protos
-	_ "github.com/bcp-innovations/hyperlane-cosmos/x/warp" // dummy import for protos
+	_ "github.com/bcp-innovations/hyperlane-cosmos/x/core"
+	_ "github.com/bcp-innovations/hyperlane-cosmos/x/warp"
 	_ "github.com/circlefin/noble-cctp/x/cctp"
 	_ "github.com/circlefin/noble-fiattokenfactory/x/fiattokenfactory"
 	_ "github.com/cosmos/cosmos-sdk/x/auth"

@@ -104,6 +104,16 @@ func (c *HyperlaneController) HandlePacket(
 		return errorsmod.Wrap(err, "error extracting Hyperlane forwarding attributes")
 	}
 
+	c.logger.Debug(
+		"Forwarding attributes",
+		"tokenID",
+		string(attr.TokenId),
+		"destination-domain",
+		attr.DestinationDomain,
+		"recipient",
+		hyperlaneutil.HexAddress(attr.Recipient),
+	)
+
 	err = c.ValidateForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
 		return errorsmod.Wrap(err, "error validating Hyperlane forwarding")

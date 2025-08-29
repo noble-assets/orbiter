@@ -216,8 +216,6 @@ func SearchEvents(events []abci.Event, eventTypes []string) (bool, map[string]ab
 	wantedEvents := make(map[string]abci.Event, len(eventTypes))
 
 	for _, event := range events {
-		// TODO: remove
-		fmt.Println("found event: ", event.Type)
 		if _, found := missing[event.Type]; found {
 			wantedEvents[event.Type] = event
 			delete(missing, event.Type)

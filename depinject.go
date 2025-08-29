@@ -131,7 +131,7 @@ func InjectForwardingControllers(in ComponentsInputs) {
 		),
 	)
 	if err != nil {
-		panic(errorsmod.Wrap(err, "error creating HYPERLANE controller"))
+		panic(errorsmod.Wrap(err, "error creating Hyperlane controller"))
 	}
 
 	in.Orbiters.SetForwardingControllers(cctp, hyperlane)

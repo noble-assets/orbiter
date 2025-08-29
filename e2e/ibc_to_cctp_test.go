@@ -45,9 +45,6 @@ import (
 )
 
 func TestIBCToCCTP(t *testing.T) {
-	// TODO: data race when running e2e in parallel?
-	// t.Parallel()
-
 	testutil.SetSDKConfig()
 	ctx, s := NewSuite(t, true, true, false)
 
