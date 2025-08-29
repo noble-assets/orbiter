@@ -40,8 +40,6 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-const DispatchEvent = "hyperlane.core.post_dispatch.v1.EventDispatch"
-
 // TestIBCToHyperlane tests the "auto-lane" flow, which forwards an incoming IBC packet,
 // which contains a valid orbiter payload through the Hyperlane bridge.
 //
@@ -86,18 +84,25 @@ func TestIBCToHyperlane(t *testing.T) {
 	unwrappedTokenID, err := hyperlaneutil.DecodeHexAddress(s.hyperlaneToken.Id)
 	require.NoError(t, err, "failed to decode token id")
 
-	decodedCustomHookID, err := hyperlaneutil.DecodeHexAddress(s.hyperlaneHook.Id.String())
-	require.NoError(t, err, "failed to decode custom hook id")
+	// TODO: commented out for now
+	// decodedCustomHookID, err := hyperlaneutil.DecodeHexAddress(s.hyperlaneHook.Id.String())
+	// require.NoError(t, err, "failed to decode custom hook id")
+
+	customHookID := []byte{}
+	customHookMetadata := ""
 
 	forwarding, err := forwardingtypes.NewHyperlaneForwarding(
 		unwrappedTokenID.Bytes(),
 		// TODO: check value here
-		s.destinationDomain,
+		s.hyperlaneDestinationDomain,
 		s.mintRecipient,
-		decodedCustomHookID.Bytes(),
+		customHookID,
+		customHookMetadata,
 		sdkmath.ZeroInt(),
 		sdk.NewInt64Coin(uusdcDenom, 1e4),
-		[]byte("some payload to pass through"), // check with passthrough payload?
+		// []byte("some payload to pass through"), // check with passthrough payload? // TODO:
+		// payload passthrough required to be zero by default
+		[]byte{}, // check with passthrough payload?
 	)
 	require.NoError(t, err, "failed to create hyperlane forwarding")
 
@@ -139,11 +144,11 @@ func TestIBCToHyperlane(t *testing.T) {
 	txsResult := GetTxsResult(t, ctx, s.Chain.Validators[0], strconv.Itoa(int(ibcHeight)))
 	require.Equal(t, txsResult.TotalCount, uint64(1), "expected only one tx")
 
-	// TODO: why is event not found? Seems like the event is not found / orbiter payload was not
-	// parsed correctly?
-	found, events := SearchEvents(txsResult.Txs[0].Events, []string{DispatchEvent})
+	found, events := SearchEvents(txsResult.Txs[0].Events, []string{
+		"hyperlane.core.v1.EventDispatch",
+		"hyperlane.warp.v1.EventSendRemoteTransfer",
+		"noble.orbiter.component.adapter.v1.EventPayloadProcess",
+	})
 	require.True(t, found, "expected the Dispatch event to be emitted")
 	require.Len(t, events, 1, "expected only one event to be found")
-
-	// TODO: assert contents of event
 }

@@ -22,6 +22,7 @@ package e2e
 
 import (
 	"context"
+	"strconv"
 	"testing"
 
 	hyperlanepostdispatchtypes "github.com/bcp-innovations/hyperlane-cosmos/x/core/02_post_dispatch/types"
@@ -80,8 +81,9 @@ type Suite struct {
 
 	// -----------------------
 	// Hyperlane fields
-	hyperlaneToken *warptypes.WrappedHypToken
-	hyperlaneHook  *hyperlanepostdispatchtypes.NoopHook
+	hyperlaneToken             *warptypes.WrappedHypToken
+	hyperlaneHook              *hyperlanepostdispatchtypes.NoopHook
+	hyperlaneDestinationDomain uint32
 }
 
 func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.Context, Suite) {
@@ -268,7 +270,8 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 
 		suite.hyperlaneToken = collateralToken
 
-		receiverDomain := "1"
+		suite.hyperlaneDestinationDomain = 1
+		receiverDomain := strconv.Itoa(int(suite.hyperlaneDestinationDomain))
 		receiverContract := "0x0000000000000000000000000000000000000000000000000000000000000000"
 		gasAmount := "0"
 		_, err = node.ExecTx(
@@ -336,18 +339,19 @@ func createOrbiterChainSpec(
 					UIDGID:     "1025:1025",
 				},
 			},
-			Type:           "cosmos",
-			Name:           "orbiter",
-			ChainID:        "orbiter-1",
-			Bin:            "simd",
-			Bech32Prefix:   "noble",
-			Denom:          uusdcDenom,
-			GasPrices:      gasPrices,
-			GasAdjustment:  1.5,
-			TrustingPeriod: "504h",
-			NoHostMount:    false,
-			PreGenesis:     preGenesis(ctx, suite),
-			ModifyGenesis:  modifyGenesis(suite),
+			Type:                "cosmos",
+			Name:                "orbiter",
+			ChainID:             "orbiter-1",
+			AdditionalStartArgs: []string{"--log_level", "*:info,x/orbiter:trace"},
+			Bin:                 "simd",
+			Bech32Prefix:        "noble",
+			Denom:               uusdcDenom,
+			GasPrices:           gasPrices,
+			GasAdjustment:       1.5,
+			TrustingPeriod:      "504h",
+			NoHostMount:         false,
+			PreGenesis:          preGenesis(ctx, suite),
+			ModifyGenesis:       modifyGenesis(suite),
 		},
 	}
 }
