@@ -11,8 +11,10 @@ counterparty. To leverage the Orbiter functionalities, integrators only have to 
 Orbiter account with the requested metadata and via the correct entrypoint. Refer to the
 [architecture docs](./architecture.md) for more details.
 
+> [!TIP] Optional information to help a user be more successful.
+
 > [!IMPORTANT] The recipient of the cross-chain transfer MUST be the orbiter module address:
->
+
 > | Mainnet                                                                                                                            | Testnet                                                                                                                                    |
 > | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 > | [noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d](https://www.mintscan.io/noble/address/noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d) | [noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d](https://www.mintscan.io/noble-testnet/address/noble15xt7kx5mles58vkkfxvf0lq78sw04jajvfgd4d) |
