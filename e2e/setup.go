@@ -24,6 +24,8 @@ import (
 	"context"
 	"testing"
 
+	hyperlanepostdispatchtypes "github.com/bcp-innovations/hyperlane-cosmos/x/core/02_post_dispatch/types"
+	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 	fiattokenfactorytypes "github.com/circlefin/noble-fiattokenfactory/x/fiattokenfactory/types"
 	interchaintest "github.com/strangelove-ventures/interchaintest/v8"
@@ -66,7 +68,8 @@ type Suite struct {
 
 	IBC *IBC
 
-	// Addresses
+	// -----------------------
+	// CCTP fields
 	CircleRoles       CircleRoles
 	sender            ibc.Wallet
 	fallbackRecipient ibc.Wallet
@@ -74,10 +77,13 @@ type Suite struct {
 	destinationCaller []byte
 
 	destinationDomain uint32
+
+	// -----------------------
+	// Hyperlane fields
+	hyperlaneToken *warptypes.WrappedHypToken
+	hyperlaneHook  *hyperlanepostdispatchtypes.NoopHook
 }
 
-// TODO: add the hyperlane akin to how it's done in the dollar e2e tests:
-// https://github.com/noble-assets/dollar/blob/v2.1.0/e2e/utils.go#L179-L206
 func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.Context, Suite) {
 	ctx := context.Background()
 	logger := zaptest.NewLogger(t)
@@ -215,6 +221,8 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 		hook, err := getHyperlaneNoOpHook(ctx, node)
 		require.NoError(t, err, "failed to get hyperlane hook")
 
+		suite.hyperlaneHook = hook
+
 		_, err = node.ExecTx(
 			ctx,
 			hyperlaneKey,
@@ -257,6 +265,8 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 		require.NoError(t, err, "failed to create noop ism")
 		collateralToken, err := getHyperlaneCollateralToken(ctx, node)
 		require.NoError(t, err, "failed to get hyperlane collateral token")
+
+		suite.hyperlaneToken = collateralToken
 
 		receiverDomain := "1"
 		receiverContract := "0x0000000000000000000000000000000000000000000000000000000000000000"

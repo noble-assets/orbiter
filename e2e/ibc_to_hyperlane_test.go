@@ -21,13 +21,129 @@
 package e2e
 
 import (
+	"fmt"
+	"strconv"
 	"testing"
 
+	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/stretchr/testify/require"
+
+	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+
+	"github.com/noble-assets/orbiter"
+	"github.com/noble-assets/orbiter/testutil"
+	orbitertypes "github.com/noble-assets/orbiter/types"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
+const DispatchEvent = "hyperlane.core.post_dispatch.v1.EventDispatch"
+
+// TestIBCToHyperlane tests the "auto-lane" flow, which forwards an incoming IBC packet,
+// which contains a valid orbiter payload through the Hyperlane bridge.
+//
+// NOTE: here we are not testing any actions or general failure cases as those
+// are sufficiently covered in the IBC-to-CCTP case.
 func TestIBCToHyperlane(t *testing.T) {
-	ctx, s := NewSuite(t, true, false, true)
-	require.NotNil(t, ctx, "failed to create context") // TODO: nonsense, remove
-	require.NotNil(t, s, "failed to create test suite")
+	// TODO: data race when testing in parallel?
+	//t.Parallel()
+	//
+	testutil.SetSDKConfig()
+	// NOTE: this has to also include an IBC connected chain which is used to send the orbiter
+	// payload to the module.
+	ctx, s := NewSuite(t, true, true, true)
+
+	// TODO: check why this is necessary and not already done in the setup of the suite?
+	orbiter.RegisterInterfaces(s.Chain.GetCodec().InterfaceRegistry())
+
+	fromOrbiterChannelID, toOrbiterChannelID := s.GetChannels(t, ctx)
+
+	// This creates the corresponding IBC coin as it is available on the connected IBC chain
+	// when USDC is sent to it from the orbiter.
+	fundAmount := sdkmath.NewInt(2 * OneE6)
+	fundedIBCCoin := transfertypes.GetTransferCoin(
+		"transfer",
+		toOrbiterChannelID, // need to use this because we need to use the channel ID from the perspective of the receiving chain
+		uusdcDenom,
+		fundAmount,
+	)
+
+	// Fund the account on the counterparty chain such that it can send USDC
+	// via IBC to the orbiter.
+	ibcRecipient := s.IBC.CounterpartySender.FormattedAddress()
+	s.FundIBCRecipient(
+		t,
+		ctx,
+		fundedIBCCoin.Amount,
+		ibcRecipient,
+		fromOrbiterChannelID,
+		fundedIBCCoin.Denom,
+	)
+
+	unwrappedTokenID, err := hyperlaneutil.DecodeHexAddress(s.hyperlaneToken.Id)
+	require.NoError(t, err, "failed to decode token id")
+
+	decodedCustomHookID, err := hyperlaneutil.DecodeHexAddress(s.hyperlaneHook.Id.String())
+	require.NoError(t, err, "failed to decode custom hook id")
+
+	forwarding, err := forwardingtypes.NewHyperlaneForwarding(
+		unwrappedTokenID.Bytes(),
+		// TODO: check value here
+		s.destinationDomain,
+		s.mintRecipient,
+		decodedCustomHookID.Bytes(),
+		sdkmath.ZeroInt(),
+		sdk.NewInt64Coin(uusdcDenom, 1e4),
+		[]byte("some payload to pass through"), // check with passthrough payload?
+	)
+	require.NoError(t, err, "failed to create hyperlane forwarding")
+
+	p, err := core.NewPayloadWrapper(forwarding)
+	require.NoError(t, err, "failed to create payload wrapper")
+
+	payloadBytes, err := orbitertypes.MarshalJSON(s.Chain.GetCodec(), p)
+	require.NoError(t, err, "failed to marshal payload")
+
+	height, err := s.Chain.Height(ctx)
+	require.NoError(t, err, "failed to query height")
+
+	amountToSend := fundAmount.SubRaw(1e5)
+	transferAmount := ibc.WalletAmount{
+		Address: core.ModuleAddress.String(),
+		Denom:   fundedIBCCoin.Denom,
+		Amount:  amountToSend,
+	}
+
+	fmt.Println(
+		"=================================\n\nSending payload:\n\n=================================",
+		string(payloadBytes),
+	)
+
+	_, err = s.IBC.CounterpartyChain.SendIBCTransfer(
+		ctx,
+		toOrbiterChannelID,
+		s.IBC.CounterpartySender.KeyName(),
+		transferAmount,
+		ibc.TransferOptions{
+			Memo: string(payloadBytes),
+		},
+	)
+	require.NoError(t, err, "failed to send IBC transfer")
+
+	s.FlushRelayer(t, ctx, toOrbiterChannelID)
+
+	ibcHeight := s.GetIbcTransferBlockExecution(t, ctx, height)
+	txsResult := GetTxsResult(t, ctx, s.Chain.Validators[0], strconv.Itoa(int(ibcHeight)))
+	require.Equal(t, txsResult.TotalCount, uint64(1), "expected only one tx")
+
+	// TODO: why is event not found? Seems like the event is not found / orbiter payload was not
+	// parsed correctly?
+	found, events := SearchEvents(txsResult.Txs[0].Events, []string{DispatchEvent})
+	require.True(t, found, "expected the Dispatch event to be emitted")
+	require.Len(t, events, 1, "expected only one event to be found")
+
+	// TODO: assert contents of event
 }

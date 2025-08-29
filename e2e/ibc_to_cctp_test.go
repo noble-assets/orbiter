@@ -45,7 +45,8 @@ import (
 )
 
 func TestIBCToCCTP(t *testing.T) {
-	t.Parallel()
+	// TODO: data race when running e2e in parallel?
+	// t.Parallel()
 
 	testutil.SetSDKConfig()
 	ctx, s := NewSuite(t, true, true, false)
@@ -55,7 +56,7 @@ func TestIBCToCCTP(t *testing.T) {
 	fromOrbiterChanID, toOrbiterChanID := s.GetChannels(t, ctx)
 
 	srcUsdcTrace := transfertypes.ParseDenomTrace(
-		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanID, Usdc),
+		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanID, uusdcDenom),
 	)
 	dstUsdcDenom := srcUsdcTrace.IBCDenom()
 
@@ -349,7 +350,7 @@ func testIbcPassingWithoutActions(
 	resp, err := s.Chain.GetBalance(
 		ctx,
 		dcAddr.String(),
-		Usdc,
+		uusdcDenom,
 	)
 	require.NoError(t, err)
 	require.Equal(
