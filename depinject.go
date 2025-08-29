@@ -21,6 +21,7 @@
 package orbiter
 
 import (
+	warpkeeper "github.com/bcp-innovations/hyperlane-cosmos/x/warp/keeper"
 	cctpkeeper "github.com/circlefin/noble-cctp/x/cctp/keeper"
 
 	"cosmossdk.io/core/address"
@@ -40,6 +41,7 @@ import (
 	"github.com/noble-assets/orbiter/keeper"
 	"github.com/noble-assets/orbiter/types"
 	actiontypes "github.com/noble-assets/orbiter/types/controller/action"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
 func init() {
@@ -103,15 +105,16 @@ type ComponentsInputs struct {
 
 	BankKeeper ComponentsBankKeeper
 	CCTPKeeper *cctpkeeper.Keeper
+	WarpKeeper warpkeeper.Keeper
 }
 
 func InjectComponents(in ComponentsInputs) {
 	InjectActionControllers(in)
-	InjectOrbitControllers(in)
+	InjectForwardingControllers(in)
 	InjectAdapterControllers(in)
 }
 
-func InjectOrbitControllers(in ComponentsInputs) {
+func InjectForwardingControllers(in ComponentsInputs) {
 	cctp, err := forwardingctrl.NewCCTPController(
 		in.Orbiters.Forwarder().Logger(),
 		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
@@ -120,7 +123,18 @@ func InjectOrbitControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating CCTP controller"))
 	}
 
-	in.Orbiters.SetForwardingControllers(cctp)
+	hyperlane, err := forwardingctrl.NewHyperlaneController(
+		in.Orbiters.Forwarder().Logger(),
+		forwardingtypes.NewHyperlaneHandler(
+			warpkeeper.NewMsgServerImpl(in.WarpKeeper),
+			warpkeeper.NewQueryServerImpl(in.WarpKeeper),
+		),
+	)
+	if err != nil {
+		panic(errorsmod.Wrap(err, "error creating HYPERLANE controller"))
+	}
+
+	in.Orbiters.SetForwardingControllers(cctp, hyperlane)
 }
 
 func InjectActionControllers(in ComponentsInputs) {

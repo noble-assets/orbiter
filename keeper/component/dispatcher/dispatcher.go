@@ -228,10 +228,15 @@ func (d *Dispatcher) dispatchForwarding(
 	)
 	err = d.dispatchForwardingPacket(ctx, packet)
 	if err != nil {
-		return errorsmod.Wrapf(
+		errDescription := fmt.Sprintf(
+			"error dispatching forwarding packet for protocol ID %s",
+			forwarding.ProtocolID(),
+		)
+		d.logger.Debug(errDescription, "error", err.Error())
+
+		return errorsmod.Wrap(
 			err,
-			"error dispatching forwarding packet for protocol %s",
-			packet.Forwarding.ProtocolID(),
+			errDescription,
 		)
 	}
 
