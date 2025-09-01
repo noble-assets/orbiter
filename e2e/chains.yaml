@@ -4,3 +4,4 @@
   build-dir: simapp
   binaries:
     - simapp/build/simd
+

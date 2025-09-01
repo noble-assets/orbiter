@@ -45,17 +45,15 @@ import (
 )
 
 func TestIBCToCCTP(t *testing.T) {
-	t.Parallel()
-
 	testutil.SetSDKConfig()
-	ctx, s := NewSuite(t, true, true)
+	ctx, s := NewSuite(t, true, true, false)
 
 	orbiter.RegisterInterfaces(s.Chain.GetCodec().InterfaceRegistry())
 
 	fromOrbiterChanID, toOrbiterChanID := s.GetChannels(t, ctx)
 
 	srcUsdcTrace := transfertypes.ParseDenomTrace(
-		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanID, Usdc),
+		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanID, uusdcDenom),
 	)
 	dstUsdcDenom := srcUsdcTrace.IBCDenom()
 
@@ -349,7 +347,7 @@ func testIbcPassingWithoutActions(
 	resp, err := s.Chain.GetBalance(
 		ctx,
 		dcAddr.String(),
-		Usdc,
+		uusdcDenom,
 	)
 	require.NoError(t, err)
 	require.Equal(

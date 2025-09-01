@@ -26,6 +26,8 @@ import (
 	"strconv"
 	"strings"
 
+	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
+
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -41,6 +43,25 @@ const (
 	HypNobleTestnetDomain = 1196573006
 	HypNobleMainnetDomain = 1313817164
 )
+
+// hyperlaneServers is a wrapper around the message and query servers to fulfill
+// the HyperlaneHandler interface.
+type hyperlaneServers struct {
+	warptypes.MsgServer
+	warptypes.QueryServer
+}
+
+// NewHyperlaneHandler creates a wrapper around the Hyperlane Warp module's message and query
+// servers.
+func NewHyperlaneHandler(
+	msgServer warptypes.MsgServer,
+	queryServer warptypes.QueryServer,
+) HyperlaneHandler {
+	return &hyperlaneServers{
+		MsgServer:   msgServer,
+		QueryServer: queryServer,
+	}
+}
 
 // NewHyperlaneAttributes creates and validates new Hyperlane forwarding attributes.
 // Returns an error if validation fails.

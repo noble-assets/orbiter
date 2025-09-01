@@ -94,6 +94,8 @@ func (c *HyperlaneController) HandlePacket(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
+	c.logger.Debug("Handling hyperlane packet")
+
 	if packet == nil {
 		return errorsmod.Wrap(core.ErrNilPointer, "Hyperlane controller received nil packet")
 	}
@@ -102,6 +104,16 @@ func (c *HyperlaneController) HandlePacket(
 	if err != nil {
 		return errorsmod.Wrap(err, "error extracting Hyperlane forwarding attributes")
 	}
+
+	c.logger.Debug(
+		"Forwarding attributes",
+		"tokenID",
+		string(attr.TokenId),
+		"destination-domain",
+		attr.DestinationDomain,
+		"recipient",
+		hyperlaneutil.HexAddress(attr.Recipient),
+	)
 
 	err = c.ValidateForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
