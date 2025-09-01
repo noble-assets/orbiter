@@ -36,7 +36,7 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ types.ControllerAction = &FeeController{}
+var _ types.ActionController = &FeeController{}
 
 // FeeController is the controller to execute
 // fee payment action.

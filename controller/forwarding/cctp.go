@@ -35,7 +35,7 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ types.ControllerForwarding = &CCTPController{}
+var _ types.ForwardingController = &CCTPController{}
 
 // CCTPController is the forwarding controller to perform
 // a CCTP transfer.

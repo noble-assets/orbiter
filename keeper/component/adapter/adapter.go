@@ -38,7 +38,7 @@ import (
 	"github.com/noble-assets/orbiter/types/router"
 )
 
-type AdapterRouter = *router.Router[core.ProtocolID, types.ControllerAdapter]
+type AdapterRouter = *router.Router[core.ProtocolID, types.AdapterController]
 
 var _ types.Adapter = &Adapter{}
 
@@ -71,10 +71,10 @@ func New(
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	adaptersKeeper := Adapter{
+	adapter := Adapter{
 		logger:       logger.With(core.ComponentPrefix, core.AdapterName),
 		eventService: eventService,
-		router:       router.New[core.ProtocolID, types.ControllerAdapter](),
+		router:       router.New[core.ProtocolID, types.AdapterController](),
 		bankKeeper:   bankKeeper,
 		dispatcher:   dispatcher,
 		params: collections.NewItem(
@@ -85,7 +85,7 @@ func New(
 		),
 	}
 
-	return &adaptersKeeper, adaptersKeeper.Validate()
+	return &adapter, adapter.Validate()
 }
 
 // Validate returns an error if the component instance is not valid.

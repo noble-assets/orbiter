@@ -37,7 +37,7 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ types.ControllerForwarding = &HyperlaneController{}
+var _ types.ForwardingController = &HyperlaneController{}
 
 // HyperlaneController is the forwarding controller for the Hyperlane protocol.
 type HyperlaneController struct {
@@ -89,7 +89,7 @@ func (c *HyperlaneController) Validate() error {
 	return nil
 }
 
-// HandlePacket implements types.ControllerForwarding.
+// HandlePacket implements types.ForwardingController.
 func (c *HyperlaneController) HandlePacket(
 	ctx context.Context,
 	packet *types.ForwardingPacket,

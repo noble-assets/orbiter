@@ -25,23 +25,23 @@ import (
 	"github.com/noble-assets/orbiter/types/router"
 )
 
-// ControllerForwarding defines the behavior a forwarding packet
+// ForwardingController defines the behavior a forwarding packet
 // controller has to implement.
-type ControllerForwarding interface {
+type ForwardingController interface {
 	Controller[core.ProtocolID]
 	PacketHandler[*ForwardingPacket]
 }
 
-// ControllerAction defines the behavior an action packet
+// ActionController defines the behavior an action packet
 // controller has to implement.
-type ControllerAction interface {
+type ActionController interface {
 	Controller[core.ActionID]
 	PacketHandler[*ActionPacket]
 }
 
-// ControllerAdapter defines the behavior expected from a specific
+// AdapterController defines the behavior expected from a specific
 // protocol adapter.
-type ControllerAdapter interface {
+type AdapterController interface {
 	Controller[core.ProtocolID]
 	PayloadParser
 }

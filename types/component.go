@@ -42,7 +42,7 @@ type Authorizer interface {
 type Forwarder interface {
 	Loggable
 	PacketHandler[*ForwardingPacket]
-	router.RouterProvider[core.ProtocolID, ControllerForwarding]
+	router.RouterProvider[core.ProtocolID, ForwardingController]
 	Pause(context.Context, core.ProtocolID, []string) error
 	Unpause(context.Context, core.ProtocolID, []string) error
 }
@@ -52,7 +52,7 @@ type Forwarder interface {
 type Executor interface {
 	Loggable
 	PacketHandler[*ActionPacket]
-	router.RouterProvider[core.ActionID, ControllerAction]
+	router.RouterProvider[core.ActionID, ActionController]
 	Pause(context.Context, core.ActionID) error
 	Unpause(context.Context, core.ActionID) error
 }
@@ -69,5 +69,5 @@ type Dispatcher interface {
 type Adapter interface {
 	Loggable
 	PayloadAdapter
-	router.RouterProvider[core.ProtocolID, ControllerAdapter]
+	router.RouterProvider[core.ProtocolID, AdapterController]
 }

@@ -28,7 +28,7 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ types.ControllerForwarding = &ForwardingController{}
+var _ types.ForwardingController = &ForwardingController{}
 
 type ForwardingController struct {
 	id core.ProtocolID
@@ -50,7 +50,7 @@ func (o *ForwardingController) HandlePacket(ctx context.Context, _ *types.Forwar
 	return nil
 }
 
-var _ types.ControllerAction = &NoOpActionController{}
+var _ types.ActionController = &NoOpActionController{}
 
 type NoOpActionController struct {
 	id core.ActionID
@@ -72,7 +72,7 @@ func (a *NoOpActionController) HandlePacket(ctx context.Context, _ *types.Action
 	return nil
 }
 
-var _ types.ControllerAdapter = &NoOpAdapterController{}
+var _ types.AdapterController = &NoOpAdapterController{}
 
 type NoOpAdapterController struct {
 	id core.ProtocolID
