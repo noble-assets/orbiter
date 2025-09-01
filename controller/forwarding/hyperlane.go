@@ -95,6 +95,8 @@ func (c *HyperlaneController) HandlePacket(
 	packet *types.ForwardingPacket,
 ) error {
 	c.logger.Debug("Handling hyperlane packet")
+
+  
 	if packet == nil {
 		return errorsmod.Wrap(core.ErrNilPointer, "Hyperlane controller received nil packet")
 	}

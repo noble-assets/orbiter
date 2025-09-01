@@ -21,10 +21,12 @@
 package forwarding
 
 import (
+	"encoding/hex"
 	"fmt"
+	"strconv"
 	"strings"
-
-	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
+	
+  warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
@@ -124,13 +126,14 @@ func (a *HypAttributes) Validate() error {
 		return fmt.Errorf("destination domain %d is a Noble domain", a.DestinationDomain)
 	}
 
-	if a.CustomHookMetadata != "" &&
-		!strings.HasPrefix(a.CustomHookMetadata, HypHookMetadataPrefix) {
-		return fmt.Errorf(
-			"hook metadata must have the %s prefix, got: %s",
-			HypHookMetadataPrefix,
-			a.CustomHookMetadata,
-		)
+	if a.CustomHookMetadata != "" {
+		if !strings.HasPrefix(a.CustomHookMetadata, HypHookMetadataPrefix) {
+			return fmt.Errorf("hook metadata must have the %s prefix, got: %s",
+				HypHookMetadataPrefix, a.CustomHookMetadata)
+		}
+		if _, err := hex.DecodeString(strings.TrimPrefix(a.CustomHookMetadata, HypHookMetadataPrefix)); err != nil {
+			return fmt.Errorf("hook metadata must be hex-encoded: %w", err)
+		}
 	}
 
 	return nil
@@ -140,7 +143,7 @@ var _ core.ForwardingAttributes = &HypAttributes{}
 
 // CounterpartyID returns a string representation of the destination domain.
 func (a *HypAttributes) CounterpartyID() string {
-	return fmt.Sprintf("%d", a.GetDestinationDomain())
+	return strconv.FormatUint(uint64(a.GetDestinationDomain()), 10)
 }
 
 // NewHyperlaneForwarding creates a new validated Hyperlane forwarding instance.
