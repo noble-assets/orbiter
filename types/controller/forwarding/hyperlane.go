@@ -120,7 +120,7 @@ func (a *HypAttributes) Validate() error {
 				HypHookMetadataPrefix, a.CustomHookMetadata)
 		}
 		if _, err := hex.DecodeString(strings.TrimPrefix(a.CustomHookMetadata, HypHookMetadataPrefix)); err != nil {
-			return fmt.Errorf("hook metadata must be hex-encoded: %v", err)
+			return fmt.Errorf("hook metadata must be hex-encoded: %w", err)
 		}
 	}
 
