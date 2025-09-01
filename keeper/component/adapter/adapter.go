@@ -71,7 +71,7 @@ func New(
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
 
-	adaptersKeeper := Adapter{
+	adapter := Adapter{
 		logger:       logger.With(core.ComponentPrefix, core.AdapterName),
 		eventService: eventService,
 		router:       router.New[core.ProtocolID, types.AdapterController](),
@@ -85,7 +85,7 @@ func New(
 		),
 	}
 
-	return &adaptersKeeper, adaptersKeeper.Validate()
+	return &adapter, adapter.Validate()
 }
 
 // Validate returns an error if the component instance is not valid.
