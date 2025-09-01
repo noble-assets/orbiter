@@ -21,7 +21,9 @@
 package forwarding
 
 import (
+	"encoding/hex"
 	"fmt"
+	"strconv"
 	"strings"
 
 	errorsmod "cosmossdk.io/errors"
@@ -110,6 +112,16 @@ func (a *HypAttributes) Validate() error {
 			HypHookMetadataPrefix,
 			a.CustomHookMetadata,
 		)
+	}
+
+	if a.CustomHookMetadata != "" {
+		if !strings.HasPrefix(a.CustomHookMetadata, HypHookMetadataPrefix) {
+			return fmt.Errorf("hook metadata must have the %s prefix, got: %s",
+				HypHookMetadataPrefix, a.CustomHookMetadata)
+		}
+		if _, err := hex.DecodeString(strings.TrimPrefix(a.CustomHookMetadata, HypHookMetadataPrefix)); err != nil {
+			return fmt.Errorf("hook metadata must be hex-encoded: %v", err)
+		}
 	}
 
 	return nil

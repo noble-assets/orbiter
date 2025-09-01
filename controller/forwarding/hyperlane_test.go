@@ -130,7 +130,7 @@ func TestExtractAttributes_Hyperlane(t *testing.T) {
 				return f
 			},
 			expHypAttr: forwardingtypes.HypAttributes{
-				TokenId:           []byte("token id"),
+				TokenId:           usdnID,
 				DestinationDomain: 0,
 				Recipient:         make([]byte, 32),
 				CustomHookId:      make([]byte, 32),
@@ -156,6 +156,7 @@ func TestExtractAttributes_Hyperlane(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, hypAttr)
+				require.Equal(t, tC.expHypAttr.TokenId, hypAttr.TokenId)
 				require.Equal(t, tC.expHypAttr.DestinationDomain, hypAttr.DestinationDomain)
 				require.Equal(t, len(tC.expHypAttr.Recipient), len(hypAttr.Recipient))
 				require.Equal(t, len(tC.expHypAttr.CustomHookId), len(hypAttr.CustomHookId))
@@ -178,6 +179,25 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 	usdnID := make([]byte, 32)
 	copy(usdnID, "usdn id")
 
+	validHypAttr := forwardingtypes.HypAttributes{
+		TokenId:           usdnID,
+		DestinationDomain: 0,
+		Recipient:         make([]byte, 32), // we don't check the content but only the length
+		CustomHookId:      make([]byte, 32), // we don't check the content but only the length
+		GasLimit:          math.NewInt(1),
+		MaxFee:            sdk.NewInt64Coin("usdn", 1),
+	}
+
+	tokenID := hyperlaneutil.HexAddress(usdnID)
+	hypToken := warptypes.WrappedHypToken{
+		Id:            tokenID.String(),
+		Owner:         "noble",
+		TokenType:     0,
+		OriginMailbox: "",
+		OriginDenom:   "usdn",
+		IsmId:         &hyperlaneutil.HexAddress{},
+	}
+
 	testCases := []struct {
 		name         string
 		setup        func(*mocks.HyperlaneHandler)
@@ -188,53 +208,22 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 		{
 			name: "success - when the attributes are valid",
 			setup: func(m *mocks.HyperlaneHandler) {
-				tokenID := hyperlaneutil.HexAddress(usdnID)
-				hypToken := &warptypes.WrappedHypToken{
-					Id:            tokenID.String(),
-					Owner:         "noble",
-					TokenType:     0,
-					OriginMailbox: "",
-					OriginDenom:   "usdn",
-					IsmId:         &hyperlaneutil.HexAddress{},
-				}
-
-				m.Tokens[hypToken.Id] = *hypToken
+				m.Tokens[hypToken.Id] = hypToken
 			},
 			transferAttr: transferAttr,
-			hypAttr: &forwardingtypes.HypAttributes{
-				TokenId:           usdnID,
-				DestinationDomain: 0,
-				Recipient:         make([]byte, 32),
-				CustomHookId:      make([]byte, 32),
-				GasLimit:          math.NewInt(1),
-				MaxFee:            sdk.NewInt64Coin("usdn", 1),
-			},
+			hypAttr:      &validHypAttr,
 		},
 		{
 			name: "error - when the hyperlane denom is not destination denom",
 			setup: func(m *mocks.HyperlaneHandler) {
-				tokenID := hyperlaneutil.HexAddress(usdnID)
-				hypToken := &warptypes.WrappedHypToken{
-					Id:            tokenID.String(),
-					Owner:         "noble",
-					TokenType:     0,
-					OriginMailbox: "",
-					OriginDenom:   "btc",
-					IsmId:         &hyperlaneutil.HexAddress{},
-				}
+				invalidHypToken := hypToken
+				invalidHypToken.OriginDenom = "btc"
 
-				m.Tokens[hypToken.Id] = *hypToken
+				m.Tokens[hypToken.Id] = invalidHypToken
 			},
 			transferAttr: transferAttr,
-			hypAttr: &forwardingtypes.HypAttributes{
-				TokenId:           usdnID,
-				DestinationDomain: 0,
-				Recipient:         make([]byte, 32),
-				CustomHookId:      make([]byte, 32),
-				GasLimit:          math.NewInt(1),
-				MaxFee:            sdk.NewInt64Coin("usdn", 1),
-			},
-			expError: "invalid forwarding token",
+			hypAttr:      &validHypAttr,
+			expError:     "invalid forwarding token",
 		},
 		{
 			name:         "error - when hyperlane attributes are nil",
@@ -247,29 +236,15 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 			name:         "error - when transfer attributes are nil",
 			setup:        func(m *mocks.HyperlaneHandler) {},
 			transferAttr: nil,
-			hypAttr: &forwardingtypes.HypAttributes{
-				TokenId:           usdnID,
-				DestinationDomain: 0,
-				Recipient:         make([]byte, 32),
-				CustomHookId:      make([]byte, 32),
-				GasLimit:          math.NewInt(1),
-				MaxFee:            sdk.NewInt64Coin("usdn", 1),
-			},
-			expError: "invalid transfer attributes",
+			hypAttr:      &validHypAttr,
+			expError:     "invalid transfer attributes",
 		},
 		{
 			name:         "error - when the token does not exist",
 			setup:        func(m *mocks.HyperlaneHandler) {},
 			transferAttr: transferAttr,
-			hypAttr: &forwardingtypes.HypAttributes{
-				TokenId:           usdnID,
-				DestinationDomain: 0,
-				Recipient:         make([]byte, 32),
-				CustomHookId:      make([]byte, 32),
-				GasLimit:          math.NewInt(1),
-				MaxFee:            sdk.NewInt64Coin("usdn", 1),
-			},
-			expError: "invalid Hyperlane forwarding",
+			hypAttr:      &validHypAttr,
+			expError:     "invalid Hyperlane forwarding",
 		},
 	}
 
@@ -306,6 +281,36 @@ func TestHandlePacket_Hyperlane(t *testing.T) {
 	usdnID := make([]byte, 32)
 	copy(usdnID, "usdn id")
 
+	tokenID := hyperlaneutil.HexAddress(usdnID)
+	hypToken := warptypes.WrappedHypToken{
+		Id:            tokenID.String(),
+		Owner:         "noble",
+		TokenType:     0,
+		OriginMailbox: "",
+		OriginDenom:   "usdn",
+		IsmId:         &hyperlaneutil.HexAddress{},
+	}
+
+	validForwarding, err := forwardingtypes.NewHyperlaneForwarding(
+		usdnID,
+		0,
+		make([]byte, 32),
+		make([]byte, 32),
+		"",
+		math.ZeroInt(),
+		sdk.NewCoin("usdn", math.ZeroInt()),
+		[]byte{},
+	)
+	require.NoError(t, err)
+
+	validTransfer, err := types.NewTransferAttributes(
+		core.PROTOCOL_IBC,
+		"channel-0",
+		"usdn",
+		math.NewInt(1),
+	)
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name     string
 		setup    func(*mocks.HyperlaneHandler) context.Context
@@ -320,16 +325,8 @@ func TestHandlePacket_Hyperlane(t *testing.T) {
 		{
 			name: "error - when forwarding is default values",
 			packet: func() *types.ForwardingPacket {
-				a, err := types.NewTransferAttributes(
-					core.PROTOCOL_IBC,
-					"channel-0",
-					"usdn",
-					math.NewInt(1),
-				)
-				require.NoError(t, err)
-
 				return &types.ForwardingPacket{
-					TransferAttributes: a,
+					TransferAttributes: validTransfer,
 					Forwarding:         &core.Forwarding{},
 				}
 			},
@@ -338,21 +335,9 @@ func TestHandlePacket_Hyperlane(t *testing.T) {
 		{
 			name: "error - when transfer attributes are default values",
 			packet: func() *types.ForwardingPacket {
-				f, err := forwardingtypes.NewHyperlaneForwarding(
-					usdnID,
-					0,
-					make([]byte, 32),
-					make([]byte, 32),
-					"",
-					math.ZeroInt(),
-					sdk.NewCoin("usdn", math.ZeroInt()),
-					[]byte{},
-				)
-				require.NoError(t, err)
-
 				return &types.ForwardingPacket{
 					TransferAttributes: &types.TransferAttributes{},
-					Forwarding:         f,
+					Forwarding:         validForwarding,
 				}
 			},
 			expError: "error validating Hyperlane forwarding",
@@ -360,44 +345,14 @@ func TestHandlePacket_Hyperlane(t *testing.T) {
 		{
 			name: "error - when the remote transfer fails",
 			setup: func(m *mocks.HyperlaneHandler) context.Context {
-				tokenID := hyperlaneutil.HexAddress(usdnID)
-				hypToken := &warptypes.WrappedHypToken{
-					Id:            tokenID.String(),
-					Owner:         "noble",
-					TokenType:     0,
-					OriginMailbox: "",
-					OriginDenom:   "usdn",
-					IsmId:         &hyperlaneutil.HexAddress{},
-				}
-
-				m.Tokens[hypToken.Id] = *hypToken
+				m.Tokens[hypToken.Id] = hypToken
 
 				return context.WithValue(context.Background(), mocks.FailingContextKey, true)
 			},
 			packet: func() *types.ForwardingPacket {
-				a, err := types.NewTransferAttributes(
-					core.PROTOCOL_IBC,
-					"channel-0",
-					"usdn",
-					math.NewInt(1),
-				)
-				require.NoError(t, err)
-
-				f, err := forwardingtypes.NewHyperlaneForwarding(
-					usdnID,
-					0,
-					make([]byte, 32),
-					make([]byte, 32),
-					"",
-					math.ZeroInt(),
-					sdk.NewCoin("usdn", math.ZeroInt()),
-					[]byte{},
-				)
-				require.NoError(t, err)
-
 				return &types.ForwardingPacket{
-					TransferAttributes: a,
-					Forwarding:         f,
+					TransferAttributes: validTransfer,
+					Forwarding:         validForwarding,
 				}
 			},
 			expError: "error executing Hyperlane forwarding",
@@ -405,44 +360,14 @@ func TestHandlePacket_Hyperlane(t *testing.T) {
 		{
 			name: "success - when the packet is valid",
 			setup: func(m *mocks.HyperlaneHandler) context.Context {
-				tokenID := hyperlaneutil.HexAddress(usdnID)
-				hypToken := &warptypes.WrappedHypToken{
-					Id:            tokenID.String(),
-					Owner:         "noble",
-					TokenType:     0,
-					OriginMailbox: "",
-					OriginDenom:   "usdn",
-					IsmId:         &hyperlaneutil.HexAddress{},
-				}
-
-				m.Tokens[hypToken.Id] = *hypToken
+				m.Tokens[hypToken.Id] = hypToken
 
 				return context.Background()
 			},
 			packet: func() *types.ForwardingPacket {
-				a, err := types.NewTransferAttributes(
-					core.PROTOCOL_IBC,
-					"channel-0",
-					"usdn",
-					math.NewInt(1),
-				)
-				require.NoError(t, err)
-
-				f, err := forwardingtypes.NewHyperlaneForwarding(
-					usdnID,
-					0,
-					make([]byte, 32),
-					make([]byte, 32),
-					"",
-					math.ZeroInt(),
-					sdk.NewCoin("usdn", math.ZeroInt()),
-					[]byte{},
-				)
-				require.NoError(t, err)
-
 				return &types.ForwardingPacket{
-					TransferAttributes: a,
-					Forwarding:         f,
+					TransferAttributes: validTransfer,
+					Forwarding:         validForwarding,
 				}
 			},
 		},
