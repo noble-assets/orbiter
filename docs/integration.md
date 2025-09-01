@@ -33,7 +33,7 @@ details about the payload fields and the supported actions and forwardings.
 For ease of use, we have provided a terminal utility that you can check out at
 [noble-assets/orbgen](https://github.com/noble-assets/orbgen/).
 
-![img.png](../.assets/orbgen.png)
+![Orbgen TUI](../.assets/orbgen.png)
 
 Orbgen allows you to create the required payload to pass along with the cross-chain transfer through
 a simple TUI. Just follow the steps, provide the required information, and the payload will be
@@ -47,6 +47,7 @@ This section describes how to create a valid IBC payload in Golang:
 
    ```go
    import(
+     "github.com/noble-assets/orbiter"
      "github.com/noble-assets/orbiter/types/core"
      "github.com/noble-assets/orbiter/types"
      "github.com/noble-assets/orbiter/testutil"
@@ -81,7 +82,7 @@ This section describes how to create a valid IBC payload in Golang:
 4. Create a wrapped payload:
 
    ```go
-    payload, err := core.NewPayloadWrapper(orbit, action)
+    payload, err := core.NewPayloadWrapper(forwarding, action)
    ```
 
 5. Marshal the payload structure into JSON using the codec with registered interfaces:

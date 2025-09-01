@@ -92,11 +92,11 @@ is an operation defined as a combination of:
 The attributes field is defined as an `Any` type implementing the
 [`ForwardingAttributes`](https://github.com/noble-assets/orbiter/blob/main/types/core/attributes.go#L33-L39)
 
-Based on the bridge protocol, the following conditions may result from the execution of an orbit:
+Based on the bridge protocol, the following conditions may result from the forwarding execution:
 
 - Synchronous protocols: Protocols like CCTP and Hyperlane follow a commit-and-forget style. In this
   case, once the associated server informs the Orbiter that the bridge request has been stored to
-  state, the Orbiter execution is complete. If the server returns an error, the entire tx will be
+  state, the Orbiter execution is complete. If the server returns an error, the entire transaction will be
   marked as unsuccessful.
 
 - Asynchronous protocol: Protocols like IBC are asynchronous in nature, and for this reason
@@ -107,7 +107,7 @@ Based on the bridge protocol, the following conditions may result from the execu
 The CCTP information required to perform a CCTP forwarding are defined in the
 [`CCTPAttributes`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/controller/forwarding/v1/cctp.proto#L9-L26)
 
-The mint recipient and the destination caller are 32 bytes addresses. Notice that the denom is not
+The mint recipient and the destination caller are 32 byte addresses. Notice that the denom is not
 specified in the attributes. This is because the denom used is the same sent to the Orbiter module,
-or the result of the actions specified. The denom that the module can forward via CCTP are those
+or the result of the actions specified. The denoms that the module can forward via CCTP are those
 supported by the Fiat Token Factory module.
