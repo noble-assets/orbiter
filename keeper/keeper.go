@@ -177,7 +177,7 @@ func (k *Keeper) Adapter() *adaptercomp.Adapter {
 	return k.adapter
 }
 
-func (k *Keeper) SetForwardingControllers(controllers ...types.ControllerForwarding) {
+func (k *Keeper) SetForwardingControllers(controllers ...types.ForwardingController) {
 	router := k.forwarder.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -189,7 +189,7 @@ func (k *Keeper) SetForwardingControllers(controllers ...types.ControllerForward
 	}
 }
 
-func (k *Keeper) SetActionControllers(controllers ...types.ControllerAction) {
+func (k *Keeper) SetActionControllers(controllers ...types.ActionController) {
 	router := k.executor.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -201,7 +201,7 @@ func (k *Keeper) SetActionControllers(controllers ...types.ControllerAction) {
 	}
 }
 
-func (k *Keeper) SetAdapterControllers(controllers ...types.ControllerAdapter) {
+func (k *Keeper) SetAdapterControllers(controllers ...types.AdapterController) {
 	router := k.adapter.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {

@@ -36,7 +36,7 @@ import (
 	router "github.com/noble-assets/orbiter/types/router"
 )
 
-type ForwardingRouter = router.Router[core.ProtocolID, types.ControllerForwarding]
+type ForwardingRouter = router.Router[core.ProtocolID, types.ForwardingController]
 
 var _ types.Forwarder = &Forwarder{}
 
@@ -72,7 +72,7 @@ func New(
 		logger:       logger.With(core.ComponentPrefix, core.ForwarderName),
 		eventService: eventService,
 		bankKeeper:   bankKeeper,
-		router:       router.New[core.ProtocolID, types.ControllerForwarding](),
+		router:       router.New[core.ProtocolID, types.ForwardingController](),
 		pausedCrossChains: collections.NewKeySet(
 			sb,
 			core.PausedCrossChainsPrefix,

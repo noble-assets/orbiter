@@ -31,7 +31,7 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ types.ControllerAdapter = &IBCAdapter{}
+var _ types.AdapterController = &IBCAdapter{}
 
 // IBCAdapter is the type component in charge of adapting the
 // memo of an IBC ICS20 transfer to the common payload type

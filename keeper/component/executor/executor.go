@@ -36,7 +36,7 @@ import (
 	"github.com/noble-assets/orbiter/types/router"
 )
 
-type ActionRouter = *router.Router[core.ActionID, types.ControllerAction]
+type ActionRouter = *router.Router[core.ActionID, types.ActionController]
 
 var _ types.Executor = &Executor{}
 
@@ -69,7 +69,7 @@ func New(
 	executor := Executor{
 		logger:       logger.With(core.ComponentPrefix, core.ExecutorName),
 		eventService: eventService,
-		router:       router.New[core.ActionID, types.ControllerAction](),
+		router:       router.New[core.ActionID, types.ActionController](),
 		PausedActions: collections.NewKeySet(
 			sb,
 			core.PausedActionsPrefix,

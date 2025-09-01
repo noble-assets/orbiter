@@ -38,7 +38,7 @@ import (
 	"github.com/noble-assets/orbiter/types/router"
 )
 
-type AdapterRouter = *router.Router[core.ProtocolID, types.ControllerAdapter]
+type AdapterRouter = *router.Router[core.ProtocolID, types.AdapterController]
 
 var _ types.Adapter = &Adapter{}
 
@@ -74,7 +74,7 @@ func New(
 	adaptersKeeper := Adapter{
 		logger:       logger.With(core.ComponentPrefix, core.AdapterName),
 		eventService: eventService,
-		router:       router.New[core.ProtocolID, types.ControllerAdapter](),
+		router:       router.New[core.ProtocolID, types.AdapterController](),
 		bankKeeper:   bankKeeper,
 		dispatcher:   dispatcher,
 		params: collections.NewItem(
