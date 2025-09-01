@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document describes how to integrate with the Orbiter module to leverage Noble cross-chain
+This document describes how to use the Orbiter module to leverage Noble cross-chain
 functionalities.
 
 The Orbiter module is a payload-based module, which is capable of parsing cross-chain metadata from
@@ -11,7 +11,7 @@ counterparty. To leverage the Orbiter functionalities, integrators only have to 
 Orbiter account with the requested metadata and via the correct entrypoint. Refer to the
 [architecture docs](./architecture.md) for more details.
 
-The recipient of the cross-chain transfer MUST be the orbiter module address:
+The recipient of the cross-chain transfer MUST be the Orbiter module address:
 
 | Mainnet                                                                                                                            | Testnet                                                                                                                                    |
 | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -19,7 +19,7 @@ The recipient of the cross-chain transfer MUST be the orbiter module address:
 
 ## Payload Creation
 
-This section describes how to create a corresponding Orbiter payload. Based on the bridge protocol
+This section describes how to create an Orbiter payload. Based on the bridge protocol
 used to initiate the transfer, a specific payload must be provided. This is associated with the
 entrypoint for the particular protocol. For example, IBC allows to pass metadata along with a
 cross-chain transfer via the _memo_, which is a JSON-formatted string. Other protocols, like CCTP,

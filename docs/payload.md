@@ -1,19 +1,19 @@
 # Payload
 
-The Orbiter expected metadata is defined in a [proto3](https://protobuf.dev/) message named
+The expected metadata is defined in a [proto3](https://protobuf.dev/) message named
 [`Payload`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L57-L67).
 This message consists of two main components:
 
 - A list of actions.
 - A forwarding.
 
-The payload is defined as a proto message to guarantee efficiency in the data transmission and
+Using Protobuf guarantees efficiency in data transmission and
 security during its unmarshaling/decoding phase.
 
 Once created, the metadata has to be encoded in the format expected by the initiating bridge
 protocol, and sent along with the cross-chain transaction.
 
-An example of a JSON-structured string payload, used in the IBC protocol, is:
+An example of a JSON-encoded string payload, used in the IBC protocol, is:
 
 ```json
 {
@@ -50,7 +50,8 @@ An example of a JSON-structured string payload, used in the IBC protocol, is:
 
 An
 [`Action`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L12-L33)
-is a state transition request which can be executed on Noble and is defined by two fields:
+is a state transition request which is executed after the transaction's arrival on the Noble chain and before forwarding to the desired destination.
+It is defined by two fields:
 
 1. An action
    [identifier](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/id.proto#L9-L24).
