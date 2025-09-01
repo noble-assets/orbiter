@@ -22,6 +22,7 @@ package e2e
 
 import (
 	"strconv"
+	"strings"
 	"testing"
 
 	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
@@ -131,8 +132,16 @@ func TestIBCToHyperlane(t *testing.T) {
 	found, events := SearchEvents(txsResult.Txs[0].Events, []string{
 		"hyperlane.core.v1.EventDispatch",
 		"hyperlane.warp.v1.EventSendRemoteTransfer",
-		"noble.orbiter.component.adapter.v1.EventPayloadProcess",
+		"noble.orbiter.component.adapter.v1.EventPayloadProcessed",
 	})
-	require.True(t, found, "expected the Dispatch event to be emitted")
+
+	// NOTE: log missing events here
+	missingEvents := make([]string, 0, len(events))
+	if !found {
+		for _, event := range events {
+			missingEvents = append(missingEvents, event.Type)
+		}
+	}
+	require.True(t, found, "some expected events are missing: "+strings.Join(missingEvents, ", "))
 	require.Len(t, events, 1, "expected only one event to be found")
 }
