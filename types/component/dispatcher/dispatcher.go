@@ -20,6 +20,69 @@
 
 package dispatcher
 
+import (
+	errorsmod "cosmossdk.io/errors"
+	"github.com/noble-assets/orbiter/types/core"
+)
+
 func (a *AmountDispatched) IsPositive() bool {
 	return a.Incoming.IsPositive() || a.Outgoing.IsPositive()
+}
+
+func (a DispatchedAmountEntry) Validate() error {
+	if a.Denom == "" {
+		return errorsmod.Wrap(core.ErrValidation, "cannot set empty denom")
+	}
+
+	if a.SourceId == nil {
+		return errorsmod.Wrap(core.ErrValidation, "missing source cross-chain ID")
+	}
+	if err := a.SourceId.Validate(); err != nil {
+		return errorsmod.Wrap(err, "failed to create source cross-chain ID")
+	}
+
+	if a.DestinationId == nil {
+		return errorsmod.Wrap(core.ErrValidation, "missing destination cross-chain ID")
+	}
+
+	if err := a.DestinationId.Validate(); err != nil {
+		return errorsmod.Wrap(err, "failed to create destination cross-chain ID")
+	}
+
+	if a.AmountDispatched.Incoming.IsNegative() || a.AmountDispatched.Outgoing.IsNegative() {
+		return errorsmod.Wrap(core.ErrValidation, "cannot set negative amounts")
+	}
+
+	if !a.AmountDispatched.Incoming.IsPositive() && !a.AmountDispatched.Outgoing.IsPositive() {
+		return errorsmod.Wrap(
+			core.ErrValidation,
+			"cannot set incoming and outgoing amounts equal to zero",
+		)
+	}
+
+	return nil
+}
+
+func (c DispatchCountEntry) Validate() error {
+	if c.Count == 0 {
+		return errorsmod.Wrap(core.ErrValidation, "cannot set zero count")
+	}
+
+	if c.SourceId == nil {
+		return errorsmod.Wrap(core.ErrValidation, "missing source cross-chain ID")
+	}
+
+	if err := c.SourceId.Validate(); err != nil {
+		return errorsmod.Wrap(err, "failed to create source cross-chain ID")
+	}
+
+	if c.DestinationId == nil {
+		return errorsmod.Wrap(core.ErrValidation, "missing destination cross-chain ID")
+	}
+
+	if err := c.DestinationId.Validate(); err != nil {
+		return errorsmod.Wrap(err, "failed to create destination cross-chain ID")
+	}
+
+	return nil
 }
