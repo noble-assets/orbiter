@@ -25,8 +25,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	
-  warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
+
+	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
