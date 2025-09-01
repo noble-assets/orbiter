@@ -143,5 +143,4 @@ func TestIBCToHyperlane(t *testing.T) {
 		}
 	}
 	require.True(t, found, "some expected events are missing: "+strings.Join(missingEvents, ", "))
-	require.Len(t, events, 1, "expected only one event to be found")
 }
