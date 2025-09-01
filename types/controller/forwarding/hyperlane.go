@@ -105,15 +105,6 @@ func (a *HypAttributes) Validate() error {
 		return fmt.Errorf("destination domain %d is a Noble domain", a.DestinationDomain)
 	}
 
-	if a.CustomHookMetadata != "" &&
-		!strings.HasPrefix(a.CustomHookMetadata, HypHookMetadataPrefix) {
-		return fmt.Errorf(
-			"hook metadata must have the %s prefix, got: %s",
-			HypHookMetadataPrefix,
-			a.CustomHookMetadata,
-		)
-	}
-
 	if a.CustomHookMetadata != "" {
 		if !strings.HasPrefix(a.CustomHookMetadata, HypHookMetadataPrefix) {
 			return fmt.Errorf("hook metadata must have the %s prefix, got: %s",
