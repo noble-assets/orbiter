@@ -22,6 +22,7 @@ package dispatcher
 
 import (
 	errorsmod "cosmossdk.io/errors"
+
 	"github.com/noble-assets/orbiter/types/core"
 )
 
