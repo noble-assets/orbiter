@@ -20,67 +20,6 @@
 
 package dispatcher
 
-import (
-	"cosmossdk.io/math"
-
-	"github.com/noble-assets/orbiter/types/core"
-)
-
 func (a *AmountDispatched) IsPositive() bool {
 	return a.Incoming.IsPositive() || a.Outgoing.IsPositive()
-}
-
-func NewAmountDispatched(
-	incoming math.Int,
-	outgoing math.Int,
-) *AmountDispatched {
-	return &AmountDispatched{
-		Incoming: incoming,
-		Outgoing: outgoing,
-	}
-}
-
-type ChainAmountDispatched struct {
-	ccID             core.CrossChainID
-	amountDispatched AmountDispatched
-}
-
-func NewChainAmountDispatched(
-	ccID core.CrossChainID,
-	amountDispatched AmountDispatched,
-) *ChainAmountDispatched {
-	return &ChainAmountDispatched{
-		ccID:             ccID,
-		amountDispatched: amountDispatched,
-	}
-}
-
-func (cad *ChainAmountDispatched) CrossChainID() core.CrossChainID {
-	return cad.ccID
-}
-
-func (cad *ChainAmountDispatched) AmountDispatched() AmountDispatched {
-	return cad.amountDispatched
-}
-
-type TotalDispatched struct {
-	chainsAmount map[string]ChainAmountDispatched
-}
-
-func NewTotalDispatched() *TotalDispatched {
-	return &TotalDispatched{
-		chainsAmount: make(map[string]ChainAmountDispatched),
-	}
-}
-
-func (td *TotalDispatched) ChainAmount(counterpartyID string) ChainAmountDispatched {
-	return td.chainsAmount[counterpartyID]
-}
-
-func (td *TotalDispatched) ChainsAmount() map[string]ChainAmountDispatched {
-	return td.chainsAmount
-}
-
-func (td *TotalDispatched) SetAmountDispatched(counterpartyID string, cad ChainAmountDispatched) {
-	td.chainsAmount[counterpartyID] = cad
 }
