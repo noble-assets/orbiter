@@ -119,7 +119,7 @@ var _ core.ForwardingAttributes = &HypAttributes{}
 
 // CounterpartyID returns a string representation of the destination domain.
 func (a *HypAttributes) CounterpartyID() string {
-	return fmt.Sprintf("%d", a.GetDestinationDomain())
+	return strconv.FormatUint(uint64(a.GetDestinationDomain()), 10)
 }
 
 // NewHyperlaneForwarding creates a new validated Hyperlane forwarding instance.
