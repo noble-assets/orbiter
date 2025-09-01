@@ -22,8 +22,11 @@ package e2e
 
 import (
 	"context"
+	"strconv"
 	"testing"
 
+	hyperlanepostdispatchtypes "github.com/bcp-innovations/hyperlane-cosmos/x/core/02_post_dispatch/types"
+	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 	fiattokenfactorytypes "github.com/circlefin/noble-fiattokenfactory/x/fiattokenfactory/types"
 	interchaintest "github.com/strangelove-ventures/interchaintest/v8"
@@ -39,6 +42,12 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/noble-assets/orbiter/testutil"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
+)
+
+const (
+	usdcDenom  = "usdc"
+	uusdcDenom = "uusdc"
 )
 
 var (
@@ -60,7 +69,8 @@ type Suite struct {
 
 	IBC *IBC
 
-	// Addresses
+	// -----------------------
+	// CCTP fields
 	CircleRoles       CircleRoles
 	sender            ibc.Wallet
 	fallbackRecipient ibc.Wallet
@@ -68,9 +78,15 @@ type Suite struct {
 	destinationCaller []byte
 
 	destinationDomain uint32
+
+	// -----------------------
+	// Hyperlane fields
+	hyperlaneToken             *warptypes.WrappedHypToken
+	hyperlaneHook              *hyperlanepostdispatchtypes.NoopHook
+	hyperlaneDestinationDomain uint32
 }
 
-func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite) {
+func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.Context, Suite) {
 	ctx := context.Background()
 	logger := zaptest.NewLogger(t)
 
@@ -158,10 +174,12 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 		math.NewInt(1_000_000_000),
 		suite.Chain,
 		suite.Chain,
+		suite.Chain,
 	)
 
 	suite.sender = wallets[0]
 	suite.fallbackRecipient = wallets[1]
+	hyperlaneWallet := wallets[2]
 
 	suite.destinationDomain = 0
 
@@ -186,6 +204,84 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC bool) (context.Context, Suite
 		suite.IBC.CounterpartySender = wallets[0]
 	}
 
+	if isHyperlane {
+		// Create the ISM -- for testing purposes it's enough to use the No-Op ISM
+		node := suite.Chain.GetNode()
+		hyperlaneKey := hyperlaneWallet.KeyName()
+
+		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "ism", "create-noop")
+		require.NoError(t, err, "failed to create noop ism")
+		ism, err := getHyperlaneNoOpISM(ctx, node)
+		require.NoError(t, err, "unexpected result getting hyperlane ISM")
+		require.NotNil(t, ism, "expected hyperlane ISM to be in state")
+
+		_, err = node.ExecTx(ctx, hyperlaneKey, "hyperlane", "hooks", "noop", "create")
+		require.NoError(t, err, "failed to create hyperlane hook")
+		hook, err := getHyperlaneNoOpHook(ctx, node)
+		require.NoError(t, err, "failed to get hyperlane hook")
+
+		suite.hyperlaneHook = hook
+
+		_, err = node.ExecTx(
+			ctx,
+			hyperlaneKey,
+			"hyperlane",
+			"mailbox",
+			"create",
+			ism.Id.String(),
+			strconv.FormatInt(forwardingtypes.HypNobleMainnetDomain, 10),
+		)
+		require.NoError(t, err, "failed to create mailbox")
+		mailbox, err := getHyperlaneMailbox(ctx, node)
+		require.NoError(t, err, "failed to get hyperlane mailbox")
+
+		_, err = node.ExecTx(
+			ctx,
+			hyperlaneKey,
+			"hyperlane",
+			"mailbox",
+			"set",
+			mailbox.Id.String(),
+			"--default-ism",
+			ism.Id.String(),
+			"--required-hook",
+			hook.Id.String(),
+			"--default-hook",
+			hook.Id.String(),
+		)
+		require.NoError(t, err, "failed to create set mailbox")
+
+		_, err = node.ExecTx(
+			ctx,
+			hyperlaneKey,
+			"hyperlane-transfer",
+			"create-collateral-token",
+			mailbox.Id.String(),
+			uusdcDenom,
+		)
+		require.NoError(t, err, "failed to create collateral token")
+		collateralToken, err := getHyperlaneCollateralToken(ctx, node)
+		require.NoError(t, err, "failed to get hyperlane collateral token")
+
+		suite.hyperlaneToken = collateralToken
+
+		suite.hyperlaneDestinationDomain = 1
+		receiverDomain := strconv.Itoa(int(suite.hyperlaneDestinationDomain))
+		receiverContract := "0x0000000000000000000000000000000000000000000000000000000000000000"
+		gasAmount := "0"
+		_, err = node.ExecTx(
+			ctx,
+			hyperlaneKey,
+			"hyperlane-transfer",
+			"enroll-remote-router",
+			collateralToken.Id,
+			receiverDomain,
+			receiverContract,
+			gasAmount,
+		)
+		require.NoError(t, err, "failed to create enroll remote router for token")
+	}
+
 	return ctx, suite
 }
 
@@ -193,22 +289,22 @@ var DenomMetadataUsdc = banktypes.Metadata{
 	Description: "USD Coin",
 	DenomUnits: []*banktypes.DenomUnit{
 		{
-			Denom:    "uusdc",
+			Denom:    uusdcDenom,
 			Exponent: 0,
 			Aliases: []string{
 				"microusdc",
 			},
 		},
 		{
-			Denom:    "usdc",
+			Denom:    usdcDenom,
 			Exponent: 6,
 			Aliases:  []string{},
 		},
 	},
-	Base:    "uusdc",
-	Display: "usdc",
-	Name:    "usdc",
-	Symbol:  "USDC",
+	Base:    uusdcDenom,
+	Display: usdcDenom,
+	Name:    usdcDenom,
+	Symbol:  usdcDenom,
 }
 
 type CircleRoles struct {
@@ -238,18 +334,19 @@ func createOrbiterChainSpec(
 					UIDGID:     "1025:1025",
 				},
 			},
-			Type:           "cosmos",
-			Name:           "orbiter",
-			ChainID:        "orbiter-1",
-			Bin:            "simd",
-			Bech32Prefix:   "noble",
-			Denom:          "uusdc",
-			GasPrices:      gasPrices,
-			GasAdjustment:  1.5,
-			TrustingPeriod: "504h",
-			NoHostMount:    false,
-			PreGenesis:     preGenesis(ctx, suite),
-			ModifyGenesis:  modifyGenesis(suite),
+			Type:                "cosmos",
+			Name:                "orbiter",
+			ChainID:             "orbiter-1",
+			AdditionalStartArgs: []string{"--log_level", "*:info,x/orbiter:trace"},
+			Bin:                 "simd",
+			Bech32Prefix:        "noble",
+			Denom:               uusdcDenom,
+			GasPrices:           gasPrices,
+			GasAdjustment:       1.5,
+			TrustingPeriod:      "504h",
+			NoHostMount:         false,
+			PreGenesis:          preGenesis(ctx, suite),
+			ModifyGenesis:       modifyGenesis(suite),
 		},
 	}
 }
@@ -273,7 +370,7 @@ func preGenesis(ctx context.Context, suite *Suite) func(ibc.Chain) error {
 
 		genesisWallet := ibc.WalletAmount{
 			Address: fiatTfRoles.Pauser.FormattedAddress(),
-			Denom:   "uusdc",
+			Denom:   uusdcDenom,
 			Amount:  math.NewIntFromUint64(1_000_000_000),
 		}
 		err = val.AddGenesisAccount(

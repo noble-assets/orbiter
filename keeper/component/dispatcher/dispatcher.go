@@ -40,6 +40,7 @@ var _ types.PayloadDispatcher = &Dispatcher{}
 // packet. The dispatcher keeps track of the statistics associated with the handled dispatches.
 type Dispatcher struct {
 	logger log.Logger
+
 	// Packet elements handlers
 	ForwardingHandler types.PacketHandler[*types.ForwardingPacket]
 	ActionHandler     types.PacketHandler[*types.ActionPacket]
@@ -193,6 +194,7 @@ func (d *Dispatcher) dispatchActions(
 			return errorsmod.Wrapf(err, "error dispatching action %s packet", action.ID())
 		}
 	}
+
 	d.logger.Debug("completed actions dispatching")
 
 	return nil
@@ -208,10 +210,15 @@ func (d *Dispatcher) dispatchForwarding(
 	d.logger.Debug("started forwarding dispatching")
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {
-		return errorsmod.Wrapf(
-			err,
+		errDescription := fmt.Sprintf(
 			"error creating forwarding packet for protocol ID %s",
 			forwarding.ProtocolID(),
+		)
+		d.logger.Debug(errDescription, "error", err.Error())
+
+		return errorsmod.Wrap(
+			err,
+			errDescription,
 		)
 	}
 
@@ -226,12 +233,19 @@ func (d *Dispatcher) dispatchForwarding(
 	)
 	err = d.dispatchForwardingPacket(ctx, packet)
 	if err != nil {
-		return errorsmod.Wrapf(
+		errDescription := fmt.Sprintf(
+			"error dispatching forwarding packet for protocol ID %s",
+			forwarding.ProtocolID(),
+		)
+		d.logger.Debug(errDescription, "error", err.Error())
+
+		return errorsmod.Wrap(
 			err,
-			"error dispatching forwarding packet for protocol %s",
-			packet.Forwarding.ProtocolID(),
+			errDescription,
 		)
 	}
+
+	d.logger.Debug("completed forwarding dispatching")
 
 	return nil
 }

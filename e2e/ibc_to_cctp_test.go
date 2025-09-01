@@ -32,6 +32,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/math"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 
@@ -44,17 +45,15 @@ import (
 )
 
 func TestIBCToCCTP(t *testing.T) {
-	t.Parallel()
-
 	testutil.SetSDKConfig()
-	ctx, s := NewSuite(t, true, true)
+	ctx, s := NewSuite(t, true, true, false)
 
 	orbiter.RegisterInterfaces(s.Chain.GetCodec().InterfaceRegistry())
 
 	fromOrbiterChanID, toOrbiterChanID := s.GetChannels(t, ctx)
 
 	srcUsdcTrace := transfertypes.ParseDenomTrace(
-		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanID, Usdc),
+		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanID, uusdcDenom),
 	)
 	dstUsdcDenom := srcUsdcTrace.IBCDenom()
 
@@ -225,8 +224,10 @@ func testIbcPassingWithFeeAction(
 
 	found, _ := SearchEvents(txsResult.Txs[0].Events, []string{
 		"circle.cctp.v1.DepositForBurn",
+		"noble.orbiter.component.adapter.v1.EventPayloadProcessed",
+		"noble.orbiter.controller.action.v1.EventFeeAction",
 	})
-	require.True(t, found)
+	require.True(t, found, "expected events not found")
 
 	feeAmt, err := s.Chain.BankQueryBalance(ctx, feeRecipientAddr, "uusdc")
 	require.NoError(t, err)
@@ -341,10 +342,12 @@ func testIbcPassingWithoutActions(
 		}
 	}
 
+	dcAddr := authtypes.NewModuleAddress(core.DustCollectorName)
+
 	resp, err := s.Chain.GetBalance(
 		ctx,
-		core.DustCollectorAddress.String(),
-		Usdc,
+		dcAddr.String(),
+		uusdcDenom,
 	)
 	require.NoError(t, err)
 	require.Equal(

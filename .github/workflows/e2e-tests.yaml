@@ -1,10 +1,10 @@
 name: End to End Tests
 on:
   pull_request:
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.yaml'
-      - '**/*.yml'
+    paths:
+      - 'go.mod'
+      - 'go.sum'
+      - '**/*.go'
 env:
   TAR_PATH: docker-image.tar
   ARTIFACT_NAME: tar-docker-image

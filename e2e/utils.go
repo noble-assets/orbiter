@@ -40,7 +40,6 @@ import (
 const (
 	DepositForBurnEvent = "circle.cctp.v1.DepositForBurn"
 	OneE6               = 1_000_000
-	Usdc                = "uusdc"
 	MaxSearchBlocks     = 30
 )
 
@@ -128,7 +127,7 @@ func (s *Suite) FundIBCRecipient(
 
 	transfer := ibc.WalletAmount{
 		Address: recipient,
-		Denom:   Usdc,
+		Denom:   uusdcDenom,
 		Amount:  amt,
 	}
 	_, err := s.Chain.SendIBCTransfer(
@@ -144,10 +143,12 @@ func (s *Suite) FundIBCRecipient(
 	dstSenderBal, err := s.IBC.CounterpartyChain.GetBalance(
 		ctx,
 		recipient,
+		// TODO: could be better to just pass the channel here and the build the corresponding denom
+		// here? instead of passing the dstUSDCDenom
 		dstUsdcDenom,
 	)
 	require.NoError(t, err)
-	require.Equal(t, transfer.Amount, dstSenderBal)
+	require.Equal(t, transfer.Amount.String(), dstSenderBal.String())
 }
 
 func (s *Suite) FundRecipient(
@@ -160,7 +161,7 @@ func (s *Suite) FundRecipient(
 
 	transfer := ibc.WalletAmount{
 		Address: recipient,
-		Denom:   Usdc,
+		Denom:   uusdcDenom,
 		Amount:  amt,
 	}
 	err := s.Chain.SendFunds(
@@ -173,7 +174,7 @@ func (s *Suite) FundRecipient(
 	dstSenderBal, err := s.Chain.GetBalance(
 		ctx,
 		recipient,
-		Usdc,
+		uusdcDenom,
 	)
 	require.NoError(t, err)
 	require.Equal(t, transfer.Amount, dstSenderBal)

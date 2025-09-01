@@ -21,7 +21,12 @@
 package forwarding
 
 import (
+	"encoding/hex"
 	"fmt"
+	"strconv"
+	"strings"
+
+	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
@@ -34,9 +39,29 @@ const (
 	HypTokenIDLen         = 32
 	HypRecipientLen       = 32
 	HypCustomHookLen      = 32
+	HypHookMetadataPrefix = "0x"
 	HypNobleTestnetDomain = 1196573006
 	HypNobleMainnetDomain = 1313817164
 )
+
+// hyperlaneServers is a wrapper around the message and query servers to fulfill
+// the HyperlaneHandler interface.
+type hyperlaneServers struct {
+	warptypes.MsgServer
+	warptypes.QueryServer
+}
+
+// NewHyperlaneHandler creates a wrapper around the Hyperlane Warp module's message and query
+// servers.
+func NewHyperlaneHandler(
+	msgServer warptypes.MsgServer,
+	queryServer warptypes.QueryServer,
+) HyperlaneHandler {
+	return &hyperlaneServers{
+		MsgServer:   msgServer,
+		QueryServer: queryServer,
+	}
+}
 
 // NewHyperlaneAttributes creates and validates new Hyperlane forwarding attributes.
 // Returns an error if validation fails.
@@ -45,16 +70,18 @@ func NewHyperlaneAttributes(
 	destinationDomain uint32,
 	recipient []byte,
 	customHookID []byte,
+	customHookMetadata string,
 	gasLimit math.Int,
 	maxFee sdk.Coin,
 ) (*HypAttributes, error) {
 	attr := &HypAttributes{
-		TokenId:           tokenID,
-		DestinationDomain: destinationDomain,
-		Recipient:         recipient,
-		CustomHookId:      customHookID,
-		GasLimit:          gasLimit,
-		MaxFee:            maxFee,
+		TokenId:            tokenID,
+		DestinationDomain:  destinationDomain,
+		Recipient:          recipient,
+		CustomHookId:       customHookID,
+		CustomHookMetadata: customHookMetadata,
+		GasLimit:           gasLimit,
+		MaxFee:             maxFee,
 	}
 
 	if err := attr.Validate(); err != nil {
@@ -66,6 +93,10 @@ func NewHyperlaneAttributes(
 
 // Validate performs validation on the Hyperlane attributes.
 func (a *HypAttributes) Validate() error {
+	if a == nil {
+		return core.ErrNilPointer.Wrap("Hyperlane attributes are not set")
+	}
+
 	if len(a.TokenId) != HypTokenIDLen {
 		return fmt.Errorf(
 			"token ID must be %d bytes, received %d bytes",
@@ -73,6 +104,7 @@ func (a *HypAttributes) Validate() error {
 			len(a.TokenId),
 		)
 	}
+
 	if len(a.Recipient) != HypRecipientLen {
 		return fmt.Errorf(
 			"recipient must be %d bytes, received %d bytes",
@@ -80,16 +112,28 @@ func (a *HypAttributes) Validate() error {
 			len(a.Recipient),
 		)
 	}
-	if len(a.CustomHookId) != HypCustomHookLen {
+
+	if l := len(a.CustomHookId); l != 0 && l != HypCustomHookLen {
 		return fmt.Errorf(
-			"custom hook ID must be %d bytes, received %d bytes",
+			"custom hook ID must be %d bytes when set, received %d bytes",
 			HypCustomHookLen,
-			len(a.CustomHookId),
+			l,
 		)
 	}
+
 	if a.DestinationDomain == HypNobleMainnetDomain ||
 		a.DestinationDomain == HypNobleTestnetDomain {
 		return fmt.Errorf("destination domain %d is a Noble domain", a.DestinationDomain)
+	}
+
+	if a.CustomHookMetadata != "" {
+		if !strings.HasPrefix(a.CustomHookMetadata, HypHookMetadataPrefix) {
+			return fmt.Errorf("hook metadata must have the %s prefix, got: %s",
+				HypHookMetadataPrefix, a.CustomHookMetadata)
+		}
+		if _, err := hex.DecodeString(strings.TrimPrefix(a.CustomHookMetadata, HypHookMetadataPrefix)); err != nil {
+			return fmt.Errorf("hook metadata must be hex-encoded: %w", err)
+		}
 	}
 
 	return nil
@@ -99,7 +143,7 @@ var _ core.ForwardingAttributes = &HypAttributes{}
 
 // CounterpartyID returns a string representation of the destination domain.
 func (a *HypAttributes) CounterpartyID() string {
-	return fmt.Sprintf("%d", a.GetDestinationDomain())
+	return strconv.FormatUint(uint64(a.GetDestinationDomain()), 10)
 }
 
 // NewHyperlaneForwarding creates a new validated Hyperlane forwarding instance.
@@ -110,6 +154,7 @@ func NewHyperlaneForwarding(
 	destinationDomain uint32,
 	recipient []byte,
 	customHookID []byte,
+	customHookMetadata string,
 	gasLimit math.Int,
 	maxFee sdk.Coin,
 	passthroughPayload []byte,
@@ -119,6 +164,7 @@ func NewHyperlaneForwarding(
 		destinationDomain,
 		recipient,
 		customHookID,
+		customHookMetadata,
 		gasLimit,
 		maxFee,
 	)

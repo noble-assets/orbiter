@@ -110,6 +110,11 @@ func TestHandlePacket_CCTP(t *testing.T) {
 			},
 		},
 		{
+			name:     "error - when the forwarding packet is nil",
+			packet:   func() *types.ForwardingPacket { return nil },
+			expError: "CCTP controller received nil packet",
+		},
+		{
 			name: "error - CCTP server returns an error",
 			setup: func() context.Context {
 				return context.WithValue(context.Background(), mocks.FailingContextKey, true)

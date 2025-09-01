@@ -39,4 +39,4 @@ if ! [ -f .orbiter/data/priv_validator_state.json ]; then
 	sed -i '' 's/timeout_commit = "5s"/timeout_commit = "1s"/g' $HOME_DIR/config/config.toml
 fi
 
-$SIMD start --home $HOME_DIR
+$SIMD start --home $HOME_DIR --log_level "*:info,orbiter:debug"

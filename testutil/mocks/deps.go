@@ -27,6 +27,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	coreevent "cosmossdk.io/core/event"
 	corestore "cosmossdk.io/core/store"
 	"cosmossdk.io/log"
 	"cosmossdk.io/store"
@@ -46,6 +47,7 @@ type Dependencies struct {
 	SdkCtx       sdk.Context
 	EncCfg       moduletestutil.TestEncodingConfig
 	StoreService corestore.KVStoreService
+	EventService coreevent.Service
 	Logger       log.Logger
 }
 
@@ -70,6 +72,7 @@ func NewDependencies(tb testing.TB) Dependencies {
 		SdkCtx:       ctx,
 		EncCfg:       cfg,
 		StoreService: runtime.NewKVStoreService(key),
+		EventService: runtime.ProvideEventService(),
 		Logger:       log.NewNopLogger(),
 	}
 }

@@ -32,4 +32,5 @@ var (
 	ErrParsingPayload    = errorsmod.Register(ModuleName, 7, "parsing payload failed")
 	ErrUnableToPause     = errorsmod.Register(ModuleName, 8, "unable to pause")
 	ErrUnableToUnpause   = errorsmod.Register(ModuleName, 9, "unable to unpause")
+	ErrAlreadySet        = errorsmod.Register(ModuleName, 10, "value already set")
 )

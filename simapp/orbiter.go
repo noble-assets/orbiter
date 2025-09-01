@@ -9,6 +9,7 @@ func (app *SimApp) RegisterOrbiterControllers() {
 		Orbiters:   app.OrbiterKeeper,
 		BankKeeper: app.BankKeeper,
 		CCTPKeeper: app.CCTPKeeper,
+		WarpKeeper: app.WarpKeeper,
 	}
 
 	orbiter.InjectComponents(in)

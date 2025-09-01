@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package noble.orbiter.component.executor.v1;
+
+import "noble/orbiter/core/v1/id.proto";
+
+option go_package = "github.com/noble-assets/orbiter/types/component/executor";
+
+message EventPaused {
+  noble.orbiter.core.v1.ActionID action_id = 1;
+}
+
+message EventUnpaused {
+  noble.orbiter.core.v1.ActionID action_id = 1;
+}

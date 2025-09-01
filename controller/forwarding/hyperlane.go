@@ -83,7 +83,7 @@ func (c *HyperlaneController) Validate() error {
 		return core.ErrNilPointer.Wrap("base controller is required for the Hyperlane controller")
 	}
 	if c.handler == nil {
-		return core.ErrNilPointer.Wrap("handler is required for the Hyperlance controller")
+		return core.ErrNilPointer.Wrap("handler is required for the Hyperlane controller")
 	}
 
 	return nil
@@ -94,6 +94,8 @@ func (c *HyperlaneController) HandlePacket(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
+	c.logger.Debug("Handling hyperlane packet")
+
 	if packet == nil {
 		return errorsmod.Wrap(core.ErrNilPointer, "Hyperlane controller received nil packet")
 	}
@@ -102,6 +104,16 @@ func (c *HyperlaneController) HandlePacket(
 	if err != nil {
 		return errorsmod.Wrap(err, "error extracting Hyperlane forwarding attributes")
 	}
+
+	c.logger.Debug(
+		"Forwarding attributes",
+		"tokenID",
+		string(attr.TokenId),
+		"destination-domain",
+		attr.DestinationDomain,
+		"recipient",
+		hyperlaneutil.HexAddress(attr.Recipient),
+	)
 
 	err = c.ValidateForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
@@ -150,6 +162,14 @@ func (c *HyperlaneController) ValidateForwarding(
 	transferAttr *types.TransferAttributes,
 	hypAttr *forwardingtypes.HypAttributes,
 ) error {
+	if err := transferAttr.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid transfer attributes")
+	}
+
+	if err := hypAttr.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid Hyperlane attributes")
+	}
+
 	tokenID := hyperlaneutil.HexAddress(hypAttr.GetTokenId())
 	req := warptypes.QueryTokenRequest{
 		Id: tokenID.String(),
@@ -174,11 +194,13 @@ func (c *HyperlaneController) executeForwarding(
 	ctx context.Context,
 	transferAttr *types.TransferAttributes,
 	hypAttr *forwardingtypes.HypAttributes,
-	passthroughPayload []byte,
+	_ []byte,
 ) error {
-	var hookAddr hyperlaneutil.HexAddress
+	// If the len of bytes is zero, we pass nil in the msg construction.
+	var hookAddrPtr *hyperlaneutil.HexAddress
 	if len(hypAttr.CustomHookId) != 0 {
-		hookAddr = hyperlaneutil.HexAddress(hypAttr.CustomHookId)
+		h := hyperlaneutil.HexAddress(hypAttr.CustomHookId)
+		hookAddrPtr = &h
 	}
 
 	_, err := c.handler.RemoteTransfer(ctx, &warptypes.MsgRemoteTransfer{
@@ -187,10 +209,10 @@ func (c *HyperlaneController) executeForwarding(
 		DestinationDomain:  hypAttr.DestinationDomain,
 		Recipient:          hyperlaneutil.HexAddress(hypAttr.GetRecipient()),
 		Amount:             transferAttr.DestinationAmount(),
-		CustomHookId:       &hookAddr,
+		CustomHookId:       hookAddrPtr,
 		GasLimit:           hypAttr.GasLimit,
 		MaxFee:             hypAttr.GetMaxFee(),
-		CustomHookMetadata: string(passthroughPayload),
+		CustomHookMetadata: hypAttr.GetCustomHookMetadata(),
 	})
 	if err != nil {
 		return errorsmod.Wrap(err, "error executing Hyperlane forwarding")

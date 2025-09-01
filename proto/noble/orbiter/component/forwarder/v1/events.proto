@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package noble.orbiter.component.forwarder.v1;
+
+import "noble/orbiter/core/v1/id.proto";
+
+option go_package = "github.com/noble-assets/orbiter/types/component/forwarder";
+
+message EventProtocolPaused {
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1;
+}
+
+message EventProtocolUnpaused {
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1;
+}
+
+message EventCrossChainsPaused {
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1;
+  repeated string counterparty_ids = 2;
+}
+
+message EventCrossChainsUnpaused {
+  noble.orbiter.core.v1.ProtocolID protocol_id = 1;
+  repeated string counterparty_ids = 2;
+}
