@@ -215,6 +215,7 @@ func (d *Dispatcher) dispatchForwarding(
 			forwarding.ProtocolID(),
 		)
 		d.logger.Debug(errDescription, "error", err.Error())
+
 		return errorsmod.Wrap(
 			err,
 			errDescription,
