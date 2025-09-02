@@ -58,8 +58,9 @@ The Hyperlane protocol is a mailbox-based implementation of a permissionless bri
 the entrypoints used to send and receive messages via Hyperlane. The cross-chain transfer is built
 around the general message passing functionality, Hyperlane **Core**, as an application called
 **Warp**. The architecture is similar to how IBC core and ICS20 are structured. When we send coins,
-we first call into the Warp server which then calls into the Core, and when we receive them, the
-flow is in the opposite direction. Two elements are important to be aware of:
+we first call into the Warp server which internally delegates the message passing to the Core module.
+Upon receiving tokens, this flow is reversed.
+Two elements are important to be aware of:
 
 - Interchain Security Modules (ISMs): these modules are used to verify a received message.
 - Post dispatch hooks: these modules are used to execute post dispatch logic when a message is sent.
