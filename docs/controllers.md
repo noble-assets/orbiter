@@ -70,8 +70,8 @@ For additional information, please refer to the [Hyperlane docs](https://docs.hy
 The Hyperlane controller is the specific implementation of the controller interface designed to
 handle Hyperlane transfers. A Hyperlane transfer is defined by the
 [`HypAttributes`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/controller/forwarding/v1/hyperlane.proto#L12-L48)
-type, which is one of the concrete implementations of the forwarding attributes interface. Below is
-reported the proto implementation of the attributes:
+type, which is one of the concrete implementations of the forwarding attributes interface.
+The corresponding Protobuf implementation can be seen here:
 
 ```protobuf
 message HypAttributes {
