@@ -62,8 +62,8 @@ we first call into the Warp server which internally delegates the message passin
 Upon receiving tokens, this flow is reversed.
 Two elements are important to be aware of:
 
-- Interchain Security Modules (ISMs): these modules are used to verify a received message.
-- Post dispatch hooks: these modules are used to execute post dispatch logic when a message is sent.
+- Interchain Security Modules (ISMs) are used to verify a received message.
+- Post-dispatch hooks are used to execute additional logic after a message is sent.
 
 For additional information, please refer to the [Hyperlane docs](https://docs.hyperlane.xyz/).
 
