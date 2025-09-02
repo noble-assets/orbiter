@@ -33,7 +33,7 @@ All controllers are orchestrated by the
 ## Forwarding
 
 The forwarding step is completely defined by the core
-[`Forwarding`](https://github.com/noble-assets/orbiter/blob/main/types/core/orbiter.pb.go#L79-L91)
+[`Forwarding`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55)
 type. This structure allows users to specify:
 
 1. The cross-chain protocol to use for the forwarding.
