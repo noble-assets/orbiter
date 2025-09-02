@@ -141,7 +141,7 @@ controller during its instantiation. By using the server instead of calling dire
 keeper, we guarantee that all the required checks are performed, and that all the standard events
 are emitted by the Warp module.
 
-When we dispatch the message, two post dispatch hooks are called in sequence:
+When we dispatch the message, two post-dispatch hooks are called in sequence:
 
 - The required hook associated with the mailbox.
 - A default hook associated with the mailbox.
