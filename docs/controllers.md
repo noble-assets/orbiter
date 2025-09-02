@@ -3,7 +3,7 @@
 ## Introduction
 
 Forwarding controllers are the software components implementing the
-[`ControllerForwarding`](https://github.com/noble-assets/orbiter/blob/main/types/controller.go#L30-L33)
+[`ForwardingController`](https://github.com/noble-assets/orbiter/blob/main/types/controller.go#L30-L33)
 interface responsible for handling forwarding packets.
 
 ```go
