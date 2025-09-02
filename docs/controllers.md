@@ -136,10 +136,10 @@ router associated with the destination chain. This router is used to retrieve th
 destination in charge of handling the request. The token ID will also be used as the sender of the
 message in the protocol.
 
-The forwarding step is executed by means of the Hyperlane Warp message server which is passed to the
-controller during its instantiation. By using the server instead of calling directly into the
-keeper, we guarantee that all the required checks are performed, and that all the standard events
-are emitted by the Warp module.
+The actual cross-chain asset transfer is directly using the Hyperlane Warp message server.
+By using the server instead of calling directly into the keeper,
+we guarantee that all the required checks are performed,
+and that all the standard events are emitted by the Warp module.
 
 When we dispatch the message, two post-dispatch hooks are called in sequence:
 
