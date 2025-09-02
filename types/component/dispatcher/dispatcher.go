@@ -21,6 +21,8 @@
 package dispatcher
 
 import (
+	"errors"
+
 	errorsmod "cosmossdk.io/errors"
 
 	"github.com/noble-assets/orbiter/types/core"
@@ -32,18 +34,19 @@ func (a *AmountDispatched) IsPositive() bool {
 
 func (a DispatchedAmountEntry) Validate() error {
 	if a.Denom == "" {
-		return errorsmod.Wrap(core.ErrValidation, "cannot set empty denom")
+		return errors.New("cannot set empty denom")
 	}
 
 	if a.SourceId == nil {
-		return errorsmod.Wrap(core.ErrValidation, "missing source cross-chain ID")
+		return errorsmod.Wrap(core.ErrNilPointer, "missing source cross-chain ID")
 	}
+
 	if err := a.SourceId.Validate(); err != nil {
 		return errorsmod.Wrap(err, "failed to create source cross-chain ID")
 	}
 
 	if a.DestinationId == nil {
-		return errorsmod.Wrap(core.ErrValidation, "missing destination cross-chain ID")
+		return errorsmod.Wrap(core.ErrNilPointer, "missing destination cross-chain ID")
 	}
 
 	if err := a.DestinationId.Validate(); err != nil {
@@ -51,12 +54,11 @@ func (a DispatchedAmountEntry) Validate() error {
 	}
 
 	if a.AmountDispatched.Incoming.IsNegative() || a.AmountDispatched.Outgoing.IsNegative() {
-		return errorsmod.Wrap(core.ErrValidation, "cannot set negative amounts")
+		return errors.New("cannot set negative amounts")
 	}
 
 	if !a.AmountDispatched.Incoming.IsPositive() && !a.AmountDispatched.Outgoing.IsPositive() {
-		return errorsmod.Wrap(
-			core.ErrValidation,
+		return errors.New(
 			"cannot set incoming and outgoing amounts equal to zero",
 		)
 	}
@@ -66,23 +68,23 @@ func (a DispatchedAmountEntry) Validate() error {
 
 func (c DispatchCountEntry) Validate() error {
 	if c.Count == 0 {
-		return errorsmod.Wrap(core.ErrValidation, "cannot set zero count")
+		return errors.New("cannot set zero count")
 	}
 
 	if c.SourceId == nil {
-		return errorsmod.Wrap(core.ErrValidation, "missing source cross-chain ID")
+		return errorsmod.Wrap(core.ErrNilPointer, "missing source cross-chain ID")
 	}
 
 	if err := c.SourceId.Validate(); err != nil {
-		return errorsmod.Wrap(err, "failed to create source cross-chain ID")
+		return errorsmod.Wrap(err, "invalid source cross-chain ID")
 	}
 
 	if c.DestinationId == nil {
-		return errorsmod.Wrap(core.ErrValidation, "missing destination cross-chain ID")
+		return errorsmod.Wrap(core.ErrNilPointer, "missing destination cross-chain ID")
 	}
 
 	if err := c.DestinationId.Validate(); err != nil {
-		return errorsmod.Wrap(err, "failed to create destination cross-chain ID")
+		return errorsmod.Wrap(err, "invalid destination cross-chain ID")
 	}
 
 	return nil
