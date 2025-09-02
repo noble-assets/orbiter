@@ -21,7 +21,9 @@
 package dispatcher
 
 import (
-	"cosmossdk.io/math"
+	"errors"
+
+	errorsmod "cosmossdk.io/errors"
 
 	"github.com/noble-assets/orbiter/types/core"
 )
@@ -30,57 +32,60 @@ func (a *AmountDispatched) IsPositive() bool {
 	return a.Incoming.IsPositive() || a.Outgoing.IsPositive()
 }
 
-func NewAmountDispatched(
-	incoming math.Int,
-	outgoing math.Int,
-) *AmountDispatched {
-	return &AmountDispatched{
-		Incoming: incoming,
-		Outgoing: outgoing,
+func (a DispatchedAmountEntry) Validate() error {
+	if a.Denom == "" {
+		return errors.New("cannot set empty denom")
 	}
-}
 
-type ChainAmountDispatched struct {
-	ccID             core.CrossChainID
-	amountDispatched AmountDispatched
-}
-
-func NewChainAmountDispatched(
-	ccID core.CrossChainID,
-	amountDispatched AmountDispatched,
-) *ChainAmountDispatched {
-	return &ChainAmountDispatched{
-		ccID:             ccID,
-		amountDispatched: amountDispatched,
+	if a.SourceId == nil {
+		return errorsmod.Wrap(core.ErrNilPointer, "missing source cross-chain ID")
 	}
-}
 
-func (cad *ChainAmountDispatched) CrossChainID() core.CrossChainID {
-	return cad.ccID
-}
-
-func (cad *ChainAmountDispatched) AmountDispatched() AmountDispatched {
-	return cad.amountDispatched
-}
-
-type TotalDispatched struct {
-	chainsAmount map[string]ChainAmountDispatched
-}
-
-func NewTotalDispatched() *TotalDispatched {
-	return &TotalDispatched{
-		chainsAmount: make(map[string]ChainAmountDispatched),
+	if err := a.SourceId.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid source cross-chain ID")
 	}
+
+	if a.DestinationId == nil {
+		return errorsmod.Wrap(core.ErrNilPointer, "missing destination cross-chain ID")
+	}
+
+	if err := a.DestinationId.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid destination cross-chain ID")
+	}
+
+	if a.AmountDispatched.Incoming.IsNegative() || a.AmountDispatched.Outgoing.IsNegative() {
+		return errors.New("cannot set negative amounts")
+	}
+
+	if !a.AmountDispatched.Incoming.IsPositive() && !a.AmountDispatched.Outgoing.IsPositive() {
+		return errors.New(
+			"cannot set incoming and outgoing amounts equal to zero",
+		)
+	}
+
+	return nil
 }
 
-func (td *TotalDispatched) ChainAmount(counterpartyID string) ChainAmountDispatched {
-	return td.chainsAmount[counterpartyID]
-}
+func (c DispatchCountEntry) Validate() error {
+	if c.Count == 0 {
+		return errors.New("cannot set zero count")
+	}
 
-func (td *TotalDispatched) ChainsAmount() map[string]ChainAmountDispatched {
-	return td.chainsAmount
-}
+	if c.SourceId == nil {
+		return errorsmod.Wrap(core.ErrNilPointer, "missing source cross-chain ID")
+	}
 
-func (td *TotalDispatched) SetAmountDispatched(counterpartyID string, cad ChainAmountDispatched) {
-	td.chainsAmount[counterpartyID] = cad
+	if err := c.SourceId.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid source cross-chain ID")
+	}
+
+	if c.DestinationId == nil {
+		return errorsmod.Wrap(core.ErrNilPointer, "missing destination cross-chain ID")
+	}
+
+	if err := c.DestinationId.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid destination cross-chain ID")
+	}
+
+	return nil
 }
