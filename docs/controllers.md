@@ -99,7 +99,7 @@ message HypAttributes {
 When the controller receives the forwarding packet, the following steps are executed:
 
 - Hyperlane attributes are extracted from the generic core forwarding type.
-- Hyperlane and transfer attributes are validated.
+- The general transfer attributes as well as the protocol specific ones are validated.
 - The forwarding is executed.
 
 ```mermaid
