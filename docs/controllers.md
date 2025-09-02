@@ -27,7 +27,7 @@ type ForwardingPacket struct {
 - **Forwarding attributes**: Specific information associated with the protocol used to complete the
   forwarding step.
 
-All controllers are orchestrated by the Orbiter component called
+All controllers are orchestrated by the
 [`Forwarder`](https://github.com/noble-assets/orbiter/blob/main/keeper/component/forwarder/forwarder.go#L42-L55).
 
 ## Forwarding
