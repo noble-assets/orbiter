@@ -43,7 +43,7 @@ type. This structure allows users to specify:
 The cross-chain protocol specific information is encoded with the `Attributes` field with an any
 type that implements the `ForwardingAttributes` interface. For additional details on the
 implementation, please refer to the
-[proto definition](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55)
+[proto definition](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55).
 
 Forwarding controllers are elements of the Orbiter module used to interpret the protocol-specific
 information and use them to forward funds. Based on the selected bridge, we can have:
