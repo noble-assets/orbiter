@@ -146,7 +146,8 @@ When we dispatch the message, two post dispatch hooks are called in sequence:
 - The required hook associated with the mailbox.
 - A default hook associated with the mailbox.
 
-While the first hook is mandatory, the second one can be replaced by a custom hook specified via the
-custom hook ID field. The custom hook can be used to handle the other optional field called custom
-hook metadata.The execution of the two post dispatch hooks is limited by the value specified in the
-maximum fee field.
+While the first hook is mandatory,
+the second one can be replaced by a custom hook specified via the custom hook ID field.
+The custom hook can be used to handle the optional custom hook metadata.
+The execution of the two post-dispatch hooks is limited
+by the value specified in the maximum fee field.
