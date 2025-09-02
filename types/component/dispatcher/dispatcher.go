@@ -42,7 +42,7 @@ func (a DispatchedAmountEntry) Validate() error {
 	}
 
 	if err := a.SourceId.Validate(); err != nil {
-		return errorsmod.Wrap(err, "failed to create source cross-chain ID")
+		return errorsmod.Wrap(err, "invalid source cross-chain ID")
 	}
 
 	if a.DestinationId == nil {
@@ -50,7 +50,7 @@ func (a DispatchedAmountEntry) Validate() error {
 	}
 
 	if err := a.DestinationId.Validate(); err != nil {
-		return errorsmod.Wrap(err, "failed to create destination cross-chain ID")
+		return errorsmod.Wrap(err, "invalid destination cross-chain ID")
 	}
 
 	if a.AmountDispatched.Incoming.IsNegative() || a.AmountDispatched.Outgoing.IsNegative() {
