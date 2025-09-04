@@ -52,6 +52,71 @@ information and use them to forward funds. Based on the selected bridge, we can 
 - **AutoLane**: Automatic forwarding of funds via the Hyperlane protocol.
 - **AutoIBC**: Automatic forwarding of funds via the Inter-BlockChain protocol.
 
+## CCTP
+
+The Cross-Chain Transfer Protocol (CCTP) is an interoperability protocol developed by Circle
+to enable native USDC transfers across different blockchain networks.
+CCTP uses a burn-and-mint mechanism where USDC is burned on the source chain and minted on the destination chain,
+ensuring that the total supply remains constant across all supported chains.
+
+For more detailed information about the protocol itself, please refer to the [Circle CCTP documentation](https://developers.circle.com/cctp).
+
+The CCTP controller is the concrete implementation of the controller interface designed to handle CCTP transfers.
+All relevant information related to a CCTP transfer is defined by the [`CCTPAttributes`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/controller/forwarding/v1/cctp.proto#L9-L26)
+type,
+which implements the forwarding attributes interface.
+The corresponding Protobuf implementation can be seen here:
+
+```protobuf
+message CCTPAttributes {
+  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ForwardingAttributes";
+
+  uint32 destination_domain = 1;
+  bytes mint_recipient = 2;
+  bytes destination_caller = 3;
+}
+```
+
+When the controller receives the forwarding packet, the following steps are executed:
+
+- CCTP attributes are extracted from the generic core forwarding type.
+- The general transfer attributes as well as the protocol specific ones are validated.
+- The forwarding is executed.
+
+```mermaid
+---
+title: CCTP Controller Workflow Diagram
+---
+
+flowchart LR
+   subgraph Orbiter Module
+     direction LR
+      F[Forwarder]
+      CC[[CCTP Controller]]
+      EA(Extract attributes)
+      VF(Validate forwarding)
+   end
+
+  F -- forwarding payload --> CC
+  CC -.-> EA
+  EA -.->|CCTPAttributes| CC
+  CC -.-> VF
+  VF -.->|bool| CC
+  CC -- burn and mint--> CCTP[CCTP Module]
+```
+
+The validation step consists of basic validation on the types, like checks for nil pointers, and validation of the CCTP-specific attributes. This includes ensuring that:
+
+- The destination domain is not the Noble domain (to prevent circular transfers)
+- The mint recipient address is not empty
+- The destination caller address is not empty
+
+The actual cross-chain asset transfer is performed by calling the CCTP module's `DepositForBurnWithCaller` message server. This message initiates the burn process on the source chain and sends the necessary information to the destination chain for the minting process.
+
+The CCTP protocol uses a commit-and-forget style, meaning that once the CCTP server confirms that the burn request has been stored to state, the Orbiter execution is complete.
+The events emitted during this state transition are then picked up by the relayers
+and forwarded to the destination chain.
+
 ## Hyperlane
 
 The Hyperlane protocol is a mailbox-based implementation of a permissionless bridge. Mailboxes are
