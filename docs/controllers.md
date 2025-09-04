@@ -2,9 +2,9 @@
 
 ## Introduction
 
-Forwarding controllers are the software components implementing the
+Forwarding controllers are software components that implement the
 [`ForwardingController`](https://github.com/noble-assets/orbiter/blob/main/types/controller.go#L30-L33)
-interface responsible for handling forwarding packets.
+interface and handle forwarding packets.
 
 ```go
 type ControllerForwarding interface {
@@ -14,7 +14,7 @@ type ControllerForwarding interface {
 ```
 
 A [`ForwardingPacket`](https://github.com/noble-assets/orbiter/blob/main/types/packet.go#L171-L174)
-is composed by two parts:
+consists of two parts:
 
 ```go
 type ForwardingPacket struct {
@@ -23,34 +23,33 @@ type ForwardingPacket struct {
 }
 ```
 
-- **Transfer attributes**: General information associated with the cross-chain transfer.
-- **Forwarding attributes**: Specific information associated with the protocol used to complete the
-  forwarding step.
+- **Transfer attributes**: General information about the cross-chain transfer
+- **Forwarding attributes**: Protocol-specific information for completing the forwarding step
 
 All controllers are orchestrated by the
 [`Forwarder`](https://github.com/noble-assets/orbiter/blob/main/keeper/component/forwarder/forwarder.go#L42-L55).
 
 ## Forwarding
 
-The forwarding step is completely defined by the core
+The forwarding step is defined by the core
 [`Forwarding`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55)
-type. This structure allows users to specify:
+type, which allows users to specify:
 
-1. The cross-chain protocol to use for the forwarding.
-2. The cross-chain protocol specific information.
-3. Passthrough metadata that has to be attached to the cross-chain transfer.
+1. The cross-chain protocol for forwarding
+2. Protocol-specific information
+3. Passthrough metadata to attach to the cross-chain transfer
 
-The cross-chain protocol specific information is encoded with the `Attributes` field with an any
-type that implements the `ForwardingAttributes` interface. For additional details on the
-implementation, please refer to the
+Protocol-specific information is encoded in the `Attributes` field using an `any`
+type that implements the `ForwardingAttributes` interface.
+For implementation details, see the
 [proto definition](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55).
 
-Forwarding controllers are elements of the Orbiter module used to interpret the protocol-specific
-information and use them to forward funds. Based on the selected bridge, we can have:
+Forwarding controllers interpret protocol-specific information and forward funds.
+Based on the selected bridge, the following controllers are available:
 
-- **AutoCCTP**: Automatic forwarding of funds via the Cross-Chain Transfer Protocol.
-- **AutoLane**: Automatic forwarding of funds via the Hyperlane protocol.
-- **AutoIBC**: Automatic forwarding of funds via the Inter-BlockChain protocol.
+- **AutoCCTP**: Automatic forwarding via the Cross-Chain Transfer Protocol
+- **AutoLane**: Automatic forwarding via the Hyperlane protocol
+- **AutoIBC**: Automatic forwarding via the Inter-Blockchain protocol
 
 ## CCTP
 
@@ -105,15 +104,15 @@ flowchart LR
   CC -- burn and mint--> CCTP[CCTP Module]
 ```
 
-The validation step consists of basic validation on the types, like checks for nil pointers, and validation of the CCTP-specific attributes. This includes ensuring that:
+**Validation** includes standard type checks and CCTP-specific validation:
 
-- The destination domain is not the Noble domain (to prevent circular transfers)
+- The destination domain is not the Noble domain (prevents circular transfers)
 - The mint recipient address is not empty
 - The destination caller address is not empty
 
-The actual cross-chain asset transfer is performed by calling the CCTP module's `DepositForBurnWithCaller` message server.
-This message initiates the burn process on the source chain
-and sends the necessary information to the destination chain for the minting process.
+**Execution** calls the CCTP module's `DepositForBurnWithCaller` message server,
+which initiates the burn process on the source chain
+and sends the necessary information to the destination chain for minting.
 
 The CCTP protocol uses a commit-and-forget style, meaning that
 once the CCTP server confirms that the burn request has been stored to state,
@@ -137,7 +136,7 @@ Key components include:
 
 For additional information, please refer to the [Hyperlane docs](https://docs.hyperlane.xyz/).
 
-The Hyperlane controller handles transfers defined by the
+The Hyperlane controller handles transfers using the
 [`HypAttributes`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/controller/forwarding/v1/hyperlane.proto#L12-L48)
 type:
 
@@ -191,7 +190,7 @@ flowchart LR
 
 **Validation** includes standard type checks plus Hyperlane-specific validation:
 
-- Token ID verification using the Warp query server to retrieve `WrappedHypToken`
+- Token ID verification using the Warp query server
 - Origin denom matching with the destination denom (crucial since multiple token IDs can map to the same denom)
 - Token ID enrollment with a router for the destination chain
 
@@ -200,7 +199,7 @@ ensuring all required checks and standard events are handled.
 The transfer triggers two post-dispatch hooks in sequence:
 
 1. The mandatory mailbox hook
-2. Either the default mailbox hook or a custom hook (if specified via `custom_hook_id`)
+2. Either the default hook or a custom hook (if specified via `custom_hook_id`)
 
 The custom hook can process the optional `custom_hook_metadata`,
 and both hooks are subject to the gas limit and maximum fee constraints.
