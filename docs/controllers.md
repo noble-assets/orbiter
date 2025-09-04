@@ -49,7 +49,7 @@ Based on the selected bridge, the following controllers are available:
 
 - **AutoCCTP**: Automatic forwarding via the Cross-Chain Transfer Protocol
 - **AutoLane**: Automatic forwarding via the Hyperlane protocol
-- **AutoIBC**: Automatic forwarding via the Inter-Blockchain protocol
+- **AutoIBC**: Automatic forwarding via the Inter-Blockchain Communication (IBC) protocol
 
 ## CCTP
 
@@ -125,7 +125,7 @@ and forwarded to the destination chain.
 The Hyperlane protocol is a mailbox-based permissionless bridge
 that enables cross-chain transfers through its **Warp** application,
 which is built on top of Hyperlane's general message passing functionality.
-The architecture follows a pattern similar to IBC core and ICS20,
+The architecture follows a pattern similar to IBC core and ICS-20,
 where the Warp server handles token transfers by delegating to the underlying Core module.
 
 Key components include:
