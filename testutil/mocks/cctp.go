@@ -33,6 +33,17 @@ var _ forwarding.CCTPMsgServer = CCTPMsgServer{}
 
 type CCTPMsgServer struct{}
 
+func (c CCTPMsgServer) DepositForBurn(
+	ctx context.Context,
+	msg *cctptypes.MsgDepositForBurn,
+) (*cctptypes.MsgDepositForBurnResponse, error) {
+	if CheckIfFailing(ctx) {
+		return nil, errors.New("error calling deposit for burn api")
+	}
+
+	return &cctptypes.MsgDepositForBurnResponse{}, nil
+}
+
 func (c CCTPMsgServer) DepositForBurnWithCaller(
 	ctx context.Context,
 	msg *cctptypes.MsgDepositForBurnWithCaller,
