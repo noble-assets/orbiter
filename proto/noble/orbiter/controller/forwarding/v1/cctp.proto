@@ -20,7 +20,7 @@ message CCTPAttributes {
   // the cross-chain transfer.
   bytes mint_recipient = 2;
 
-  // destination_caller is the address of the account in charge
-  // of completing the CCTP routing.
+  // destination_caller is the address of the account in charge of completing
+  // the CCTP routing. Note this can be left empty.
   bytes destination_caller = 3;
 }
