@@ -29,6 +29,10 @@ import (
 
 // CCTPMsgServer defines the expected behavior for the CCTP server.
 type CCTPMsgServer interface {
+	DepositForBurn(
+		context.Context,
+		*cctptypes.MsgDepositForBurn,
+	) (*cctptypes.MsgDepositForBurnResponse, error)
 	DepositForBurnWithCaller(
 		context.Context,
 		*cctptypes.MsgDepositForBurnWithCaller,

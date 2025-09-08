@@ -33,8 +33,8 @@ type CCTPAttributes struct {
 	// mint_recipient represents the address which will receive
 	// the cross-chain transfer.
 	MintRecipient []byte `protobuf:"bytes,2,opt,name=mint_recipient,json=mintRecipient,proto3" json:"mint_recipient,omitempty"`
-	// destination_caller is the address of the account in charge
-	// of completing the CCTP routing.
+	// destination_caller is the address of the account in charge of completing
+	// the CCTP routing. Note this can be left empty.
 	DestinationCaller []byte `protobuf:"bytes,3,opt,name=destination_caller,json=destinationCaller,proto3" json:"destination_caller,omitempty"`
 }
 
