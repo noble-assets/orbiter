@@ -143,7 +143,8 @@ func (q queryServer) DispatchedAmounts(
 		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
 	}
 
-	if !q.HasDispatchedAmount(ctx, &sourceID, &destID, req.Denom) {
+	amounts := q.GetDispatchedAmount(ctx, &sourceID, &destID, req.Denom)
+	if !amounts.AmountDispatched.IsPositive() {
 		return nil, fmt.Errorf(
 			"dispatched amount does not exist for source ID %s, destination ID %s, and denom %s",
 			sourceID.String(),
@@ -151,8 +152,6 @@ func (q queryServer) DispatchedAmounts(
 			req.Denom,
 		)
 	}
-
-	amounts := q.GetDispatchedAmount(ctx, &sourceID, &destID, req.Denom)
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
 		Amounts: []*dispatchertypes.DispatchedAmountEntry{amounts},

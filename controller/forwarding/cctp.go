@@ -35,7 +35,7 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ types.ControllerForwarding = &CCTPController{}
+var _ types.ForwardingController = &CCTPController{}
 
 // CCTPController is the forwarding controller to perform
 // a CCTP transfer.
@@ -156,18 +156,33 @@ func (c *CCTPController) executeForwarding(
 	transferAttr *types.TransferAttributes,
 	cctpAttr *forwardingtypes.CCTPAttributes,
 ) error {
-	msg := cctptypes.MsgDepositForBurnWithCaller{
-		From:              core.ModuleAddress.String(),
-		Amount:            transferAttr.DestinationAmount(),
-		DestinationDomain: cctpAttr.DestinationDomain,
-		MintRecipient:     cctpAttr.MintRecipient,
-		BurnToken:         transferAttr.DestinationDenom(),
-		DestinationCaller: cctpAttr.DestinationCaller,
-	}
+	if len(cctpAttr.DestinationCaller) == 0 {
+		msg := cctptypes.MsgDepositForBurn{
+			From:              core.ModuleAddress.String(),
+			Amount:            transferAttr.DestinationAmount(),
+			DestinationDomain: cctpAttr.DestinationDomain,
+			MintRecipient:     cctpAttr.MintRecipient,
+			BurnToken:         transferAttr.DestinationDenom(),
+		}
 
-	_, err := c.handler.DepositForBurnWithCaller(ctx, &msg)
-	if err != nil {
-		return err
+		_, err := c.handler.DepositForBurn(ctx, &msg)
+		if err != nil {
+			return err
+		}
+	} else {
+		msg := cctptypes.MsgDepositForBurnWithCaller{
+			From:              core.ModuleAddress.String(),
+			Amount:            transferAttr.DestinationAmount(),
+			DestinationDomain: cctpAttr.DestinationDomain,
+			MintRecipient:     cctpAttr.MintRecipient,
+			BurnToken:         transferAttr.DestinationDenom(),
+			DestinationCaller: cctpAttr.DestinationCaller,
+		}
+
+		_, err := c.handler.DepositForBurnWithCaller(ctx, &msg)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

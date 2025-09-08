@@ -23,12 +23,16 @@ package forwarding
 import (
 	"context"
 
+	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 )
 
-// CCTPMsgServer defines the expected behavior for the CCTP server to
-// be used in the CCTP controller.
+// CCTPMsgServer defines the expected behavior for the CCTP server.
 type CCTPMsgServer interface {
+	DepositForBurn(
+		context.Context,
+		*cctptypes.MsgDepositForBurn,
+	) (*cctptypes.MsgDepositForBurnResponse, error)
 	DepositForBurnWithCaller(
 		context.Context,
 		*cctptypes.MsgDepositForBurnWithCaller,
@@ -37,4 +41,16 @@ type CCTPMsgServer interface {
 		context.Context,
 		*cctptypes.MsgReplaceDepositForBurn,
 	) (*cctptypes.MsgReplaceDepositForBurnResponse, error)
+}
+
+// HyperlaneHandler defines the expected behavior for the Hyperlane server.
+type HyperlaneHandler interface {
+	RemoteTransfer(
+		ctx context.Context,
+		msg *warptypes.MsgRemoteTransfer,
+	) (*warptypes.MsgRemoteTransferResponse, error)
+	Token(
+		ctx context.Context,
+		request *warptypes.QueryTokenRequest,
+	) (*warptypes.QueryTokenResponse, error)
 }

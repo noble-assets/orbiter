@@ -21,10 +21,12 @@
 package orbiter
 
 import (
+	warpkeeper "github.com/bcp-innovations/hyperlane-cosmos/x/warp/keeper"
 	cctpkeeper "github.com/circlefin/noble-cctp/x/cctp/keeper"
 
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/core/event"
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/depinject"
 	errorsmod "cosmossdk.io/errors"
@@ -39,6 +41,7 @@ import (
 	"github.com/noble-assets/orbiter/keeper"
 	"github.com/noble-assets/orbiter/types"
 	actiontypes "github.com/noble-assets/orbiter/types/controller/action"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
 func init() {
@@ -56,6 +59,7 @@ type ModuleInputs struct {
 	AddressCodec address.Codec
 	Logger       log.Logger
 
+	EventService event.Service
 	StoreService store.KVStoreService
 
 	BankKeeper types.BankKeeper
@@ -79,6 +83,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.Codec,
 		in.AddressCodec,
 		in.Logger,
+		in.EventService,
 		in.StoreService,
 		authority.String(),
 		in.BankKeeper,
@@ -100,15 +105,16 @@ type ComponentsInputs struct {
 
 	BankKeeper ComponentsBankKeeper
 	CCTPKeeper *cctpkeeper.Keeper
+	WarpKeeper warpkeeper.Keeper
 }
 
 func InjectComponents(in ComponentsInputs) {
 	InjectActionControllers(in)
-	InjectOrbitControllers(in)
+	InjectForwardingControllers(in)
 	InjectAdapterControllers(in)
 }
 
-func InjectOrbitControllers(in ComponentsInputs) {
+func InjectForwardingControllers(in ComponentsInputs) {
 	cctp, err := forwardingctrl.NewCCTPController(
 		in.Orbiters.Forwarder().Logger(),
 		cctpkeeper.NewMsgServerImpl(in.CCTPKeeper),
@@ -117,12 +123,24 @@ func InjectOrbitControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating CCTP controller"))
 	}
 
-	in.Orbiters.SetForwardingControllers(cctp)
+	hyperlane, err := forwardingctrl.NewHyperlaneController(
+		in.Orbiters.Forwarder().Logger(),
+		forwardingtypes.NewHyperlaneHandler(
+			warpkeeper.NewMsgServerImpl(in.WarpKeeper),
+			warpkeeper.NewQueryServerImpl(in.WarpKeeper),
+		),
+	)
+	if err != nil {
+		panic(errorsmod.Wrap(err, "error creating Hyperlane controller"))
+	}
+
+	in.Orbiters.SetForwardingControllers(cctp, hyperlane)
 }
 
 func InjectActionControllers(in ComponentsInputs) {
 	fee, err := actionctrl.NewFeeController(
 		in.Orbiters.Executor().Logger(),
+		in.Orbiters.Executor().EventService(),
 		in.BankKeeper,
 	)
 	if err != nil {

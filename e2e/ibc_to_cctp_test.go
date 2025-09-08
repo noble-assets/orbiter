@@ -45,17 +45,15 @@ import (
 )
 
 func TestIBCToCCTP(t *testing.T) {
-	t.Parallel()
-
 	testutil.SetSDKConfig()
-	ctx, s := NewSuite(t, true, true)
+	ctx, s := NewSuite(t, true, true, false)
 
 	orbiter.RegisterInterfaces(s.Chain.GetCodec().InterfaceRegistry())
 
 	fromOrbiterChanID, toOrbiterChanID := s.GetChannels(t, ctx)
 
 	srcUsdcTrace := transfertypes.ParseDenomTrace(
-		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanID, Usdc),
+		transfertypes.GetPrefixedDenom("transfer", toOrbiterChanID, uusdcDenom),
 	)
 	dstUsdcDenom := srcUsdcTrace.IBCDenom()
 
@@ -226,8 +224,10 @@ func testIbcPassingWithFeeAction(
 
 	found, _ := SearchEvents(txsResult.Txs[0].Events, []string{
 		"circle.cctp.v1.DepositForBurn",
+		"noble.orbiter.component.adapter.v1.EventPayloadProcessed",
+		"noble.orbiter.controller.action.v1.EventFeeAction",
 	})
-	require.True(t, found)
+	require.True(t, found, "expected events not found")
 
 	feeAmt, err := s.Chain.BankQueryBalance(ctx, feeRecipientAddr, "uusdc")
 	require.NoError(t, err)
@@ -347,7 +347,7 @@ func testIbcPassingWithoutActions(
 	resp, err := s.Chain.GetBalance(
 		ctx,
 		dcAddr.String(),
-		Usdc,
+		uusdcDenom,
 	)
 	require.NoError(t, err)
 	require.Equal(

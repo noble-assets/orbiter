@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package noble.orbiter.controller.forwarding.v1;
+
+import "amino/amino.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/noble-assets/orbiter/types/controller/forwarding";
+
+// HypAttributes defines the concrete implementation of the
+// ForwardingAttributes interface to execute a cross-chain routing
+// via the Hyperlane protocol.
+message HypAttributes {
+  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ForwardingAttributes";
+
+  // token_id represents the unique ID assigned to a token by the Hyperlane
+  // app router.
+  bytes token_id = 1;
+
+  // destination_domain represents the Hyperlane destination
+  // domain identifier: https://docs.hyperlane.xyz/docs/reference/domains.
+  uint32 destination_domain = 2;
+
+  // recipient is the address of the recipient account in the
+  // destination domain.
+  bytes recipient = 3;
+
+  // custom_hook_id is the optional ID of the custom hook used instead of the
+  // default hook of the mailbox. This hook is executed after the mailbox
+  // required hook.
+  bytes custom_hook_id = 4;
+
+  // custom_hook_metadata is the HEX encoded metadata passed to the Hyperlane
+  // post dispatch hook.
+  string custom_hook_metadata = 5;
+
+  // gas_limit is the maximum gas allowed for the execution of the
+  // destination transaction.
+  string gas_limit = 6 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true,
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int"
+  ];
+
+  // max_fee is the maximum fee allowed for the execution of post dispatch hooks.
+  cosmos.base.v1beta1.Coin max_fee = 7 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins",
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}

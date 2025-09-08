@@ -26,6 +26,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	"cosmossdk.io/core/event"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -35,7 +36,7 @@ import (
 	router "github.com/noble-assets/orbiter/types/router"
 )
 
-type ForwardingRouter = router.Router[core.ProtocolID, types.ControllerForwarding]
+type ForwardingRouter = router.Router[core.ProtocolID, types.ForwardingController]
 
 var _ types.Forwarder = &Forwarder{}
 
@@ -44,8 +45,9 @@ var _ types.Forwarder = &Forwarder{}
 // orcherstrate the controllers of the supported outgoing cross-chain
 // transfer bridges.
 type Forwarder struct {
-	logger     log.Logger
-	bankKeeper types.BankKeeperForwarder
+	logger       log.Logger
+	eventService event.Service
+	bankKeeper   types.BankKeeperForwarder
 	// router is a forwarding controllers router.
 	router *ForwardingRouter
 	// PausedController keeps track of the paused protocol ids.
@@ -59,6 +61,7 @@ func New(
 	cdc codec.Codec,
 	sb *collections.SchemaBuilder,
 	logger log.Logger,
+	eventService event.Service,
 	bankKeeper types.BankKeeperForwarder,
 ) (*Forwarder, error) {
 	if logger == nil {
@@ -66,9 +69,10 @@ func New(
 	}
 
 	f := Forwarder{
-		logger:     logger.With(core.ComponentPrefix, core.ForwarderName),
-		bankKeeper: bankKeeper,
-		router:     router.New[core.ProtocolID, types.ControllerForwarding](),
+		logger:       logger.With(core.ComponentPrefix, core.ForwarderName),
+		eventService: eventService,
+		bankKeeper:   bankKeeper,
+		router:       router.New[core.ProtocolID, types.ForwardingController](),
 		pausedCrossChains: collections.NewKeySet(
 			sb,
 			core.PausedCrossChainsPrefix,
@@ -89,6 +93,9 @@ func New(
 func (f *Forwarder) Validate() error {
 	if f.logger == nil {
 		return core.ErrNilPointer.Wrap("logger cannot be nil")
+	}
+	if f.eventService == nil {
+		return core.ErrNilPointer.Wrap("event service cannot be nil")
 	}
 	if f.bankKeeper == nil {
 		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")

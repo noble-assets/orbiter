@@ -19,6 +19,8 @@ modules:
           params,
           upgrade,
           cctp,
+          hyperlane,
+          warp,
           orbiter,
         ]
       override_store_keys:
@@ -41,6 +43,9 @@ modules:
         - account: fiat-tokenfactory
           permissions: [burner, minter]
         - account: cctp
+        - account: hyperlane
+        - account: warp
+          permissions: [burner, minter]
         - account: orbiter
         - account: orbiter/dust_collector
   - name: bank
@@ -77,6 +82,14 @@ modules:
   - name: cctp
     config:
       '@type': circle.cctp.module.v1.Module
+  - name: hyperlane
+    config:
+      "@type": hyperlane.core.module.v1.Module
+  - name: warp
+    config:
+      "@type": hyperlane.warp.module.v1.Module
+      enabled_tokens:
+        - 1 # Enable Collateral tokens
   - name: orbiter
     config:
       '@type': noble.orbiter.module.v1.Module
