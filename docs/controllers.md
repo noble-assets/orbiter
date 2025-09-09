@@ -101,14 +101,13 @@ flowchart LR
   EA -.->|CCTPAttributes| CC
   CC -.-> VF
   VF -.->|bool| CC
-  CC -- burn and mint--> CCTP[CCTP Module]
+  CC -- burn --> CCTP[CCTP Module]
 ```
 
 **Validation** includes standard type checks and CCTP-specific validation:
 
 - The destination domain is not the Noble domain
 - The mint recipient address is not empty
-- The destination caller address is not empty
 
 **Execution** calls the CCTP module's `DepositForBurnWithCaller` message server,
 which initiates the burn process on the source chain
@@ -126,7 +125,9 @@ The Hyperlane protocol is a mailbox-based permissionless bridge
 that enables cross-chain transfers through its **Warp** application,
 which is built on top of Hyperlane's general message passing functionality.
 The architecture follows a pattern similar to IBC core and ICS-20,
-where the Warp server handles token transfers by delegating to the underlying Core module.
+where the Warp server handles token transfers
+by building a specific payload,
+that is then dispatched by the underlying Core module.
 
 Key components include:
 
