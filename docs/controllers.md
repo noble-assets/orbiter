@@ -2,9 +2,9 @@
 
 ## Introduction
 
-Forwarding controllers are the software components implementing the
+Forwarding controllers are software components that implement the
 [`ForwardingController`](https://github.com/noble-assets/orbiter/blob/main/types/controller.go#L30-L33)
-interface responsible for handling forwarding packets.
+interface and handle forwarding packets.
 
 ```go
 type ControllerForwarding interface {
@@ -14,7 +14,7 @@ type ControllerForwarding interface {
 ```
 
 A [`ForwardingPacket`](https://github.com/noble-assets/orbiter/blob/main/types/packet.go#L171-L174)
-is composed by two parts:
+consists of two parts:
 
 ```go
 type ForwardingPacket struct {
@@ -23,55 +23,123 @@ type ForwardingPacket struct {
 }
 ```
 
-- **Transfer attributes**: General information associated with the cross-chain transfer.
-- **Forwarding attributes**: Specific information associated with the protocol used to complete the
-  forwarding step.
+- **Transfer attributes**: General information about the cross-chain transfer.
+- **Forwarding attributes**: Protocol-specific information for completing the forwarding step.
 
 All controllers are orchestrated by the
 [`Forwarder`](https://github.com/noble-assets/orbiter/blob/main/keeper/component/forwarder/forwarder.go#L42-L55).
 
 ## Forwarding
 
-The forwarding step is completely defined by the core
+The forwarding step is defined by the core
 [`Forwarding`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55)
-type. This structure allows users to specify:
+type, which allows users to specify:
 
-1. The cross-chain protocol to use for the forwarding.
-2. The cross-chain protocol specific information.
-3. Passthrough metadata that has to be attached to the cross-chain transfer.
+1. The cross-chain protocol for forwarding
+2. Protocol-specific information
+3. Passthrough metadata to send along with the to the cross-chain transfer
 
-The cross-chain protocol specific information is encoded with the `Attributes` field with an any
-type that implements the `ForwardingAttributes` interface. For additional details on the
-implementation, please refer to the
+Protocol-specific information is encoded in the `Attributes` field using an `any`
+type that implements the `ForwardingAttributes` interface.
+For implementation details, refer to the
 [proto definition](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55).
 
-Forwarding controllers are elements of the Orbiter module used to interpret the protocol-specific
-information and use them to forward funds. Based on the selected bridge, we can have:
+Forwarding controllers interpret protocol-specific information and forward funds.
+Based on the selected bridge, the following controllers are available:
 
-- **AutoCCTP**: Automatic forwarding of funds via the Cross-Chain Transfer Protocol.
-- **AutoLane**: Automatic forwarding of funds via the Hyperlane protocol.
-- **AutoIBC**: Automatic forwarding of funds via the Inter-BlockChain protocol.
+- **AutoCCTP**: Automatic forwarding via the Cross-Chain Transfer Protocol
+- **AutoLane**: Automatic forwarding via the Hyperlane protocol
+- **AutoIBC**: Automatic forwarding via the Inter-Blockchain Communication (IBC) protocol
+
+## CCTP
+
+The Cross-Chain Transfer Protocol (CCTP) is an interoperability protocol developed by Circle
+to enable native USDC transfers across different blockchain networks.
+CCTP uses a burn-and-mint mechanism where USDC is burned on the source chain and minted on the destination chain,
+ensuring that the total supply remains constant across all supported chains.
+
+For more detailed information about the protocol itself, please refer to the [Circle CCTP documentation](https://developers.circle.com/cctp).
+
+The CCTP controller is the concrete implementation of the controller interface designed to handle CCTP transfers.
+All relevant information related to a CCTP transfer is defined by
+the [`CCTPAttributes`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/controller/forwarding/v1/cctp.proto#L9-L26) type,
+which implements the forwarding attributes interface.
+The corresponding Protobuf implementation can be seen here:
+
+```protobuf
+message CCTPAttributes {
+  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ForwardingAttributes";
+
+  uint32 destination_domain = 1;
+  bytes mint_recipient = 2;
+  bytes destination_caller = 3;
+}
+```
+
+When the controller receives the forwarding packet, the following steps are executed:
+
+- CCTP attributes are extracted from the generic core forwarding type.
+- The general transfer attributes as well as the protocol specific ones are validated.
+- The forwarding is executed.
+
+```mermaid
+---
+title: CCTP Controller Workflow Diagram
+---
+
+flowchart LR
+   subgraph Orbiter Module
+     direction LR
+      F[Forwarder]
+      CC[[CCTP Controller]]
+      EA(Extract attributes)
+      VF(Validate forwarding)
+   end
+
+  F -- forwarding payload --> CC
+  CC -.-> EA
+  EA -.->|CCTPAttributes| CC
+  CC -.-> VF
+  VF -.->|bool| CC
+  CC -- burn --> CCTP[CCTP Module]
+```
+
+**Validation** includes standard type checks and CCTP-specific validation:
+
+- The destination domain is not the Noble domain
+- The mint recipient address is not empty
+
+**Execution** calls the CCTP module's `DepositForBurnWithCaller` message server,
+which initiates the burn process on the source chain
+and sends the necessary information to the destination chain for minting.
+
+The CCTP protocol uses a commit-and-forget style, meaning that
+once the CCTP server confirms that the burn request has been stored to state,
+the Orbiter execution is complete.
+The events emitted during this state transition are then picked up by the relayers
+and forwarded to the destination chain.
 
 ## Hyperlane
 
-The Hyperlane protocol is a mailbox-based implementation of a permissionless bridge. Mailboxes are
-the entrypoints used to send and receive messages via Hyperlane. The cross-chain transfer is built
-around the general message passing functionality, Hyperlane **Core**, as an application called
-**Warp**. The architecture is similar to how IBC core and ICS20 are structured. When we send coins,
-we first call into the Warp server which internally delegates the message passing to the Core module.
-Upon receiving tokens, this flow is reversed.
-Two elements are important to be aware of:
+The Hyperlane protocol is a mailbox-based permissionless bridge
+that enables cross-chain transfers through its **Warp** application,
+which is built on top of Hyperlane's general message passing functionality.
+The architecture follows a pattern similar to IBC core and ICS-20,
+where the Warp server handles token transfers
+by building a specific payload,
+that is then dispatched by the underlying Core module.
 
-- Interchain Security Modules (ISMs) are used to verify a received message.
-- Post-dispatch hooks are used to execute additional logic after a message is sent.
+Key components include:
+
+- **Mailboxes**: Entrypoints for sending and receiving cross-chain messages.
+- **Interchain Security Modules (ISMs)**: Verify received messages.
+- **Post-dispatch hooks**: Execute additional logic after message transmission.
 
 For additional information, please refer to the [Hyperlane docs](https://docs.hyperlane.xyz/).
 
-The Hyperlane controller is the specific implementation of the controller interface designed to
-handle Hyperlane transfers. A Hyperlane transfer is defined by the
+The Hyperlane controller handles transfers using the
 [`HypAttributes`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/controller/forwarding/v1/hyperlane.proto#L12-L48)
-type, which is one of the concrete implementations of the forwarding attributes interface.
-The corresponding Protobuf implementation can be seen here:
+type:
 
 ```protobuf
 message HypAttributes {
@@ -97,11 +165,7 @@ message HypAttributes {
 }
 ```
 
-When the controller receives the forwarding packet, the following steps are executed:
-
-- Hyperlane attributes are extracted from the generic core forwarding type.
-- The general transfer attributes as well as the protocol specific ones are validated.
-- The forwarding is executed.
+The controller follows the same three-step process as other forwarding controllers:
 
 ```mermaid
 ---
@@ -125,30 +189,18 @@ flowchart LR
   HC -- remote transfer--> W[Warp Module]
 ```
 
-The validation step consists of basic validation on the types, like checks for nil pointers, and the
-check on the specified token ID. This validation uses the Warp application query server to retrieve
-the `WrappedHypToken`, and then verifies that the associated origin denom is the same as the
-destination denom specified in the transfer attributes. Remember that a denom can be associated with
-multiple token IDs with Hyperlane, so it is of paramount importance to specify the correct
-identifier.
+**Validation** includes standard type checks plus Hyperlane-specific validation:
 
-For the forwarding to work, the Hyperlane token ID must exist and it has to be enrolled with a
-router associated with the destination chain. This router is used to retrieve the contract on the
-destination in charge of handling the request. The token ID will also be used as the sender of the
-message in the protocol.
+- Token ID verification using the Warp query server.
+- Origin denom matching with the destination denom (crucial since multiple token IDs can map to the same denom).
+- Token ID enrollment with a router for the destination chain.
 
-The actual cross-chain asset transfer is directly using the Hyperlane Warp message server.
-By using the server instead of calling directly into the keeper,
-we guarantee that all the required checks are performed,
-and that all the standard events are emitted by the Warp module.
+**Execution** uses the Warp message server to initiate the transfer,
+ensuring all required checks and standard events are handled.
+The transfer triggers two post-dispatch hooks in sequence:
 
-When we dispatch the message, two post-dispatch hooks are called in sequence:
+1. The mandatory mailbox hook.
+2. Either the default hook or a custom hook (if specified via `custom_hook_id`).
 
-- The required hook associated with the mailbox.
-- A default hook associated with the mailbox.
-
-While the first hook is mandatory,
-the second one can be replaced by a custom hook specified via the custom hook ID field.
-The custom hook can be used to handle the optional custom hook metadata.
-The execution of the two post-dispatch hooks is limited
-by the value specified in the maximum fee field.
+The custom hook can process the optional `custom_hook_metadata`,
+and both hooks are subject to the gas limit and maximum fee constraints.
