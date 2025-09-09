@@ -23,8 +23,8 @@ type ForwardingPacket struct {
 }
 ```
 
-- **Transfer attributes**: General information about the cross-chain transfer
-- **Forwarding attributes**: Protocol-specific information for completing the forwarding step
+- **Transfer attributes**: General information about the cross-chain transfer.
+- **Forwarding attributes**: Protocol-specific information for completing the forwarding step.
 
 All controllers are orchestrated by the
 [`Forwarder`](https://github.com/noble-assets/orbiter/blob/main/keeper/component/forwarder/forwarder.go#L42-L55).
@@ -37,11 +37,11 @@ type, which allows users to specify:
 
 1. The cross-chain protocol for forwarding
 2. Protocol-specific information
-3. Passthrough metadata to attach to the cross-chain transfer
+3. Passthrough metadata to send along with the to the cross-chain transfer
 
 Protocol-specific information is encoded in the `Attributes` field using an `any`
 type that implements the `ForwardingAttributes` interface.
-For implementation details, see the
+For implementation details, refer to the
 [proto definition](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55).
 
 Forwarding controllers interpret protocol-specific information and forward funds.
@@ -106,7 +106,7 @@ flowchart LR
 
 **Validation** includes standard type checks and CCTP-specific validation:
 
-- The destination domain is not the Noble domain (prevents circular transfers)
+- The destination domain is not the Noble domain
 - The mint recipient address is not empty
 - The destination caller address is not empty
 
@@ -130,9 +130,9 @@ where the Warp server handles token transfers by delegating to the underlying Co
 
 Key components include:
 
-- **Mailboxes**: Entrypoints for sending and receiving cross-chain messages
-- **Interchain Security Modules (ISMs)**: Verify received messages
-- **Post-dispatch hooks**: Execute additional logic after message transmission
+- **Mailboxes**: Entrypoints for sending and receiving cross-chain messages.
+- **Interchain Security Modules (ISMs)**: Verify received messages.
+- **Post-dispatch hooks**: Execute additional logic after message transmission.
 
 For additional information, please refer to the [Hyperlane docs](https://docs.hyperlane.xyz/).
 
@@ -190,16 +190,16 @@ flowchart LR
 
 **Validation** includes standard type checks plus Hyperlane-specific validation:
 
-- Token ID verification using the Warp query server
-- Origin denom matching with the destination denom (crucial since multiple token IDs can map to the same denom)
-- Token ID enrollment with a router for the destination chain
+- Token ID verification using the Warp query server.
+- Origin denom matching with the destination denom (crucial since multiple token IDs can map to the same denom).
+- Token ID enrollment with a router for the destination chain.
 
 **Execution** uses the Warp message server to initiate the transfer,
 ensuring all required checks and standard events are handled.
 The transfer triggers two post-dispatch hooks in sequence:
 
-1. The mandatory mailbox hook
-2. Either the default hook or a custom hook (if specified via `custom_hook_id`)
+1. The mandatory mailbox hook.
+2. Either the default hook or a custom hook (if specified via `custom_hook_id`).
 
 The custom hook can process the optional `custom_hook_metadata`,
 and both hooks are subject to the gas limit and maximum fee constraints.
