@@ -69,7 +69,7 @@ protocols and actions will be updated when new bridges and Noble actions will be
 | --------- | -------- | -------- | --------------------------------------- |
 | IBC       | ✅       | ❌       | Inter-Blockchain Communication Protocol |
 | CCTP      | ❌       | ✅       | Circle Cross-Chain Transfer Protocol    |
-| Hyperlane | ❌       | ❌       | Hyperlane Protocol                      |
+| Hyperlane | ❌       | ✅       | Hyperlane Protocol                      |
 
 ### Actions
 
