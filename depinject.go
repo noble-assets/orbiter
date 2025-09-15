@@ -21,6 +21,7 @@
 package orbiter
 
 import (
+	hyperlanecorekeeper "github.com/bcp-innovations/hyperlane-cosmos/x/core/keeper"
 	warpkeeper "github.com/bcp-innovations/hyperlane-cosmos/x/warp/keeper"
 	cctpkeeper "github.com/circlefin/noble-cctp/x/cctp/keeper"
 
@@ -63,6 +64,9 @@ type ModuleInputs struct {
 	StoreService store.KVStoreService
 
 	BankKeeper types.BankKeeper
+
+	// TODO: use abstracted interfaces
+	CoreKeeper *hyperlanecorekeeper.Keeper
 }
 
 type ModuleOutputs struct {
@@ -87,6 +91,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.StoreService,
 		authority.String(),
 		in.BankKeeper,
+		in.CoreKeeper,
 	)
 	m := NewAppModule(k)
 
@@ -159,5 +164,13 @@ func InjectAdapterControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating IBC adapter"))
 	}
 
-	in.Orbiters.SetAdapterControllers(ibc)
+	hyperlane, err := adapterctrl.NewHyperlaneAdapter(
+		in.Orbiters.Codec(),
+		in.Orbiters.Adapter().Logger(),
+	)
+	if err != nil {
+		panic(errorsmod.Wrap(err, "error creating Hyperlane adapter"))
+	}
+
+	in.Orbiters.SetAdapterControllers(ibc, hyperlane)
 }

@@ -27,6 +27,7 @@ import (
 	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 
+	"github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
@@ -63,4 +64,14 @@ func (h HyperlaneHandler) Token(
 	return &warptypes.QueryTokenResponse{
 		Token: &t,
 	}, nil
+}
+
+var _ types.HyperlaneCoreKeeper = HyperlaneCoreKeeper{}
+
+type HyperlaneCoreKeeper struct {
+	appRouter *hyperlaneutil.Router[hyperlaneutil.HyperlaneApp]
+}
+
+func (hck HyperlaneCoreKeeper) AppRouter() *hyperlaneutil.Router[hyperlaneutil.HyperlaneApp] {
+	return hck.appRouter
 }

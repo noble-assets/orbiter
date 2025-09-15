@@ -56,6 +56,9 @@ type Keeper struct {
 	forwarder  *forwardercomp.Forwarder
 	dispatcher *dispatchercomp.Dispatcher
 	adapter    *adaptercomp.Adapter
+
+	// Hyperlane dependencies
+	hyperlaneCoreKeeper types.HyperlaneCoreKeeper
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -68,8 +71,9 @@ func NewKeeper(
 	storeService store.KVStoreService,
 	authority string,
 	bankKeeper types.BankKeeper,
+	coreKeeper types.HyperlaneCoreKeeper,
 ) *Keeper {
-	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, bankKeeper, authority); err != nil {
+	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, bankKeeper, coreKeeper, authority); err != nil {
 		panic(err)
 	}
 
@@ -80,6 +84,8 @@ func NewKeeper(
 		eventService: eventService,
 		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
 		authority:    authority,
+
+		hyperlaneCoreKeeper: coreKeeper,
 	}
 
 	if err := k.setComponents(k.cdc, k.logger, k.eventService, sb, bankKeeper); err != nil {
@@ -94,6 +100,8 @@ func NewKeeper(
 		panic(err)
 	}
 
+	k.RegisterHyperlaneAppRoute()
+
 	return &k
 }
 
@@ -106,6 +114,7 @@ func validateKeeperInputs(
 	eventService event.Service,
 	storeService store.KVStoreService,
 	bankKeeper types.BankKeeper,
+	coreKeeper types.HyperlaneCoreKeeper,
 	authority string,
 ) error {
 	if cdc == nil {
@@ -126,6 +135,11 @@ func validateKeeperInputs(
 	if bankKeeper == nil {
 		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
 	}
+
+	if coreKeeper == nil {
+		return core.ErrNilPointer.Wrap("hyperlane core keeper cannot be nil")
+	}
+
 	_, err := addressCdc.StringToBytes(authority)
 	if err != nil {
 		return errors.New("authority for x/orbiter module is not valid")
@@ -213,7 +227,7 @@ func (k *Keeper) SetAdapterControllers(controllers ...types.AdapterController) {
 	}
 }
 
-// RequireAuthority returns an error is the signer is not the
+// RequireAuthority returns an error if the signer is not the
 // keeper authority.
 func (k *Keeper) RequireAuthority(signer string) error {
 	if k.Authority() != signer {

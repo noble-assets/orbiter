@@ -23,6 +23,8 @@ package types
 import (
 	"context"
 
+	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -51,4 +53,10 @@ type BankKeeperAdapter interface {
 		senderModule, recipientModule string,
 		amt sdk.Coins,
 	) error
+}
+
+// HyperlaneCoreKeeper specifies the expected interface of Hyperlane
+// core functionality that is required for the Orbiter execution.
+type HyperlaneCoreKeeper interface {
+	AppRouter() *hyperlaneutil.Router[hyperlaneutil.HyperlaneApp]
 }
