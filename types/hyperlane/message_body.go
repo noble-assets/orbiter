@@ -21,14 +21,13 @@
 package hyperlane
 
 import (
+	errorsmod "cosmossdk.io/errors"
 	"encoding/binary"
 	"errors"
+	"fmt"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"math"
 
-	errorsmod "cosmossdk.io/errors"
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -37,7 +36,7 @@ import (
 //
 // Bytes layout:
 //   - 0:4 : protocol ID
-//   - 4:  : forwarding
+//   - 4:  : forwarding attributes
 type OrbiterBody struct {
 	// // TODO: how can these bytes be constructed in the EVM?
 	// // TODO: There is no way to do proper serializing of the data according to protobuf types in
@@ -49,24 +48,31 @@ type OrbiterBody struct {
 	attributes core.ForwardingAttributes
 }
 
+// TODO: remove if unused?
 func NewHyperlaneOrbiterBody(p core.ProtocolID, a core.ForwardingAttributes) (*OrbiterBody, error) {
-	if err := p.Validate(); err != nil {
-		return nil, errorsmod.Wrap(err, "invalid protocol id")
-	}
-
-	if err := a.Validate(); err != nil {
-		return nil, errorsmod.Wrap(err, "invalid forward attributes")
-	}
-
-	return &OrbiterBody{
+	o := &OrbiterBody{
 		protocolID: p,
 		attributes: a,
-	}, nil
+	}
+
+	return o, o.Validate()
 }
 
-func (h OrbiterBody) ToOrbiterPayload() (*core.Payload, error) {
+func (o OrbiterBody) Validate() error {
+	if err := o.protocolID.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid protocol id")
+	}
+
+	if err := o.attributes.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid forwarding attributes")
+	}
+
+	return nil
+}
+
+func (o OrbiterBody) ToOrbiterPayload() (*core.Payload, error) {
 	// TODO: currently not supporting passthrough payload
-	forwarding, err := core.NewForwarding(h.protocolID, h.attributes, nil)
+	forwarding, err := core.NewForwarding(o.protocolID, o.attributes, nil)
 	if err != nil {
 		// sanity check, should not happen because the parsing should only yield valid bodies.
 		return nil, err
@@ -79,6 +85,7 @@ func (h OrbiterBody) ToOrbiterPayload() (*core.Payload, error) {
 // the relevant information for handling with the Orbiter implementation.
 //
 // TODO: for now this is not containing any actions but can only contain forwarding information.
+// TODO: cdc can be removed I think :eyes:
 func ParseHyperlaneOrbiterBody(cdc codec.Codec, messageBody []byte) (*OrbiterBody, error) {
 	protocolIDu32 := binary.BigEndian.Uint32(messageBody[:4])
 	if protocolIDu32 > math.MaxInt32 {
@@ -93,18 +100,26 @@ func ParseHyperlaneOrbiterBody(cdc codec.Codec, messageBody []byte) (*OrbiterBod
 	// TODO: This won't work as it is, because this would require marshalling protos inside
 	// of Solidity contracts.
 	// Instead, we will have to manually pack / unpack the contents from the bytes array.
-	forwardingAttributes := messageBody[4:]
-	var hypAttrs forwardingtypes.HypAttributes
-	if err = cdc.Unmarshal(forwardingAttributes, &hypAttrs); err == nil {
-		return NewHyperlaneOrbiterBody(protocolID, &hypAttrs)
+	var attr core.ForwardingAttributes
+	switch protocolID {
+	case core.PROTOCOL_CCTP:
+		panic("TODO: implement")
+		attr, err = unpackCCTPAttributes(messageBody[4:])
+		if err != nil {
+			return nil, errorsmod.Wrap(err, "failed to unpack cctp attributes")
+		}
+	case core.PROTOCOL_HYPERLANE:
+		panic("TODO: implement")
+		attr, err = unpackHypAttributes(messageBody[4:])
+		if err != nil {
+			return nil, errorsmod.Wrap(err, "failed to unpack hyperlane attributes")
+		}
+	default:
+		panic(fmt.Sprintf("protocol %s not implemented", protocolID.String()))
 	}
 
-	var cctpAttrs forwardingtypes.CCTPAttributes
-	if err = cdc.Unmarshal(forwardingAttributes, &cctpAttrs); err == nil {
-		return NewHyperlaneOrbiterBody(protocolID, &cctpAttrs)
-	}
-
-	// TODO: currently not supporting IBC yet because the attributes are not defined yet
-
-	return nil, errors.New("message body does not contain valid forwarding attributes")
+	return &OrbiterBody{
+		protocolID: protocolID,
+		attributes: attr,
+	}, errors.New("message body does not contain valid forwarding attributes")
 }
