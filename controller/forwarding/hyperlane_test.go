@@ -318,7 +318,7 @@ func TestHandlePacket_Hyperlane(t *testing.T) {
 		expError string
 	}{
 		{
-			name:     "error - when the attributes are valid",
+			name:     "error - when forwarding packet is nil",
 			packet:   func() *types.ForwardingPacket { return nil },
 			expError: "Hyperlane controller received nil packet",
 		},
