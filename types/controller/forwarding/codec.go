@@ -33,5 +33,6 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 		(*core.ForwardingAttributes)(nil),
 		&CCTPAttributes{},
 		&HypAttributes{},
+		&InternalAttributes{},
 	)
 }

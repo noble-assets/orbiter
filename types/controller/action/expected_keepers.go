@@ -26,12 +26,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// BankKeeper defines the union of the behaviors the actions
-// expect from the bank module.
-type BankKeeper interface {
-	BankKeeperFee
-}
-
 // BankKeeperFee defines the behaviors the Fee action
 // expects from the bank module.
 type BankKeeperFee interface {
