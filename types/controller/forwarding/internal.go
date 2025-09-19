@@ -45,7 +45,7 @@ func NewInternalAttributes(
 
 func (a *InternalAttributes) Validate() error {
 	if a == nil {
-		return core.ErrNilPointer.Wrap("CCTP attributes")
+		return core.ErrNilPointer.Wrap("internal attributes")
 	}
 
 	if a.Recipient == "" {
