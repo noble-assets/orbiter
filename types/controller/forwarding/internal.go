@@ -40,6 +40,7 @@ func NewInternalAttributes(
 	attr := InternalAttributes{
 		Recipient: recipient,
 	}
+
 	return &attr, attr.Validate()
 }
 

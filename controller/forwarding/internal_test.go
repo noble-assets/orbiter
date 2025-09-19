@@ -208,6 +208,7 @@ func TestHandlePacket_Internal(t *testing.T) {
 						validTransfer.DestinationAmount(),
 					),
 				}
+
 				return context.Background()
 			},
 			packet: func() *types.ForwardingPacket {
