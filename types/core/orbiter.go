@@ -21,6 +21,8 @@
 package core
 
 import (
+	"fmt"
+
 	errorsmod "cosmossdk.io/errors"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -267,6 +269,14 @@ func NewPayload(
 func (p *Payload) Validate() error {
 	if p == nil {
 		return errorsmod.Wrap(ErrNilPointer, "payload is not set")
+	}
+
+	visitedIDs := make(map[int32]any)
+	for _, action := range p.PreActions {
+		if _, found := visitedIDs[int32(action.Id)]; found {
+			return fmt.Errorf("received repeated action ID: %v", action.ID())
+		}
+		visitedIDs[int32(action.Id)] = nil
 	}
 
 	for _, action := range p.PreActions {
