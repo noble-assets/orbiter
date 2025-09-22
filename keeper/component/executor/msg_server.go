@@ -50,7 +50,11 @@ func (s msgServer) PauseAction(
 		return nil, err
 	}
 
-	actionID, err := core.NewActionID(core.ActionID_value[msg.ActionId])
+	val, exists := core.ActionID_value[msg.ActionId]
+	if !exists {
+		return nil, core.ErrUnableToPause.Wrapf("action with ID %s does not exist", msg.ActionId)
+	}
+	actionID, err := core.NewActionID(val)
 	if err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
 			"invalid action ID: %s", err.Error(),
@@ -84,7 +88,11 @@ func (s msgServer) UnpauseAction(
 		return nil, err
 	}
 
-	actionID, err := core.NewActionID(core.ActionID_value[msg.ActionId])
+	val, exists := core.ActionID_value[msg.ActionId]
+	if !exists {
+		return nil, core.ErrUnableToUnpause.Wrapf("action with ID %s does not exist", msg.ActionId)
+	}
+	actionID, err := core.NewActionID(val)
 	if err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"invalid action ID: %s", err.Error(),

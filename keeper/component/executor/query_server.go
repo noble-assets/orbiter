@@ -49,7 +49,11 @@ func (s queryServer) IsActionPaused(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	actionID, err := core.NewActionID(core.ActionID_value[req.ActionId])
+	val, exists := core.ActionID_value[req.ActionId]
+	if !exists {
+		return nil, core.ErrUnableToPause.Wrapf("action with ID %s does not exist", req.ActionId)
+	}
+	actionID, err := core.NewActionID(val)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "invalid action ID")
 	}

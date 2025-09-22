@@ -56,7 +56,14 @@ func (s msgServer) PauseProtocol(
 		return nil, err
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
+	val, exists := core.ProtocolID_value[msg.ProtocolId]
+	if !exists {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"protocol with ID %s does not exist",
+			msg.ProtocolId,
+		)
+	}
+	protocolID := core.ProtocolID(val)
 	if err := s.Pause(ctx, protocolID, nil); err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
 			"protocol: %s", err.Error(),
@@ -81,7 +88,14 @@ func (s msgServer) UnpauseProtocol(
 		return nil, err
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
+	val, exists := core.ProtocolID_value[msg.ProtocolId]
+	if !exists {
+		return nil, core.ErrUnableToUnpause.Wrapf(
+			"protocol with ID %s does not exist",
+			msg.ProtocolId,
+		)
+	}
+	protocolID := core.ProtocolID(val)
 	if err := s.Unpause(ctx, protocolID, nil); err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"protocol: %s", err.Error(),
@@ -106,7 +120,14 @@ func (s msgServer) PauseCrossChains(
 		return nil, err
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
+	val, exists := core.ProtocolID_value[msg.ProtocolId]
+	if !exists {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"protocol with ID %s does not exist",
+			msg.ProtocolId,
+		)
+	}
+	protocolID := core.ProtocolID(val)
 	if err := s.Pause(ctx, protocolID, msg.CounterpartyIds); err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
 			"cross-chains: %s", err.Error(),
@@ -134,7 +155,14 @@ func (s msgServer) UnpauseCrossChains(
 		return nil, err
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
+	val, exists := core.ProtocolID_value[msg.ProtocolId]
+	if !exists {
+		return nil, core.ErrUnableToUnpause.Wrapf(
+			"protocol with ID %s does not exist",
+			msg.ProtocolId,
+		)
+	}
+	protocolID := core.ProtocolID(val)
 	if err := s.Unpause(ctx, protocolID, msg.CounterpartyIds); err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"cross-chains: %s", err.Error(),
