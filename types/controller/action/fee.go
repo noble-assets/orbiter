@@ -51,6 +51,14 @@ func (f *FeeAttributes) Validate() error {
 		return core.ErrNilPointer.Wrap("fee attributes")
 	}
 
+	if len(f.FeesInfo) > core.MaxFeeRecipients {
+		return fmt.Errorf(
+			"maximum fee recipients %d, received %d",
+			core.MaxFeeRecipients,
+			len(f.FeesInfo),
+		)
+	}
+
 	for _, i := range f.FeesInfo {
 		if err := i.Validate(); err != nil {
 			return err

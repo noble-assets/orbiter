@@ -183,7 +183,7 @@ func TestValidate_Payload(t *testing.T) {
 		expError string
 	}{
 		{
-			name:     "fail - nil payload",
+			name:     "error - nil payload",
 			payload:  nil,
 			expError: "payload is not set",
 		},
@@ -205,7 +205,7 @@ func TestValidate_Payload(t *testing.T) {
 			expError: "ID is not supported",
 		},
 		{
-			name: "fail - forwarding is not set",
+			name: "error - forwarding is not set",
 			payload: &core.Payload{
 				PreActions: []*core.Action{},
 				Forwarding: nil,

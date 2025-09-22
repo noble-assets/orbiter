@@ -96,3 +96,62 @@ func TestValidateFee(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateFeeAttributes(t *testing.T) {
+	testutil.SetSDKConfig()
+
+	testCases := []struct {
+		name    string
+		feeInfo *actiontypes.FeeAttributes
+		expErr  string
+	}{
+		{
+			name:   "error - nil fee attributes",
+			expErr: core.ErrNilPointer.Error(),
+		},
+		{
+			name: "error - over maximum fee recipient",
+			feeInfo: &actiontypes.FeeAttributes{
+				FeesInfo: func() []*actiontypes.FeeInfo {
+					fees := make([]*actiontypes.FeeInfo, core.MaxFeeRecipients+1)
+					for i := range fees {
+						fees[i] = &actiontypes.FeeInfo{
+							Recipient:   "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+							BasisPoints: 1,
+						}
+					}
+					return fees
+				}(),
+			},
+			expErr: "maximum fee recipients",
+		},
+		{
+			name: "success - maximum fee recipient",
+			feeInfo: &actiontypes.FeeAttributes{
+				FeesInfo: func() []*actiontypes.FeeInfo {
+					fees := make([]*actiontypes.FeeInfo, core.MaxFeeRecipients)
+					for i := range fees {
+						fees[i] = &actiontypes.FeeInfo{
+							Recipient:   "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+							BasisPoints: 1,
+						}
+					}
+					return fees
+				}(),
+			},
+			expErr: "",
+		},
+	}
+
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			err := tC.feeInfo.Validate()
+
+			if tC.expErr != "" {
+				require.ErrorContains(t, err, tC.expErr)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}

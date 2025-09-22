@@ -71,6 +71,9 @@ const (
 	// BPSNormalizer is used to normalize the basis points
 	// defined in a fee action execution.
 	BPSNormalizer = 10_000
+	// MaxFeeRecipients is the maximum number of addresses that can
+	// be specified for a fee payment.
+	MaxFeeRecipients = 5
 )
 
 var PausedActionsPrefix = collections.NewPrefix(20)
