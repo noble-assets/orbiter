@@ -153,6 +153,10 @@ func local_request_Query_DispatchedCounts_0(ctx context.Context, marshaler runti
 
 }
 
+var (
+	filter_Query_DispatchedCountsBySourceProtocolID_0 = &utilities.DoubleArray{Encoding: map[string]int{"protocol_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
+
 func request_Query_DispatchedCountsBySourceProtocolID_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq QueryDispatchedCountsByProtocolIDRequest
 	var metadata runtime.ServerMetadata
@@ -173,6 +177,13 @@ func request_Query_DispatchedCountsBySourceProtocolID_0(ctx context.Context, mar
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_DispatchedCountsBySourceProtocolID_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.DispatchedCountsBySourceProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -202,10 +213,21 @@ func local_request_Query_DispatchedCountsBySourceProtocolID_0(ctx context.Contex
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
 
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_DispatchedCountsBySourceProtocolID_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
 	msg, err := server.DispatchedCountsBySourceProtocolID(ctx, &protoReq)
 	return msg, metadata, err
 
 }
+
+var (
+	filter_Query_DispatchedCountsByDestinationProtocolID_0 = &utilities.DoubleArray{Encoding: map[string]int{"protocol_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
 
 func request_Query_DispatchedCountsByDestinationProtocolID_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq QueryDispatchedCountsByProtocolIDRequest
@@ -227,6 +249,13 @@ func request_Query_DispatchedCountsByDestinationProtocolID_0(ctx context.Context
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_DispatchedCountsByDestinationProtocolID_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.DispatchedCountsByDestinationProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -254,6 +283,13 @@ func local_request_Query_DispatchedCountsByDestinationProtocolID_0(ctx context.C
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_DispatchedCountsByDestinationProtocolID_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := server.DispatchedCountsByDestinationProtocolID(ctx, &protoReq)
@@ -399,6 +435,10 @@ func local_request_Query_DispatchedAmounts_0(ctx context.Context, marshaler runt
 
 }
 
+var (
+	filter_Query_DispatchedAmountsBySourceProtocolID_0 = &utilities.DoubleArray{Encoding: map[string]int{"protocol_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
+
 func request_Query_DispatchedAmountsBySourceProtocolID_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq QueryDispatchedAmountsByProtocolIDRequest
 	var metadata runtime.ServerMetadata
@@ -419,6 +459,13 @@ func request_Query_DispatchedAmountsBySourceProtocolID_0(ctx context.Context, ma
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_DispatchedAmountsBySourceProtocolID_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.DispatchedAmountsBySourceProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -448,10 +495,21 @@ func local_request_Query_DispatchedAmountsBySourceProtocolID_0(ctx context.Conte
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
 	}
 
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_DispatchedAmountsBySourceProtocolID_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
 	msg, err := server.DispatchedAmountsBySourceProtocolID(ctx, &protoReq)
 	return msg, metadata, err
 
 }
+
+var (
+	filter_Query_DispatchedAmountsByDestinationProtocolID_0 = &utilities.DoubleArray{Encoding: map[string]int{"protocol_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
 
 func request_Query_DispatchedAmountsByDestinationProtocolID_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq QueryDispatchedAmountsByProtocolIDRequest
@@ -473,6 +531,13 @@ func request_Query_DispatchedAmountsByDestinationProtocolID_0(ctx context.Contex
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_DispatchedAmountsByDestinationProtocolID_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.DispatchedAmountsByDestinationProtocolID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -500,6 +565,13 @@ func local_request_Query_DispatchedAmountsByDestinationProtocolID_0(ctx context.
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "protocol_id", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Query_DispatchedAmountsByDestinationProtocolID_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := server.DispatchedAmountsByDestinationProtocolID(ctx, &protoReq)

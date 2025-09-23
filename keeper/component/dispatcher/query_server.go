@@ -72,7 +72,8 @@ func (q queryServer) DispatchedCounts(
 	counts := q.GetDispatchedCounts(ctx, &sourceID, &destID)
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
-		Counts: []*dispatchertypes.DispatchCountEntry{counts},
+		Counts:     []*dispatchertypes.DispatchCountEntry{counts},
+		Pagination: nil,
 	}, nil
 }
 
@@ -89,10 +90,18 @@ func (q queryServer) DispatchedCountsByDestinationProtocolID(
 		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	counts := q.GetDispatchedCountsByDestinationProtocolID(ctx, protocolID)
+	counts, pageRes, err := q.GetDispatchedCountsByDestinationProtocolID(
+		ctx,
+		protocolID,
+		req.Pagination,
+	)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "error retrieving paginated results")
+	}
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
-		Counts: counts,
+		Counts:     counts,
+		Pagination: pageRes,
 	}, nil
 }
 
@@ -109,10 +118,14 @@ func (q queryServer) DispatchedCountsBySourceProtocolID(
 		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	counts := q.GetDispatchedCountsBySourceProtocolID(ctx, protocolID)
+	counts, pageRes, err := q.GetDispatchedCountsBySourceProtocolID(ctx, protocolID, req.Pagination)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "error retrieving paginated results")
+	}
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
-		Counts: counts,
+		Counts:     counts,
+		Pagination: pageRes,
 	}, nil
 }
 
@@ -171,10 +184,18 @@ func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	amounts := q.GetDispatchedAmountsByDestinationProtocolID(ctx, protocolID)
+	amounts, pageResp, err := q.GetDispatchedAmountsByDestinationProtocolID(
+		ctx,
+		protocolID,
+		req.Pagination,
+	)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "error retrieving paginated results")
+	}
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
-		Amounts: amounts,
+		Amounts:    amounts,
+		Pagination: pageResp,
 	}, nil
 }
 
@@ -191,9 +212,17 @@ func (q queryServer) DispatchedAmountsBySourceProtocolID(
 		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
-	amounts := q.GetDispatchedAmountsBySourceProtocolID(ctx, protocolID)
+	amounts, pageResp, err := q.GetDispatchedAmountsBySourceProtocolID(
+		ctx,
+		protocolID,
+		req.Pagination,
+	)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "error retrieving paginated results")
+	}
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
-		Amounts: amounts,
+		Amounts:    amounts,
+		Pagination: pageResp,
 	}, nil
 }

@@ -27,6 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/math"
+	"github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
 	"github.com/noble-assets/orbiter/testutil/mocks"
@@ -201,25 +202,48 @@ func TestGetDispatchedAmountBySourceProtocolID(t *testing.T) {
 	ctx := deps.SdkCtx
 
 	// ACT
-	daIBC := d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_IBC)
-	daHyp := d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_HYPERLANE)
-	daCCTP := d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_CCTP)
+	daIBC, _, err := d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_IBC, nil)
 
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daIBC, 0)
+
+	// ACT
+	daHyp, _, err := d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_HYPERLANE, nil)
+
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daHyp, 0)
+
+	// ACT
+	daCCTP, _, err := d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_CCTP, nil)
+
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daCCTP, 0)
 
 	// ARRANGE
 	createDispatchedAmountEntries(t, ctx, d)
 
 	// ACT
-	daIBC = d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_IBC)
-	daHyp = d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_HYPERLANE)
-	daCCTP = d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_CCTP)
+	daIBC, _, err = d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_IBC, nil)
 
 	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daIBC, 3)
+
+	// ACT
+	daHyp, _, err = d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_HYPERLANE, nil)
+
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daHyp, 3)
+
+	// ACT
+	daCCTP, _, err = d.GetDispatchedAmountsBySourceProtocolID(ctx, core.PROTOCOL_CCTP, nil)
+
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daCCTP, 6)
 }
 
@@ -229,25 +253,51 @@ func TestGetDispatchedAmountByDestinationProtocolID(t *testing.T) {
 	ctx := deps.SdkCtx
 
 	// ACT
-	daIBC := d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_IBC)
-	daHyp := d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_HYPERLANE)
-	daCCTP := d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_CCTP)
+	daIBC, _, err := d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_IBC, nil)
 
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daIBC, 0)
+
+	// ACT
+	daHyp, _, err := d.GetDispatchedAmountsByDestinationProtocolID(
+		ctx,
+		core.PROTOCOL_HYPERLANE,
+		nil,
+	)
+
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daHyp, 0)
+
+	daCCTP, _, err := d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_CCTP, nil)
+
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daCCTP, 0)
 
 	// ARRANGE
 	createDispatchedAmountEntries(t, ctx, d)
 
 	// ACT
-	daIBC = d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_IBC)
-	daHyp = d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_HYPERLANE)
-	daCCTP = d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_CCTP)
+	daIBC, _, err = d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_IBC, nil)
 
 	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daIBC, 6)
+
+	// ACT
+	daHyp, _, err = d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_HYPERLANE, nil)
+
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daHyp, 0)
+
+	// ACT
+	daCCTP, _, err = d.GetDispatchedAmountsByDestinationProtocolID(ctx, core.PROTOCOL_CCTP, nil)
+
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, daCCTP, 6)
 }
 
@@ -314,7 +364,7 @@ func TestGetAllDispatchedCounts(t *testing.T) {
 	dc := d.GetAllDispatchedCounts(ctx)
 
 	// ASSERT
-	require.Len(t, dc, 9)
+	require.Len(t, dc, 12)
 }
 
 func TestGetDispatchedCountsBySourceProtocolID(t *testing.T) {
@@ -324,28 +374,73 @@ func TestGetDispatchedCountsBySourceProtocolID(t *testing.T) {
 	createDispatchedCountEntries(t, ctx, d)
 
 	// ACT
-	dc := d.GetDispatchedCountsBySourceProtocolID(ctx, core.PROTOCOL_IBC)
+	dc, _, err := d.GetDispatchedCountsBySourceProtocolID(ctx, core.PROTOCOL_IBC, nil)
 
 	// ASSERT
+	require.NoError(t, err)
+	require.Len(t, dc, 6)
+
+	// ACT
+	dc, _, err = d.GetDispatchedCountsBySourceProtocolID(ctx, core.PROTOCOL_CCTP, nil)
+
+	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, dc, 3)
 
 	// ACT
-	dc = d.GetDispatchedCountsBySourceProtocolID(ctx, core.PROTOCOL_CCTP)
+	dc, _, err = d.GetDispatchedCountsBySourceProtocolID(ctx, core.PROTOCOL_HYPERLANE, nil)
 
 	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, dc, 3)
 
 	// ACT
-	dc = d.GetDispatchedCountsBySourceProtocolID(ctx, core.PROTOCOL_HYPERLANE)
+	dc, _, err = d.GetDispatchedCountsBySourceProtocolID(ctx, core.ProtocolID(100), nil)
 
 	// ASSERT
-	require.Len(t, dc, 3)
-
-	// ACT
-	dc = d.GetDispatchedCountsBySourceProtocolID(ctx, core.ProtocolID(100))
-
-	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, dc, 0)
+
+	// ACT: check pagination with offset and limit. Out of 6 results, we should get the 2nd, 3th,
+	// and 4th.
+	dc, pagResp, err := d.GetDispatchedCountsBySourceProtocolID(
+		ctx,
+		core.PROTOCOL_IBC,
+		&query.PageRequest{
+			Offset:     1,
+			Limit:      3,
+			CountTotal: true,
+		},
+	)
+
+	// ASSERT
+	require.NoError(t, err)
+	require.Len(t, dc, 3)
+	require.Equal(t, uint64(6), pagResp.Total)
+	// We skip the first entry associated with source counterparty id "channel-1"
+	// and destination protocol CCTP, then we have the second entry associated with
+	// the same source counterparty ID.
+	require.Equal(t, "1234", dc[0].DestinationId.CounterpartyId)
+	// We have the entries for source counterparty id "channel-2", first for CCTP,
+	// then for Hyperlane.
+	require.Equal(t, "0", dc[1].DestinationId.CounterpartyId)
+	require.Equal(t, "1234", dc[2].DestinationId.CounterpartyId)
+
+	// ACT: check that passing the next key of previous response to the pagination
+	// we obtain only the alst two results.
+	dc, _, err = d.GetDispatchedCountsBySourceProtocolID(
+		ctx,
+		core.PROTOCOL_IBC,
+		&query.PageRequest{
+			Key: pagResp.NextKey,
+		},
+	)
+
+	// ASSERT
+	require.NoError(t, err)
+	require.Len(t, dc, 2)
+	require.Equal(t, "0", dc[0].DestinationId.CounterpartyId)
+	require.Equal(t, "1234", dc[1].DestinationId.CounterpartyId)
 }
 
 func TestGetDispatchedCountsByDestinationProtocolID(t *testing.T) {
@@ -355,28 +450,68 @@ func TestGetDispatchedCountsByDestinationProtocolID(t *testing.T) {
 	createDispatchedCountEntries(t, ctx, d)
 
 	// ACT
-	dc := d.GetDispatchedCountsByDestinationProtocolID(ctx, core.PROTOCOL_IBC)
+	dc, _, err := d.GetDispatchedCountsByDestinationProtocolID(ctx, core.PROTOCOL_IBC, nil)
 
 	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, dc, 3)
 
 	// ACT
-	dc = d.GetDispatchedCountsByDestinationProtocolID(ctx, core.PROTOCOL_CCTP)
+	dc, _, err = d.GetDispatchedCountsByDestinationProtocolID(ctx, core.PROTOCOL_CCTP, nil)
 
 	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, dc, 6)
 
 	// ACT
-	dc = d.GetDispatchedCountsByDestinationProtocolID(ctx, core.PROTOCOL_HYPERLANE)
+	dc, _, err = d.GetDispatchedCountsByDestinationProtocolID(ctx, core.PROTOCOL_HYPERLANE, nil)
 
 	// ASSERT
-	require.Len(t, dc, 0)
+	require.NoError(t, err)
+	require.Len(t, dc, 3)
 
 	// ACT
-	dc = d.GetDispatchedCountsByDestinationProtocolID(ctx, core.ProtocolID(100))
+	dc, _, err = d.GetDispatchedCountsByDestinationProtocolID(ctx, core.ProtocolID(100), nil)
 
 	// ASSERT
+	require.NoError(t, err)
 	require.Len(t, dc, 0)
+
+	// ACT: check pagination with offset and limit. Out of 6 results, we should get the 2nd, 3th,
+	// and 4th.
+	dc, pagResp, err := d.GetDispatchedCountsByDestinationProtocolID(
+		ctx,
+		core.PROTOCOL_CCTP,
+		&query.PageRequest{
+			Offset:     1,
+			Limit:      3,
+			CountTotal: true,
+		},
+	)
+
+	// ASSERT
+	require.NoError(t, err)
+	require.Len(t, dc, 3)
+	require.Equal(t, uint64(6), pagResp.Total)
+	require.Equal(t, "channel-2", dc[0].SourceId.CounterpartyId)
+	require.Equal(t, "channel-3", dc[1].SourceId.CounterpartyId)
+	require.Equal(t, "1128614981", dc[2].SourceId.CounterpartyId)
+
+	// ACT: check that passing the next key of previous response to the pagination
+	// we obtain only the alst two results.
+	dc, _, err = d.GetDispatchedCountsByDestinationProtocolID(
+		ctx,
+		core.PROTOCOL_CCTP,
+		&query.PageRequest{
+			Key: pagResp.NextKey,
+		},
+	)
+
+	// ASSERT
+	require.NoError(t, err)
+	require.Len(t, dc, 2)
+	require.Equal(t, "8453", dc[0].SourceId.CounterpartyId)
+	require.Equal(t, "999", dc[1].SourceId.CounterpartyId)
 }
 
 func createDispatchedCountEntries(t *testing.T, ctx context.Context, d *dispatcher.Dispatcher) {
@@ -391,7 +526,7 @@ func createDispatchedCountEntries(t *testing.T, ctx context.Context, d *dispatch
 		CounterpartyId: "0",
 	}
 
-	// Set 3 entries for IBC sources.
+	// Set 6 entries for IBC sources.
 	err := d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
 	require.NoError(t, err)
 
@@ -403,7 +538,23 @@ func createDispatchedCountEntries(t *testing.T, ctx context.Context, d *dispatch
 	err = d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
 	require.NoError(t, err)
 
+	sourceID.CounterpartyId = channel1
+	destID.ProtocolId = core.PROTOCOL_HYPERLANE
+	destID.CounterpartyId = "1234"
+	err = d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = channel2
+	err = d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
+	require.NoError(t, err)
+
+	sourceID.CounterpartyId = channel3
+	err = d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)
+	require.NoError(t, err)
+
 	// Set 3 entries for Hyperlane sources.
+	destID.ProtocolId = core.PROTOCOL_CCTP
+	destID.CounterpartyId = "0"
 	sourceID.ProtocolId = core.PROTOCOL_HYPERLANE
 	sourceID.CounterpartyId = "999"
 	err = d.SetDispatchedCounts(ctx, &sourceID, &destID, 1)

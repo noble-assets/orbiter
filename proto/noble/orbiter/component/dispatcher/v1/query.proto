@@ -5,6 +5,7 @@ package noble.orbiter.component.dispatcher.v1;
 import "cosmos/query/v1/query.proto";
 import "google/api/annotations.proto";
 import "noble/orbiter/component/dispatcher/v1/dispatcher.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/noble-assets/orbiter/types/component/dispatcher";
 
@@ -64,11 +65,17 @@ message QueryDispatchedCountsRequest {
 message QueryDispatchedCountsByProtocolIDRequest {
   // source_protocol_id is the protocol identifier.
   string protocol_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryDispatchedCountsResponse is the response type for the Query/DispatchedCounts* RPC methods.
 message QueryDispatchedCountsResponse {
   repeated DispatchCountEntry counts = 1;
+
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // QueryDispatchedAmountsRequest is the request type for the Query/DispatchedAmounts RPC method.
@@ -89,9 +96,15 @@ message QueryDispatchedAmountsRequest {
 message QueryDispatchedAmountsByProtocolIDRequest {
   // source_protocol_id is the protocol identifier.
   string protocol_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryDispatchedAmountsResponse is the response type for the Query/DispatchedAmounts* RPC methods.
 message QueryDispatchedAmountsResponse {
   repeated DispatchedAmountEntry amounts = 1;
+
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
