@@ -34,7 +34,7 @@ import (
 const (
 	MaxCounterpartyIDLength = 32
 	MinCounterpartyIDLength = 1
-	AllowedCharsetPattern   = `^[a-zA-Z0-9._-]+$`
+	AllowedCharsetPattern   = `^[a-zA-Z0-9:_-]+$`
 )
 
 var allowedCharsetRegex = regexp.MustCompile(AllowedCharsetPattern)
