@@ -10,12 +10,19 @@ import { HyperlaneEntrypoint } from "../src/HyperlaneEntrypoint.sol";
 import { Mailbox } from "@hyperlane/Mailbox.sol";
 import { MockMailbox } from "@hyperlane/mock/MockMailbox.sol";
 import { TestPostDispatchHook } from "@hyperlane/test/TestPostDispatchHook.sol";
+import { TypeCasts } from "@hyperlane/libs/TypeCasts.sol";
 
 import { TransparentUpgradeableProxy, ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 contract TestOrbiterHypERC20 is Test {
-    // TODO: check noble destination domain for Hyperlane
+    // NOTE: this is adding the utilities for converting address to Hyperlane expected bytes32.
+    using TypeCasts for address;
+
+    /*
+     * CONSTANTS
+     */
     uint32 internal constant ORIGIN = 1;
+    // TODO: check noble destination domain for Hyperlane
     uint32 internal constant DESTINATION = 6;
     uint8 internal DECIMALS = 6;
     uint256 internal SCALE = 1;
@@ -24,13 +31,20 @@ contract TestOrbiterHypERC20 is Test {
     string internal constant NAME = "Orbiter";
     string internal constant SYMBOL = "ORB";
 
+    /*
+     * HYPERLANE CONTRACTS
+     */
     MockMailbox internal originMailbox;
     MockMailbox internal remoteMailbox;
     TestPostDispatchHook internal noopHook;
 
-    OrbiterHypERC20 internal token;
+    OrbiterHypERC20 internal localToken;
+    OrbiterHypERC20 internal remoteToken;
     HyperlaneEntrypoint internal entrypoint;
 
+    /*
+     * TESTING ACCOUNTS
+     */
     address internal constant ALICE = address(0x1);
     address internal constant BOB = address(0x2);
     address internal constant ADMIN = address(0x3);
@@ -47,7 +61,10 @@ contract TestOrbiterHypERC20 is Test {
         vm.startPrank(ADMIN);
 
         // Set up testing instances of Hyperlane dependencies.
+        originMailbox = new MockMailbox(ORIGIN);
         remoteMailbox = new MockMailbox(DESTINATION);
+        originMailbox.addRemoteMailbox(DESTINATION, remoteMailbox);
+        remoteMailbox.addRemoteMailbox(ORIGIN, originMailbox);
 
         noopHook = new TestPostDispatchHook();
 
@@ -61,30 +78,19 @@ contract TestOrbiterHypERC20 is Test {
         OrbiterTransientStore ots = new OrbiterTransientStore();
 
         // Deploy Orbiter compatible token with a proxy.
-        OrbiterHypERC20 implementation = new OrbiterHypERC20(
-            DECIMALS,
-            SCALE,
-            address(remoteMailbox)
+        localToken = deployOrbiterHypERC20(
+            address(originMailbox),
+            address(noopHook),
+            HYP_OWNER,
+            address(ots)
         );
 
-        TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(
-            address(implementation),
-            msg.sender,
-            abi.encodeWithSelector(
-                OrbiterHypERC20.initialize.selector,
-                // default HypERC20 initialization arguments
-                TOTAL_SUPPLY,
-                NAME,
-                SYMBOL,
-                address(noopHook),
-                address(0), // TODO: check if InterchainGasPaymaster has to be created?
-                HYP_OWNER,
-                // custom OrbiterHypERC20 initialization arguments
-                address(ots)
-            )
+        remoteToken = deployOrbiterHypERC20(
+            address(remoteMailbox),
+            address(noopHook),
+            HYP_OWNER,
+            address(ots)
         );
-
-        token = OrbiterHypERC20(address(proxy));
 
         entrypoint = new HyperlaneEntrypoint();
 
@@ -93,12 +99,27 @@ contract TestOrbiterHypERC20 is Test {
         //
         // NOTE: the msg.sender of the `initialize` call has the supply of tokens
         // minted to the corresponding address.
-        require(token.balanceOf(ADMIN) == TOTAL_SUPPLY, "expected tokens to be minted");
-        require(token.balanceOf(ALICE) == 0, "expected alice to have no tokens before transfer");
+        require(localToken.balanceOf(ADMIN) == TOTAL_SUPPLY, "expected tokens to be minted");
+        require(localToken.balanceOf(ALICE) == 0, "expected alice to have no tokens before transfer");
 
         uint256 sentAmount = 1e7;
-        require(token.transfer(ALICE, sentAmount), "failed to send tokens to alice");
-        require(token.balanceOf(ALICE) == sentAmount, "expected tokens to have been sent to alice");
+        require(localToken.transfer(ALICE, sentAmount), "failed to send tokens to alice");
+        require(localToken.balanceOf(ALICE) == sentAmount, "expected tokens to have been sent to alice");
+
+        vm.stopPrank();
+
+        vm.startPrank(HYP_OWNER);
+
+        // Enroll the routers
+        localToken.enrollRemoteRouter(
+            DESTINATION,
+            address(remoteToken).addressToBytes32()
+        );
+
+        remoteToken.enrollRemoteRouter(
+            ORIGIN,
+            address(localToken).addressToBytes32()
+        );
 
         vm.stopPrank();
     }
@@ -109,7 +130,7 @@ contract TestOrbiterHypERC20 is Test {
      */
     function testSetupWorked() public {
         assertNotEq(
-            token.balanceOf(ALICE),
+            localToken.balanceOf(ALICE),
             0,
             "expected alice to have non-zero token balance after setup"
         );
@@ -123,15 +144,15 @@ contract TestOrbiterHypERC20 is Test {
         vm.startPrank(ALICE);
 
         uint256 sentAmount = 1230;
-        assertGe(token.balanceOf(ALICE), sentAmount, "sent amount exceeds available token balance");
+        assertGe(localToken.balanceOf(ALICE), sentAmount, "sent amount exceeds available token balance");
 
         // Approve the entrypoint contract to spend ALICE's tokens
-        require(token.approve(address(entrypoint), sentAmount), "failed to approve entrypoint");
+        require(localToken.approve(address(entrypoint), sentAmount), "failed to approve entrypoint");
 
         bytes32 sentPayloadHash = bytes32(uint256(1234));
 
         bytes32 messageID = entrypoint.sendForwardedTransfer(
-            address(token),
+            address(localToken),
             DESTINATION,
             bytes32(uint256(uint160(BOB))), // This converts the 20-byte address to a bytes32 value.
             sentAmount,
@@ -140,5 +161,39 @@ contract TestOrbiterHypERC20 is Test {
         assertNotEq32(messageID, 0, "expected non-zero message ID");
 
         vm.stopPrank();
+    }
+
+    function deployOrbiterHypERC20(
+        address _mailboxAddress,
+        address _hook,
+        address _owner,
+        address _otsAddress
+    ) internal returns (OrbiterHypERC20) {
+        OrbiterHypERC20 implementation = new OrbiterHypERC20(
+            DECIMALS,
+            SCALE,
+            _mailboxAddress
+        );
+
+        TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(
+            address(implementation),
+            msg.sender,
+            abi.encodeWithSelector(
+                OrbiterHypERC20.initialize.selector,
+                // default HypERC20 initialization arguments
+                TOTAL_SUPPLY,
+                NAME,
+                SYMBOL,
+                _hook,
+                address(0), // TODO: check if InterchainGasPaymaster has to be created?
+                _owner,
+                // custom OrbiterHypERC20 initialization arguments
+                _otsAddress
+            )
+        );
+
+        remoteToken = OrbiterHypERC20(address(proxy));
+
+        return remoteToken;
     }
 }
