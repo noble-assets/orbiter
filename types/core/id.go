@@ -23,11 +23,21 @@ package core
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
 	errorsmod "cosmossdk.io/errors"
+	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 )
+
+const (
+	MaxCounterpartyIDLength = 32
+	MinCounterpartyIDLength = 1
+	AllowedCharsetPattern   = `^[a-zA-Z0-9._-]+$`
+)
+
+var allowedCharsetRegex = regexp.MustCompile(AllowedCharsetPattern)
 
 type IdentifierConstraint interface {
 	ProtocolID | ActionID
@@ -111,19 +121,47 @@ func (i CrossChainID) Validate() error {
 	if err := i.ProtocolId.Validate(); err != nil {
 		return err
 	}
-	if err := ValidateCounterpartyID(i.CounterpartyId); err != nil {
+	if err := ValidateCounterpartyID(i.CounterpartyId, i.ProtocolId); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func ValidateCounterpartyID(id string) error {
+func ValidateCounterpartyID(id string, protocol ProtocolID) error {
 	if id == "" {
 		return errors.New("counterparty ID cannot be empty string")
 	}
 
+	if len(id) > MaxCounterpartyIDLength {
+		return fmt.Errorf(
+			"counterparty ID cannot contains more than %d characters",
+			MaxCounterpartyIDLength,
+		)
+	}
+
+	var valid bool
+	switch protocol {
+	case PROTOCOL_IBC:
+		valid = channeltypes.IsValidChannelID(id)
+	case PROTOCOL_CCTP, PROTOCOL_HYPERLANE:
+		valid = isInteger(id)
+	default:
+		valid = false
+	}
+
+	if !valid {
+		return fmt.Errorf("invalid counterparty ID for protocol %s", protocol.String())
+	}
+
 	return nil
+}
+
+// isInteger returns true if the string can be converted to
+// an integer, false otherwise.
+func isInteger(s string) bool {
+	_, err := strconv.Atoi(s)
+	return err == nil
 }
 
 // ID generates an internal identifier for a tuple (bridge protocol, chain).

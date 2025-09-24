@@ -54,7 +54,7 @@ func TestMsgServerPauseAction(t *testing.T) {
 				Signer:   testutil.Authority,
 				ActionId: core.ActionID(99).String(),
 			},
-			expErr: "invalid action ID",
+			expErr: "does not exist",
 		},
 		{
 			name: "error - already paused",
@@ -130,7 +130,7 @@ func TestMsgServerUnpauseAction(t *testing.T) {
 				Signer:   testutil.Authority,
 				ActionId: core.ActionID(99).String(),
 			},
-			expErr: "invalid action ID",
+			expErr: "does not exist",
 		},
 		{
 			name: "error - already unpaused",

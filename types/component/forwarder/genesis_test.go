@@ -43,8 +43,8 @@ func TestValidate(t *testing.T) {
 			genState: &GenesisState{
 				PausedProtocolIds: []core.ProtocolID{core.PROTOCOL_IBC, core.PROTOCOL_CCTP},
 				PausedCrossChainIds: []*core.CrossChainID{
-					{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "ibc-1"},
-					{ProtocolId: core.PROTOCOL_CCTP, CounterpartyId: "cctp-2"},
+					{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-1"},
+					{ProtocolId: core.PROTOCOL_CCTP, CounterpartyId: "2"},
 				},
 			},
 		},

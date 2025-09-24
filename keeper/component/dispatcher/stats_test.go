@@ -41,7 +41,7 @@ func TestUpdateStats(t *testing.T) {
 		t.Helper()
 		ta, err := types.NewTransferAttributes(
 			core.PROTOCOL_IBC,
-			"hyperliquid",
+			"channel-1",
 			"uusdc",
 			math.NewInt(100),
 		)
@@ -53,7 +53,7 @@ func TestUpdateStats(t *testing.T) {
 	defaultForwarding := func() *core.Forwarding {
 		t.Helper()
 		attr := &testdata.TestForwardingAttr{
-			Planet: "ethereum",
+			Planet: "1",
 		}
 		f, err := core.NewForwarding(core.PROTOCOL_CCTP, attr, []byte{})
 		require.NoError(t, err)
@@ -160,12 +160,12 @@ func TestUpdateStats(t *testing.T) {
 			setup: func(ctx context.Context, d *dispatcher.Dispatcher) {
 				sourceID := core.CrossChainID{
 					ProtocolId:     core.PROTOCOL_IBC,
-					CounterpartyId: "hyperliquid",
+					CounterpartyId: "channel-1",
 				}
 
 				destID := core.CrossChainID{
 					ProtocolId:     core.PROTOCOL_CCTP,
-					CounterpartyId: "ethereum",
+					CounterpartyId: "1",
 				}
 
 				err := d.SetDispatchedCounts(ctx, &sourceID, &destID, 10)
@@ -265,7 +265,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 		{
 			name: "single entry with same denoms",
 			transferAttributes: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				ta, err := types.NewTransferAttributes(1, "channel-1", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 
 				return ta
@@ -280,7 +280,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 		{
 			name: "single entry with same denoms but different amounts",
 			transferAttributes: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				ta, err := types.NewTransferAttributes(1, "channel-1", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 				ta.SetDestinationAmount(math.NewInt(50))
 
@@ -296,7 +296,7 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 		{
 			name: "two entries with different denoms",
 			transferAttributes: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				ta, err := types.NewTransferAttributes(1, "channel-1", "uusdc", math.NewInt(100))
 				require.NoError(t, err)
 				ta.SetDestinationDenom("gwei")
 				ta.SetDestinationAmount(math.NewInt(50))

@@ -171,7 +171,7 @@ func ValidateCrossChains(
 		return errorsmod.Wrap(err, "invalid protocol ID")
 	}
 	for _, id := range counterpartyIDs {
-		if err := core.ValidateCounterpartyID(id); err != nil {
+		if err := core.ValidateCounterpartyID(id, protocolID); err != nil {
 			return errorsmod.Wrap(err, "invalid counterparty ID")
 		}
 	}

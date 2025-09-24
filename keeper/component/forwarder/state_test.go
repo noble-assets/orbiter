@@ -32,24 +32,24 @@ import (
 func TestGetPausedCrossChains(t *testing.T) {
 	ccIDs := []core.CrossChainID{
 		{
-			ProtocolId:     1,
-			CounterpartyId: "one",
+			ProtocolId:     3,
+			CounterpartyId: "1",
 		},
 		{
-			ProtocolId:     1,
-			CounterpartyId: "two",
+			ProtocolId:     3,
+			CounterpartyId: "2",
 		},
 		{
-			ProtocolId:     1,
-			CounterpartyId: "three",
-		},
-		{
-			ProtocolId:     2,
-			CounterpartyId: "one",
+			ProtocolId:     3,
+			CounterpartyId: "3",
 		},
 		{
 			ProtocolId:     2,
-			CounterpartyId: "two",
+			CounterpartyId: "1",
+		},
+		{
+			ProtocolId:     2,
+			CounterpartyId: "2",
 		},
 	}
 
@@ -78,10 +78,10 @@ func TestGetPausedCrossChains(t *testing.T) {
 			expLen:     0,
 		},
 		{
-			name:       "paused cross-chains for protocol ID 1",
-			protocolID: ptr(core.ProtocolID(1)),
+			name:       "paused cross-chains for protocol ID 3",
+			protocolID: ptr(core.ProtocolID(3)),
 			expMapLen:  1,
-			wantKey:    1,
+			wantKey:    3,
 			expFound:   true,
 			expLen:     3,
 		},
