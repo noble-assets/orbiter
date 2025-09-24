@@ -22,9 +22,11 @@ package dispatcher
 
 import (
 	"context"
+	"errors"
+	"math"
 
 	errorsmod "cosmossdk.io/errors"
-	"cosmossdk.io/math"
+	sdkmath "cosmossdk.io/math"
 
 	"github.com/noble-assets/orbiter/types"
 	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
@@ -114,6 +116,9 @@ func (d *Dispatcher) updateDispatchedCounts(
 	destID *core.CrossChainID,
 ) error {
 	dc := d.GetDispatchedCounts(ctx, sourceID, destID)
+	if dc.Count == math.MaxUint64 {
+		return errors.New("dispatch count overflow")
+	}
 	count := dc.Count + 1
 
 	return d.SetDispatchedCounts(ctx, sourceID, destID, count)
@@ -148,7 +153,7 @@ func (d *Dispatcher) BuildDenomDispatchedAmounts(
 		Denom: sourceDenom,
 		AmountDispatched: dispatchertypes.AmountDispatched{
 			Incoming: sourceAmount,
-			Outgoing: math.ZeroInt(),
+			Outgoing: sdkmath.ZeroInt(),
 		},
 	}
 
@@ -164,7 +169,7 @@ func (d *Dispatcher) BuildDenomDispatchedAmounts(
 		ddas = append(ddas, denomDispatchedAmount{
 			Denom: destDenom,
 			AmountDispatched: dispatchertypes.AmountDispatched{
-				Incoming: math.ZeroInt(),
+				Incoming: sdkmath.ZeroInt(),
 				Outgoing: destAmount,
 			},
 		})
