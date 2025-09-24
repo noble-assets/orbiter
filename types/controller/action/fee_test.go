@@ -120,6 +120,7 @@ func TestValidateFeeAttributes(t *testing.T) {
 							BasisPoints: 1,
 						}
 					}
+
 					return fees
 				}(),
 			},
@@ -136,6 +137,7 @@ func TestValidateFeeAttributes(t *testing.T) {
 							BasisPoints: 1,
 						}
 					}
+
 					return fees
 				}(),
 			},

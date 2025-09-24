@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package noble.orbiter.component.dispatcher.v1;
 
+import "cosmos/base/query/v1beta1/pagination.proto";
 import "cosmos/query/v1/query.proto";
 import "google/api/annotations.proto";
 import "noble/orbiter/component/dispatcher/v1/dispatcher.proto";
-import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/noble-assets/orbiter/types/component/dispatcher";
 
