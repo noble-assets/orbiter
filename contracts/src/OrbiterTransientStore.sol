@@ -23,16 +23,19 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  * @notice Holds pending payload hashes of transfers that should be executed
  * through the Orbiter.
  */
-contract OrbiterTransientStore is Ownable {
-    bytes32 transient pendingPayloadHash;
+contract OrbiterTransientStore {
+    bytes32 transient private pendingPayloadHash;
 
-    constructor() Ownable(msg.sender) {}
+//    constructor() Ownable(msg.sender) {}
+    constructor() {}
 
     function getPendingPayloadHash() external view returns (bytes32) {
         return pendingPayloadHash;
     }
 
-    function setPendingPayloadHash(bytes32 payloadHash) external onlyOwner {
+    // TODO: this should be possible to be set by everyone? since it can only be set in the same transaction
+//    function setPendingPayloadHash(bytes32 payloadHash) external onlyOwner {
+    function setPendingPayloadHash(bytes32 payloadHash) external {
         pendingPayloadHash = payloadHash;
     }
 }

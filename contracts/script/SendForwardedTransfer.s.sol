@@ -3,14 +3,14 @@ pragma solidity ^0.8.24;
 
 import { console } from "forge-std/console.sol";
 import { Script } from "forge-std/Script.sol";
-import {HyperlaneEntrypoint} from "../src/HyperlaneEntrypoint.sol";
+import { HyperlaneEntrypoint } from "../src/HyperlaneEntrypoint.sol";
 
 contract SendForwardedTransfer is Script {
     function run() external {
         address entrypoint = vm.envAddress("ENTRYPOINT");
         require(entrypoint != address(0), "entrypoint not set");
 
-        address nobleDollar = vm.envAddress("NOBLEDOLLAR");
+        address tokenAddress = vm.envAddress("NOBLEDOLLAR");
         require(entrypoint != address(0), "noble dollar address not set");
 
         uint32 destinationDomain = 1;
@@ -21,8 +21,8 @@ contract SendForwardedTransfer is Script {
         vm.startBroadcast();
 
         HyperlaneEntrypoint he = HyperlaneEntrypoint(entrypoint);
-        bytes32 messageID = he.sendUSDNWithForwardThroughHyperlane(
-            nobleDollar,
+        bytes32 messageID = he.sendForwardedTransfer(
+            tokenAddress,
             destinationDomain,
             recipient,
             amount,
