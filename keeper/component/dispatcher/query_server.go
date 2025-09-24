@@ -49,13 +49,29 @@ func (q queryServer) DispatchedCounts(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	sourceProtocolID := core.ProtocolID(core.ProtocolID_value[req.SourceProtocolId])
+	val, exists := core.ProtocolID_value[req.SourceProtocolId]
+	if !exists {
+		return nil, fmt.Errorf(
+			"source protocol with ID %s does not exist",
+			req.SourceProtocolId,
+		)
+	}
+	sourceProtocolID := core.ProtocolID(val)
+
 	sourceID, err := core.NewCrossChainID(sourceProtocolID, req.SourceCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
 	}
 
-	destProtocolID := core.ProtocolID(core.ProtocolID_value[req.DestinationProtocolId])
+	val, exists = core.ProtocolID_value[req.DestinationProtocolId]
+	if !exists {
+		return nil, fmt.Errorf(
+			"destination protocol with ID %s does not exist",
+			req.DestinationProtocolId,
+		)
+	}
+	destProtocolID := core.ProtocolID(val)
+
 	destID, err := core.NewCrossChainID(destProtocolID, req.DestinationCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
@@ -85,10 +101,14 @@ func (q queryServer) DispatchedCountsByDestinationProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
-	if err != nil {
-		return nil, errorsmod.Wrap(err, "invalid protocol ID")
+	val, exists := core.ProtocolID_value[req.ProtocolId]
+	if !exists {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"protocol with ID %s does not exist",
+			req.ProtocolId,
+		)
 	}
+	protocolID := core.ProtocolID(val)
 
 	counts, pageRes, err := q.GetDispatchedCountsByDestinationProtocolID(
 		ctx,
@@ -113,10 +133,14 @@ func (q queryServer) DispatchedCountsBySourceProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
-	if err != nil {
-		return nil, errorsmod.Wrap(err, "invalid protocol ID")
+	val, exists := core.ProtocolID_value[req.ProtocolId]
+	if !exists {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"protocol with ID %s does not exist",
+			req.ProtocolId,
+		)
 	}
+	protocolID := core.ProtocolID(val)
 
 	counts, pageRes, err := q.GetDispatchedCountsBySourceProtocolID(ctx, protocolID, req.Pagination)
 	if err != nil {
@@ -144,13 +168,29 @@ func (q queryServer) DispatchedAmounts(
 		)
 	}
 
-	sourceProtocolID := core.ProtocolID(core.ProtocolID_value[req.SourceProtocolId])
+	val, exists := core.ProtocolID_value[req.SourceProtocolId]
+	if !exists {
+		return nil, fmt.Errorf(
+			"source protocol with ID %s does not exist",
+			req.SourceProtocolId,
+		)
+	}
+	sourceProtocolID := core.ProtocolID(val)
+
 	sourceID, err := core.NewCrossChainID(sourceProtocolID, req.SourceCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
 	}
 
-	destProtocolID := core.ProtocolID(core.ProtocolID_value[req.DestinationProtocolId])
+	val, exists = core.ProtocolID_value[req.DestinationProtocolId]
+	if !exists {
+		return nil, fmt.Errorf(
+			"destination protocol with ID %s does not exist",
+			req.DestinationProtocolId,
+		)
+	}
+	destProtocolID := core.ProtocolID(val)
+
 	destID, err := core.NewCrossChainID(destProtocolID, req.DestinationCounterpartyId)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
@@ -179,10 +219,14 @@ func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
-	if err != nil {
-		return nil, errorsmod.Wrap(err, "invalid protocol ID")
+	val, exists := core.ProtocolID_value[req.ProtocolId]
+	if !exists {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"protocol with ID %s does not exist",
+			req.ProtocolId,
+		)
 	}
+	protocolID := core.ProtocolID(val)
 
 	amounts, pageResp, err := q.GetDispatchedAmountsByDestinationProtocolID(
 		ctx,
@@ -207,10 +251,14 @@ func (q queryServer) DispatchedAmountsBySourceProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
-	if err != nil {
-		return nil, errorsmod.Wrap(err, "invalid protocol ID")
+	val, exists := core.ProtocolID_value[req.ProtocolId]
+	if !exists {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"protocol with ID %s does not exist",
+			req.ProtocolId,
+		)
 	}
+	protocolID := core.ProtocolID(val)
 
 	amounts, pageResp, err := q.GetDispatchedAmountsBySourceProtocolID(
 		ctx,
