@@ -7,10 +7,11 @@ import { OrbiterHypERC20 } from "../src/OrbiterHypERC20.sol";
 import { OrbiterTransientStore } from "../src/OrbiterTransientStore.sol";
 import { HyperlaneEntrypoint } from "../src/HyperlaneEntrypoint.sol";
 
+import { TypeCasts } from "@hyperlane/libs/TypeCasts.sol";
 import { Mailbox } from "@hyperlane/Mailbox.sol";
 import { MockMailbox } from "@hyperlane/mock/MockMailbox.sol";
 import { TestPostDispatchHook } from "@hyperlane/test/TestPostDispatchHook.sol";
-import { TypeCasts } from "@hyperlane/libs/TypeCasts.sol";
+import { TokenRouter } from "@hyperlane/token/libs/TokenRouter.sol";
 
 import { TransparentUpgradeableProxy, ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
@@ -22,7 +23,6 @@ contract TestOrbiterHypERC20 is Test {
      * CONSTANTS
      */
     uint32 internal constant ORIGIN = 1;
-    // TODO: check noble destination domain for Hyperlane
     uint32 internal constant DESTINATION = 6;
     uint8 internal DECIMALS = 6;
     uint256 internal SCALE = 1;
@@ -108,9 +108,11 @@ contract TestOrbiterHypERC20 is Test {
 
         vm.stopPrank();
 
+        /*
+         * Enrolling routers has to be done by the HYP token owner.
+         */
         vm.startPrank(HYP_OWNER);
 
-        // Enroll the routers
         localToken.enrollRemoteRouter(
             DESTINATION,
             address(remoteToken).addressToBytes32()
@@ -151,6 +153,7 @@ contract TestOrbiterHypERC20 is Test {
 
         bytes32 sentPayloadHash = bytes32(uint256(1234));
 
+        // TODO: check event
         bytes32 messageID = entrypoint.sendForwardedTransfer(
             address(localToken),
             DESTINATION,
@@ -161,6 +164,35 @@ contract TestOrbiterHypERC20 is Test {
         assertNotEq32(messageID, 0, "expected non-zero message ID");
 
         vm.stopPrank();
+    }
+
+    /*
+     * @notice This test shows that the token contract can still be used
+     * for direct `remoteTransfer` calls that do not go through the Hyperlane entrypoint,
+     * and therefore don't insert the payload hash into the emitted token message.
+     */
+    function testStandardRemoteTransfer() public {
+        uint256 sentAmount = 123;
+        uint256 initialBalance = localToken.balanceOf(ALICE);
+        require(initialBalance >= sentAmount);
+
+        // NOTE: this tracks the next emitted event and checks if it was emitted in the following
+        // function call.
+        vm.expectEmit();
+        emit TokenRouter.SentTransferRemote(
+            DESTINATION,
+            address(BOB).addressToBytes32(),
+            sentAmount
+        );
+
+        vm.prank(ALICE);
+        localToken.transferRemote(
+            DESTINATION,
+            address(BOB).addressToBytes32(),
+            sentAmount
+        );
+
+        require(localToken.balanceOf(ALICE) == initialBalance - sentAmount, "expected tokens to be sent");
     }
 
     function deployOrbiterHypERC20(
@@ -185,7 +217,7 @@ contract TestOrbiterHypERC20 is Test {
                 NAME,
                 SYMBOL,
                 _hook,
-                address(0), // TODO: check if InterchainGasPaymaster has to be created?
+                address(0), // using no IGP here
                 _owner,
                 // custom OrbiterHypERC20 initialization arguments
                 _otsAddress

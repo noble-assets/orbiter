@@ -69,8 +69,6 @@ contract OrbiterHypERC20 is HypERC20 {
         //
         // It is designed with inspiration from the CCTP token bridge contract:
         // https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/%40hyperlane-xyz/core%409.0.9/solidity/contracts/token/TokenBridgeCctp.sol#L196-L231
-        //
-        // TODO: this is currently requiring the OTS to be set, check if we always want this?
         require(
             address(ots) != address(0),
             "orbiter transient store must be set"
