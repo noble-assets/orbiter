@@ -21,16 +21,98 @@
 package forwarder_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
+
+	"github.com/noble-assets/orbiter/keeper/component/forwarder"
 	"github.com/noble-assets/orbiter/testutil/mocks"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-func TestGetPausedCrossChains(t *testing.T) {
+func TestGetPaginatedPausedCrossChains(t *testing.T) {
+	f, deps := mocks.NewForwarderComponent(t)
+	ctx := deps.SdkCtx
+
+	createPausedCrossChainsEntires(t, ctx, f)
+
+	testCases := []struct {
+		name       string
+		protocolID core.ProtocolID
+		pagination *query.PageRequest
+		expLen     int
+		postChecks func(counterparties []string, pageResp *query.PageResponse)
+	}{
+		{
+			name:       "no results for protocols not stored",
+			protocolID: core.ProtocolID(100),
+			expLen:     0,
+		},
+		{
+			name:       "all paused cross-chain for portocol ID 3 with no pagination",
+			protocolID: core.ProtocolID(3),
+			expLen:     5,
+		},
+		{
+			name:       "all paused cross-chain for portocol ID 3 with pagination",
+			protocolID: core.ProtocolID(3),
+			pagination: &query.PageRequest{
+				Offset:     1,
+				Limit:      2,
+				CountTotal: true,
+			},
+			expLen: 2,
+			postChecks: func(counterparties []string, pageResp *query.PageResponse) {
+				require.Equal(t, "1", counterparties[0])
+				require.Equal(t, "2", counterparties[1])
+
+				require.Equal(t, uint64(5), pageResp.Total)
+			},
+		},
+		{
+			name:       "all paused cross-chain for portocol ID 3 with pagination reversed",
+			protocolID: core.ProtocolID(3),
+			pagination: &query.PageRequest{
+				Offset:  1,
+				Limit:   2,
+				Reverse: true,
+			},
+			expLen: 2,
+			postChecks: func(counterparties []string, pageResp *query.PageResponse) {
+				require.Equal(t, "3", counterparties[0])
+				require.Equal(t, "2", counterparties[1])
+			},
+		},
+	}
+
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			counterparties, pageResp, err := f.GetPaginatedPausedCrossChains(
+				ctx,
+				tC.protocolID,
+				tC.pagination,
+			)
+			require.NoError(t, err)
+			require.Len(t, counterparties, tC.expLen)
+
+			if tC.postChecks != nil {
+				tC.postChecks(counterparties, pageResp)
+			}
+		})
+	}
+}
+
+func createPausedCrossChainsEntires(t *testing.T, ctx context.Context, f *forwarder.Forwarder) {
+	t.Helper()
+
 	ccIDs := []core.CrossChainID{
+		{
+			ProtocolId:     3,
+			CounterpartyId: "0",
+		},
 		{
 			ProtocolId:     3,
 			CounterpartyId: "1",
@@ -44,84 +126,21 @@ func TestGetPausedCrossChains(t *testing.T) {
 			CounterpartyId: "3",
 		},
 		{
-			ProtocolId:     2,
-			CounterpartyId: "1",
+			ProtocolId:     3,
+			CounterpartyId: "4",
 		},
 		{
 			ProtocolId:     2,
-			CounterpartyId: "2",
+			CounterpartyId: "0",
+		},
+		{
+			ProtocolId:     2,
+			CounterpartyId: "1",
 		},
 	}
-
-	f, deps := mocks.NewForwarderComponent(t)
-	ctx := deps.SdkCtx
 
 	for _, ccID := range ccIDs {
 		err := f.SetPausedCrossChain(ctx, ccID)
 		require.NoError(t, err)
 	}
-
-	testCases := []struct {
-		name       string
-		protocolID *core.ProtocolID
-		expMapLen  int
-		wantKey    core.ProtocolID
-		expFound   bool
-		expLen     int
-	}{
-		{
-			name:       "no results for protocols not stored",
-			protocolID: ptr(core.ProtocolID(100)),
-			expMapLen:  0,
-			wantKey:    0,
-			expFound:   false,
-			expLen:     0,
-		},
-		{
-			name:       "paused cross-chains for protocol ID 3",
-			protocolID: ptr(core.ProtocolID(3)),
-			expMapLen:  1,
-			wantKey:    3,
-			expFound:   true,
-			expLen:     3,
-		},
-		{
-			name:       "paused cross-chains for protocol ID 2",
-			protocolID: ptr(core.ProtocolID(2)),
-			expMapLen:  1,
-			wantKey:    2,
-			expFound:   true,
-			expLen:     2,
-		},
-		{
-			name:       "all paused cross chains",
-			protocolID: nil,
-			expMapLen:  2,
-			wantKey:    0,     // not checking specific key for nil case
-			expFound:   false, // not checking found for nil case
-			expLen:     0,     // not checking chains length for nil case
-		},
-	}
-
-	for _, tC := range testCases {
-		t.Run(tC.name, func(t *testing.T) {
-			paused, err := f.GetPausedCrossChainsMap(ctx, tC.protocolID)
-			require.NoError(t, err)
-			require.Len(t, paused, tC.expMapLen)
-
-			// Skip key checks for nil protocol ID case
-			if tC.protocolID != nil {
-				idPaused, found := paused[int32(tC.wantKey)]
-				require.Equal(t, tC.expFound, found)
-				if found {
-					require.Len(t, idPaused, tC.expLen)
-				}
-			}
-		})
-	}
-}
-
-// Helper function.
-func ptr[T any](v T) *T {
-	return &v
 }

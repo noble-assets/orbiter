@@ -128,6 +128,14 @@ func (s msgServer) PauseCrossChains(
 		)
 	}
 	protocolID := core.ProtocolID(val)
+
+	if len(msg.CounterpartyIds) > core.MaxTargetCounterparties {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"cannot pause more than %d counterparties in a transaction",
+			core.MaxTargetCounterparties,
+		)
+	}
+
 	if err := s.Pause(ctx, protocolID, msg.CounterpartyIds); err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
 			"cross-chains: %s", err.Error(),
@@ -163,6 +171,14 @@ func (s msgServer) UnpauseCrossChains(
 		)
 	}
 	protocolID := core.ProtocolID(val)
+
+	if len(msg.CounterpartyIds) > core.MaxTargetCounterparties {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"cannot unpause more than %d counterparties in a transaction",
+			core.MaxTargetCounterparties,
+		)
+	}
+
 	if err := s.Unpause(ctx, protocolID, msg.CounterpartyIds); err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
 			"cross-chains: %s", err.Error(),

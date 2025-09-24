@@ -120,12 +120,18 @@ func (s queryServer) PausedCrossChains(
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "invalid protocol ID")
 	}
-	paused, err := s.GetPausedCrossChainsMap(ctx, &protocolID)
+
+	counterparties, pageResp, err := s.GetPaginatedPausedCrossChains(
+		ctx,
+		protocolID,
+		req.Pagination,
+	)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "unable to query paused cross-chains")
 	}
 
 	return &forwardertypes.QueryPausedCrossChainsResponse{
-		CounterpartyIds: paused[int32(protocolID)],
+		CounterpartyIds: counterparties,
+		Pagination:      pageResp,
 	}, nil
 }

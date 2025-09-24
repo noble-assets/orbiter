@@ -6,6 +6,7 @@ import "amino/amino.proto";
 import "cosmos/query/v1/query.proto";
 import "google/api/annotations.proto";
 import "noble/orbiter/core/v1/id.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/noble-assets/orbiter/types/component/forwarder";
 
@@ -49,12 +50,18 @@ message QueryPausedProtocolsResponse {
 message QueryPausedCrossChainsRequest {
   // protocol_id is the protocol to query paused counterparties for.
   string protocol_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryPausedCrossChainsResponse is the response type for the Query/PausedCrossChains RPC method.
 message QueryPausedCrossChainsResponse {
   // counterparty_ids is the list of paused counterparty identifiers for the specified protocol ID.
   repeated string counterparty_ids = 1;
+
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // QueryIsProtocolPausedRequest is the request type for the Query/IsProtocolPaused RPC method.

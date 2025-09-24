@@ -49,6 +49,8 @@ const (
 	// Maps names.
 	PausedCrossChainsName = "paused_cross_chains"
 	PausedProtocolsName   = "paused_protocols"
+
+	MaxTargetCounterparties = 100
 )
 
 var (
