@@ -8,6 +8,10 @@ all: deps compile lint
 compile:
 	@forge compile
 
+clean:
+	@forge clean && \
+	rm -rf node_modules/
+
 deps:
 	@bun install
 

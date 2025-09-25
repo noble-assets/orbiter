@@ -5,7 +5,7 @@ import { console } from "forge-std/console.sol";
 import { Script } from "forge-std/Script.sol";
 
 import { OrbiterHypERC20 } from "../src/OrbiterHypERC20.sol";
-import { OrbiterTransientStore } from "../src/OrbiterTransientStore.sol";
+import { OrbiterTransientStorage } from "../src/OrbiterTransientStorage.sol";
 
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
@@ -16,6 +16,9 @@ contract DeployOrbiterHypERC20 is Script {
 
         address proxyAdmin = vm.envAddress("PROXYADMIN");
         require(proxyAdmin != address(0), "proxy admin address not set");
+
+        address gateway = vm.envAddress("GATEWAY");
+        require(gateway != address(0), "gateway address not set");
 
         uint8 decimals = 6;
         uint256 scale = 1;
@@ -28,7 +31,7 @@ contract DeployOrbiterHypERC20 is Script {
         vm.startBroadcast();
 
         // Deploy the Orbiter transient store for the HypERC20 token.
-        OrbiterTransientStore ots = new OrbiterTransientStore();
+        OrbiterTransientStorage ots = new OrbiterTransientStorage(gateway);
 
         // Deploy the implementation behind a proxy.
         OrbiterHypERC20 implementation = new OrbiterHypERC20(

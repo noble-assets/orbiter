@@ -1,0 +1,66 @@
+/*
+ * Copyright 2025 NASD Inc. All rights reserved.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+pragma solidity ^0.8.24;
+
+import { OrbiterTransientStorage } from "./OrbiterTransientStorage.sol";
+import { OrbiterHypERC20 } from "./OrbiterHypERC20.sol";
+
+
+/// @title Orbiter Gateway Contract
+/// @author Noble Core Team
+/// @notice The canonical portal contract to use Noble's Orbiter implementation through Hyperlane.
+/// @dev The Orbiter (https://github.com/noble-assets/orbiter) allows to send cross-chain transfers
+/// using various bridge mechanisms, execute actions on the Noble blockchain (e.g. fee payments),
+/// and eventually forward the resulting assets to another destination through one of the available
+/// bridging mechanisms (e.g. IBC, CCTP).
+///
+/// TODO: make upgradeable
+contract OrbiterGateway {
+    /// @notice Send an asset transfer to the Orbiter, that should be forwarded to another Hyperlane domain.
+    /// @param tokenAddress Address of the token to forward using Orbiter.
+    /// @param destinationDomain The destination domain of the Noble chain (where the Orbiter lives).
+    /// @param recipient A bytes32 representation of the token recipient on the receiving chain.
+    /// @param amount The amount of tokens to transfer.
+    /// @param payloadHash The payload hash to associate with the cross-chain transfer.
+    /// @return messageID The ID of the dispatched Hyperlane message.
+    function sendForwardedTransfer(
+        address tokenAddress,
+        uint32 destinationDomain,
+        bytes32 recipient,
+        uint256 amount,
+        bytes32 payloadHash
+    ) external returns (bytes32 messageID) {
+        OrbiterHypERC20 token = OrbiterHypERC20(tokenAddress);
+
+        OrbiterTransientStorage ots = token.getOrbiterTransientStore();
+        ots.setPendingPayloadHash(payloadHash);
+
+        /*
+         * Transfer tokens from the user to this contract first.
+         * This is required since transferRemote is burning from msg.sender,
+         * which is this contract.
+         */
+        token.transferFrom(msg.sender, address(this), amount);
+
+        /*
+         * Call transferRemote directly on the token contract.
+         * The token contract will handle the transfer and return the message ID.
+         */
+        return token.transferRemote(destinationDomain, recipient, amount);
+    }
+}

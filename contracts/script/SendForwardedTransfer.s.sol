@@ -3,25 +3,25 @@ pragma solidity ^0.8.24;
 
 import { console } from "forge-std/console.sol";
 import { Script } from "forge-std/Script.sol";
-import { HyperlaneEntrypoint } from "../src/HyperlaneEntrypoint.sol";
+import { OrbiterGateway } from "../src/OrbiterGateway.sol";
 
 contract SendForwardedTransfer is Script {
     function run() external {
-        address entrypoint = vm.envAddress("ENTRYPOINT");
-        require(entrypoint != address(0), "entrypoint not set");
+        address gateway = vm.envAddress("GATEWAY");
+        require(gateway != address(0), "orbiter gateway not set");
 
         address tokenAddress = vm.envAddress("NOBLEDOLLAR");
-        require(entrypoint != address(0), "noble dollar address not set");
+        require(tokenAddress != address(0), "noble dollar address not set");
 
         uint32 destinationDomain = 1;
-        bytes32 recipient = bytes32(0); // TODO: adjust to use identifier
+        bytes32 recipient = bytes32(0);
         uint256 amount = 123;
-        bytes32 payloadHash = bytes32(uint256(10203040)); // TODO: generate valid payload hash
+        bytes32 payloadHash = bytes32(uint256(10203040));
 
         vm.startBroadcast();
 
-        HyperlaneEntrypoint he = HyperlaneEntrypoint(entrypoint);
-        bytes32 messageID = he.sendForwardedTransfer(
+        OrbiterGateway gw = OrbiterGateway(gateway);
+        bytes32 messageID = gw.sendForwardedTransfer(
             tokenAddress,
             destinationDomain,
             recipient,
