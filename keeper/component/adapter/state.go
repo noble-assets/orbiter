@@ -26,22 +26,9 @@ import (
 	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 )
 
-// GetParams returns the adapter params from state. In case of an error,
-// it returns default values and logs the error.
-//
-// NOTE: Returning the default is safe here since it returns zero
-// bytes allowed, which is the restrictive condition.
-func (a *Adapter) GetParams(ctx context.Context) adaptertypes.Params {
-	params, err := a.params.Get(ctx)
-	if err != nil {
-		a.logger.Error("error getting params", "err", err.Error())
-
-		return adaptertypes.Params{
-			MaxPassthroughPayloadSize: 0,
-		}
-	}
-
-	return params
+// GetParams returns the adapter params from state.
+func (a *Adapter) GetParams(ctx context.Context) (adaptertypes.Params, error) {
+	return a.params.Get(ctx)
 }
 
 func (a *Adapter) SetParams(ctx context.Context, params adaptertypes.Params) error {
