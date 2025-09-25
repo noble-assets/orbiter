@@ -401,7 +401,7 @@ func TestGetDispatchedCountsBySourceProtocolID(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, dc, 0)
 
-	// ACT: check pagination with offset and limit. Out of 6 results, we should get the 2nd, 3th,
+	// ACT: check pagination with offset and limit. Out of 6 results, we should get the 2nd, 3rd,
 	// and 4th.
 	dc, pagResp, err := d.GetDispatchedCountsBySourceProtocolID(
 		ctx,
@@ -427,7 +427,7 @@ func TestGetDispatchedCountsBySourceProtocolID(t *testing.T) {
 	require.Equal(t, "1234", dc[2].DestinationId.CounterpartyId)
 
 	// ACT: check that passing the next key of previous response to the pagination
-	// we obtain only the alst two results.
+	// we obtain only the last two results.
 	dc, _, err = d.GetDispatchedCountsBySourceProtocolID(
 		ctx,
 		core.PROTOCOL_IBC,
@@ -477,7 +477,7 @@ func TestGetDispatchedCountsByDestinationProtocolID(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, dc, 0)
 
-	// ACT: check pagination with offset and limit. Out of 6 results, we should get the 2nd, 3th,
+	// ACT: check pagination with offset and limit. Out of 6 results, we should get the 2nd, 3rd,
 	// and 4th.
 	dc, pagResp, err := d.GetDispatchedCountsByDestinationProtocolID(
 		ctx,
@@ -498,7 +498,7 @@ func TestGetDispatchedCountsByDestinationProtocolID(t *testing.T) {
 	require.Equal(t, "1128614981", dc[2].SourceId.CounterpartyId)
 
 	// ACT: check that passing the next key of previous response to the pagination
-	// we obtain only the alst two results.
+	// we obtain only the last two results.
 	dc, _, err = d.GetDispatchedCountsByDestinationProtocolID(
 		ctx,
 		core.PROTOCOL_CCTP,

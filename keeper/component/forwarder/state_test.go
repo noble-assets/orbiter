@@ -37,7 +37,7 @@ func TestGetPaginatedPausedCrossChains(t *testing.T) {
 	f, deps := mocks.NewForwarderComponent(t)
 	ctx := deps.SdkCtx
 
-	createPausedCrossChainsEntires(t, ctx, f)
+	createPausedCrossChainsEntries(t, ctx, f)
 
 	testCases := []struct {
 		name       string
@@ -105,7 +105,7 @@ func TestGetPaginatedPausedCrossChains(t *testing.T) {
 	}
 }
 
-func createPausedCrossChainsEntires(t *testing.T, ctx context.Context, f *forwarder.Forwarder) {
+func createPausedCrossChainsEntries(t *testing.T, ctx context.Context, f *forwarder.Forwarder) {
 	t.Helper()
 
 	ccIDs := []core.CrossChainID{
