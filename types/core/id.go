@@ -23,7 +23,6 @@ package core
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -33,11 +32,7 @@ import (
 
 const (
 	MaxCounterpartyIDLength = 32
-	MinCounterpartyIDLength = 1
-	AllowedCharsetPattern   = `^[a-zA-Z0-9:_-]+$`
 )
-
-var allowedCharsetRegex = regexp.MustCompile(AllowedCharsetPattern)
 
 type IdentifierConstraint interface {
 	ProtocolID | ActionID
@@ -172,6 +167,8 @@ func ValidateCounterpartyID(id string, protocol ProtocolID) error {
 		valid = channeltypes.IsValidChannelID(id)
 	case PROTOCOL_CCTP, PROTOCOL_HYPERLANE:
 		valid = isInteger(id)
+	case PROTOCOL_UNSUPPORTED:
+		valid = false
 	default:
 		valid = false
 	}
@@ -187,6 +184,7 @@ func ValidateCounterpartyID(id string, protocol ProtocolID) error {
 // an integer, false otherwise.
 func isInteger(s string) bool {
 	_, err := strconv.Atoi(s)
+
 	return err == nil
 }
 
