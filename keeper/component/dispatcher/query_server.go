@@ -22,9 +22,10 @@ package dispatcher
 
 import (
 	"context"
-	"fmt"
 
-	errorsmod "cosmossdk.io/errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
@@ -49,37 +50,33 @@ func (q queryServer) DispatchedCounts(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	val, exists := core.ProtocolID_value[req.SourceProtocolId]
-	if !exists {
-		return nil, fmt.Errorf(
-			"source protocol with ID %s does not exist",
-			req.SourceProtocolId,
-		)
+	sourceProtocolID, err := core.NewProtocolIDFromString(req.SourceProtocolId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "source protocol ID: %s", err.Error())
 	}
-	sourceProtocolID := core.ProtocolID(val)
 
 	sourceID, err := core.NewCrossChainID(sourceProtocolID, req.SourceCounterpartyId)
 	if err != nil {
-		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
+		return nil, status.Errorf(codes.InvalidArgument, "source cross-chain ID: %s", err.Error())
 	}
 
-	val, exists = core.ProtocolID_value[req.DestinationProtocolId]
-	if !exists {
-		return nil, fmt.Errorf(
-			"destination protocol with ID %s does not exist",
-			req.DestinationProtocolId,
-		)
+	destProtocolID, err := core.NewProtocolIDFromString(req.DestinationProtocolId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "destination protocol ID: %s", err.Error())
 	}
-	destProtocolID := core.ProtocolID(val)
 
 	destID, err := core.NewCrossChainID(destProtocolID, req.DestinationCounterpartyId)
 	if err != nil {
-		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			"destination cross-chain ID: %s",
+			err.Error(),
+		)
 	}
 
 	if !q.HasDispatchedCounts(ctx, &sourceID, &destID) {
-		return nil, fmt.Errorf(
-			"dispatched counts do not exist for source ID %s and destination ID %s",
+		return nil, status.Errorf(codes.NotFound,
+			"dispatched counts not found for source ID %s and destination ID %s",
 			sourceID.String(),
 			destID.String(),
 		)
@@ -101,14 +98,10 @@ func (q queryServer) DispatchedCountsByDestinationProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	val, exists := core.ProtocolID_value[req.ProtocolId]
-	if !exists {
-		return nil, core.ErrUnableToPause.Wrapf(
-			"protocol with ID %s does not exist",
-			req.ProtocolId,
-		)
+	protocolID, err := core.NewProtocolIDFromString(req.ProtocolId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	protocolID := core.ProtocolID(val)
 
 	counts, pageRes, err := q.GetDispatchedCountsByDestinationProtocolID(
 		ctx,
@@ -116,7 +109,7 @@ func (q queryServer) DispatchedCountsByDestinationProtocolID(
 		req.Pagination,
 	)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "error retrieving paginated results")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
@@ -133,18 +126,14 @@ func (q queryServer) DispatchedCountsBySourceProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	val, exists := core.ProtocolID_value[req.ProtocolId]
-	if !exists {
-		return nil, core.ErrUnableToPause.Wrapf(
-			"protocol with ID %s does not exist",
-			req.ProtocolId,
-		)
+	protocolID, err := core.NewProtocolIDFromString(req.ProtocolId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	protocolID := core.ProtocolID(val)
 
 	counts, pageRes, err := q.GetDispatchedCountsBySourceProtocolID(ctx, protocolID, req.Pagination)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "error retrieving paginated results")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
@@ -162,49 +151,43 @@ func (q queryServer) DispatchedAmounts(
 	}
 
 	if req.Denom == "" {
-		return nil, errorsmod.Wrapf(
-			core.ErrEmptyString,
-			"error querying an empty string token denom",
-		)
+		return nil, status.Error(codes.InvalidArgument, "empty denom")
 	}
 
-	val, exists := core.ProtocolID_value[req.SourceProtocolId]
-	if !exists {
-		return nil, fmt.Errorf(
-			"source protocol with ID %s does not exist",
-			req.SourceProtocolId,
-		)
+	sourceProtocolID, err := core.NewProtocolIDFromString(req.SourceProtocolId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "source protocol ID: %s", err.Error())
 	}
-	sourceProtocolID := core.ProtocolID(val)
 
 	sourceID, err := core.NewCrossChainID(sourceProtocolID, req.SourceCounterpartyId)
 	if err != nil {
-		return nil, errorsmod.Wrapf(err, "error creating source cross-chain ID")
+		return nil, status.Errorf(codes.InvalidArgument, "source cross-chain ID: %s", err.Error())
 	}
 
-	val, exists = core.ProtocolID_value[req.DestinationProtocolId]
-	if !exists {
-		return nil, fmt.Errorf(
-			"destination protocol with ID %s does not exist",
-			req.DestinationProtocolId,
-		)
+	destProtocolID, err := core.NewProtocolIDFromString(req.DestinationProtocolId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "destination protocol ID: %s", err.Error())
 	}
-	destProtocolID := core.ProtocolID(val)
 
 	destID, err := core.NewCrossChainID(destProtocolID, req.DestinationCounterpartyId)
 	if err != nil {
-		return nil, errorsmod.Wrapf(err, "error creating destination cross-chain ID")
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			"destination cross-chain ID: %s",
+			err.Error(),
+		)
 	}
 
-	amounts := q.GetDispatchedAmount(ctx, &sourceID, &destID, req.Denom)
-	if !amounts.AmountDispatched.IsPositive() {
-		return nil, fmt.Errorf(
-			"dispatched amount does not exist for source ID %s, destination ID %s, and denom %s",
+	if !q.HasDispatchedAmount(ctx, &sourceID, &destID, req.Denom) {
+		return nil, status.Errorf(codes.NotFound,
+			"dispatched amount not found for source ID %s, destination ID %s, denom %s",
 			sourceID.String(),
 			destID.String(),
 			req.Denom,
 		)
 	}
+
+	amounts := q.GetDispatchedAmount(ctx, &sourceID, &destID, req.Denom)
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
 		Amounts: []*dispatchertypes.DispatchedAmountEntry{amounts},
@@ -219,14 +202,10 @@ func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	val, exists := core.ProtocolID_value[req.ProtocolId]
-	if !exists {
-		return nil, core.ErrUnableToPause.Wrapf(
-			"protocol with ID %s does not exist",
-			req.ProtocolId,
-		)
+	protocolID, err := core.NewProtocolIDFromString(req.ProtocolId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	protocolID := core.ProtocolID(val)
 
 	amounts, pageResp, err := q.GetDispatchedAmountsByDestinationProtocolID(
 		ctx,
@@ -234,7 +213,7 @@ func (q queryServer) DispatchedAmountsByDestinationProtocolID(
 		req.Pagination,
 	)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "error retrieving paginated results")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
@@ -251,14 +230,10 @@ func (q queryServer) DispatchedAmountsBySourceProtocolID(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	val, exists := core.ProtocolID_value[req.ProtocolId]
-	if !exists {
-		return nil, core.ErrUnableToPause.Wrapf(
-			"protocol with ID %s does not exist",
-			req.ProtocolId,
-		)
+	protocolID, err := core.NewProtocolIDFromString(req.ProtocolId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	protocolID := core.ProtocolID(val)
 
 	amounts, pageResp, err := q.GetDispatchedAmountsBySourceProtocolID(
 		ctx,
@@ -266,7 +241,7 @@ func (q queryServer) DispatchedAmountsBySourceProtocolID(
 		req.Pagination,
 	)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "error retrieving paginated results")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{

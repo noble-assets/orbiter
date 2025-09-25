@@ -45,6 +45,19 @@ type IdentifierConstraint interface {
 	String() string
 }
 
+func NewActionIDFromString(id string) (ActionID, error) {
+	val, exists := ActionID_value[id]
+	if !exists {
+		return ACTION_UNSUPPORTED, fmt.Errorf("action ID %s does not exist", id)
+	}
+	actionID, err := NewActionID(val)
+	if err != nil {
+		return ACTION_UNSUPPORTED, fmt.Errorf("action ID %s is not supported", err.Error())
+	}
+
+	return actionID, nil
+}
+
 // NewActionID returns a validated action ID from an int32. If
 // the validation fails, the returned value signals an unsupported
 // action and an error is returned along with it.
@@ -67,6 +80,19 @@ func (id ActionID) Validate() error {
 	}
 
 	return nil
+}
+
+func NewProtocolIDFromString(id string) (ProtocolID, error) {
+	val, exists := ProtocolID_value[id]
+	if !exists {
+		return PROTOCOL_UNSUPPORTED, fmt.Errorf("protocol ID %s does not exist", id)
+	}
+	protocolID, err := NewProtocolID(val)
+	if err != nil {
+		return PROTOCOL_UNSUPPORTED, fmt.Errorf("protocol ID %s is not supported", err.Error())
+	}
+
+	return protocolID, nil
 }
 
 // NewProtocolID returns a validated protocol ID from an int32. If

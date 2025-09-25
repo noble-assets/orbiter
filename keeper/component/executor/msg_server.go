@@ -23,6 +23,8 @@ package executor
 import (
 	"context"
 
+	errorsmod "cosmossdk.io/errors"
+
 	"github.com/noble-assets/orbiter/types"
 	executortypes "github.com/noble-assets/orbiter/types/component/executor"
 	"github.com/noble-assets/orbiter/types/core"
@@ -50,20 +52,14 @@ func (s msgServer) PauseAction(
 		return nil, err
 	}
 
-	val, exists := core.ActionID_value[msg.ActionId]
-	if !exists {
-		return nil, core.ErrUnableToPause.Wrapf("action with ID %s does not exist", msg.ActionId)
-	}
-	actionID, err := core.NewActionID(val)
+	actionID, err := core.NewActionIDFromString(msg.ActionId)
 	if err != nil {
-		return nil, core.ErrUnableToPause.Wrapf(
-			"invalid action ID: %s", err.Error(),
-		)
+		return nil, errorsmod.Wrap(core.ErrUnableToPause, err.Error())
 	}
 
 	if err := s.Pause(ctx, actionID); err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
-			"action: %s", err.Error(),
+			"error setting paused state: %s", err.Error(),
 		)
 	}
 
@@ -88,20 +84,14 @@ func (s msgServer) UnpauseAction(
 		return nil, err
 	}
 
-	val, exists := core.ActionID_value[msg.ActionId]
-	if !exists {
-		return nil, core.ErrUnableToUnpause.Wrapf("action with ID %s does not exist", msg.ActionId)
-	}
-	actionID, err := core.NewActionID(val)
+	actionID, err := core.NewActionIDFromString(msg.ActionId)
 	if err != nil {
-		return nil, core.ErrUnableToUnpause.Wrapf(
-			"invalid action ID: %s", err.Error(),
-		)
+		return nil, errorsmod.Wrap(core.ErrUnableToUnpause, err.Error())
 	}
 
 	if err := s.Unpause(ctx, actionID); err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
-			"action: %s", err.Error(),
+			"error setting unpaused state: %s", err.Error(),
 		)
 	}
 

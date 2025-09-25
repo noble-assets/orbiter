@@ -23,7 +23,9 @@ package forwarder
 import (
 	"context"
 
-	errorsmod "cosmossdk.io/errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
@@ -49,14 +51,14 @@ func (s queryServer) IsProtocolPaused(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	protocolID, err := core.NewProtocolIDFromString(req.ProtocolId)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "invalid protocol ID")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	paused, err := s.Forwarder.IsProtocolPaused(ctx, protocolID)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "unable to query protocol paused status")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &forwardertypes.QueryIsProtocolPausedResponse{
@@ -75,7 +77,7 @@ func (s queryServer) PausedProtocols(
 
 	paused, err := s.GetPausedProtocols(ctx)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "unable to query paused protocols")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &forwardertypes.QueryPausedProtocolsResponse{
@@ -91,15 +93,19 @@ func (s queryServer) IsCrossChainPaused(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[req.ProtocolId])
+	protocolID, err := core.NewProtocolIDFromString(req.ProtocolId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
 	ccID, err := core.NewCrossChainID(protocolID, req.CounterpartyId)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "unable to query cross-chain paused status")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	paused, err := s.Forwarder.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "unable to query cross-chain paused status")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &forwardertypes.QueryIsCrossChainPausedResponse{
@@ -116,9 +122,9 @@ func (s queryServer) PausedCrossChains(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	protocolID, err := core.NewProtocolID(core.ProtocolID_value[req.ProtocolId])
+	protocolID, err := core.NewProtocolIDFromString(req.ProtocolId)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "invalid protocol ID")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	counterparties, pageResp, err := s.GetPaginatedPausedCrossChains(
@@ -127,7 +133,7 @@ func (s queryServer) PausedCrossChains(
 		req.Pagination,
 	)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "unable to query paused cross-chains")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &forwardertypes.QueryPausedCrossChainsResponse{
