@@ -54,7 +54,7 @@ func TestValidateFee(t *testing.T) {
 			name: "error - over maximum basis points",
 			feeInfo: &actiontypes.FeeInfo{
 				Recipient:   "",
-				BasisPoints: core.BPSNormalizer + 1,
+				BasisPoints: actiontypes.BPSNormalizer + 1,
 			},
 			expErr: "fee basis point must be > 0 and < 10000",
 		},
@@ -113,7 +113,7 @@ func TestValidateFeeAttributes(t *testing.T) {
 			name: "error - over maximum fee recipient",
 			feeInfo: &actiontypes.FeeAttributes{
 				FeesInfo: func() []*actiontypes.FeeInfo {
-					fees := make([]*actiontypes.FeeInfo, core.MaxFeeRecipients+1)
+					fees := make([]*actiontypes.FeeInfo, actiontypes.MaxFeeRecipients+1)
 					for i := range fees {
 						fees[i] = &actiontypes.FeeInfo{
 							Recipient:   "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
@@ -130,7 +130,7 @@ func TestValidateFeeAttributes(t *testing.T) {
 			name: "success - maximum fee recipient",
 			feeInfo: &actiontypes.FeeAttributes{
 				FeesInfo: func() []*actiontypes.FeeInfo {
-					fees := make([]*actiontypes.FeeInfo, core.MaxFeeRecipients)
+					fees := make([]*actiontypes.FeeInfo, actiontypes.MaxFeeRecipients)
 					for i := range fees {
 						fees[i] = &actiontypes.FeeInfo{
 							Recipient:   "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
