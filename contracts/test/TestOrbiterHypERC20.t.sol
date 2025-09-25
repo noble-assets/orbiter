@@ -7,10 +7,13 @@ import { OrbiterHypERC20 } from "../src/OrbiterHypERC20.sol";
 import { OrbiterTransientStore } from "../src/OrbiterTransientStore.sol";
 import { HyperlaneEntrypoint } from "../src/HyperlaneEntrypoint.sol";
 
-import { TypeCasts } from "@hyperlane/libs/TypeCasts.sol";
 import { Mailbox } from "@hyperlane/Mailbox.sol";
+import { IMailbox } from "@hyperlane/interfaces/IMailbox.sol";
+import { TypeCasts } from "@hyperlane/libs/TypeCasts.sol";
+import { Message } from "@hyperlane/libs/Message.sol";
 import { MockMailbox } from "@hyperlane/mock/MockMailbox.sol";
 import { TestPostDispatchHook } from "@hyperlane/test/TestPostDispatchHook.sol";
+import { TokenMessage } from "@hyperlane/token/libs/TokenMessage.sol";
 import { TokenRouter } from "@hyperlane/token/libs/TokenRouter.sol";
 
 import { TransparentUpgradeableProxy, ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
@@ -128,9 +131,9 @@ contract TestOrbiterHypERC20 is Test {
 
     /*
      * @notice This test checks that the setup was successful by asserting
-     * expected token balances and correct wiring of the interdependent contracts.
+     * expected token balances.
      */
-    function testSetupWorked() public {
+    function testSetupWorked() public view {
         assertNotEq(
             localToken.balanceOf(ALICE),
             0,
@@ -140,7 +143,8 @@ contract TestOrbiterHypERC20 is Test {
 
     /*
      * @notice This tests that sending a Hyperlane forwarded transfer
-     * using the entrypoint contract is going to work.
+     * using the entrypoint contract is going to work and emits
+     * the expected dispatch event, which contains the payload hash.
      */
     function testForwardedTransfer() public {
         vm.startPrank(ALICE);
@@ -153,11 +157,33 @@ contract TestOrbiterHypERC20 is Test {
 
         bytes32 sentPayloadHash = bytes32(uint256(1234));
 
-        // TODO: check event
+        // NOTE: the expected message is the wrapped token message with the contained payload.
+        bytes memory expectedMessage = _formatMessageWithMemoryBody(
+            3,
+            0,
+            ORIGIN,
+            address(localToken).addressToBytes32(),
+            DESTINATION,
+            address(remoteToken).addressToBytes32(),
+            TokenMessage.format(
+                BOB.addressToBytes32(),
+                sentAmount,
+                abi.encodePacked(sentPayloadHash)
+            )
+        );
+
+        vm.expectEmit();
+        emit IMailbox.Dispatch(
+            address(localToken),
+            DESTINATION,
+            address(remoteToken).addressToBytes32(),
+            expectedMessage
+        );
+
         bytes32 messageID = entrypoint.sendForwardedTransfer(
             address(localToken),
             DESTINATION,
-            bytes32(uint256(uint160(BOB))), // This converts the 20-byte address to a bytes32 value.
+            BOB.addressToBytes32(),
             sentAmount,
             sentPayloadHash
         );
@@ -195,6 +221,33 @@ contract TestOrbiterHypERC20 is Test {
         require(localToken.balanceOf(ALICE) == initialBalance - sentAmount, "expected tokens to be sent");
     }
 
+    /*
+     * @notice Helper function to format a message with bytes memory body
+     * @dev This is needed because Message.formatMessage expects bytes calldata.
+     *
+     * It's based on the implementation on Message.sol:
+     * https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/%40hyperlane-xyz/core%409.0.9/solidity/contracts/libs/Message.sol#L21-L52
+     */
+    function _formatMessageWithMemoryBody(
+        uint8 _version,
+        uint32 _nonce,
+        uint32 _originDomain,
+        bytes32 _sender,
+        uint32 _destinationDomain,
+        bytes32 _recipient,
+        bytes memory _messageBody
+    ) internal pure returns (bytes memory) {
+        return abi.encodePacked(
+            _version,
+            _nonce,
+            _originDomain,
+            _sender,
+            _destinationDomain,
+            _recipient,
+            _messageBody
+        );
+    }
+
     function deployOrbiterHypERC20(
         address _mailboxAddress,
         address _hook,
@@ -224,8 +277,6 @@ contract TestOrbiterHypERC20 is Test {
             )
         );
 
-        remoteToken = OrbiterHypERC20(address(proxy));
-
-        return remoteToken;
+        return OrbiterHypERC20(address(proxy));
     }
 }
