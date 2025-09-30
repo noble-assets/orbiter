@@ -57,7 +57,7 @@ func NewInternalController(
 	id := core.PROTOCOL_INTERNAL
 	b, err := controller.NewBase(id)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "error creating base controller for hyperlane controller")
+		return nil, errorsmod.Wrap(err, "error creating base controller for internal controller")
 	}
 
 	c := &InternalController{
