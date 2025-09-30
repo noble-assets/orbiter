@@ -40,11 +40,12 @@ type, which allows users to specify:
 3. Passthrough metadata to send along with the to the cross-chain transfer
 
 Protocol-specific information is encoded in the `Attributes` field using an `any` type that
-implements the `ForwardingAttributes` interface. For implementation details, refer to the
+implements the `ForwardingAttributes` interface.
+For implementation details, refer to the
 [proto definition](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/core/v1/orbiter.proto#L35-L55).
 
-Forwarding controllers interpret protocol-specific information and forward funds. Based on the
-selected bridge, the following controllers are available:
+Forwarding controllers interpret protocol-specific information and forward funds.
+Based on the selected bridge, the following controllers are available:
 
 - **AutoCCTP**: Automatic forwarding via the Cross-Chain Transfer Protocol
 - **AutoLane**: Automatic forwarding via the Hyperlane protocol
@@ -53,18 +54,19 @@ selected bridge, the following controllers are available:
 ## CCTP
 
 The Cross-Chain Transfer Protocol (CCTP) is an interoperability protocol developed by Circle to
-enable native USDC transfers across different blockchain networks. CCTP uses a burn-and-mint
-mechanism where USDC is burned on the source chain and minted on the destination chain, ensuring
-that the total supply remains constant across all supported chains.
+enable native USDC transfers across different blockchain networks.
+CCTP uses a burn-and-mint mechanism where USDC is burned on the source chain and minted on
+the destination chain, ensuring that the total supply remains constant across all supported chains.
 
 For more detailed information about the protocol itself, please refer to the
 [Circle CCTP documentation](https://developers.circle.com/cctp).
 
 The CCTP controller is the concrete implementation of the controller interface designed to handle
-CCTP transfers. All relevant information related to a CCTP transfer is defined by the
+CCTP transfers.
+All relevant information related to a CCTP transfer is defined by the
 [`CCTPAttributes`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/controller/forwarding/v1/cctp.proto#L9-L26)
-type, which implements the forwarding attributes interface. The corresponding Protobuf
-implementation can be seen here:
+type, which implements the forwarding attributes interface.
+The corresponding Protobuf implementation can be seen here:
 
 ```protobuf
 message CCTPAttributes {
@@ -113,18 +115,21 @@ flowchart LR
 burn process on the source chain and sends the necessary information to the destination chain for
 minting.
 
-The CCTP protocol uses a commit-and-forget style, meaning that once the CCTP server confirms that
-the burn request has been stored to state, the Orbiter execution is complete. The events emitted
+The CCTP protocol uses a commit-and-forget style,
+meaning that once the CCTP server confirms that the burn request has been stored to state, 
+the Orbiter execution is complete.
+The events emitted
 during this state transition are then picked up by the relayers and forwarded to the destination
 chain.
 
 ## Hyperlane
 
 The Hyperlane protocol is a mailbox-based permissionless bridge that enables cross-chain transfers
-through its **Warp** application, which is built on top of Hyperlane's general message passing
-functionality. The architecture follows a pattern similar to IBC core and ICS-20, where the Warp
-server handles token transfers by building a specific payload, that is then dispatched by the
-underlying Core module.
+through its **Warp** application,
+which is built on top of Hyperlane's general message passing functionality.
+The architecture follows a pattern similar to IBC core and ICS-20,
+where the Warp server handles token transfers by building a specific payload,
+that is then dispatched by the underlying Core module.
 
 Key components include:
 
@@ -189,23 +194,25 @@ flowchart LR
 **Validation** includes standard type checks plus Hyperlane-specific validation:
 
 - Token ID verification using the Warp query server.
-- Origin denom matching with the destination denom (crucial since multiple token IDs can map to the
-  same denom).
+- Origin denom matching with the destination denom
+(crucial since multiple token IDs can map to the same denom).
 - Token ID enrollment with a router for the destination chain.
 
-**Execution** uses the Warp message server to initiate the transfer, ensuring all required checks
-and standard events are handled. The transfer triggers two post-dispatch hooks in sequence:
+**Execution** uses the Warp message server to initiate the transfer,
+ensuring all required checks and standard events are handled.
+The transfer triggers two post-dispatch hooks in sequence:
 
 1. The mandatory mailbox hook.
 2. Either the default hook or a custom hook (if specified via `custom_hook_id`).
 
-The custom hook can process the optional `custom_hook_metadata`, and both hooks are subject to the
-gas limit and maximum fee constraints.
+The custom hook can process the optional `custom_hook_metadata`,
+and both hooks are subject to the gas limit and maximum fee constraints.
 
 ## Internal
 
 The internal controller is a special case of controller used to forward funds received via a generic
-bridge protocol to another Noble account. The attributes for the internal forwarding are defined as:
+bridge protocol to another Noble account.
+The attributes for the internal forwarding are defined as:
 
 ```protobuf
 message InternalAttributes {
