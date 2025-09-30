@@ -163,7 +163,11 @@ func TestParsePayload(t *testing.T) {
 			require.NoError(t, err)
 
 			fmt.Println("len of payload:", len(tc.payloadBz))
-			isOrbiterPayload, payload, err := parser.ParsePayload(core.PROTOCOL_IBC, tc.payloadBz)
+			isOrbiterPayload, payload, err := parser.ParsePayload(
+				t.Context(),
+				core.PROTOCOL_IBC,
+				tc.payloadBz,
+			)
 
 			require.Equal(t, tc.expectIsOrbiter, isOrbiterPayload)
 			if tc.expectError {

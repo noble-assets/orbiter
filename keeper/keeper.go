@@ -24,6 +24,8 @@ import (
 	"errors"
 	"fmt"
 
+	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
+
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/event"
@@ -38,9 +40,17 @@ import (
 	forwardercomp "github.com/noble-assets/orbiter/keeper/component/forwarder"
 	"github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/types/hyperlane"
 )
 
-var _ types.Authorizer = &Keeper{}
+var (
+	// General interface compliance
+	_ types.Authorizer = &Keeper{}
+
+	// Hyperlane interface compliance
+	_ hyperlaneutil.HyperlaneApp  = &Keeper{}
+	_ types.HyperlaneStateHandler = &Keeper{}
+)
 
 // Keeper is the main module keeper.
 type Keeper struct {
@@ -57,8 +67,15 @@ type Keeper struct {
 	dispatcher *dispatchercomp.Dispatcher
 	adapter    *adaptercomp.Adapter
 
+	// pendingPayloads stores the pending payloads addressed by their keccak256 hash.
+	pendingPayloads collections.Map[[]byte, hyperlane.PendingPayload]
+	// pendingPayloadsSequence is the unique identifier of a given pending payload handled by the
+	// orbiter.
+	pendingPayloadsSequence collections.Sequence
+
 	// Hyperlane dependencies
 	hyperlaneCoreKeeper types.HyperlaneCoreKeeper
+	hyperlaneWarpKeeper types.HyperlaneWarpKeeper
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -84,6 +101,19 @@ func NewKeeper(
 		eventService: eventService,
 		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
 		authority:    authority,
+
+		pendingPayloadsSequence: collections.NewSequence(
+			sb,
+			core.PendingPayloadsSequencePrefix,
+			core.PendingPayloadsSequenceName,
+		),
+		pendingPayloads: collections.NewMap[[]byte, hyperlane.PendingPayload](
+			sb,
+			core.PendingPayloadsPrefix,
+			core.PendingPayloadsName,
+			collections.BytesKey,
+			&hyperlane.PendingPayloadCollValue{},
+		),
 
 		hyperlaneCoreKeeper: coreKeeper,
 	}

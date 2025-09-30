@@ -30,34 +30,16 @@ import (
 	errorsmod "cosmossdk.io/errors"
 
 	"github.com/noble-assets/orbiter/types/core"
+	hyperlaneorbitertypes "github.com/noble-assets/orbiter/types/hyperlane"
 )
 
-var _ hyperlaneutil.HyperlaneApp = &Keeper{}
+// OrbiterHyperlaneAppID defines the module identifier of the Orbiter Hyperlane application.
+const OrbiterHyperlaneAppID uint8 = 255
 
-const OrbiterHyperlaneApp uint8 = iota
-
+// RegisterHyperlaneAppRoute registers the Orbiter Hyperlane application in the main application
+// router.
 func (k *Keeper) RegisterHyperlaneAppRoute() {
-	k.hyperlaneCoreKeeper.AppRouter().RegisterModule(uint8(0), k)
-}
-
-// TODO: do we need this? The Warp implementation is using this to check if a token is registered..
-// but we don't need that?
-func (k *Keeper) Exists(
-	ctx context.Context,
-	handledPayload hyperlaneutil.HexAddress,
-) (bool, error) {
-	// return k.HandledHyperlaneTransfers.Has(ctx, handledPayload.GetInternalId())
-	return true, nil
-}
-
-// TODO: do we need this? The Warp implementation is using this to check for a certain ISM
-// per-token,
-// but we won't keep track of any specific assets that would need to be registered.
-func (k *Keeper) ReceiverIsmId(
-	ctx context.Context,
-	recipient hyperlaneutil.HexAddress,
-) (*hyperlaneutil.HexAddress, error) {
-	return nil, errors.New("not implemented")
+	k.hyperlaneCoreKeeper.AppRouter().RegisterModule(OrbiterHyperlaneAppID, k)
 }
 
 func (k *Keeper) Handle(
@@ -65,7 +47,7 @@ func (k *Keeper) Handle(
 	mailboxId hyperlaneutil.HexAddress,
 	message hyperlaneutil.HyperlaneMessage,
 ) error {
-	_, payload, err := k.adapter.ParsePayload(core.PROTOCOL_HYPERLANE, message.Body)
+	_, payload, err := k.adapter.ParsePayload(ctx, core.PROTOCOL_HYPERLANE, message.Body)
 	if err != nil {
 		return errorsmod.Wrap(err, "failed to parse payload")
 	}
@@ -85,10 +67,22 @@ func (k *Keeper) Handle(
 
 	// TODO: what to do with mailbox ID? do we need to check this?
 
-	// TODO: theoretically we'd need a different after-transfer hook here?
-	// The transfer attributes should be populated from the information from the Warp transfer
-	// and not based on the balance of the module account since the transfer is in a separate
-	// message.
+	// TODO: this should be where the underlying warp logic is called.
+	reducedWarpMessage, err := hyperlaneorbitertypes.GetReducedWarpMessageFromOrbiterMessage(
+		message,
+	)
+	if err != nil {
+		return errorsmod.Wrap(err, "failed to create reduced warp message")
+	}
+
+	if err = k.hyperlaneWarpKeeper.Handle(
+		ctx,
+		mailboxId,
+		reducedWarpMessage,
+	); err != nil {
+		return errorsmod.Wrap(err, "internal warp handling failed")
+	}
+
 	transferAttr, err := k.adapter.AfterTransferHook(ctx, ccID, payload)
 	if err != nil {
 		return errorsmod.Wrap(err, "failed to run AfterTransferHook")
@@ -99,4 +93,28 @@ func (k *Keeper) Handle(
 	}
 
 	return nil
+}
+
+// TODO: do we need this? The Warp implementation is using this to check if a token is registered..
+// but we don't need that?
+//
+// TODO: should we delegate to the Warp method here?
+func (k *Keeper) Exists(
+	ctx context.Context,
+	handledPayload hyperlaneutil.HexAddress,
+) (bool, error) {
+	// return k.HandledHyperlaneTransfers.Has(ctx, handledPayload.GetInternalId())
+	return true, nil
+}
+
+// TODO: do we need this? The Warp implementation is using this to check for a certain ISM
+// per-token,
+// but we won't keep track of any specific assets that would need to be registered.
+//
+// TODO: should we delegate to the Warp method here?
+func (k *Keeper) ReceiverIsmId(
+	ctx context.Context,
+	recipient hyperlaneutil.HexAddress,
+) (*hyperlaneutil.HexAddress, error) {
+	return nil, errors.New("not implemented")
 }

@@ -165,8 +165,8 @@ func InjectAdapterControllers(in ComponentsInputs) {
 	}
 
 	hyperlane, err := adapterctrl.NewHyperlaneAdapter(
-		in.Orbiters.Codec(),
-		in.Orbiters.Adapter().Logger(),
+		in.Orbiters.Logger(),
+		in.Orbiters,
 	)
 	if err != nil {
 		panic(errorsmod.Wrap(err, "error creating Hyperlane adapter"))

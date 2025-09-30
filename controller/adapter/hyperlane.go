@@ -21,17 +21,18 @@
 package adapter
 
 import (
+	"context"
+
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
-	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/noble-assets/orbiter/controller"
-	"github.com/noble-assets/orbiter/types"
+	orbitertypes "github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
 	"github.com/noble-assets/orbiter/types/hyperlane"
 )
 
-var _ types.AdapterController = &HyperlaneAdapter{}
+var _ orbitertypes.AdapterController = &HyperlaneAdapter{}
 
 // HyperlaneAdapter is the type component to convert
 // an incoming Hyperlane message body to the common payload
@@ -40,11 +41,15 @@ type HyperlaneAdapter struct {
 	*controller.BaseController[core.ProtocolID]
 
 	logger log.Logger
-	parser *HyperlaneParser
+
+	stateHandler orbitertypes.HyperlaneStateHandler
 }
 
 // NewHyperlaneAdapter returns a reference to a new HyperlaneAdapter instance.
-func NewHyperlaneAdapter(cdc codec.Codec, logger log.Logger) (*HyperlaneAdapter, error) {
+func NewHyperlaneAdapter(
+	logger log.Logger,
+	orbiterStateHandler orbitertypes.HyperlaneStateHandler,
+) (*HyperlaneAdapter, error) {
 	if logger == nil {
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
 	}
@@ -54,61 +59,33 @@ func NewHyperlaneAdapter(cdc codec.Codec, logger log.Logger) (*HyperlaneAdapter,
 		return nil, errorsmod.Wrap(err, "failed to create base controller")
 	}
 
-	parser, err := NewHyperlaneParser(cdc)
-	if err != nil {
-		return nil, errorsmod.Wrap(err, "failed to create hyperlane parser")
+	if orbiterStateHandler == nil {
+		return nil, core.ErrNilPointer.Wrap("orbiter state handler cannot be nil")
 	}
 
 	return &HyperlaneAdapter{
 		BaseController: baseController,
 		logger:         logger.With(core.AdapterControllerName, baseController.Name()),
-		parser:         parser,
+		stateHandler:   orbiterStateHandler,
 	}, nil
 }
 
 // ParsePayload delegates the parsing of a Hyperlane message body to the underlying
 // Parser implementation.
 func (h *HyperlaneAdapter) ParsePayload(
-	protocolID core.ProtocolID,
-	payloadBz []byte,
-) (bool, *core.Payload, error) {
-	return h.parser.ParsePayload(protocolID, payloadBz)
-}
-
-// HyperlaneParser is used to parse Orbiter payloads from an incoming Hyperlane message body.
-type HyperlaneParser struct {
-	cdc codec.Codec
-}
-
-func NewHyperlaneParser(cdc codec.Codec) (*HyperlaneParser, error) {
-	if cdc == nil {
-		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
-	}
-
-	return &HyperlaneParser{cdc: cdc}, nil
-}
-
-// ParsePayload parses the payload from a Hyperlane message body to retrieve
-// the Orbiter payload.
-//
-// NOTE: This parser is only ever called in the Handle method of the Hyperlane application,
-// which means that all message bodies handled by this parser were intended for the
-// Orbiter. Hence, the first return value is ALWAYS true.
-//
-// TODO: can protocol ID be removed here? Why is it included?
-func (p *HyperlaneParser) ParsePayload(
+	ctx context.Context,
 	_ core.ProtocolID,
 	payloadBz []byte,
 ) (bool, *core.Payload, error) {
-	parsedBody, err := hyperlane.ParseHyperlaneOrbiterBody(p.cdc, payloadBz)
+	payloadHash, err := hyperlane.GetPayloadHashFromWarpMessageBody(payloadBz)
 	if err != nil {
-		return true, nil, errorsmod.Wrap(err, "failed to parse hyperlane body")
+		return false, nil, errorsmod.Wrap(err, "failed to parse payload")
 	}
 
-	payload, err := parsedBody.ToOrbiterPayload()
+	pendingPayload, err := h.stateHandler.GetPendingPayloadWithHash(ctx, payloadHash)
 	if err != nil {
-		return true, nil, errorsmod.Wrap(err, "failed to convert hyperlane body to payload")
+		return false, nil, errorsmod.Wrap(err, "failed to get pending payload")
 	}
 
-	return true, payload, nil
+	return true, pendingPayload.CorePayload(), nil
 }
