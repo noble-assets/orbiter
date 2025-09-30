@@ -49,7 +49,7 @@ func (h InternalHandler) Send(
 	fromBal := h.Balances[msg.FromAddress]
 
 	if msg.Amount.Len() != 1 {
-		return nil, errors.New("only one coin is accepter")
+		return nil, errors.New("only one coin is accepted")
 	}
 
 	coin := msg.Amount[0]
