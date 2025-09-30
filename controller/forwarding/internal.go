@@ -96,7 +96,7 @@ func (c *InternalController) HandlePacket(
 	c.logger.Debug("Handling internal packet")
 
 	if packet == nil {
-		return errorsmod.Wrap(core.ErrNilPointer, "internal controller received nil packet")
+		return core.ErrNilPointer.Wrap("internal controller received nil packet")
 	}
 
 	attr, err := c.ExtractAttributes(packet.Forwarding)
