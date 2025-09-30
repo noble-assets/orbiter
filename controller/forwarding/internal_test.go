@@ -79,7 +79,7 @@ func TestNewInternalController(t *testing.T) {
 	}
 }
 
-func TestExtractAttribuetes_Internal(t *testing.T) {
+func TestExtractAttributes_Internal(t *testing.T) {
 	nobleAddr := testutil.NewNobleAddress()
 
 	testCases := []struct {
