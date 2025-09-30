@@ -154,7 +154,7 @@ func (c *InternalController) ValidateForwarding(
 	}
 
 	if err := intAttr.Validate(); err != nil {
-		return errorsmod.Wrap(err, "invalid transfer attributes")
+		return errorsmod.Wrap(err, "invalid internal forwarding attributes")
 	}
 
 	return nil
