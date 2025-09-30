@@ -189,7 +189,7 @@ func TestHandlePacket_Internal(t *testing.T) {
 			expError: "error validating internal forwarding",
 		},
 		{
-			name: "error - when the handler fails",
+			name: "error - when the handler fails because the module balance is empty",
 			packet: func() *types.ForwardingPacket {
 				return &types.ForwardingPacket{
 					TransferAttributes: validTransfer,
