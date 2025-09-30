@@ -102,7 +102,6 @@ func TestExtractAttribuetes_Internal(t *testing.T) {
 					testutil.RandomBytes(32),
 					[]byte{},
 				)
-
 				require.NoError(t, err)
 
 				return f
