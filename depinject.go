@@ -33,6 +33,7 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	modulev1 "github.com/noble-assets/orbiter/api/module/v1"
 	actionctrl "github.com/noble-assets/orbiter/controller/action"
@@ -40,7 +41,6 @@ import (
 	forwardingctrl "github.com/noble-assets/orbiter/controller/forwarding"
 	"github.com/noble-assets/orbiter/keeper"
 	"github.com/noble-assets/orbiter/types"
-	actiontypes "github.com/noble-assets/orbiter/types/controller/action"
 	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
@@ -96,14 +96,10 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	}
 }
 
-type ComponentsBankKeeper interface {
-	actiontypes.BankKeeper
-}
-
 type ComponentsInputs struct {
 	Orbiters *keeper.Keeper
 
-	BankKeeper ComponentsBankKeeper
+	BankKeeper bankkeeper.Keeper
 	CCTPKeeper *cctpkeeper.Keeper
 	WarpKeeper warpkeeper.Keeper
 }
@@ -134,7 +130,15 @@ func InjectForwardingControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating Hyperlane controller"))
 	}
 
-	in.Orbiters.SetForwardingControllers(cctp, hyperlane)
+	internal, err := forwardingctrl.NewInternalController(
+		in.Orbiters.Forwarder().Logger(),
+		bankkeeper.NewMsgServerImpl(in.BankKeeper),
+	)
+	if err != nil {
+		panic(errorsmod.Wrap(err, "error creating internal controller"))
+	}
+
+	in.Orbiters.SetForwardingControllers(cctp, hyperlane, internal)
 }
 
 func InjectActionControllers(in ComponentsInputs) {
