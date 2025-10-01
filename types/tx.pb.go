@@ -6,11 +6,19 @@ package types
 import (
 	context "context"
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
 	_ "github.com/cosmos/cosmos-sdk/types/msgservice"
+	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
+	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
+	core "github.com/noble-assets/orbiter/types/core"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -24,20 +32,210 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// MsgSubmitPayload enters a new Orbiter payload into the queue of pending
+// forwarding operations.
+type MsgSubmitPayload struct {
+	// The signer of the transaction.
+	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	// The payload submitted to the Orbiter module.
+	Payload core.Payload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload"`
+}
+
+func (m *MsgSubmitPayload) Reset()         { *m = MsgSubmitPayload{} }
+func (m *MsgSubmitPayload) String() string { return proto.CompactTextString(m) }
+func (*MsgSubmitPayload) ProtoMessage()    {}
+func (*MsgSubmitPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{0}
+}
+func (m *MsgSubmitPayload) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSubmitPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSubmitPayload.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSubmitPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSubmitPayload.Merge(m, src)
+}
+func (m *MsgSubmitPayload) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSubmitPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSubmitPayload.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSubmitPayload proto.InternalMessageInfo
+
+func (m *MsgSubmitPayload) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgSubmitPayload) GetPayload() core.Payload {
+	if m != nil {
+		return m.Payload
+	}
+	return core.Payload{}
+}
+
+// MsgSubmitPayloadResponse returns the sequence number of the registered
+type MsgSubmitPayloadResponse struct {
+	// The sequence number of the submitted payload.
+	Sequence uint64 `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	// The keccak256 hash by which to reference the submitted payload.
+	Hash []byte `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
+}
+
+func (m *MsgSubmitPayloadResponse) Reset()         { *m = MsgSubmitPayloadResponse{} }
+func (m *MsgSubmitPayloadResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSubmitPayloadResponse) ProtoMessage()    {}
+func (*MsgSubmitPayloadResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{1}
+}
+func (m *MsgSubmitPayloadResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSubmitPayloadResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSubmitPayloadResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSubmitPayloadResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSubmitPayloadResponse.Merge(m, src)
+}
+func (m *MsgSubmitPayloadResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSubmitPayloadResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSubmitPayloadResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSubmitPayloadResponse proto.InternalMessageInfo
+
+func (m *MsgSubmitPayloadResponse) GetSequence() uint64 {
+	if m != nil {
+		return m.Sequence
+	}
+	return 0
+}
+
+func (m *MsgSubmitPayloadResponse) GetHash() []byte {
+	if m != nil {
+		return m.Hash
+	}
+	return nil
+}
+
+// PendingPayload holds the information that goes into the stored payload hash.
+//
+// TODO: move to different file? hyperlane.proto or something?
+type PendingPayload struct {
+	// The sequence number of the pending payload.
+	Sequence uint64 `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	// The submitted payload that will is registered as pending.
+	Payload *core.Payload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
+}
+
+func (m *PendingPayload) Reset()         { *m = PendingPayload{} }
+func (m *PendingPayload) String() string { return proto.CompactTextString(m) }
+func (*PendingPayload) ProtoMessage()    {}
+func (*PendingPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4f89c0e5a76b9120, []int{2}
+}
+func (m *PendingPayload) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PendingPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PendingPayload.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PendingPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PendingPayload.Merge(m, src)
+}
+func (m *PendingPayload) XXX_Size() int {
+	return m.Size()
+}
+func (m *PendingPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_PendingPayload.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PendingPayload proto.InternalMessageInfo
+
+func (m *PendingPayload) GetSequence() uint64 {
+	if m != nil {
+		return m.Sequence
+	}
+	return 0
+}
+
+func (m *PendingPayload) GetPayload() *core.Payload {
+	if m != nil {
+		return m.Payload
+	}
+	return nil
+}
+
+func init() {
+	proto.RegisterType((*MsgSubmitPayload)(nil), "noble.orbiter.v1.MsgSubmitPayload")
+	proto.RegisterType((*MsgSubmitPayloadResponse)(nil), "noble.orbiter.v1.MsgSubmitPayloadResponse")
+	proto.RegisterType((*PendingPayload)(nil), "noble.orbiter.v1.PendingPayload")
+}
+
 func init() { proto.RegisterFile("noble/orbiter/v1/tx.proto", fileDescriptor_4f89c0e5a76b9120) }
 
 var fileDescriptor_4f89c0e5a76b9120 = []byte{
-	// 156 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0xcc, 0xcb, 0x4f, 0xca,
-	0x49, 0xd5, 0xcf, 0x2f, 0x4a, 0xca, 0x2c, 0x49, 0x2d, 0xd2, 0x2f, 0x33, 0xd4, 0x2f, 0xa9, 0xd0,
-	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x00, 0x4b, 0xe9, 0x41, 0xa5, 0xf4, 0xca, 0x0c, 0xa5,
-	0xc4, 0x93, 0xf3, 0x8b, 0x73, 0xf3, 0x8b, 0xf5, 0x73, 0x8b, 0xd3, 0x41, 0x2a, 0x73, 0x8b, 0xd3,
-	0x21, 0x4a, 0x8d, 0x78, 0xb8, 0x98, 0x7d, 0x8b, 0xd3, 0xa5, 0x58, 0x1b, 0x9e, 0x6f, 0xd0, 0x62,
-	0x74, 0xb2, 0x3f, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x27,
-	0x3c, 0x96, 0x63, 0xb8, 0xf0, 0x58, 0x8e, 0xe1, 0xc6, 0x63, 0x39, 0x86, 0x28, 0xd5, 0xf4, 0xcc,
-	0x92, 0x8c, 0xd2, 0x24, 0xbd, 0xe4, 0xfc, 0x5c, 0x7d, 0xb0, 0xe9, 0xba, 0x89, 0xc5, 0xc5, 0xa9,
-	0x25, 0xc5, 0x70, 0xfb, 0x4b, 0x2a, 0x0b, 0x52, 0x8b, 0x93, 0xd8, 0xc0, 0xa6, 0x1a, 0x03, 0x02,
-	0x00, 0x00, 0xff, 0xff, 0x4d, 0xa8, 0x52, 0x16, 0x9d, 0x00, 0x00, 0x00,
+	// 416 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x52, 0x3d, 0xab, 0x13, 0x41,
+	0x14, 0xdd, 0xd1, 0xe7, 0xd3, 0x37, 0x7e, 0xf0, 0x5c, 0x02, 0x6e, 0xb6, 0x58, 0xc3, 0x8a, 0x10,
+	0x16, 0x32, 0x6b, 0x62, 0x13, 0x6c, 0x24, 0xb1, 0x13, 0x02, 0x61, 0xd3, 0xd9, 0x84, 0xfd, 0x18,
+	0x27, 0x0b, 0xd9, 0x99, 0x75, 0xef, 0x24, 0x98, 0x4e, 0x2c, 0xad, 0xfc, 0x19, 0x96, 0x29, 0xfc,
+	0x07, 0x36, 0x29, 0x83, 0x95, 0x95, 0x48, 0x52, 0xe4, 0x6f, 0xc8, 0xce, 0x4e, 0x02, 0x1b, 0x41,
+	0xb1, 0x19, 0xe6, 0xce, 0xb9, 0xf7, 0x9c, 0x39, 0x87, 0x8b, 0x9b, 0x5c, 0x44, 0x73, 0xea, 0x8b,
+	0x22, 0x4a, 0x25, 0x2d, 0xfc, 0x65, 0xd7, 0x97, 0xef, 0x49, 0x5e, 0x08, 0x29, 0xcc, 0x6b, 0x05,
+	0x11, 0x0d, 0x91, 0x65, 0xd7, 0x7e, 0x18, 0x66, 0x29, 0x17, 0xbe, 0x3a, 0xab, 0x26, 0xfb, 0x51,
+	0x2c, 0x20, 0x13, 0xe0, 0x67, 0xc0, 0xca, 0xe1, 0x0c, 0x98, 0x06, 0x9a, 0x15, 0x30, 0x55, 0x95,
+	0x5f, 0x15, 0x1a, 0x6a, 0x30, 0xc1, 0x44, 0xf5, 0x5e, 0xde, 0xf4, 0xeb, 0x93, 0xfa, 0x4f, 0x62,
+	0x51, 0xd0, 0x92, 0xf1, 0x28, 0xaf, 0x9a, 0xdc, 0x6f, 0x08, 0x5f, 0x8f, 0x80, 0x4d, 0x16, 0x51,
+	0x96, 0xca, 0x71, 0xb8, 0x9a, 0x8b, 0x30, 0x31, 0x9f, 0xe1, 0x4b, 0x48, 0x19, 0xa7, 0x85, 0x85,
+	0x5a, 0xa8, 0x7d, 0x35, 0xb4, 0xbe, 0x7f, 0xed, 0x34, 0xb4, 0xe2, 0x20, 0x49, 0x0a, 0x0a, 0x30,
+	0x91, 0x45, 0xca, 0x59, 0xa0, 0xfb, 0xcc, 0x57, 0xf8, 0x76, 0x5e, 0x0d, 0x5b, 0x37, 0x5a, 0xa8,
+	0x7d, 0xb7, 0xe7, 0x90, 0xba, 0xd9, 0x52, 0x9d, 0x2c, 0xbb, 0x44, 0x4b, 0x0c, 0xaf, 0x36, 0x3f,
+	0x1f, 0x1b, 0x5f, 0x0e, 0x6b, 0x0f, 0x05, 0xc7, 0xc9, 0x17, 0xfd, 0x8f, 0x87, 0xb5, 0xa7, 0x19,
+	0x3f, 0x1d, 0xd6, 0x5e, 0xfb, 0x8f, 0x28, 0x47, 0xc0, 0x06, 0x71, 0x4c, 0x73, 0x39, 0xa6, 0x3c,
+	0x49, 0x39, 0xd3, 0x6c, 0xee, 0x6b, 0x6c, 0x9d, 0x9b, 0x08, 0x28, 0xe4, 0x82, 0x03, 0x35, 0x6d,
+	0x7c, 0x07, 0xe8, 0xbb, 0x05, 0xe5, 0x31, 0x55, 0x76, 0x2e, 0x82, 0x53, 0x6d, 0x9a, 0xf8, 0x62,
+	0x16, 0xc2, 0x4c, 0xfd, 0xf9, 0x5e, 0xa0, 0xee, 0xee, 0x5b, 0xfc, 0xa0, 0xce, 0xfe, 0x57, 0x86,
+	0xfe, 0x7f, 0x1a, 0x3f, 0xb9, 0xed, 0x65, 0xf8, 0xe6, 0x08, 0x98, 0x39, 0xc5, 0xf7, 0xeb, 0xe1,
+	0xbb, 0xe4, 0x7c, 0x4d, 0xc8, 0xb9, 0x37, 0xdb, 0xfb, 0x77, 0xcf, 0xd1, 0xbf, 0x7d, 0xeb, 0x43,
+	0x99, 0xf2, 0xf0, 0xe5, 0x66, 0xe7, 0xa0, 0xed, 0xce, 0x41, 0xbf, 0x76, 0x0e, 0xfa, 0xbc, 0x77,
+	0x8c, 0xed, 0xde, 0x31, 0x7e, 0xec, 0x1d, 0xe3, 0xcd, 0x53, 0x96, 0xca, 0xd9, 0x22, 0x22, 0xb1,
+	0xc8, 0x7c, 0x45, 0xdb, 0x09, 0x01, 0xa8, 0x84, 0x53, 0xf0, 0x72, 0x95, 0x53, 0x88, 0x2e, 0xd5,
+	0xc2, 0x3c, 0xff, 0x1d, 0x00, 0x00, 0xff, 0xff, 0xe9, 0xb1, 0x70, 0x7b, 0xe1, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -52,6 +250,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	// SubmitPayload is the entrypoint to insert a new pending payload
+	// into the dispatching queue.
+	SubmitPayload(ctx context.Context, in *MsgSubmitPayload, opts ...grpc.CallOption) (*MsgSubmitPayloadResponse, error)
 }
 
 type msgClient struct {
@@ -62,23 +263,649 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
+func (c *msgClient) SubmitPayload(ctx context.Context, in *MsgSubmitPayload, opts ...grpc.CallOption) (*MsgSubmitPayloadResponse, error) {
+	out := new(MsgSubmitPayloadResponse)
+	err := c.cc.Invoke(ctx, "/noble.orbiter.v1.Msg/SubmitPayload", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	// SubmitPayload is the entrypoint to insert a new pending payload
+	// into the dispatching queue.
+	SubmitPayload(context.Context, *MsgSubmitPayload) (*MsgSubmitPayloadResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
+func (*UnimplementedMsgServer) SubmitPayload(ctx context.Context, req *MsgSubmitPayload) (*MsgSubmitPayloadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitPayload not implemented")
+}
+
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
+}
+
+func _Msg_SubmitPayload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSubmitPayload)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SubmitPayload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/noble.orbiter.v1.Msg/SubmitPayload",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SubmitPayload(ctx, req.(*MsgSubmitPayload))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var Msg_serviceDesc = _Msg_serviceDesc
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "noble.orbiter.v1.Msg",
 	HandlerType: (*MsgServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "noble/orbiter/v1/tx.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SubmitPayload",
+			Handler:    _Msg_SubmitPayload_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "noble/orbiter/v1/tx.proto",
 }
+
+func (m *MsgSubmitPayload) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSubmitPayload) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSubmitPayload) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Payload.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintTx(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSubmitPayloadResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSubmitPayloadResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSubmitPayloadResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Hash) > 0 {
+		i -= len(m.Hash)
+		copy(dAtA[i:], m.Hash)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Hash)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Sequence != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Sequence))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *PendingPayload) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PendingPayload) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PendingPayload) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Payload != nil {
+		{
+			size, err := m.Payload.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Sequence != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Sequence))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTx(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *MsgSubmitPayload) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = m.Payload.Size()
+	n += 1 + l + sovTx(uint64(l))
+	return n
+}
+
+func (m *MsgSubmitPayloadResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Sequence != 0 {
+		n += 1 + sovTx(uint64(m.Sequence))
+	}
+	l = len(m.Hash)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *PendingPayload) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Sequence != 0 {
+		n += 1 + sovTx(uint64(m.Sequence))
+	}
+	if m.Payload != nil {
+		l = m.Payload.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func sovTx(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozTx(x uint64) (n int) {
+	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *MsgSubmitPayload) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSubmitPayload: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSubmitPayload: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Payload", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Payload.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSubmitPayloadResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSubmitPayloadResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSubmitPayloadResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
+			}
+			m.Sequence = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Sequence |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Hash = append(m.Hash[:0], dAtA[iNdEx:postIndex]...)
+			if m.Hash == nil {
+				m.Hash = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PendingPayload) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PendingPayload: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PendingPayload: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
+			}
+			m.Sequence = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Sequence |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Payload", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Payload == nil {
+				m.Payload = &core.Payload{}
+			}
+			if err := m.Payload.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipTx(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthTx
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTx
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTx
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthTx        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTx          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTx = fmt.Errorf("proto: unexpected end of group")
+)
