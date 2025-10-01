@@ -237,6 +237,11 @@ func TestHandlePacket_Internal(t *testing.T) {
 				require.ErrorContains(t, err, tC.expError)
 			} else {
 				require.NoError(t, err)
+
+				// Verify recipient received the funds
+				recipientBalance := handler.Balances[nobleAddr]
+				expectedCoin := sdk.NewCoin(validTransfer.DestinationDenom(), validTransfer.DestinationAmount())
+				require.True(t, recipientBalance.AmountOf(expectedCoin.Denom).Equal(expectedCoin.Amount))
 			}
 		})
 	}
