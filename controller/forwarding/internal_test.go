@@ -138,6 +138,7 @@ func TestExtractAttributes_Internal(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, intAttr)
+				require.Equal(t, &tC.expAttr, intAttr)
 			}
 		})
 	}
