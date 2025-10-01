@@ -23,7 +23,9 @@ package executor
 import (
 	"context"
 
-	errorsmod "cosmossdk.io/errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	executortypes "github.com/noble-assets/orbiter/types/component/executor"
@@ -49,14 +51,14 @@ func (s queryServer) IsActionPaused(
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	actionID, err := core.NewActionID(core.ActionID_value[req.ActionId])
+	actionID, err := core.NewActionIDFromString(req.ActionId)
 	if err != nil {
-		return nil, errorsmod.Wrapf(err, "invalid action ID")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	paused, err := s.Executor.IsActionPaused(ctx, actionID)
 	if err != nil {
-		return nil, errorsmod.Wrapf(err, "unable to query action paused status")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &executortypes.QueryIsActionPausedResponse{
@@ -75,7 +77,7 @@ func (s queryServer) PausedActions(
 
 	paused, err := s.GetPausedActions(ctx)
 	if err != nil {
-		return nil, errorsmod.Wrapf(err, "unable to query paused actions")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &executortypes.QueryPausedActionsResponse{

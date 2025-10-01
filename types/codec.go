@@ -23,7 +23,6 @@ package types
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
 
 	"github.com/noble-assets/orbiter/types/component"
 	"github.com/noble-assets/orbiter/types/controller"
@@ -47,8 +46,6 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 		"noble.orbiter.v1.ActionAttributes",
 		(*core.ActionAttributes)(nil),
 	)
-
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 
 	component.RegisterInterfaces(registry)
 	controller.RegisterInterfaces(registry)
