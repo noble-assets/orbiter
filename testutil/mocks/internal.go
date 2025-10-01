@@ -18,21 +18,48 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package forwarding
+package mocks
 
 import (
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"context"
+	"errors"
 
-	"github.com/noble-assets/orbiter/types/core"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
+	"github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
-// RegisterInterfaces registers the forwarding attributes
-// satisfying the ForwardingAttributes interface in the module codec.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterImplementations(
-		(*core.ForwardingAttributes)(nil),
-		&CCTPAttributes{},
-		&HypAttributes{},
-		&InternalAttributes{},
-	)
+var _ forwarding.InternalHandler = InternalHandler{}
+
+type InternalHandler struct {
+	*BankKeeper
+}
+
+func NewInternalHandler() *InternalHandler {
+	return &InternalHandler{
+		NewBankKeeper(),
+	}
+}
+
+// Send implements forwarding.InternalHandler.
+func (h InternalHandler) Send(
+	ctx context.Context,
+	msg *banktypes.MsgSend,
+) (*banktypes.MsgSendResponse, error) {
+	fromBal := h.Balances[msg.FromAddress]
+
+	if msg.Amount.Len() != 1 {
+		return nil, errors.New("only one coin is accepted")
+	}
+
+	coin := msg.Amount[0]
+
+	if fromBal.AmountOf(coin.Denom).LT(coin.Amount) {
+		return nil, errors.New("not enough balance")
+	}
+
+	h.Balances[msg.FromAddress] = fromBal.Sub(coin)
+	h.Balances[msg.ToAddress] = h.Balances[msg.ToAddress].Add(coin)
+
+	return &banktypes.MsgSendResponse{}, nil
 }
