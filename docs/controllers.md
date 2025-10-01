@@ -56,21 +56,23 @@ Based on the selected bridge, the following controllers are available:
 The Cross-Chain Transfer Protocol (CCTP) is an interoperability protocol developed by Circle to
 enable native USDC transfers across different blockchain networks.
 CCTP uses a burn-and-mint mechanism where USDC is burned on the source chain and minted on
-the destination chain, ensuring that the total supply remains constant across all supported chains.
+the destination chain,
+ensuring that the total supply remains constant across all supported chains.
 
-For more detailed information about the protocol itself, please refer to the
-[Circle CCTP documentation](https://developers.circle.com/cctp).
+For more detailed information about the protocol itself,
+please refer to the [Circle CCTP documentation](https://developers.circle.com/cctp).
 
 The CCTP controller is the concrete implementation of the controller interface designed to handle
 CCTP transfers.
 All relevant information related to a CCTP transfer is defined by the
 [`CCTPAttributes`](https://github.com/noble-assets/orbiter/blob/main/proto/noble/orbiter/controller/forwarding/v1/cctp.proto#L9-L26)
-type, which implements the forwarding attributes interface.
+type,
+which implements the forwarding attributes interface.
 The corresponding Protobuf implementation can be seen here:
 
 ```protobuf
 message CCTPAttributes {
-  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ForwardingAttributes";
+  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ForwardingAttributes";
 
   uint32 destination_domain = 1;
   bytes mint_recipient = 2;
@@ -111,21 +113,20 @@ flowchart LR
 - The destination domain is not the Noble domain
 - The mint recipient address is not empty
 
-**Execution** calls the CCTP module's `DepositForBurnWithCaller` message server, which initiates the
-burn process on the source chain and sends the necessary information to the destination chain for
-minting.
+**Execution** calls the CCTP module's `DepositForBurnWithCaller` message server,
+which initiates the burn process on the source chain
+and sends the necessary information to the destination chain for minting.
 
 The CCTP protocol uses a commit-and-forget style,
-meaning that once the CCTP server confirms that the burn request has been stored to state, 
+meaning that once the CCTP server confirms that the burn request has been stored to state,
 the Orbiter execution is complete.
-The events emitted
-during this state transition are then picked up by the relayers and forwarded to the destination
-chain.
+The events emitted during this state transition are then picked up by the relayers
+and forwarded to the destination chain.
 
 ## Hyperlane
 
-The Hyperlane protocol is a mailbox-based permissionless bridge that enables cross-chain transfers
-through its **Warp** application,
+The Hyperlane protocol is a mailbox-based permissionless bridge
+that enables cross-chain transfers through its **Warp** application,
 which is built on top of Hyperlane's general message passing functionality.
 The architecture follows a pattern similar to IBC core and ICS-20,
 where the Warp server handles token transfers by building a specific payload,
@@ -145,7 +146,7 @@ type:
 
 ```protobuf
 message HypAttributes {
-  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ForwardingAttributes";
+  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ForwardingAttributes";
 
   bytes token_id = 1;
   uint32 destination_domain = 2;
@@ -198,9 +199,8 @@ flowchart LR
 (crucial since multiple token IDs can map to the same denom).
 - Token ID enrollment with a router for the destination chain.
 
-**Execution** uses the Warp message server to initiate the transfer,
-ensuring all required checks and standard events are handled.
-The transfer triggers two post-dispatch hooks in sequence:
+**Execution** uses the Warp message server to initiate the transfer, ensuring all required checks
+and standard events are handled. The transfer triggers two post-dispatch hooks in sequence:
 
 1. The mandatory mailbox hook.
 2. Either the default hook or a custom hook (if specified via `custom_hook_id`).

@@ -13,7 +13,7 @@ option go_package = "github.com/noble-assets/orbiter/types/controller/forwarding
 // ForwardingAttributes interface to execute a cross-chain routing
 // via the Hyperlane protocol.
 message HypAttributes {
-  option (cosmos_proto.implements_interface) = "orbiter.core.v1.ForwardingAttributes";
+  option (cosmos_proto.implements_interface) = "noble.orbiter.v1.ForwardingAttributes";
 
   // token_id represents the unique ID assigned to a token by the Hyperlane
   // app router.

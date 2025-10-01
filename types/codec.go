@@ -39,12 +39,12 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 // the Orbiter module.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterInterface(
-		"orbiter.core.v1.ForwardingAttributes",
+		"noble.orbiter.v1.ForwardingAttributes",
 		(*core.ForwardingAttributes)(nil),
 	)
 
 	registry.RegisterInterface(
-		"orbiter.core.v1.ActionAttributes",
+		"noble.orbiter.v1.ActionAttributes",
 		(*core.ActionAttributes)(nil),
 	)
 
