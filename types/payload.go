@@ -21,10 +21,9 @@
 package types
 
 import (
-	"encoding/json"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/noble-assets/orbiter/types/core"
 
 	"cosmossdk.io/collections/codec"
 )
@@ -32,12 +31,21 @@ import (
 // Keccak256Hash returns the keccak 256 hash of the payload contents.
 // To guarantee uniqueness the sequence number is included.
 func (p *PendingPayload) Keccak256Hash() (common.Hash, error) {
-	bz, err := json.Marshal(p)
+	bz, err := p.Marshal()
 	if err != nil {
 		return common.Hash{}, err
 	}
 
 	return crypto.Keccak256Hash(bz), nil
+}
+
+// Validate checks that the pending payload contents are valid.
+func (p *PendingPayload) Validate() error {
+	if p == nil {
+		return core.ErrNilPointer.Wrap("pending payload")
+	}
+
+	return p.Payload.Validate()
 }
 
 // TODO: check if this is required?
@@ -49,30 +57,30 @@ type PendingPayloadCollValue struct{}
 
 // TODO: this could use e.g. `abi` encoding to be aligned with Ethereum?
 func (v *PendingPayloadCollValue) Encode(p PendingPayload) ([]byte, error) {
-	panic("implement me")
+	return p.Marshal()
 }
 
 func (v *PendingPayloadCollValue) Decode(data []byte) (PendingPayload, error) {
-	panic("implement me")
-}
-
-func (v *PendingPayloadCollValue) EncodeJSON(payload PendingPayload) ([]byte, error) {
-	return json.Marshal(payload)
-}
-
-func (v *PendingPayloadCollValue) DecodeJSON(data []byte) (PendingPayload, error) {
-	var payload PendingPayload
-	if err := json.Unmarshal(data, &payload); err != nil {
+	var p PendingPayload
+	if err := (&p).Unmarshal(data); err != nil {
 		return PendingPayload{}, err
 	}
 
-	return payload, nil
+	return p, nil
+}
+
+func (v *PendingPayloadCollValue) EncodeJSON(payload PendingPayload) ([]byte, error) {
+	panic("implement me (EncodeJSON)")
+}
+
+func (v *PendingPayloadCollValue) DecodeJSON(data []byte) (PendingPayload, error) {
+	panic("implement me (DecodeJSON)")
 }
 
 func (v *PendingPayloadCollValue) Stringify(_ PendingPayload) string {
-	panic("implement me")
+	panic("implement me (Stringify)")
 }
 
 func (v *PendingPayloadCollValue) ValueType() string {
-	panic("implement me")
+	return "noble/orbiter/v1/PendingPayload"
 }

@@ -38,6 +38,10 @@ func (k *Keeper) AcceptPayload(
 	ctx context.Context,
 	payload *orbitertypes.PendingPayload,
 ) ([]byte, error) {
+	if err := payload.Validate(); err != nil {
+		return nil, errorsmod.Wrap(err, "invalid pending payload")
+	}
+
 	hash, err := payload.Keccak256Hash()
 	if err != nil {
 		return nil, err
