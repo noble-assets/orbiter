@@ -87,5 +87,5 @@ func (h *HyperlaneAdapter) ParsePayload(
 		return false, nil, errorsmod.Wrap(err, "failed to get pending payload")
 	}
 
-	return true, pendingPayload.CorePayload(), nil
+	return true, pendingPayload.Payload, nil
 }

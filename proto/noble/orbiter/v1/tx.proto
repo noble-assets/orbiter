@@ -37,10 +37,8 @@ message MsgSubmitPayload {
 
 // MsgSubmitPayloadResponse returns the sequence number of the registered
 message MsgSubmitPayloadResponse {
-  // The sequence number of the submitted payload.
-  uint64 sequence = 1;
   // The keccak256 hash by which to reference the submitted payload.
-  bytes hash = 2;
+  bytes hash = 1;
 }
 
 // PendingPayload holds the information that goes into the stored payload hash.

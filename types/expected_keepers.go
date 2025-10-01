@@ -26,8 +26,6 @@ import (
 	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/noble-assets/orbiter/types/hyperlane"
 )
 
 // BankKeeper wraps the bank behaviors expected by the orbiter
@@ -76,7 +74,7 @@ type HyperlaneWarpKeeper interface {
 // HyperlaneStateHandler defines the interface to adjust and query the Orbiter module
 // state as it relates to Hyperlane bookkeeping.
 type HyperlaneStateHandler interface {
-	AcceptPendingPayload(ctx context.Context, payload *hyperlane.PendingPayload) error
-	CompletePayloadWithHash(ctx context.Context, payload *hyperlane.PendingPayload) error
-	GetPendingPayloadWithHash(ctx context.Context, hash []byte) (*hyperlane.PendingPayload, error)
+	AcceptPayload(ctx context.Context, payload *PendingPayload) ([]byte, error)
+	CompletePayloadWithHash(ctx context.Context, hash []byte) error
+	GetPendingPayloadWithHash(ctx context.Context, hash []byte) (*PendingPayload, error)
 }

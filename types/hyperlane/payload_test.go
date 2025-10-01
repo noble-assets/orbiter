@@ -21,10 +21,10 @@
 package hyperlane_test
 
 import (
-	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 	"math/big"
 	"testing"
 
+	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"

@@ -21,34 +21,10 @@
 package hyperlane
 
 import (
-	"encoding/json"
 	"fmt"
 
 	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-
-	"github.com/noble-assets/orbiter/types/core"
 )
-
-// PendingPayload is the storage type for information on incoming Orbiter payloads.
-// In order for them to be unique in the hashes they produce, the sequence number
-// is included in the hash.
-type PendingPayload struct {
-	Contents *core.Payload `json:"contents"`
-	Sequence uint64        `json:"sequence"`
-}
-
-func (p *PendingPayload) CorePayload() *core.Payload { return p.Contents }
-
-func (p *PendingPayload) Hash() (common.Hash, error) {
-	bz, err := json.Marshal(p)
-	if err != nil {
-		return common.Hash{}, err
-	}
-
-	return crypto.Keccak256Hash(bz), nil
-}
 
 // GetPayloadHashFromWarpMessageBody grabs the orbiter payload hash from a Hyperlane message body.
 // This hash is stored in the last 32 bytes of the passed byte slice.

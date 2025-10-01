@@ -18,55 +18,47 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package mocks
+package keeper
 
 import (
 	"context"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	errorsmod "cosmossdk.io/errors"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/noble-assets/orbiter/testutil"
+	orbitertypes "github.com/noble-assets/orbiter/types"
 )
 
-type contextKey string
-
-const FailingContextKey contextKey = "failing"
-
-func init() {
-	testutil.Authority = testutil.NewNobleAddress()
-	testutil.SetSDKConfig()
-}
-
-type Mocks struct {
-	// Cosmos SDK
-	BankKeeper *BankKeeper
-	// Circle
-	CCTPMsgServer *CCTPMsgServer
-	// Hyperlane
-	HyperlaneCoreKeeper *HyperlaneCoreKeeper
-}
-
-func NewMocks(deps Dependencies) Mocks {
-	bk := BankKeeper{
-		Balances: make(map[string]sdk.Coins),
+func (k *Keeper) SubmitPayload(
+	ctx context.Context,
+	req *orbitertypes.MsgSubmitPayload,
+) (*orbitertypes.MsgSubmitPayloadResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	mocks := Mocks{
-		// Cosmos SDK
-		BankKeeper: &bk,
-		// Circle
-		CCTPMsgServer:       &CCTPMsgServer{},
-		HyperlaneCoreKeeper: newMockHyperlaneCoreKeeper(deps),
+	if err := req.Payload.Validate(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}
 
-	return mocks
-}
-
-func CheckIfFailing(ctx context.Context) bool {
-	isFailing := ctx.Value(FailingContextKey)
-	if isFailing == nil || isFailing == false {
-		return false
+	// TODO: move this into the internal method?
+	seq, err := k.pendingPayloadsSequence.Next(ctx)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to obtain sequence number")
 	}
 
-	return true
+	payloadHash, err := k.AcceptPayload(
+		ctx,
+		&orbitertypes.PendingPayload{
+			Sequence: seq,
+			Payload:  &req.Payload,
+		},
+	)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to accept payload")
+	}
+
+	return &orbitertypes.MsgSubmitPayloadResponse{
+		Hash: payloadHash,
+	}, nil
 }

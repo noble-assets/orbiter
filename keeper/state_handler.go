@@ -22,37 +22,41 @@ package keeper
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 
 	errorsmod "cosmossdk.io/errors"
 
 	orbitertypes "github.com/noble-assets/orbiter/types"
-	hyperlaneorbitertypes "github.com/noble-assets/orbiter/types/hyperlane"
 )
 
 var _ orbitertypes.HyperlaneStateHandler = &Keeper{}
 
-// AcceptPendingPayload adds a new pending payload into the module storage.
+// AcceptPayload adds a new pending payload into the module storage.
 // If the payload's hash is already set, an error is returned.
-func (k *Keeper) AcceptPendingPayload(
+func (k *Keeper) AcceptPayload(
 	ctx context.Context,
-	payload *hyperlaneorbitertypes.PendingPayload,
-) error {
-	hash, err := payload.Hash()
+	payload *orbitertypes.PendingPayload,
+) ([]byte, error) {
+	hash, err := payload.Keccak256Hash()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	found, err := k.pendingPayloads.Has(ctx, hash.Bytes())
 	if err != nil {
-		return errorsmod.Wrap(err, "failed to check pending payloads")
+		return nil, errorsmod.Wrap(err, "failed to check pending payloads")
 	}
 
 	if found {
-		return errors.New("payload hash already exists")
+		k.Logger().Error("payload hash already registered", "hash", hash.String())
+
+		return nil, errors.New("payload hash already registered")
 	}
 
-	return k.pendingPayloads.Set(ctx, hash.Bytes(), *payload)
+	k.Logger().Debug("payload hash registered", "hash", hash.String(), "payload", payload.String())
+
+	return hash.Bytes(), k.pendingPayloads.Set(ctx, hash.Bytes(), *payload)
 }
 
 // GetPendingPayloadWithHash returns the pending payload with the given hash
@@ -62,7 +66,7 @@ func (k *Keeper) AcceptPendingPayload(
 func (k *Keeper) GetPendingPayloadWithHash(
 	ctx context.Context,
 	hash []byte,
-) (*hyperlaneorbitertypes.PendingPayload, error) {
+) (*orbitertypes.PendingPayload, error) {
 	payload, err := k.pendingPayloads.Get(ctx, hash)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "pending payload not found")
@@ -75,19 +79,12 @@ func (k *Keeper) GetPendingPayloadWithHash(
 // If a payload is not found, it is a no-op but does not return an error.
 //
 // TODO: probably this needs to have more fields other than just the payload like the sender and
-// origin account
+// origin account.
 func (k *Keeper) CompletePayloadWithHash(
 	ctx context.Context,
-	payload *hyperlaneorbitertypes.PendingPayload,
+	hash []byte,
 ) error {
-	if payload == nil {
-		return errors.New("payload must not be nil")
-	}
+	k.Logger().Debug("completing payload", "hash", hex.EncodeToString(hash))
 
-	hash, err := payload.Hash()
-	if err != nil {
-		return err
-	}
-
-	return k.pendingPayloads.Remove(ctx, hash.Bytes())
+	return k.pendingPayloads.Remove(ctx, hash)
 }

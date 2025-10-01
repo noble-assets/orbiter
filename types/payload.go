@@ -18,14 +18,29 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package hyperlane
+package types
 
 import (
 	"encoding/json"
 
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+
 	"cosmossdk.io/collections/codec"
 )
 
+// Keccak256Hash returns the keccak 256 hash of the payload contents.
+// To guarantee uniqueness the sequence number is included.
+func (p *PendingPayload) Keccak256Hash() (common.Hash, error) {
+	bz, err := json.Marshal(p)
+	if err != nil {
+		return common.Hash{}, err
+	}
+
+	return crypto.Keccak256Hash(bz), nil
+}
+
+// TODO: check if this is required?
 var _ codec.ValueCodec[PendingPayload] = &PendingPayloadCollValue{}
 
 // PendingPayloadCollValue implements the ValueCodec interface so that PendingPayload

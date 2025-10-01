@@ -38,18 +38,18 @@ import (
 	dispatchercomp "github.com/noble-assets/orbiter/keeper/component/dispatcher"
 	executorcomp "github.com/noble-assets/orbiter/keeper/component/executor"
 	forwardercomp "github.com/noble-assets/orbiter/keeper/component/forwarder"
-	"github.com/noble-assets/orbiter/types"
+	orbitertypes "github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
-	"github.com/noble-assets/orbiter/types/hyperlane"
 )
 
 var (
-	// General interface compliance
-	_ types.Authorizer = &Keeper{}
+	// General interface compliance.
+	_ orbitertypes.Authorizer = &Keeper{}
+	_ orbitertypes.MsgServer  = &Keeper{}
 
-	// Hyperlane interface compliance
-	_ hyperlaneutil.HyperlaneApp  = &Keeper{}
-	_ types.HyperlaneStateHandler = &Keeper{}
+	// Hyperlane interface compliance.
+	_ hyperlaneutil.HyperlaneApp         = &Keeper{}
+	_ orbitertypes.HyperlaneStateHandler = &Keeper{}
 )
 
 // Keeper is the main module keeper.
@@ -68,14 +68,14 @@ type Keeper struct {
 	adapter    *adaptercomp.Adapter
 
 	// pendingPayloads stores the pending payloads addressed by their keccak256 hash.
-	pendingPayloads collections.Map[[]byte, hyperlane.PendingPayload]
+	pendingPayloads collections.Map[[]byte, orbitertypes.PendingPayload]
 	// pendingPayloadsSequence is the unique identifier of a given pending payload handled by the
 	// orbiter.
 	pendingPayloadsSequence collections.Sequence
 
 	// Hyperlane dependencies
-	hyperlaneCoreKeeper types.HyperlaneCoreKeeper
-	hyperlaneWarpKeeper types.HyperlaneWarpKeeper
+	hyperlaneCoreKeeper orbitertypes.HyperlaneCoreKeeper
+	hyperlaneWarpKeeper orbitertypes.HyperlaneWarpKeeper
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -87,8 +87,8 @@ func NewKeeper(
 	eventService event.Service,
 	storeService store.KVStoreService,
 	authority string,
-	bankKeeper types.BankKeeper,
-	coreKeeper types.HyperlaneCoreKeeper,
+	bankKeeper orbitertypes.BankKeeper,
+	coreKeeper orbitertypes.HyperlaneCoreKeeper,
 ) *Keeper {
 	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, bankKeeper, coreKeeper, authority); err != nil {
 		panic(err)
@@ -107,12 +107,14 @@ func NewKeeper(
 			core.PendingPayloadsSequencePrefix,
 			core.PendingPayloadsSequenceName,
 		),
-		pendingPayloads: collections.NewMap[[]byte, hyperlane.PendingPayload](
+		pendingPayloads: collections.NewMap[[]byte, orbitertypes.PendingPayload](
 			sb,
 			core.PendingPayloadsPrefix,
 			core.PendingPayloadsName,
 			collections.BytesKey,
-			&hyperlane.PendingPayloadCollValue{},
+			//// TODO: why does CollValue not work for the proto type PendingPayload?
+			// codec.CollValue[&orbitertypes.PendingPayload{}],
+			&orbitertypes.PendingPayloadCollValue{},
 		),
 
 		hyperlaneCoreKeeper: coreKeeper,
@@ -143,8 +145,8 @@ func validateKeeperInputs(
 	logger log.Logger,
 	eventService event.Service,
 	storeService store.KVStoreService,
-	bankKeeper types.BankKeeper,
-	coreKeeper types.HyperlaneCoreKeeper,
+	bankKeeper orbitertypes.BankKeeper,
+	coreKeeper orbitertypes.HyperlaneCoreKeeper,
 	authority string,
 ) error {
 	if cdc == nil {
@@ -221,7 +223,7 @@ func (k *Keeper) Adapter() *adaptercomp.Adapter {
 	return k.adapter
 }
 
-func (k *Keeper) SetForwardingControllers(controllers ...types.ForwardingController) {
+func (k *Keeper) SetForwardingControllers(controllers ...orbitertypes.ForwardingController) {
 	router := k.forwarder.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -233,7 +235,7 @@ func (k *Keeper) SetForwardingControllers(controllers ...types.ForwardingControl
 	}
 }
 
-func (k *Keeper) SetActionControllers(controllers ...types.ActionController) {
+func (k *Keeper) SetActionControllers(controllers ...orbitertypes.ActionController) {
 	router := k.executor.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -245,7 +247,7 @@ func (k *Keeper) SetActionControllers(controllers ...types.ActionController) {
 	}
 }
 
-func (k *Keeper) SetAdapterControllers(controllers ...types.AdapterController) {
+func (k *Keeper) SetAdapterControllers(controllers ...orbitertypes.AdapterController) {
 	router := k.adapter.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -273,7 +275,7 @@ func (k *Keeper) setComponents(
 	logger log.Logger,
 	eventService event.Service,
 	sb *collections.SchemaBuilder,
-	bankKeeper types.BankKeeper,
+	bankKeeper orbitertypes.BankKeeper,
 ) error {
 	executor, err := executorcomp.New(cdc, sb, logger, eventService)
 	if err != nil {
