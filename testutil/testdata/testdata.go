@@ -30,3 +30,5 @@ var (
 func (a *TestForwardingAttr) CounterpartyID() string {
 	return a.Planet
 }
+
+func (a *TestForwardingAttr) Validate() error { return nil }
