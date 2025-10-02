@@ -61,8 +61,6 @@ func (ha *HyperlaneAdapter) Handle(
 		return errorsmod.Wrap(err, "failed to parse cross chain ID")
 	}
 
-	// TODO: I guess here should be where the BeforeTransferHook is called? however the transfer
-	// should already have been processed at this point
 	if err = types.Adapter(ha).BeforeTransferHook(
 		ctx, ccID, payload,
 	); err != nil {
@@ -71,7 +69,6 @@ func (ha *HyperlaneAdapter) Handle(
 
 	// TODO: what to do with mailbox ID? do we need to check this?
 
-	// TODO: this should be where the underlying warp logic is called.
 	reducedWarpMessage, err := hyperlaneorbitertypes.GetReducedWarpMessageFromOrbiterMessage(
 		message,
 	)
