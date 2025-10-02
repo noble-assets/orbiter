@@ -109,7 +109,7 @@ func TestGetAttributes(t *testing.T) {
 	}
 
 	deps := mocks.NewDependencies(t)
-	m := mocks.NewMocks()
+	m := mocks.NewMocks(deps)
 	controller, err := controllers.NewFeeController(deps.Logger, deps.EventService, m.BankKeeper)
 	require.NoError(t, err)
 
@@ -292,7 +292,7 @@ func TestComputeFeesToDistribute(t *testing.T) {
 	}
 
 	deps := mocks.NewDependencies(t)
-	m := mocks.NewMocks()
+	m := mocks.NewMocks(deps)
 	controller, err := controllers.NewFeeController(deps.Logger, deps.EventService, m.BankKeeper)
 	require.NoError(t, err)
 
@@ -455,7 +455,7 @@ func TestValidateAttributes(t *testing.T) {
 	}
 
 	deps := mocks.NewDependencies(t)
-	m := mocks.NewMocks()
+	m := mocks.NewMocks(deps)
 	controller, err := controllers.NewFeeController(deps.Logger, deps.EventService, m.BankKeeper)
 	require.NoError(t, err)
 
@@ -550,7 +550,7 @@ func TestHandlePacket(t *testing.T) {
 	}
 
 	deps := mocks.NewDependencies(t)
-	m := mocks.NewMocks()
+	m := mocks.NewMocks(deps)
 	controller, err := controllers.NewFeeController(deps.Logger, deps.EventService, m.BankKeeper)
 	require.NoError(t, err)
 

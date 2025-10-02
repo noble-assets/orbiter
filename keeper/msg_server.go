@@ -18,20 +18,34 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package keeper
 
 import (
 	"context"
 
-	"github.com/noble-assets/orbiter/types/core"
+	errorsmod "cosmossdk.io/errors"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	orbitertypes "github.com/noble-assets/orbiter/types"
 )
 
-// PayloadParser defines the behavior expected by a type capable of
-// parsing a payload from its bytes representation.
-type PayloadParser interface {
-	// ParsePayload handle bytes and parse them into the
-	// orbiter payload. It returns a boolean to inform if
-	// the bytes represent an orbiter payload or not. The
-	// parsing is executed only if the boolean is true.
-	ParsePayload(context.Context, core.ProtocolID, []byte) (bool, *core.Payload, error)
+func (k *Keeper) SubmitPayload(
+	ctx context.Context,
+	req *orbitertypes.MsgSubmitPayload,
+) (*orbitertypes.MsgSubmitPayloadResponse, error) {
+	if err := req.Payload.Validate(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
+
+	payloadHash, err := k.AcceptPayload(
+		ctx,
+		&req.Payload,
+	)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to accept payload")
+	}
+
+	return &orbitertypes.MsgSubmitPayloadResponse{
+		Hash: payloadHash,
+	}, nil
 }

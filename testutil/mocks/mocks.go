@@ -42,9 +42,11 @@ type Mocks struct {
 	BankKeeper *BankKeeper
 	// Circle
 	CCTPMsgServer *CCTPMsgServer
+	// Hyperlane
+	HyperlaneCoreKeeper *HyperlaneCoreKeeper
 }
 
-func NewMocks() Mocks {
+func NewMocks(deps Dependencies) Mocks {
 	bk := BankKeeper{
 		Balances: make(map[string]sdk.Coins),
 	}
@@ -53,7 +55,8 @@ func NewMocks() Mocks {
 		// Cosmos SDK
 		BankKeeper: &bk,
 		// Circle
-		CCTPMsgServer: &CCTPMsgServer{},
+		CCTPMsgServer:       &CCTPMsgServer{},
+		HyperlaneCoreKeeper: newMockHyperlaneCoreKeeper(deps),
 	}
 
 	return mocks

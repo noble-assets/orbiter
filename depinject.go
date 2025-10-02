@@ -21,6 +21,7 @@
 package orbiter
 
 import (
+	hyperlanecorekeeper "github.com/bcp-innovations/hyperlane-cosmos/x/core/keeper"
 	warpkeeper "github.com/bcp-innovations/hyperlane-cosmos/x/warp/keeper"
 	cctpkeeper "github.com/circlefin/noble-cctp/x/cctp/keeper"
 
@@ -63,6 +64,9 @@ type ModuleInputs struct {
 	StoreService store.KVStoreService
 
 	BankKeeper types.BankKeeper
+
+	// TODO: use abstracted interfaces
+	CoreKeeper *hyperlanecorekeeper.Keeper
 }
 
 type ModuleOutputs struct {
@@ -101,7 +105,9 @@ type ComponentsInputs struct {
 
 	BankKeeper bankkeeper.Keeper
 	CCTPKeeper *cctpkeeper.Keeper
-	WarpKeeper warpkeeper.Keeper
+
+	HyperlaneCoreKeeper *hyperlanecorekeeper.Keeper
+	WarpKeeper          *warpkeeper.Keeper
 }
 
 func InjectComponents(in ComponentsInputs) {
@@ -122,8 +128,8 @@ func InjectForwardingControllers(in ComponentsInputs) {
 	hyperlane, err := forwardingctrl.NewHyperlaneController(
 		in.Orbiters.Forwarder().Logger(),
 		forwardingtypes.NewHyperlaneHandler(
-			warpkeeper.NewMsgServerImpl(in.WarpKeeper),
-			warpkeeper.NewQueryServerImpl(in.WarpKeeper),
+			warpkeeper.NewMsgServerImpl(*in.WarpKeeper),
+			warpkeeper.NewQueryServerImpl(*in.WarpKeeper),
 		),
 	)
 	if err != nil {
@@ -163,5 +169,17 @@ func InjectAdapterControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating IBC adapter"))
 	}
 
-	in.Orbiters.SetAdapterControllers(ibc)
+	hyperlane, err := adapterctrl.NewHyperlaneAdapter(
+		in.Orbiters.Logger(),
+		in.Orbiters,
+		in.HyperlaneCoreKeeper,
+		in.WarpKeeper,
+	)
+	if err != nil {
+		panic(errorsmod.Wrap(err, "error creating Hyperlane adapter"))
+	}
+
+	hyperlane.RegisterHyperlaneAppRoute()
+
+	in.Orbiters.SetAdapterControllers(ibc, hyperlane)
 }

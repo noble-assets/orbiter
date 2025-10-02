@@ -1,0 +1,10 @@
+{
+  "name": "@noble-assets/orbiter-contracts",
+  "private": true,
+  "devDependencies": {
+    "@hyperlane-xyz/core": "9.0.9",
+    "@openzeppelin/contracts": "^4.9.3",
+    "@openzeppelin/contracts-upgradeable": "^4.9.3",
+    "forge-std": "github:foundry-rs/forge-std#v1.9.7"
+  }
+}

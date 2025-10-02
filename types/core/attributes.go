@@ -34,6 +34,7 @@ type ActionAttributes interface {
 // attribute type has to implement.
 type ForwardingAttributes interface {
 	proto.Message
-	// Returns the destination chain identifier.
+	// CounterpartyID returns the destination chain identifier.
 	CounterpartyID() string
+	Validate() error
 }

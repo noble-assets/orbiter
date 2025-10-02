@@ -1,0 +1,9 @@
+# dependencies
+node_modules/
+
+# compilation files
+out/
+cache/
+
+# foundry testing / script files
+broadcast/
