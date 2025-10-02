@@ -23,9 +23,10 @@ package types
 import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/noble-assets/orbiter/types/core"
 
 	"cosmossdk.io/collections/codec"
+
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 // Keccak256Hash returns the keccak 256 hash of the payload contents.

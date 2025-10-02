@@ -76,6 +76,12 @@ func (k *Keeper) GetPendingPayloadWithHash(
 		return nil, errorsmod.Wrap(err, "pending payload not found")
 	}
 
+	k.Logger().Debug(
+		"retrieved pending payload",
+		"hash", hex.EncodeToString(hash),
+		"payload", payload.String(),
+	)
+
 	return &payload, nil
 }
 
