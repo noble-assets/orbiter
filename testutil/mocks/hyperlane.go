@@ -30,7 +30,7 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
@@ -69,7 +69,7 @@ func (h HyperlaneHandler) Token(
 	}, nil
 }
 
-var _ types.HyperlaneCoreKeeper = HyperlaneCoreKeeper{}
+var _ adapter.HyperlaneCoreKeeper = HyperlaneCoreKeeper{}
 
 type HyperlaneCoreKeeper struct {
 	appRouter *hyperlaneutil.Router[hyperlaneutil.HyperlaneApp]

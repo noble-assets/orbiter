@@ -28,11 +28,15 @@ import (
 
 	"github.com/noble-assets/orbiter/controller"
 	orbitertypes "github.com/noble-assets/orbiter/types"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/core"
 	"github.com/noble-assets/orbiter/types/hyperlane"
 )
 
-var _ orbitertypes.AdapterController = &HyperlaneAdapter{}
+var (
+	_ orbitertypes.Adapter           = &HyperlaneAdapter{}
+	_ orbitertypes.AdapterController = &HyperlaneAdapter{}
+)
 
 // HyperlaneAdapter is the type component to convert
 // an incoming Hyperlane message body to the common payload
@@ -40,15 +44,24 @@ var _ orbitertypes.AdapterController = &HyperlaneAdapter{}
 type HyperlaneAdapter struct {
 	*controller.BaseController[core.ProtocolID]
 
+	orbitertypes.Adapter
+
 	logger log.Logger
 
 	stateHandler orbitertypes.PendingPayloadsHandler
+
+	// Hyperlane dependencies
+	hyperlaneCore adaptertypes.HyperlaneCoreKeeper
+	hyperlaneWarp adaptertypes.HyperlaneWarpKeeper
 }
 
 // NewHyperlaneAdapter returns a reference to a new HyperlaneAdapter instance.
 func NewHyperlaneAdapter(
 	logger log.Logger,
-	orbiterStateHandler orbitertypes.PendingPayloadsHandler,
+	payloadsHandler orbitertypes.PendingPayloadsHandler,
+	// TODO: move interface definition in this package
+	hyperlaneCoreKeeper adaptertypes.HyperlaneCoreKeeper,
+	hyperlaneWarpKeeper adaptertypes.HyperlaneWarpKeeper,
 ) (*HyperlaneAdapter, error) {
 	if logger == nil {
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
@@ -59,20 +72,30 @@ func NewHyperlaneAdapter(
 		return nil, errorsmod.Wrap(err, "failed to create base controller")
 	}
 
-	if orbiterStateHandler == nil {
+	if payloadsHandler == nil {
 		return nil, core.ErrNilPointer.Wrap("orbiter state handler cannot be nil")
+	}
+
+	if hyperlaneCoreKeeper == nil {
+		return nil, core.ErrNilPointer.Wrap("hyperlane core keeper cannot be nil")
+	}
+
+	if hyperlaneWarpKeeper == nil {
+		return nil, core.ErrNilPointer.Wrap("warp keeper cannot be nil")
 	}
 
 	return &HyperlaneAdapter{
 		BaseController: baseController,
 		logger:         logger.With(core.AdapterControllerName, baseController.Name()),
-		stateHandler:   orbiterStateHandler,
+		stateHandler:   payloadsHandler,
+		hyperlaneCore:  hyperlaneCoreKeeper,
+		hyperlaneWarp:  hyperlaneWarpKeeper,
 	}, nil
 }
 
 // ParsePayload delegates the parsing of a Hyperlane message body to the underlying
 // Parser implementation.
-func (h *HyperlaneAdapter) ParsePayload(
+func (ha *HyperlaneAdapter) ParsePayload(
 	ctx context.Context,
 	_ core.ProtocolID,
 	payloadBz []byte,
@@ -82,7 +105,7 @@ func (h *HyperlaneAdapter) ParsePayload(
 		return false, nil, errorsmod.Wrap(err, "failed to parse payload")
 	}
 
-	pendingPayload, err := h.stateHandler.PendingPayload(ctx, payloadHash)
+	pendingPayload, err := ha.stateHandler.PendingPayload(ctx, payloadHash)
 	if err != nil {
 		return false, nil, errorsmod.Wrap(err, "failed to get pending payload")
 	}

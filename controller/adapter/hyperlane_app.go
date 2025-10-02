@@ -18,7 +18,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package keeper
+package adapter
 
 import (
 	"context"
@@ -29,25 +29,29 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
+	"github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
 	hyperlaneorbitertypes "github.com/noble-assets/orbiter/types/hyperlane"
 )
+
+// Hyperlane interface compliance.
+var _ hyperlaneutil.HyperlaneApp = &HyperlaneAdapter{}
 
 // OrbiterHyperlaneAppID defines the module identifier of the Orbiter Hyperlane application.
 const OrbiterHyperlaneAppID uint8 = 255
 
 // RegisterHyperlaneAppRoute registers the Orbiter Hyperlane application in the main application
 // router.
-func (k *Keeper) RegisterHyperlaneAppRoute() {
-	k.hyperlaneCoreKeeper.AppRouter().RegisterModule(OrbiterHyperlaneAppID, k)
+func (ha *HyperlaneAdapter) RegisterHyperlaneAppRoute() {
+	ha.hyperlaneCore.AppRouter().RegisterModule(OrbiterHyperlaneAppID, ha)
 }
 
-func (k *Keeper) Handle(
+func (ha *HyperlaneAdapter) Handle(
 	ctx context.Context,
 	mailboxId hyperlaneutil.HexAddress,
 	message hyperlaneutil.HyperlaneMessage,
 ) error {
-	_, payload, err := k.adapter.ParsePayload(ctx, core.PROTOCOL_HYPERLANE, message.Body)
+	_, payload, err := ha.ParsePayload(ctx, core.PROTOCOL_HYPERLANE, message.Body)
 	if err != nil {
 		return errorsmod.Wrap(err, "failed to parse payload")
 	}
@@ -59,7 +63,7 @@ func (k *Keeper) Handle(
 
 	// TODO: I guess here should be where the BeforeTransferHook is called? however the transfer
 	// should already have been processed at this point
-	if err = k.adapter.BeforeTransferHook(
+	if err = types.Adapter(ha).BeforeTransferHook(
 		ctx, ccID, payload,
 	); err != nil {
 		return errorsmod.Wrap(err, "failed during before transfer hook")
@@ -75,7 +79,7 @@ func (k *Keeper) Handle(
 		return errorsmod.Wrap(err, "failed to create reduced warp message")
 	}
 
-	if err = k.hyperlaneWarpKeeper.Handle(
+	if err = ha.hyperlaneWarp.Handle(
 		ctx,
 		mailboxId,
 		reducedWarpMessage,
@@ -83,12 +87,12 @@ func (k *Keeper) Handle(
 		return errorsmod.Wrap(err, "internal warp handling failed")
 	}
 
-	transferAttr, err := k.adapter.AfterTransferHook(ctx, ccID, payload)
+	transferAttr, err := ha.AfterTransferHook(ctx, ccID, payload)
 	if err != nil {
 		return errorsmod.Wrap(err, "failed to run AfterTransferHook")
 	}
 
-	if err = k.adapter.ProcessPayload(ctx, transferAttr, payload); err != nil {
+	if err = ha.ProcessPayload(ctx, transferAttr, payload); err != nil {
 		return errorsmod.Wrap(err, "failed to process payload")
 	}
 
@@ -99,11 +103,11 @@ func (k *Keeper) Handle(
 // but we don't need that?
 //
 // TODO: should we delegate to the Warp method here?
-func (k *Keeper) Exists(
-	ctx context.Context,
-	handledPayload hyperlaneutil.HexAddress,
+func (ha *HyperlaneAdapter) Exists(
+	_ context.Context,
+	_ hyperlaneutil.HexAddress,
 ) (bool, error) {
-	// return k.HandledHyperlaneTransfers.Has(ctx, handledPayload.GetInternalId())
+	// return ha.HandledHyperlaneTransfers.Has(ctx, handledPayload.GetInternalId())
 	return true, nil
 }
 
@@ -112,9 +116,9 @@ func (k *Keeper) Exists(
 // but we won't keep track of any specific assets that would need to be registered.
 //
 // TODO: should we delegate to the Warp method here?
-func (k *Keeper) ReceiverIsmId(
-	ctx context.Context,
-	recipient hyperlaneutil.HexAddress,
+func (ha *HyperlaneAdapter) ReceiverIsmId(
+	_ context.Context,
+	_ hyperlaneutil.HexAddress,
 ) (*hyperlaneutil.HexAddress, error) {
 	return nil, errors.New("not implemented")
 }

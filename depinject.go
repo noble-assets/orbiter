@@ -91,7 +91,6 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.StoreService,
 		authority.String(),
 		in.BankKeeper,
-		in.CoreKeeper,
 	)
 	m := NewAppModule(k)
 
@@ -106,7 +105,9 @@ type ComponentsInputs struct {
 
 	BankKeeper bankkeeper.Keeper
 	CCTPKeeper *cctpkeeper.Keeper
-	WarpKeeper warpkeeper.Keeper
+
+	HyperlaneCoreKeeper *hyperlanecorekeeper.Keeper
+	WarpKeeper          *warpkeeper.Keeper
 }
 
 func InjectComponents(in ComponentsInputs) {
@@ -124,12 +125,11 @@ func InjectForwardingControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating CCTP controller"))
 	}
 
-	// TODO: pass hyperlane core and warp dependencies here instead of to the main keeper
 	hyperlane, err := forwardingctrl.NewHyperlaneController(
 		in.Orbiters.Forwarder().Logger(),
 		forwardingtypes.NewHyperlaneHandler(
-			warpkeeper.NewMsgServerImpl(in.WarpKeeper),
-			warpkeeper.NewQueryServerImpl(in.WarpKeeper),
+			warpkeeper.NewMsgServerImpl(*in.WarpKeeper),
+			warpkeeper.NewQueryServerImpl(*in.WarpKeeper),
 		),
 	)
 	if err != nil {
@@ -172,10 +172,14 @@ func InjectAdapterControllers(in ComponentsInputs) {
 	hyperlane, err := adapterctrl.NewHyperlaneAdapter(
 		in.Orbiters.Logger(),
 		in.Orbiters,
+		in.HyperlaneCoreKeeper,
+		in.WarpKeeper,
 	)
 	if err != nil {
 		panic(errorsmod.Wrap(err, "error creating Hyperlane adapter"))
 	}
+
+	hyperlane.RegisterHyperlaneAppRoute()
 
 	in.Orbiters.SetAdapterControllers(ibc, hyperlane)
 }

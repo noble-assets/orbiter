@@ -24,8 +24,6 @@ import (
 	"errors"
 	"fmt"
 
-	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
-
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/event"
@@ -44,11 +42,8 @@ import (
 
 var (
 	// General interface compliance.
-	_ orbitertypes.Authorizer = &Keeper{}
-	_ orbitertypes.MsgServer  = &Keeper{}
-
-	// Hyperlane interface compliance.
-	_ hyperlaneutil.HyperlaneApp          = &Keeper{}
+	_ orbitertypes.Authorizer             = &Keeper{}
+	_ orbitertypes.MsgServer              = &Keeper{}
 	_ orbitertypes.PendingPayloadsHandler = &Keeper{}
 )
 
@@ -74,10 +69,6 @@ type Keeper struct {
 	//
 	// TODO: this is only exported to be able to set the sequence in tests -- make private again?
 	PendingPayloadsSequence collections.Sequence
-
-	// Hyperlane dependencies
-	hyperlaneCoreKeeper orbitertypes.HyperlaneCoreKeeper
-	hyperlaneWarpKeeper orbitertypes.HyperlaneWarpKeeper
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -90,9 +81,8 @@ func NewKeeper(
 	storeService store.KVStoreService,
 	authority string,
 	bankKeeper orbitertypes.BankKeeper,
-	coreKeeper orbitertypes.HyperlaneCoreKeeper,
 ) *Keeper {
-	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, bankKeeper, coreKeeper, authority); err != nil {
+	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, bankKeeper, authority); err != nil {
 		panic(err)
 	}
 
@@ -116,8 +106,6 @@ func NewKeeper(
 			collections.BytesKey,
 			codec.CollValue[orbitertypes.PendingPayload](cdc),
 		),
-
-		hyperlaneCoreKeeper: coreKeeper,
 	}
 
 	if err := k.setComponents(k.cdc, k.logger, k.eventService, sb, bankKeeper); err != nil {
@@ -132,12 +120,13 @@ func NewKeeper(
 		panic(err)
 	}
 
-	k.RegisterHyperlaneAppRoute()
+	// // TODO: check if registration of route also works during setup of the adapter controller
+	// k.RegisterHyperlaneAppRoute()
 
 	return &k
 }
 
-// validateKeeperInputs check that all Keeper inputs
+// validateKeeperInputs checks that all Keeper inputs
 // are valid or panic.
 func validateKeeperInputs(
 	cdc codec.Codec,
@@ -146,7 +135,6 @@ func validateKeeperInputs(
 	eventService event.Service,
 	storeService store.KVStoreService,
 	bankKeeper orbitertypes.BankKeeper,
-	coreKeeper orbitertypes.HyperlaneCoreKeeper,
 	authority string,
 ) error {
 	if cdc == nil {
@@ -166,10 +154,6 @@ func validateKeeperInputs(
 	}
 	if bankKeeper == nil {
 		return core.ErrNilPointer.Wrap("bank keeper cannot be nil")
-	}
-
-	if coreKeeper == nil {
-		return core.ErrNilPointer.Wrap("hyperlane core keeper cannot be nil")
 	}
 
 	_, err := addressCdc.StringToBytes(authority)
