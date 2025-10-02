@@ -48,8 +48,8 @@ var (
 	_ orbitertypes.MsgServer  = &Keeper{}
 
 	// Hyperlane interface compliance.
-	_ hyperlaneutil.HyperlaneApp         = &Keeper{}
-	_ orbitertypes.HyperlaneStateHandler = &Keeper{}
+	_ hyperlaneutil.HyperlaneApp          = &Keeper{}
+	_ orbitertypes.PendingPayloadsHandler = &Keeper{}
 )
 
 // Keeper is the main module keeper.
@@ -112,9 +112,7 @@ func NewKeeper(
 			core.PendingPayloadsPrefix,
 			core.PendingPayloadsName,
 			collections.BytesKey,
-			//// TODO: why does CollValue not work for the proto type PendingPayload?
-			// codec.CollValue[&orbitertypes.PendingPayload{}],
-			&orbitertypes.PendingPayloadCollValue{},
+			codec.CollValue[orbitertypes.PendingPayload](cdc),
 		),
 
 		hyperlaneCoreKeeper: coreKeeper,

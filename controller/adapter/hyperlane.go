@@ -42,13 +42,13 @@ type HyperlaneAdapter struct {
 
 	logger log.Logger
 
-	stateHandler orbitertypes.HyperlaneStateHandler
+	stateHandler orbitertypes.PendingPayloadsHandler
 }
 
 // NewHyperlaneAdapter returns a reference to a new HyperlaneAdapter instance.
 func NewHyperlaneAdapter(
 	logger log.Logger,
-	orbiterStateHandler orbitertypes.HyperlaneStateHandler,
+	orbiterStateHandler orbitertypes.PendingPayloadsHandler,
 ) (*HyperlaneAdapter, error) {
 	if logger == nil {
 		return nil, core.ErrNilPointer.Wrap("logger cannot be nil")
@@ -82,7 +82,7 @@ func (h *HyperlaneAdapter) ParsePayload(
 		return false, nil, errorsmod.Wrap(err, "failed to parse payload")
 	}
 
-	pendingPayload, err := h.stateHandler.GetPendingPayloadWithHash(ctx, payloadHash)
+	pendingPayload, err := h.stateHandler.PendingPayload(ctx, payloadHash)
 	if err != nil {
 		return false, nil, errorsmod.Wrap(err, "failed to get pending payload")
 	}

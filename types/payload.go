@@ -24,8 +24,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"cosmossdk.io/collections/codec"
-
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -47,41 +45,4 @@ func (p *PendingPayload) Validate() error {
 	}
 
 	return p.Payload.Validate()
-}
-
-// TODO: check if this is required?
-var _ codec.ValueCodec[PendingPayload] = &PendingPayloadCollValue{}
-
-// PendingPayloadCollValue implements the ValueCodec interface so that PendingPayload
-// can be used with collections maps.
-type PendingPayloadCollValue struct{}
-
-// TODO: this could use e.g. `abi` encoding to be aligned with Ethereum?
-func (v *PendingPayloadCollValue) Encode(p PendingPayload) ([]byte, error) {
-	return p.Marshal()
-}
-
-func (v *PendingPayloadCollValue) Decode(data []byte) (PendingPayload, error) {
-	var p PendingPayload
-	if err := (&p).Unmarshal(data); err != nil {
-		return PendingPayload{}, err
-	}
-
-	return p, nil
-}
-
-func (v *PendingPayloadCollValue) EncodeJSON(payload PendingPayload) ([]byte, error) {
-	panic("implement me (EncodeJSON)")
-}
-
-func (v *PendingPayloadCollValue) DecodeJSON(data []byte) (PendingPayload, error) {
-	panic("implement me (DecodeJSON)")
-}
-
-func (v *PendingPayloadCollValue) Stringify(_ PendingPayload) string {
-	panic("implement me (Stringify)")
-}
-
-func (v *PendingPayloadCollValue) ValueType() string {
-	return "noble/orbiter/v1/PendingPayload"
 }

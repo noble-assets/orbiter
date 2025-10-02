@@ -71,10 +71,10 @@ type HyperlaneWarpKeeper interface {
 	) error
 }
 
-// HyperlaneStateHandler defines the interface to adjust and query the Orbiter module
-// state as it relates to Hyperlane bookkeeping.
-type HyperlaneStateHandler interface {
+// PendingPayloadsHandler defines the interface to adjust and query the Orbiter module
+// state as it relates to the bookkeeping of pending payloads.
+type PendingPayloadsHandler interface {
 	AcceptPayload(ctx context.Context, payload *PendingPayload) ([]byte, error)
-	CompletePayloadWithHash(ctx context.Context, hash []byte) error
-	GetPendingPayloadWithHash(ctx context.Context, hash []byte) (*PendingPayload, error)
+	RemovePendingPayload(ctx context.Context, hash []byte) error
+	PendingPayload(ctx context.Context, hash []byte) (*PendingPayload, error)
 }

@@ -30,7 +30,7 @@ import (
 	orbitertypes "github.com/noble-assets/orbiter/types"
 )
 
-var _ orbitertypes.HyperlaneStateHandler = &Keeper{}
+var _ orbitertypes.PendingPayloadsHandler = &Keeper{}
 
 // AcceptPayload adds a new pending payload into the module storage.
 // If the payload's hash is already set, an error is returned.
@@ -63,11 +63,11 @@ func (k *Keeper) AcceptPayload(
 	return hash.Bytes(), k.pendingPayloads.Set(ctx, hash.Bytes(), *payload)
 }
 
-// GetPendingPayloadWithHash returns the pending payload with the given hash
+// PendingPayload returns the pending payload with the given hash
 // if it is found in the module storage.
 //
 // TODO: move into own abstraction type (Hyperlane state handler or smth.?)
-func (k *Keeper) GetPendingPayloadWithHash(
+func (k *Keeper) PendingPayload(
 	ctx context.Context,
 	hash []byte,
 ) (*orbitertypes.PendingPayload, error) {
@@ -85,12 +85,9 @@ func (k *Keeper) GetPendingPayloadWithHash(
 	return &payload, nil
 }
 
-// CompletePayloadWithHash removes the pending payload from the module state.
+// RemovePendingPayload removes the pending payload from the module state.
 // If a payload is not found, it is a no-op but does not return an error.
-//
-// TODO: probably this needs to have more fields other than just the payload like the sender and
-// origin account.
-func (k *Keeper) CompletePayloadWithHash(
+func (k *Keeper) RemovePendingPayload(
 	ctx context.Context,
 	hash []byte,
 ) error {

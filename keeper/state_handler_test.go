@@ -91,14 +91,14 @@ func TestGetPendingPayloadWithHash(t *testing.T) {
 
 	testcases := []struct {
 		name        string
-		setup       func(*testing.T, context.Context, orbitertypes.HyperlaneStateHandler)
+		setup       func(*testing.T, context.Context, orbitertypes.PendingPayloadsHandler)
 		hash        []byte
 		expPayload  *orbitertypes.PendingPayload
 		errContains string
 	}{
 		{
 			name: "success - hash found",
-			setup: func(t *testing.T, ctx context.Context, handler orbitertypes.HyperlaneStateHandler) {
+			setup: func(t *testing.T, ctx context.Context, handler orbitertypes.PendingPayloadsHandler) {
 				t.Helper()
 
 				_, err := handler.AcceptPayload(ctx, validPayload)
@@ -125,7 +125,7 @@ func TestGetPendingPayloadWithHash(t *testing.T) {
 				tc.setup(t, ctx, k)
 			}
 
-			got, err := k.GetPendingPayloadWithHash(ctx, tc.hash)
+			got, err := k.PendingPayload(ctx, tc.hash)
 
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to get pending payload")
@@ -146,18 +146,18 @@ func TestCompletePayload(t *testing.T) {
 
 	testcases := []struct {
 		name        string
-		setup       func(*testing.T, context.Context, orbitertypes.HyperlaneStateHandler)
+		setup       func(*testing.T, context.Context, orbitertypes.PendingPayloadsHandler)
 		hash        []byte
 		errContains string
 	}{
 		{
 			name: "success - valid payload",
-			setup: func(t *testing.T, ctx context.Context, handler orbitertypes.HyperlaneStateHandler) {
+			setup: func(t *testing.T, ctx context.Context, handler orbitertypes.PendingPayloadsHandler) {
 				t.Helper()
 				_, err := handler.AcceptPayload(ctx, validPayload)
 				require.NoError(t, err, "failed to setup testcase; accepting payload")
 
-				gotPayload, err := handler.GetPendingPayloadWithHash(ctx, expHash.Bytes())
+				gotPayload, err := handler.PendingPayload(ctx, expHash.Bytes())
 				require.NoError(t, err, "error getting pending payload")
 				require.Equal(
 					t,
@@ -190,11 +190,11 @@ func TestCompletePayload(t *testing.T) {
 				tc.setup(t, ctx, k)
 			}
 
-			err = k.CompletePayloadWithHash(ctx, tc.hash)
+			err = k.RemovePendingPayload(ctx, tc.hash)
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to complete payload")
 
-				gotPayload, err := k.GetPendingPayloadWithHash(ctx, tc.hash)
+				gotPayload, err := k.PendingPayload(ctx, tc.hash)
 				require.Error(t, err, "payload should not be present anymore")
 				require.Nil(t, gotPayload, "expected nil payload")
 			} else {

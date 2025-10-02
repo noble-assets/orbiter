@@ -124,6 +124,7 @@ func InjectForwardingControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating CCTP controller"))
 	}
 
+	// TODO: pass hyperlane core and warp dependencies here instead of to the main keeper
 	hyperlane, err := forwardingctrl.NewHyperlaneController(
 		in.Orbiters.Forwarder().Logger(),
 		forwardingtypes.NewHyperlaneHandler(
