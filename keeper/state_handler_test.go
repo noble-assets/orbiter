@@ -31,6 +31,7 @@ import (
 	"github.com/noble-assets/orbiter/testutil"
 	mockorbiter "github.com/noble-assets/orbiter/testutil/mocks/orbiter"
 	orbitertypes "github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/controller/action"
 	"github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types/core"
 )
@@ -38,7 +39,10 @@ import (
 func TestAcceptPayload(t *testing.T) {
 	t.Parallel()
 
-	validPayload := createTestPendingPayloadWithSequence(t, 0)
+	seq := uint64(0)
+	destDomain := uint32(1)
+	recipient := testutil.RandomBytes(32)
+	validPayload := createTestPendingPayloadWithSequence(t, seq)
 
 	expHash, err := validPayload.Keccak256Hash()
 	require.NoError(t, err, "failed to hash payload")
@@ -46,14 +50,14 @@ func TestAcceptPayload(t *testing.T) {
 	testcases := []struct {
 		name        string
 		setup       func(*testing.T, context.Context, *orbiterkeeper.Keeper)
-		payload     *orbitertypes.PendingPayload
+		payload     func() *orbitertypes.PendingPayload
 		errContains string
-		expHash     []byte
+		expHash     string
 	}{
 		{
 			name:    "success - valid payload",
-			payload: validPayload,
-			expHash: expHash.Bytes(),
+			payload: func() *orbitertypes.PendingPayload { return validPayload },
+			expHash: expHash.String(),
 		},
 		{
 			name: "error - payload already registered",
@@ -65,20 +69,92 @@ func TestAcceptPayload(t *testing.T) {
 
 				// NOTE: we're resetting the pending payloads sequence to generate the same hash for
 				// the next submission
-				err = k.PendingPayloadsSequence.Set(ctx, 0)
+				err = k.PendingPayloadsSequence.Set(ctx, seq)
 				require.NoError(t, err, "failed to set pending payloads sequence")
 			},
-			payload:     validPayload,
+			payload:     func() *orbitertypes.PendingPayload { return validPayload },
 			errContains: "already registered",
 		},
 		{
-			name:        "error - nil payload",
-			payload:     &orbitertypes.PendingPayload{},
+			name: "error - payload contains paused action",
+			setup: func(t *testing.T, ctx context.Context, k *orbiterkeeper.Keeper) {
+				t.Helper()
+
+				err := k.Executor().Pause(ctx, core.ACTION_FEE)
+				require.NoError(t, err, "failed to pause fee action")
+			},
+			payload: func() *orbitertypes.PendingPayload {
+				p := *validPayload
+
+				preAction, err := core.NewAction(core.ACTION_FEE, &action.FeeAttributes{})
+				require.NoError(t, err, "failed to construct fee action")
+
+				p.Payload.PreActions = append(
+					p.Payload.PreActions,
+					preAction,
+				)
+
+				return &p
+			},
+			errContains: "action ACTION_FEE is paused",
+		},
+		{
+			name: "error - payload contains paused protocol",
+			setup: func(t *testing.T, ctx context.Context, k *orbiterkeeper.Keeper) {
+				t.Helper()
+
+				err := k.Forwarder().Pause(ctx, core.PROTOCOL_CCTP, nil)
+				require.NoError(t, err, "failed to unpause fee action")
+			},
+			payload: func() *orbitertypes.PendingPayload {
+				p := *validPayload
+
+				fw, err := forwarding.NewCCTPForwarding(destDomain, recipient, nil, nil)
+				require.NoError(t, err, "failed to construct forwarding")
+
+				p.Payload.Forwarding = fw
+
+				return &p
+			},
+			errContains: "protocol PROTOCOL_CCTP is paused",
+		},
+		{
+			name: "error - payload contains paused cross-chain",
+			setup: func(t *testing.T, ctx context.Context, k *orbiterkeeper.Keeper) {
+				t.Helper()
+
+				cID := (&forwarding.CCTPAttributes{
+					DestinationDomain: destDomain,
+					MintRecipient:     recipient,
+				}).CounterpartyID()
+
+				err = k.Forwarder().Pause(ctx, core.PROTOCOL_CCTP, []string{cID})
+				require.NoError(t, err, "failed to unpause cross-chain forwarding")
+			},
+			payload: func() *orbitertypes.PendingPayload {
+				p := *validPayload
+
+				fw, err := forwarding.NewCCTPForwarding(destDomain, recipient, nil, nil)
+				require.NoError(t, err, "failed to construct forwarding")
+
+				p.Payload.Forwarding = fw
+
+				return &p
+			},
+			errContains: "cross-chain paused",
+		},
+		{
+			name: "error - nil payload",
+			payload: func() *orbitertypes.PendingPayload {
+				return &orbitertypes.PendingPayload{}
+			},
 			errContains: "invalid payload: payload is not set",
 		},
 		{
-			name:        "error - invalid (empty) payload",
-			payload:     &orbitertypes.PendingPayload{Payload: &core.Payload{}},
+			name: "error - invalid (empty) payload",
+			payload: func() *orbitertypes.PendingPayload {
+				return &orbitertypes.PendingPayload{Payload: &core.Payload{}}
+			},
 			errContains: "invalid payload: forwarding is not set",
 		},
 	}
@@ -93,11 +169,13 @@ func TestAcceptPayload(t *testing.T) {
 				tc.setup(t, ctx, k)
 			}
 
-			hash, err := k.AcceptPayload(ctx, tc.payload.Payload)
+			pendingPayload := tc.payload()
+
+			hash, err := k.AcceptPayload(ctx, pendingPayload.Payload)
 
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to accept payload")
-				require.Equal(t, tc.expHash, hash)
+				require.Equal(t, tc.expHash, ethcommon.BytesToHash(hash).String())
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}

@@ -24,6 +24,7 @@ import (
 	"context"
 	"encoding/hex"
 	"errors"
+	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
 
@@ -41,6 +42,10 @@ func (k *Keeper) AcceptPayload(
 ) ([]byte, error) {
 	if err := payload.Validate(); err != nil {
 		return nil, errorsmod.Wrap(err, "invalid payload")
+	}
+
+	if err := k.validatePayloadAgainstState(ctx, payload); err != nil {
+		return nil, errorsmod.Wrap(err, "payload failed stateful checks")
 	}
 
 	next, err := k.PendingPayloadsSequence.Next(ctx)
@@ -69,9 +74,57 @@ func (k *Keeper) AcceptPayload(
 		return nil, errors.New("payload hash already registered")
 	}
 
-	k.Logger().Debug("payload hash registered", "hash", hash.String(), "payload", payload.String())
+	k.Logger().Debug("payload registered", "hash", hash.String(), "payload", payload.String())
 
 	return hash.Bytes(), k.pendingPayloads.Set(ctx, hash.Bytes(), pendingPayload)
+}
+
+// validatePayloadAgainstState checks if the payload is valid with respect
+// to the current state of the chain.
+// This asserts that no actions or forwarding configurations contained in the payload
+// are paused.
+func (k *Keeper) validatePayloadAgainstState(
+	ctx context.Context,
+	payload *core.Payload,
+) error {
+	for _, action := range payload.PreActions {
+		paused, err := k.executor.IsActionPaused(ctx, action.ID())
+		if err != nil {
+			return errorsmod.Wrap(err, "failed to check if action is paused")
+		}
+
+		if paused {
+			return fmt.Errorf("action %s is paused", action.ID())
+		}
+	}
+
+	paused, err := k.forwarder.IsProtocolPaused(ctx, payload.Forwarding.ProtocolId)
+	if err != nil {
+		return errorsmod.Wrap(err, "failed to check if forwarder is paused")
+	}
+
+	if paused {
+		return fmt.Errorf("protocol %s is paused", payload.Forwarding.ProtocolId)
+	}
+
+	cachedAttrs, err := payload.Forwarding.CachedAttributes()
+	if err != nil {
+		return err
+	}
+
+	paused, err = k.forwarder.IsCrossChainPaused(ctx, core.CrossChainID{
+		ProtocolId:     payload.Forwarding.ProtocolId,
+		CounterpartyId: cachedAttrs.CounterpartyID(),
+	})
+	if err != nil {
+		return errorsmod.Wrap(err, "failed to check if cross-chain paused")
+	}
+
+	if paused {
+		return fmt.Errorf("cross-chain paused")
+	}
+
+	return nil
 }
 
 // PendingPayload returns the pending payload with the given hash
