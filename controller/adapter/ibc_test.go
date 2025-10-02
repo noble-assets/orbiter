@@ -21,7 +21,6 @@
 package adapter_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -162,7 +161,8 @@ func TestParsePayload(t *testing.T) {
 			parser, err := adapterctrl.NewIBCParser(encCfg.Codec)
 			require.NoError(t, err)
 
-			fmt.Println("len of payload:", len(tc.payloadBz))
+			t.Log("len of payload:", len(tc.payloadBz))
+
 			isOrbiterPayload, payload, err := parser.ParsePayload(
 				t.Context(),
 				core.PROTOCOL_IBC,
