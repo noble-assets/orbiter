@@ -69,9 +69,11 @@ type Keeper struct {
 
 	// pendingPayloads stores the pending payloads addressed by their keccak256 hash.
 	pendingPayloads collections.Map[[]byte, orbitertypes.PendingPayload]
-	// pendingPayloadsSequence is the unique identifier of a given pending payload handled by the
+	// PendingPayloadsSequence is the unique identifier of a given pending payload handled by the
 	// orbiter.
-	pendingPayloadsSequence collections.Sequence
+	//
+	// TODO: this is only exported to be able to set the sequence in tests -- make private again?
+	PendingPayloadsSequence collections.Sequence
 
 	// Hyperlane dependencies
 	hyperlaneCoreKeeper orbitertypes.HyperlaneCoreKeeper
@@ -102,7 +104,7 @@ func NewKeeper(
 		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
 		authority:    authority,
 
-		pendingPayloadsSequence: collections.NewSequence(
+		PendingPayloadsSequence: collections.NewSequence(
 			sb,
 			core.PendingPayloadsSequencePrefix,
 			core.PendingPayloadsSequenceName,

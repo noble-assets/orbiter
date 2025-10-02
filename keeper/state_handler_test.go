@@ -27,6 +27,7 @@ import (
 	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 
+	orbiterkeeper "github.com/noble-assets/orbiter/keeper"
 	"github.com/noble-assets/orbiter/testutil"
 	mockorbiter "github.com/noble-assets/orbiter/testutil/mocks/orbiter"
 	orbitertypes "github.com/noble-assets/orbiter/types"
@@ -44,6 +45,7 @@ func TestAcceptPayload(t *testing.T) {
 
 	testcases := []struct {
 		name        string
+		setup       func(*testing.T, context.Context, *orbiterkeeper.Keeper)
 		payload     *orbitertypes.PendingPayload
 		errContains string
 		expHash     []byte
@@ -54,14 +56,30 @@ func TestAcceptPayload(t *testing.T) {
 			expHash: expHash.Bytes(),
 		},
 		{
-			name:        "error - nil pending payload",
-			payload:     nil,
-			errContains: "invalid pending payload: pending payload: invalid nil pointer",
+			name: "error - payload already registered",
+			setup: func(t *testing.T, ctx context.Context, k *orbiterkeeper.Keeper) {
+				t.Helper()
+
+				_, err := k.AcceptPayload(ctx, validPayload.Payload)
+				require.NoError(t, err, "failed to accept payload during setup")
+
+				// NOTE: we're resetting the pending payloads sequence to generate the same hash for
+				// the next submission
+				err = k.PendingPayloadsSequence.Set(ctx, 0)
+				require.NoError(t, err, "failed to set pending payloads sequence")
+			},
+			payload:     validPayload,
+			errContains: "already registered",
 		},
 		{
-			name:        "error - invalid (empty) pending payload",
+			name:        "error - nil payload",
 			payload:     &orbitertypes.PendingPayload{},
-			errContains: "invalid pending payload: payload is not set",
+			errContains: "invalid payload: payload is not set",
+		},
+		{
+			name:        "error - invalid (empty) payload",
+			payload:     &orbitertypes.PendingPayload{Payload: &core.Payload{}},
+			errContains: "invalid payload: forwarding is not set",
 		},
 	}
 
@@ -70,7 +88,12 @@ func TestAcceptPayload(t *testing.T) {
 			t.Parallel()
 
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
-			hash, err := k.AcceptPayload(ctx, tc.payload)
+
+			if tc.setup != nil {
+				tc.setup(t, ctx, k)
+			}
+
+			hash, err := k.AcceptPayload(ctx, tc.payload.Payload)
 
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to accept payload")
@@ -101,7 +124,7 @@ func TestGetPendingPayloadWithHash(t *testing.T) {
 			setup: func(t *testing.T, ctx context.Context, handler orbitertypes.PendingPayloadsHandler) {
 				t.Helper()
 
-				_, err := handler.AcceptPayload(ctx, validPayload)
+				_, err := handler.AcceptPayload(ctx, validPayload.Payload)
 				require.NoError(t, err)
 			},
 			expPayload: validPayload,
@@ -154,7 +177,7 @@ func TestCompletePayload(t *testing.T) {
 			name: "success - valid payload",
 			setup: func(t *testing.T, ctx context.Context, handler orbitertypes.PendingPayloadsHandler) {
 				t.Helper()
-				_, err := handler.AcceptPayload(ctx, validPayload)
+				_, err := handler.AcceptPayload(ctx, validPayload.Payload)
 				require.NoError(t, err, "failed to setup testcase; accepting payload")
 
 				gotPayload, err := handler.PendingPayload(ctx, expHash.Bytes())

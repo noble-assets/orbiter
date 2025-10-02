@@ -33,26 +33,13 @@ func (k *Keeper) SubmitPayload(
 	ctx context.Context,
 	req *orbitertypes.MsgSubmitPayload,
 ) (*orbitertypes.MsgSubmitPayloadResponse, error) {
-	if req == nil {
-		return nil, sdkerrors.ErrInvalidRequest
-	}
-
 	if err := req.Payload.Validate(); err != nil {
 		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}
 
-	// TODO: move this into the internal method?
-	seq, err := k.pendingPayloadsSequence.Next(ctx)
-	if err != nil {
-		return nil, errorsmod.Wrap(err, "failed to obtain sequence number")
-	}
-
 	payloadHash, err := k.AcceptPayload(
 		ctx,
-		&orbitertypes.PendingPayload{
-			Sequence: seq,
-			Payload:  &req.Payload,
-		},
+		&req.Payload,
 	)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to accept payload")

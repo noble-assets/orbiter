@@ -28,6 +28,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 
 	orbitertypes "github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ orbitertypes.PendingPayloadsHandler = &Keeper{}
@@ -36,13 +37,23 @@ var _ orbitertypes.PendingPayloadsHandler = &Keeper{}
 // If the payload's hash is already set, an error is returned.
 func (k *Keeper) AcceptPayload(
 	ctx context.Context,
-	payload *orbitertypes.PendingPayload,
+	payload *core.Payload,
 ) ([]byte, error) {
 	if err := payload.Validate(); err != nil {
-		return nil, errorsmod.Wrap(err, "invalid pending payload")
+		return nil, errorsmod.Wrap(err, "invalid payload")
 	}
 
-	hash, err := payload.Keccak256Hash()
+	next, err := k.PendingPayloadsSequence.Next(ctx)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to get next sequence number")
+	}
+
+	pendingPayload := orbitertypes.PendingPayload{
+		Sequence: next,
+		Payload:  payload,
+	}
+
+	hash, err := pendingPayload.Keccak256Hash()
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +71,7 @@ func (k *Keeper) AcceptPayload(
 
 	k.Logger().Debug("payload hash registered", "hash", hash.String(), "payload", payload.String())
 
-	return hash.Bytes(), k.pendingPayloads.Set(ctx, hash.Bytes(), *payload)
+	return hash.Bytes(), k.pendingPayloads.Set(ctx, hash.Bytes(), pendingPayload)
 }
 
 // PendingPayload returns the pending payload with the given hash
