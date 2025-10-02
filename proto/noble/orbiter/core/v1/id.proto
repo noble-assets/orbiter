@@ -41,6 +41,9 @@ enum ProtocolID {
 
   // PROTOCOL_HYPERLANE represents the Hyperlane protocol identifier.
   PROTOCOL_HYPERLANE = 3;
+
+  // PROTOCOL_INTERNAL represents an internal transfer.
+  PROTOCOL_INTERNAL = 4;
 }
 
 // CrossChainID is an internal type used to uniquely
