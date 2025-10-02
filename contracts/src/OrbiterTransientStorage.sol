@@ -17,19 +17,25 @@
  */
 pragma solidity ^0.8.28;
 
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-
 /// @title Orbiter Transient Storage
 /// @author Noble Core Team
 /// @notice Holds pending payload hashes of transfers that should be executed
 /// through the Orbiter.
-contract OrbiterTransientStorage is Ownable {
+contract OrbiterTransientStorage {
+    address private owner;
     bytes32 transient private pendingPayloadHash;
+
+
+    /// @notice Throws if called by any account other than the owner.
+    modifier onlyOwner() {
+        require(msg.sender == owner, "caller is not the owner");
+        _;
+    }
 
     /// @notice Initializes the contract by setting the owner to be the Orbiter gateway contract.
     /// @param _gateway The address of the associated Orbiter gateway contract, which is set as the owner.
-    constructor(address _gateway) Ownable() {
-        transferOwnership(_gateway);
+    constructor(address _gateway) {
+        owner = _gateway;
     }
 
     /// @notice Retrieves the currently pending payload hash.

@@ -31,6 +31,12 @@ import { OrbiterHypERC20 } from "./OrbiterHypERC20.sol";
 ///
 /// TODO: make upgradeable
 contract OrbiterGateway {
+    uint32 private destinationDomain;
+
+    function constructor(uint32 _domain) {
+        destinationDomain = _domain;
+    }
+
     /// @notice Send an asset transfer to the Orbiter, that should be forwarded to another Hyperlane domain.
     /// @param tokenAddress Address of the token to forward using Orbiter.
     /// @param destinationDomain The destination domain of the Noble chain (where the Orbiter lives).

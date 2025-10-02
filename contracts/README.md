@@ -7,14 +7,14 @@ through smart contracts on an EVM chain.
 
 To use this repository, you need the following software installed:
 
-- `bun`
-- `foundry`
+- [`bun`](https://bun.sh)
+- [`foundry`](https://getfoundry.sh)
 
 ## Dependencies
 
 To download the required dependencies, run:
 
-```shell
+```sh
 make deps
 ```
 
@@ -22,7 +22,7 @@ make deps
 
 To compile the contracts, run:
 
-```shell
+```sh
 make compile
 ```
 
