@@ -18,13 +18,11 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package core
 
 import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-
-	"github.com/noble-assets/orbiter/types/core"
 )
 
 // Keccak256Hash returns the keccak 256 hash of the payload contents.
@@ -41,7 +39,7 @@ func (p *PendingPayload) Keccak256Hash() (common.Hash, error) {
 // Validate checks that the pending payload contents are valid.
 func (p *PendingPayload) Validate() error {
 	if p == nil {
-		return core.ErrNilPointer.Wrap("pending payload")
+		return ErrNilPointer.Wrap("pending payload")
 	}
 
 	return p.Payload.Validate()

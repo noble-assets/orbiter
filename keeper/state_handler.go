@@ -53,7 +53,7 @@ func (k *Keeper) AcceptPayload(
 		return nil, errorsmod.Wrap(err, "failed to get next sequence number")
 	}
 
-	pendingPayload := orbitertypes.PendingPayload{
+	pendingPayload := core.PendingPayload{
 		Sequence: next,
 		Payload:  payload,
 	}
@@ -134,7 +134,7 @@ func (k *Keeper) validatePayloadAgainstState(
 func (k *Keeper) PendingPayload(
 	ctx context.Context,
 	hash []byte,
-) (*orbitertypes.PendingPayload, error) {
+) (*core.PendingPayload, error) {
 	payload, err := k.pendingPayloads.Get(ctx, hash)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "pending payload not found")

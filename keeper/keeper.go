@@ -63,7 +63,7 @@ type Keeper struct {
 	adapter    *adaptercomp.Adapter
 
 	// pendingPayloads stores the pending payloads addressed by their keccak256 hash.
-	pendingPayloads collections.Map[[]byte, orbitertypes.PendingPayload]
+	pendingPayloads collections.Map[[]byte, core.PendingPayload]
 	// PendingPayloadsSequence is the unique identifier of a given pending payload handled by the
 	// orbiter.
 	//
@@ -99,12 +99,12 @@ func NewKeeper(
 			core.PendingPayloadsSequencePrefix,
 			core.PendingPayloadsSequenceName,
 		),
-		pendingPayloads: collections.NewMap[[]byte, orbitertypes.PendingPayload](
+		pendingPayloads: collections.NewMap[[]byte, core.PendingPayload](
 			sb,
 			core.PendingPayloadsPrefix,
 			core.PendingPayloadsName,
 			collections.BytesKey,
-			codec.CollValue[orbitertypes.PendingPayload](cdc),
+			codec.CollValue[core.PendingPayload](cdc),
 		),
 	}
 

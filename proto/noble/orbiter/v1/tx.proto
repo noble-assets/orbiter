@@ -23,7 +23,7 @@ service Msg {
 // forwarding operations.
 message MsgSubmitPayload {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name) = "noble/orbiter/v1/MsgAcceptPendingPayload";
+  option (amino.name) = "noble/orbiter/v1/MsgSubmitPayload";
 
   // The signer of the transaction.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
@@ -35,18 +35,9 @@ message MsgSubmitPayload {
   ];
 }
 
-// MsgSubmitPayloadResponse returns the sequence number of the registered
+// MsgSubmitPayloadResponse returns the keccak256 of the registered
+// pending payload.
 message MsgSubmitPayloadResponse {
   // The keccak256 hash by which to reference the submitted payload.
   bytes hash = 1;
-}
-
-// PendingPayload holds the information that goes into the stored payload hash.
-//
-// TODO: move to different file? hyperlane.proto or something?
-message PendingPayload {
-  // The sequence number of the pending payload.
-  uint64 sequence = 1;
-  // The submitted payload that will is registered as pending.
-  noble.orbiter.core.v1.Payload payload = 2;
 }

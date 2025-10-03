@@ -60,5 +60,5 @@ type BankKeeperAdapter interface {
 type PendingPayloadsHandler interface {
 	AcceptPayload(ctx context.Context, payload *core.Payload) ([]byte, error)
 	RemovePendingPayload(ctx context.Context, hash []byte) error
-	PendingPayload(ctx context.Context, hash []byte) (*PendingPayload, error)
+	PendingPayload(ctx context.Context, hash []byte) (*core.PendingPayload, error)
 }

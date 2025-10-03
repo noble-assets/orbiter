@@ -50,13 +50,13 @@ func TestAcceptPayload(t *testing.T) {
 	testcases := []struct {
 		name        string
 		setup       func(*testing.T, context.Context, *orbiterkeeper.Keeper)
-		payload     func() *orbitertypes.PendingPayload
+		payload     func() *core.PendingPayload
 		errContains string
 		expHash     string
 	}{
 		{
 			name:    "success - valid payload",
-			payload: func() *orbitertypes.PendingPayload { return validPayload },
+			payload: func() *core.PendingPayload { return validPayload },
 			expHash: expHash.String(),
 		},
 		{
@@ -72,7 +72,7 @@ func TestAcceptPayload(t *testing.T) {
 				err = k.PendingPayloadsSequence.Set(ctx, seq)
 				require.NoError(t, err, "failed to set pending payloads sequence")
 			},
-			payload:     func() *orbitertypes.PendingPayload { return validPayload },
+			payload:     func() *core.PendingPayload { return validPayload },
 			errContains: "already registered",
 		},
 		{
@@ -83,7 +83,7 @@ func TestAcceptPayload(t *testing.T) {
 				err := k.Executor().Pause(ctx, core.ACTION_FEE)
 				require.NoError(t, err, "failed to pause fee action")
 			},
-			payload: func() *orbitertypes.PendingPayload {
+			payload: func() *core.PendingPayload {
 				p := *validPayload
 
 				preAction, err := core.NewAction(core.ACTION_FEE, &action.FeeAttributes{})
@@ -106,7 +106,7 @@ func TestAcceptPayload(t *testing.T) {
 				err := k.Forwarder().Pause(ctx, core.PROTOCOL_CCTP, nil)
 				require.NoError(t, err, "failed to unpause fee action")
 			},
-			payload: func() *orbitertypes.PendingPayload {
+			payload: func() *core.PendingPayload {
 				p := *validPayload
 
 				fw, err := forwarding.NewCCTPForwarding(destDomain, recipient, nil, nil)
@@ -131,7 +131,7 @@ func TestAcceptPayload(t *testing.T) {
 				err = k.Forwarder().Pause(ctx, core.PROTOCOL_CCTP, []string{cID})
 				require.NoError(t, err, "failed to unpause cross-chain forwarding")
 			},
-			payload: func() *orbitertypes.PendingPayload {
+			payload: func() *core.PendingPayload {
 				p := *validPayload
 
 				fw, err := forwarding.NewCCTPForwarding(destDomain, recipient, nil, nil)
@@ -145,15 +145,15 @@ func TestAcceptPayload(t *testing.T) {
 		},
 		{
 			name: "error - nil payload",
-			payload: func() *orbitertypes.PendingPayload {
-				return &orbitertypes.PendingPayload{}
+			payload: func() *core.PendingPayload {
+				return &core.PendingPayload{}
 			},
 			errContains: "invalid payload: payload is not set",
 		},
 		{
 			name: "error - invalid (empty) payload",
-			payload: func() *orbitertypes.PendingPayload {
-				return &orbitertypes.PendingPayload{Payload: &core.Payload{}}
+			payload: func() *core.PendingPayload {
+				return &core.PendingPayload{Payload: &core.Payload{}}
 			},
 			errContains: "invalid payload: forwarding is not set",
 		},
@@ -194,7 +194,7 @@ func TestGetPendingPayloadWithHash(t *testing.T) {
 		name        string
 		setup       func(*testing.T, context.Context, orbitertypes.PendingPayloadsHandler)
 		hash        []byte
-		expPayload  *orbitertypes.PendingPayload
+		expPayload  *core.PendingPayload
 		errContains string
 	}{
 		{
@@ -365,7 +365,7 @@ func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 func createTestPendingPayloadWithSequence(
 	t *testing.T,
 	sequence uint64,
-) *orbitertypes.PendingPayload {
+) *core.PendingPayload {
 	t.Helper()
 
 	validForwarding, err := forwarding.NewCCTPForwarding(
@@ -381,7 +381,7 @@ func createTestPendingPayloadWithSequence(
 		Forwarding: validForwarding,
 	}
 
-	return &orbitertypes.PendingPayload{
+	return &core.PendingPayload{
 		Sequence: sequence,
 		Payload:  validPayload,
 	}
