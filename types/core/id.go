@@ -167,6 +167,8 @@ func ValidateCounterpartyID(id string, protocol ProtocolID) error {
 		valid = channeltypes.IsValidChannelID(id)
 	case PROTOCOL_CCTP, PROTOCOL_HYPERLANE:
 		valid = isInteger(id)
+	case PROTOCOL_INTERNAL:
+		valid = true
 	case PROTOCOL_UNSUPPORTED:
 		valid = false
 	default:
