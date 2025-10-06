@@ -2,11 +2,42 @@ syntax = "proto3";
 
 package noble.orbiter.v1;
 
+import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "noble/orbiter/core/v1/orbiter.proto";
 
 option go_package = "github.com/noble-assets/orbiter/types";
 
 // Msg defines the RPC methods for the Orbiter module.
 service Msg {
   option (cosmos.msg.v1.service) = true;
+
+  // SubmitPayload is the entrypoint to insert a new pending payload
+  // into the dispatching queue.
+  rpc SubmitPayload(MsgSubmitPayload) returns (MsgSubmitPayloadResponse);
+}
+
+// MsgSubmitPayload enters a new Orbiter payload into the queue of pending
+// forwarding operations.
+message MsgSubmitPayload {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "noble/orbiter/v1/MsgSubmitPayload";
+
+  // The signer of the transaction.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // The payload submitted to the Orbiter module.
+  noble.orbiter.core.v1.Payload payload = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgSubmitPayloadResponse returns the keccak256 of the registered
+// pending payload.
+message MsgSubmitPayloadResponse {
+  // The keccak256 hash by which to reference the submitted payload.
+  bytes hash = 1;
 }

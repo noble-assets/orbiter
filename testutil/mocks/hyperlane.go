@@ -25,8 +25,12 @@ import (
 	"errors"
 
 	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
+	hyperlanecoretypes "github.com/bcp-innovations/hyperlane-cosmos/x/core/types"
 	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 
+	"cosmossdk.io/collections"
+
+	"github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
@@ -63,4 +67,26 @@ func (h HyperlaneHandler) Token(
 	return &warptypes.QueryTokenResponse{
 		Token: &t,
 	}, nil
+}
+
+var _ adapter.HyperlaneCoreKeeper = HyperlaneCoreKeeper{}
+
+type HyperlaneCoreKeeper struct {
+	appRouter *hyperlaneutil.Router[hyperlaneutil.HyperlaneApp]
+}
+
+// newMockHyperlaneCoreKeeper creates a new mocked hyperlane core keeper and sets
+// a testing application router up.
+func newMockHyperlaneCoreKeeper(deps Dependencies) *HyperlaneCoreKeeper {
+	return &HyperlaneCoreKeeper{
+		appRouter: hyperlaneutil.NewRouter[hyperlaneutil.HyperlaneApp](
+			hyperlanecoretypes.AppRouterKey,
+			"router_app",
+			collections.NewSchemaBuilder(deps.StoreService),
+		),
+	}
+}
+
+func (hck HyperlaneCoreKeeper) AppRouter() *hyperlaneutil.Router[hyperlaneutil.HyperlaneApp] {
+	return hck.appRouter
 }

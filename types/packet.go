@@ -139,6 +139,7 @@ func (a *TransferAttributes) DestinationDenom() string {
 // nil defensively for robustness.
 func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 	if a == nil {
+		// TODO: saw this use of print here, should this use something else? or return an error?
 		fmt.Println("Warning: SetDestinationAmount() called on nil TransferAttributes")
 
 		return
@@ -159,6 +160,7 @@ func (a *TransferAttributes) SetDestinationAmount(amount math.Int) {
 // nil defensively for robustness.
 func (a *TransferAttributes) SetDestinationDenom(denom string) {
 	if a == nil {
+		// TODO: ditto as above; replace println here?
 		fmt.Println("Warning: SetDestinationDenom() called on nil TransferAttributes")
 
 		return

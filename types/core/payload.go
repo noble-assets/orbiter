@@ -18,20 +18,29 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package core
 
 import (
-	"context"
-
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
-// PayloadParser defines the behavior expected by a type capable of
-// parsing a payload from its bytes representation.
-type PayloadParser interface {
-	// ParsePayload handle bytes and parse them into the
-	// orbiter payload. It returns a boolean to inform if
-	// the bytes represent an orbiter payload or not. The
-	// parsing is executed only if the boolean is true.
-	ParsePayload(context.Context, core.ProtocolID, []byte) (bool, *core.Payload, error)
+// Keccak256Hash returns the keccak 256 hash of the payload contents.
+// To guarantee uniqueness the sequence number is included.
+func (p *PendingPayload) Keccak256Hash() (common.Hash, error) {
+	bz, err := p.Marshal()
+	if err != nil {
+		return common.Hash{}, err
+	}
+
+	return crypto.Keccak256Hash(bz), nil
+}
+
+// Validate checks that the pending payload contents are valid.
+func (p *PendingPayload) Validate() error {
+	if p == nil {
+		return ErrNilPointer.Wrap("pending payload")
+	}
+
+	return p.Payload.Validate()
 }

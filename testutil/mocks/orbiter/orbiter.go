@@ -36,10 +36,10 @@ func OrbiterKeeper(tb testing.TB) (sdk.Context, *mocks.Mocks, *keeper.Keeper) {
 	tb.Helper()
 
 	deps := mocks.NewDependencies(tb)
-	mocks := mocks.NewMocks()
-	k, ctx := orbiterKeeperWithMocks(&deps, &mocks)
+	m := mocks.NewMocks(deps)
+	k, ctx := orbiterKeeperWithMocks(&deps, &m)
 
-	return ctx, &mocks, k
+	return ctx, &m, k
 }
 
 func orbiterKeeperWithMocks(
