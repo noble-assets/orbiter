@@ -36,6 +36,6 @@ type ForwardingAttributes interface {
 	proto.Message
 	// CounterpartyID returns the destination chain identifier.
 	CounterpartyID() string
-	// Validate the attributes.
+	// Validate returns an error if the attributes are not valid.
 	Validate() error
 }
