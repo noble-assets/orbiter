@@ -116,7 +116,7 @@ func (s msgServer) PauseCrossChains(
 
 	protocolID, err := core.NewProtocolIDFromString(msg.ProtocolId)
 	if err != nil {
-		return nil, errorsmod.Wrap(core.ErrUnableToUnpause, err.Error())
+		return nil, core.ErrUnableToUnpause.Wrapf("invalid protocol id: %s", err.Error())
 	}
 
 	if len(msg.CounterpartyIds) > core.MaxTargetCounterparties {
