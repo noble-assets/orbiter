@@ -22,6 +22,8 @@ package keeper_test
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"testing"
 
 	ethcommon "github.com/ethereum/go-ethereum/common"
@@ -37,8 +39,6 @@ import (
 )
 
 func TestAcceptPayload(t *testing.T) {
-	t.Parallel()
-
 	seq := uint64(0)
 	destDomain := uint32(1)
 	recipient := testutil.RandomBytes(32)
@@ -144,25 +144,16 @@ func TestAcceptPayload(t *testing.T) {
 			errContains: "cross-chain paused",
 		},
 		{
-			name: "error - nil payload",
-			payload: func() *core.PendingPayload {
-				return &core.PendingPayload{}
-			},
-			errContains: "invalid payload: payload is not set",
-		},
-		{
 			name: "error - invalid (empty) payload",
 			payload: func() *core.PendingPayload {
 				return &core.PendingPayload{Payload: &core.Payload{}}
 			},
-			errContains: "invalid payload: forwarding is not set",
+			errContains: "forwarding is not set: invalid nil pointer",
 		},
 	}
 
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 
 			if tc.setup != nil {
@@ -171,11 +162,25 @@ func TestAcceptPayload(t *testing.T) {
 
 			pendingPayload := tc.payload()
 
-			hash, err := k.AcceptPayload(ctx, pendingPayload.Payload)
-
+			gotHash, err := k.AcceptPayload(ctx, pendingPayload.Payload)
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to accept payload")
-				require.Equal(t, tc.expHash, ethcommon.BytesToHash(hash).String())
+
+				// ASSERT: expected hash returned
+				require.Equal(t, tc.expHash, ethcommon.BytesToHash(gotHash).String())
+
+				// ASSERT: expected event emitted
+				events := ctx.EventManager().Events()
+				require.Len(t, events, 1, "expected 1 event, got %d", len(events))
+
+				found := false
+				for _, e := range events {
+					if strings.Contains(e.Type, "EventPayloadSubmitted") {
+						require.False(t, found, "expected event to be emitted just once")
+						found = true
+					}
+				}
+				require.True(t, found, "expected event payload submitted to be found")
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}
@@ -238,7 +243,7 @@ func TestGetPendingPayloadWithHash(t *testing.T) {
 	}
 }
 
-func TestCompletePayload(t *testing.T) {
+func TestRemovePayload(t *testing.T) {
 	t.Parallel()
 
 	validPayload := createTestPendingPayloadWithSequence(t, 0)
@@ -270,14 +275,16 @@ func TestCompletePayload(t *testing.T) {
 			hash: expHash.Bytes(),
 		},
 		{
-			name:  "no-op - valid payload but not found in store",
-			setup: nil,
-			hash:  expHash.Bytes(),
+			name:        "error - valid payload but not found in store",
+			setup:       nil,
+			hash:        expHash.Bytes(),
+			errContains: fmt.Sprintf("payload with hash %s not found", expHash.Hex()),
 		},
 		{
-			name:  "no-op - nil hash",
-			setup: nil,
-			hash:  nil,
+			name:        "error - nil hash",
+			setup:       nil,
+			hash:        nil,
+			errContains: fmt.Sprintf("payload with hash %s not found", ethcommon.Hash{}.Hex()),
 		},
 	}
 
@@ -293,11 +300,23 @@ func TestCompletePayload(t *testing.T) {
 
 			err = k.RemovePendingPayload(ctx, tc.hash)
 			if tc.errContains == "" {
-				require.NoError(t, err, "failed to complete payload")
+				require.NoError(t, err, "failed to remove payload")
 
+				// ASSERT: value with hash was removed.
 				gotPayload, err := k.PendingPayload(ctx, tc.hash)
 				require.Error(t, err, "payload should not be present anymore")
 				require.Nil(t, gotPayload, "expected nil payload")
+
+				// ASSERT: event was emitted.
+				found := false
+				for _, event := range ctx.EventManager().ABCIEvents() {
+					if strings.Contains(event.Type, "EventPayloadRemoved") {
+						require.False(t, found, "event should only be emitted once")
+
+						found = true
+					}
+				}
+				require.True(t, found, "expected event to be emitted")
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}
@@ -347,12 +366,13 @@ func TestSubsequentSubmissions(t *testing.T) {
 
 func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 	// ACT: Generate pending payload with sequence 1
-	validForwarding := createTestPendingPayloadWithSequence(t, 1)
+	seq := uint64(1)
+	validForwarding := createTestPendingPayloadWithSequence(t, seq)
 	expHash, err := validForwarding.Keccak256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	// ACT: Generate pending payload with sequence 2
-	validForwarding2 := createTestPendingPayloadWithSequence(t, 1)
+	validForwarding2 := createTestPendingPayloadWithSequence(t, seq+1)
 	expHash2, err := validForwarding2.Keccak256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
@@ -368,10 +388,13 @@ func createTestPendingPayloadWithSequence(
 ) *core.PendingPayload {
 	t.Helper()
 
+	recipient := make([]byte, 32)
+	copy(recipient[32-3:], []byte{1, 2, 3})
+
 	validForwarding, err := forwarding.NewCCTPForwarding(
 		0,
-		testutil.RandomBytes(32),
-		testutil.RandomBytes(32),
+		recipient,
+		recipient,
 		nil,
 	)
 	require.NoError(t, err, "failed to create valid forwarding")

@@ -26,6 +26,8 @@ import (
 	"errors"
 	"fmt"
 
+	ethcommon "github.com/ethereum/go-ethereum/common"
+
 	errorsmod "cosmossdk.io/errors"
 
 	orbitertypes "github.com/noble-assets/orbiter/types"
@@ -63,7 +65,9 @@ func (k *Keeper) AcceptPayload(
 		return nil, err
 	}
 
-	found, err := k.pendingPayloads.Has(ctx, hash.Bytes())
+	hashBz := hash.Bytes()
+
+	found, err := k.pendingPayloads.Has(ctx, hashBz)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to check pending payloads")
 	}
@@ -76,7 +80,21 @@ func (k *Keeper) AcceptPayload(
 
 	k.Logger().Debug("payload registered", "hash", hash.String(), "payload", payload.String())
 
-	return hash.Bytes(), k.pendingPayloads.Set(ctx, hash.Bytes(), pendingPayload)
+	if err = k.pendingPayloads.Set(ctx, hashBz, pendingPayload); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to set pending payload")
+	}
+
+	if err = k.eventService.EventManager(ctx).Emit(
+		ctx,
+		&orbitertypes.EventPayloadSubmitted{
+			Hash:    hashBz,
+			Payload: *payload,
+		},
+	); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to emit payload submitted event")
+	}
+
+	return hashBz, nil
 }
 
 // validatePayloadAgainstState checks if the payload is valid with respect
@@ -153,7 +171,27 @@ func (k *Keeper) RemovePendingPayload(
 	ctx context.Context,
 	hash []byte,
 ) error {
-	k.Logger().Debug("completing payload", "hash", hex.EncodeToString(hash))
+	found, err := k.pendingPayloads.Has(ctx, hash)
+	if err != nil {
+		return errorsmod.Wrap(err, "failed to check pending payloads")
+	}
 
-	return k.pendingPayloads.Remove(ctx, hash)
+	if !found {
+		return fmt.Errorf("payload with hash %s not found", ethcommon.BytesToHash(hash).Hex())
+	}
+
+	if err = k.pendingPayloads.Remove(ctx, hash); err != nil {
+		return core.ErrRemovePayload.Wrap(err.Error())
+	}
+
+	k.Logger().Debug("removed pending payload", "hash", hex.EncodeToString(hash))
+
+	if err = k.eventService.EventManager(ctx).Emit(
+		ctx,
+		&orbitertypes.EventPayloadRemoved{Hash: hash},
+	); err != nil {
+		return errorsmod.Wrap(err, "failed to emit remove pending payload event")
+	}
+
+	return nil
 }

@@ -23,11 +23,13 @@ package keeper
 import (
 	"context"
 
-	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	orbitertypes "github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
+
+var _ orbitertypes.MsgServer = &Keeper{}
 
 func (k *Keeper) SubmitPayload(
 	ctx context.Context,
@@ -42,7 +44,7 @@ func (k *Keeper) SubmitPayload(
 		&req.Payload,
 	)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "failed to accept payload")
+		return nil, core.ErrSubmitPayload.Wrap(err.Error())
 	}
 
 	return &orbitertypes.MsgSubmitPayloadResponse{
