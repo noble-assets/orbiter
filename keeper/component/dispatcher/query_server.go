@@ -74,15 +74,14 @@ func (q queryServer) DispatchedCounts(
 		)
 	}
 
-	if !q.HasDispatchedCounts(ctx, &sourceID, &destID) {
+	counts := q.GetDispatchedCounts(ctx, &sourceID, &destID)
+	if !counts.IsPositive() {
 		return nil, status.Errorf(codes.NotFound,
 			"dispatched counts not found for source ID %s and destination ID %s",
 			sourceID.String(),
 			destID.String(),
 		)
 	}
-
-	counts := q.GetDispatchedCounts(ctx, &sourceID, &destID)
 
 	return &dispatchertypes.QueryDispatchedCountsResponse{
 		Counts:     []*dispatchertypes.DispatchCountEntry{counts},
@@ -178,7 +177,8 @@ func (q queryServer) DispatchedAmounts(
 		)
 	}
 
-	if !q.HasDispatchedAmount(ctx, &sourceID, &destID, req.Denom) {
+	amounts := q.GetDispatchedAmount(ctx, &sourceID, &destID, req.Denom)
+	if !amounts.AmountDispatched.IsPositive() {
 		return nil, status.Errorf(codes.NotFound,
 			"dispatched amount not found for source ID %s, destination ID %s, denom %s",
 			sourceID.String(),
@@ -186,8 +186,6 @@ func (q queryServer) DispatchedAmounts(
 			req.Denom,
 		)
 	}
-
-	amounts := q.GetDispatchedAmount(ctx, &sourceID, &destID, req.Denom)
 
 	return &dispatchertypes.QueryDispatchedAmountsResponse{
 		Amounts: []*dispatchertypes.DispatchedAmountEntry{amounts},
