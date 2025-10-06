@@ -153,7 +153,7 @@ func TestValidateCounterpartyID(t *testing.T) {
 			expError:   "invalid counterparty ID",
 		},
 		{
-			name:       "error - only a number with IBC",
+			name:       "error - wrong string format with IBC",
 			id:         " counterparty ",
 			protocolID: core.PROTOCOL_IBC,
 			expError:   "invalid counterparty ID",
