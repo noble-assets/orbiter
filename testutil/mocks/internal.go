@@ -18,35 +18,48 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package mocks
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"context"
+	"errors"
 
-	"github.com/noble-assets/orbiter/types/component"
-	"github.com/noble-assets/orbiter/types/controller"
-	"github.com/noble-assets/orbiter/types/core"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
+	"github.com/noble-assets/orbiter/types/controller/forwarding"
 )
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	component.RegisterLegacyAminoCodec(cdc)
+var _ forwarding.InternalHandler = InternalHandler{}
+
+type InternalHandler struct {
+	*BankKeeper
 }
 
-// RegisterInterfaces is used to register in the chain codec
-// all interfaces and associated implementations defined in
-// the Orbiter module.
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterInterface(
-		"noble.orbiter.v1.ForwardingAttributes",
-		(*core.ForwardingAttributes)(nil),
-	)
+func NewInternalHandler() *InternalHandler {
+	return &InternalHandler{
+		NewBankKeeper(),
+	}
+}
 
-	registry.RegisterInterface(
-		"noble.orbiter.v1.ActionAttributes",
-		(*core.ActionAttributes)(nil),
-	)
+// Send implements forwarding.InternalHandler.
+func (h InternalHandler) Send(
+	ctx context.Context,
+	msg *banktypes.MsgSend,
+) (*banktypes.MsgSendResponse, error) {
+	fromBal := h.Balances[msg.FromAddress]
 
-	component.RegisterInterfaces(registry)
-	controller.RegisterInterfaces(registry)
+	if msg.Amount.Len() != 1 {
+		return nil, errors.New("only one coin is accepted")
+	}
+
+	coin := msg.Amount[0]
+
+	if fromBal.AmountOf(coin.Denom).LT(coin.Amount) {
+		return nil, errors.New("not enough balance")
+	}
+
+	h.Balances[msg.FromAddress] = fromBal.Sub(coin)
+	h.Balances[msg.ToAddress] = h.Balances[msg.ToAddress].Add(coin)
+
+	return &banktypes.MsgSendResponse{}, nil
 }
