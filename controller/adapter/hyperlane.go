@@ -59,7 +59,6 @@ type HyperlaneAdapter struct {
 func NewHyperlaneAdapter(
 	logger log.Logger,
 	payloadsHandler orbitertypes.PendingPayloadsHandler,
-	// TODO: move interface definition in this package
 	hyperlaneCoreKeeper adaptertypes.HyperlaneCoreKeeper,
 	hyperlaneWarpKeeper adaptertypes.HyperlaneWarpKeeper,
 ) (*HyperlaneAdapter, error) {

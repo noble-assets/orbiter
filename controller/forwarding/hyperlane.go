@@ -40,12 +40,11 @@ import (
 var _ types.ForwardingController = &HyperlaneController{}
 
 // HyperlaneController is the forwarding controller for the Hyperlane protocol.
-//
-// TODO: implement hyperlane interfaces here instead of the main keeper
 type HyperlaneController struct {
 	*controller.BaseController[core.ProtocolID]
 
-	logger  log.Logger
+	logger log.Logger
+
 	handler forwardingtypes.HyperlaneHandler
 }
 

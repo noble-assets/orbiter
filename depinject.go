@@ -64,9 +64,6 @@ type ModuleInputs struct {
 	StoreService store.KVStoreService
 
 	BankKeeper types.BankKeeper
-
-	// TODO: use abstracted interfaces
-	CoreKeeper *hyperlanecorekeeper.Keeper
 }
 
 type ModuleOutputs struct {

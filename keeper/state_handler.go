@@ -129,8 +129,6 @@ func (k *Keeper) validatePayloadAgainstState(
 
 // PendingPayload returns the pending payload with the given hash
 // if it is found in the module storage.
-//
-// TODO: move into own abstraction type (Hyperlane state handler or smth.?)
 func (k *Keeper) PendingPayload(
 	ctx context.Context,
 	hash []byte,
