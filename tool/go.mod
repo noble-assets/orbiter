@@ -1,8 +1,6 @@
 module github.com/noble-assets/orbiter/tool
 
-go 1.24.0
-
-toolchain go1.24.7
+go 1.24
 
 tool (
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
