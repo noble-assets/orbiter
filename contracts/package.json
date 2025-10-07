@@ -1,0 +1,7 @@
+{
+  "name": "contracts",
+  "private": true,
+  "devDependencies": {
+    "forge-std": "github:foundry-rs/forge-std"
+  }
+}
