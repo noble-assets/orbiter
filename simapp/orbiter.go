@@ -6,10 +6,18 @@ import (
 
 func (app *SimApp) RegisterOrbiterControllers() {
 	in := orbiter.ComponentsInputs{
-		Orbiters:   app.OrbiterKeeper,
+		// Orbiter
+		Orbiters: app.OrbiterKeeper,
+
+		// Cosmos
 		BankKeeper: app.BankKeeper,
+
+		// Circle
 		CCTPKeeper: app.CCTPKeeper,
-		WarpKeeper: &app.WarpKeeper,
+
+		// Hyperlane
+		HyperlaneCoreKeeper: app.HyperlaneKeeper,
+		WarpKeeper:          &app.WarpKeeper,
 	}
 
 	orbiter.InjectComponents(in)
