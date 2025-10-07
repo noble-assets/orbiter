@@ -25,6 +25,8 @@ import (
 
 	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
+
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
 // CCTPMsgServer defines the expected behavior for the CCTP server.
@@ -53,4 +55,9 @@ type HyperlaneHandler interface {
 		ctx context.Context,
 		request *warptypes.QueryTokenRequest,
 	) (*warptypes.QueryTokenResponse, error)
+}
+
+// InternalHandler defines the expected behavior for the internal transfer handler.
+type InternalHandler interface {
+	Send(ctx context.Context, msg *banktypes.MsgSend) (*banktypes.MsgSendResponse, error)
 }

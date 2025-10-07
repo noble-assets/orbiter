@@ -24,7 +24,7 @@ The composability flow is defined by the 3-steps logic:
 
 1. Funds with a payload are transferred to Noble.
 2. Actions like swaps or fee payments, if specified, are handled on Noble.
-3. Funds are routed to another chain based on information provided in the payload.
+3. Funds are routed to another chain, or internally, based on information provided in the payload.
 
 ```mermaid
 flowchart LR
@@ -63,13 +63,16 @@ The Orbiter module supports a subset of the bridge protocols available in Noble 
 support varies depending on whether they handle incoming or outgoing transfers. The list of
 protocols and actions will be updated when new bridges and Noble actions will be supported.
 
+As a special case for the forwarding operation, received funds can be transferred internally on
+Noble to another account.
+
 ### Bridge Protocols
 
 | Protocol  | Incoming | Outgoing | Description                             |
 | --------- | -------- | -------- | --------------------------------------- |
 | IBC       | ✅       | ❌       | Inter-Blockchain Communication Protocol |
 | CCTP      | ❌       | ✅       | Circle Cross-Chain Transfer Protocol    |
-| Hyperlane | ❌       | ❌       | Hyperlane Protocol                      |
+| Hyperlane | ❌       | ✅       | Hyperlane Protocol                      |
 
 ### Actions
 
