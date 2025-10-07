@@ -8,13 +8,13 @@ on:
 jobs:
   smart-contract-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Change working directory to use the project Forge and Solhint configs.
+        working-directory: ./contracts
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: CD Contracts Folder
-        run: |
-          cd contracts/
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
