@@ -1,9 +1,11 @@
 .claude
+.env
 .idea
 .orbiter
 build
 cache
-out
 coverage**.out
 go.work.sum
 heighliner**
+node_modules
+out
