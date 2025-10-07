@@ -16,6 +16,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install Contracts Deps
+        run: bun install
+
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
