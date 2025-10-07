@@ -64,7 +64,8 @@ contract OrbiterGatewayCCTP {
     uint32 public constant DESTINATION_DOMAIN = 4;
     /// @notice Padded address of the CCTP module on Noble:
     /// https://github.com/circlefin/noble-cctp/blob/master/x/cctp/types/keys.go#L52-L58
-    bytes32 public constant MINT_RECIPIENT = 0x000000000000000000000000a197eb1a9bfe6143b2d6499897fc1e3c1cfacbb2;
+    bytes32 public constant MINT_RECIPIENT =
+        0x000000000000000000000000a197eb1a9bfe6143b2d6499897fc1e3c1cfacbb2;
 
     /// @notice Token transferred to the Orbiter
     IFiatToken public immutable TOKEN;
@@ -127,7 +128,10 @@ contract OrbiterGatewayCCTP {
         );
 
         uint256 payloadNonce = MESSAGE_TRANSMITTER.sendMessageWithCaller(
-            DESTINATION_DOMAIN, MINT_RECIPIENT, DESTINATION_CALLER, abi.encodePacked(transferNonce, payloadHash)
+            DESTINATION_DOMAIN,
+            MINT_RECIPIENT,
+            DESTINATION_CALLER,
+            abi.encodePacked(transferNonce, payloadHash)
         );
 
         emit DepositForBurnWithOrbiterPayload(transferNonce, payloadNonce, payloadHash);
