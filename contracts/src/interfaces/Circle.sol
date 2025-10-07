@@ -15,7 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 pragma solidity 0.8.30;
+
+interface ITokenMessenger {
+    // https://github.com/circlefin/evm-cctp-contracts/blob/1ddc5057e2a686194d481d04239387cf095ec760/src/TokenMessenger.sol#L104-L104
+    function localMessageTransmitter() external view returns (IMessageTransmitter);
+
+    // https://github.com/circlefin/evm-cctp-contracts/blob/1ddc5057e2a686194d481d04239387cf095ec760/src/TokenMessenger.sol#L187-L227
+    function depositForBurnWithCaller(
+        uint256 amount,
+        uint32 destinationDomain,
+        bytes32 mintRecipient,
+        address burnToken,
+        bytes32 destinationCaller
+    ) external returns (uint64 nonce);
+}
 
 interface IFiatToken {
     // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.4.0/contracts/token/ERC20/IERC20.sol#L52-L67
@@ -25,15 +40,23 @@ interface IFiatToken {
     function transferFrom(address from, address to, uint256 value) external returns (bool);
 
     // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.4.0/contracts/token/ERC20/extensions/IERC20Permit.sol#L43-L74
-    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
-}
-
-interface ITokenMessenger {
-    // https://github.com/circlefin/evm-cctp-contracts/blob/1ddc5057e2a686194d481d04239387cf095ec760/src/TokenMessenger.sol#L187-L227
-    function depositForBurnWithCaller(uint256 amount, uint32 destinationDomain, bytes32 mintRecipient, address burnToken, bytes32 destinationCaller) external returns (uint64 nonce);
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external;
 }
 
 interface IMessageTransmitter {
     // https://github.com/circlefin/evm-cctp-contracts/blob/1ddc5057e2a686194d481d04239387cf095ec760/src/interfaces/IRelayer.sol#L37-L55
-    function sendMessageWithCaller(uint32 destinationDomain, bytes32 recipient, bytes32 destinationCaller, bytes calldata messageBody) external returns (uint64);
+    function sendMessageWithCaller(
+        uint32 destinationDomain,
+        bytes32 recipient,
+        bytes32 destinationCaller,
+        bytes calldata messageBody
+    ) external returns (uint64);
 }

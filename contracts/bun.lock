@@ -1,0 +1,14 @@
+{
+  "lockfileVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "contracts",
+      "dependencies": {
+        "forge-std": "^1.1.2",
+      },
+    },
+  },
+  "packages": {
+    "forge-std": ["forge-std@1.1.2", "", {}, "sha512-Wfb0iAS9PcfjMKtGpWQw9mXzJxrWD62kJCUqqLcyuI0+VRtJ3j20XembjF3kS20qELYdXft1vD/SPFVWVKMFOw=="],
+  }
+}
