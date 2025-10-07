@@ -43,6 +43,8 @@ func GetPayloadHashFromWarpMessageBody(body []byte) ([]byte, error) {
 // GetReducedWarpMessageFromOrbiterMessage removes the extra payload bytes from the formatted
 // message body
 // which turns the custom Orbiter Hyperlane message format into a Warp compatible one.
+//
+// TODO: move into hyperlane adapter types
 func GetReducedWarpMessageFromOrbiterMessage(
 	message hyperlaneutil.HyperlaneMessage,
 ) (hyperlaneutil.HyperlaneMessage, error) {
