@@ -334,10 +334,13 @@ func TestSubsequentSubmissions(t *testing.T) {
 	expHash, err := validPayload.Keccak256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
+	validPayloadJSON, err := orbitertypes.MarshalJSON(k.Codec(), validPayload.Payload)
+	require.NoError(t, err, "failed to marshal payload into json")
+
 	// ACT: submit first payload
 	res, err := k.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 		Signer:  testutil.NewNobleAddress(),
-		Payload: *validPayload.Payload,
+		Payload: string(validPayloadJSON),
 	})
 	require.NoError(t, err, "failed to submit payload")
 
@@ -348,7 +351,7 @@ func TestSubsequentSubmissions(t *testing.T) {
 	// ACT: submit identical payload again
 	res2, err := k.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 		Signer:  testutil.NewNobleAddress(),
-		Payload: *validPayload.Payload,
+		Payload: string(validPayloadJSON),
 	})
 	require.NoError(t, err, "failed to submit payload")
 

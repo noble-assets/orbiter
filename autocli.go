@@ -41,7 +41,8 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 			Service: orbiterv1.Msg_ServiceDesc.ServiceName,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
-					// NOTE: we're manually moving this to the `payload` sub command for better navigation
+					// NOTE: we're manually moving this to the `payload` sub command for better
+					// navigation
 					RpcMethod: "SubmitPayload",
 					Skip:      true,
 				},
@@ -76,7 +77,8 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 			Service: orbiterv1.Query_ServiceDesc.ServiceName,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
-					// NOTE: we're manually moving this to the `payload` sub command for better navigation
+					// NOTE: we're manually moving this to the `payload` sub command for better
+					// navigation
 					RpcMethod: "PendingPayloads",
 					Skip:      true,
 				},

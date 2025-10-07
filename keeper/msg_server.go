@@ -35,13 +35,18 @@ func (k *Keeper) SubmitPayload(
 	ctx context.Context,
 	req *orbitertypes.MsgSubmitPayload,
 ) (*orbitertypes.MsgSubmitPayloadResponse, error) {
-	if err := req.Payload.Validate(); err != nil {
+	var payload core.Payload
+	if err := orbitertypes.UnmarshalJSON(k.cdc, []byte(req.Payload), &payload); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
+
+	if err := (&payload).Validate(); err != nil {
 		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}
 
 	payloadHash, err := k.AcceptPayload(
 		ctx,
-		&req.Payload,
+		&payload,
 	)
 	if err != nil {
 		return nil, core.ErrSubmitPayload.Wrap(err.Error())

@@ -28,11 +28,9 @@ message MsgSubmitPayload {
   // The signer of the transaction.
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
-  // The payload submitted to the Orbiter module.
-  noble.orbiter.core.v1.Payload payload = 2 [
-    (gogoproto.nullable) = false,
-    (amino.dont_omitempty) = true
-  ];
+  // The marshalled JSON representation of the payload that is
+  // submitted to the Orbiter.
+  string payload = 2;
 }
 
 // MsgSubmitPayloadResponse returns the keccak256 of the registered
