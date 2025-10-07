@@ -3,12 +3,12 @@
   "workspaces": {
     "": {
       "name": "contracts",
-      "dependencies": {
-        "forge-std": "^1.1.2",
+      "devDependencies": {
+        "forge-std": "github:foundry-rs/forge-std",
       },
     },
   },
   "packages": {
-    "forge-std": ["forge-std@1.1.2", "", {}, "sha512-Wfb0iAS9PcfjMKtGpWQw9mXzJxrWD62kJCUqqLcyuI0+VRtJ3j20XembjF3kS20qELYdXft1vD/SPFVWVKMFOw=="],
+    "forge-std": ["forge-std@github:foundry-rs/forge-std#f906235", {}, "foundry-rs-forge-std-f906235"],
   }
 }

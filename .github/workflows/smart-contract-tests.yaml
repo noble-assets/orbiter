@@ -1,23 +1,20 @@
 name: Smart Contracts Unit Tests
-
 on:
   pull_request:
     paths-ignore:
       - '**/*.md'
       - '**/*.yaml'
       - '**/*.yml'
-
-env:
-  FOUNDRY_PROFILE: ci
-
 jobs:
   smart-contract-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+        uses: actions/checkout@v4
+
+      - name: CD Contracts Folder
+        run: |
+          cd contracts/
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
