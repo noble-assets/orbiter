@@ -64,8 +64,7 @@ contract OrbiterGatewayCCTP {
     uint32 public constant DESTINATION_DOMAIN = 4;
     /// @notice Padded address of the CCTP module on Noble:
     /// https://github.com/circlefin/noble-cctp/blob/master/x/cctp/types/keys.go#L52-L58
-    bytes32 public constant MINT_RECIPIENT =
-        0x000000000000000000000000a197eb1a9bfe6143b2d6499897fc1e3c1cfacbb2;
+    bytes32 public constant MINT_RECIPIENT = 0x000000000000000000000000a197eb1a9bfe6143b2d6499897fc1e3c1cfacbb2;
 
     /// @notice Token transferred to the Orbiter
     IFiatToken public immutable TOKEN;
@@ -76,7 +75,7 @@ contract OrbiterGatewayCCTP {
     /// remote chains
     IMessageTransmitter public immutable MESSAGE_TRANSMITTER;
     /// @notice The only address allowed to complete the transfer
-    /// on the reciving chain
+    /// on the receiving chain
     bytes32 public immutable DESTINATION_CALLER;
 
     /**
@@ -101,7 +100,7 @@ contract OrbiterGatewayCCTP {
     /**
      * @notice Initiates a CCTP token transfer to the Orbiter module on the Noble chain, and a
      * a generic message transfer containing the hash of the payload that will be executed by
-     * the Orbiter. The function requireds a pre signed permit to transfer funds from the user
+     * the Orbiter. The function requires a pre signed permit to transfer funds from the user
      * to the module as per EIP-2612 (https://eips.ethereum.org/EIPS/eip-2612).
      * The Orbiter module requires the two intents created with this method to be relayed to the
      * Noble chain in the same tx.
@@ -128,10 +127,7 @@ contract OrbiterGatewayCCTP {
         );
 
         uint256 payloadNonce = MESSAGE_TRANSMITTER.sendMessageWithCaller(
-            DESTINATION_DOMAIN,
-            MINT_RECIPIENT,
-            DESTINATION_CALLER,
-            abi.encodePacked(transferNonce, payloadHash)
+            DESTINATION_DOMAIN, MINT_RECIPIENT, DESTINATION_CALLER, abi.encodePacked(transferNonce, payloadHash)
         );
 
         emit DepositForBurnWithOrbiterPayload(transferNonce, payloadNonce, payloadHash);
