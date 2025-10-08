@@ -21,7 +21,7 @@
 package adapter_test
 
 import (
-	"fmt"
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -31,6 +31,7 @@ import (
 	adapterctrl "github.com/noble-assets/orbiter/controller/adapter"
 	"github.com/noble-assets/orbiter/testutil"
 	"github.com/noble-assets/orbiter/testutil/testdata"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -149,6 +150,49 @@ func TestParsePayload(t *testing.T) {
 			},
 			expectError: false,
 		},
+		// NOTE: the following test case has been added to validate an external audit.
+		{
+			name: "success - orbiter payload with incomplete CCTP attributes",
+			setup: func(reg codectypes.InterfaceRegistry) {
+				reg.RegisterImplementations(
+					(*core.ForwardingAttributes)(nil),
+					&forwardingtypes.CCTPAttributes{},
+				)
+			},
+			payloadBz: func() []byte {
+				memo := map[string]any{
+					"orbiter": map[string]any{
+						"forwarding": map[string]any{
+							"protocol_id": 2,
+							"attributes": map[string]any{
+								"@type":          "/noble.orbiter.controller.forwarding.v1.CCTPAttributes",
+								"mint_recipient": "PNWAxASH2RPmgMV+/Tb4e78ON1WL8SoFGnwbWWHxfuA=",
+							},
+						},
+					},
+				}
+
+				memoBz, err := json.MarshalIndent(memo, "", "  ")
+				require.NoError(t, err)
+				print(string(memoBz))
+
+				return testutil.CreateValidIBCPacketData(
+					sender,
+					core.ModuleAddress.String(),
+					string(memoBz),
+				)
+			}(),
+			expectIsOrbiter: true,
+			expectPayload: &core.Payload{
+				Forwarding: &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
+					Attributes: &codectypes.Any{
+						TypeUrl: "/noble.orbiter.controller.forwarding.v1.CCTPAttributes",
+					},
+				},
+			},
+			expectError: false,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -160,16 +204,20 @@ func TestParsePayload(t *testing.T) {
 			}
 
 			parser, err := adapterctrl.NewIBCParser(encCfg.Codec)
-			require.NoError(t, err)
+			require.NoError(t, err, "expected no error creating parser")
 
-			fmt.Println("len of payload:", len(tc.payloadBz))
 			isOrbiterPayload, payload, err := parser.ParsePayload(core.PROTOCOL_IBC, tc.payloadBz)
 
-			require.Equal(t, tc.expectIsOrbiter, isOrbiterPayload)
+			require.Equal(
+				t,
+				tc.expectIsOrbiter,
+				isOrbiterPayload,
+				"expected payload to be orbiter payload",
+			)
 			if tc.expectError {
-				require.ErrorContains(t, err, tc.errorContains)
+				require.ErrorContains(t, err, tc.errorContains, "expected a different error")
 			} else {
-				require.NoError(t, err)
+				require.NoError(t, err, "expected no error parsing the payload")
 				if tc.expectIsOrbiter {
 					require.NotNil(t, payload.Forwarding)
 					require.Equal(t, tc.expectPayload.Forwarding.ProtocolId, payload.Forwarding.ProtocolId, "expected different id")
