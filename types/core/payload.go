@@ -28,6 +28,10 @@ import (
 // Keccak256Hash returns the keccak 256 hash of the payload contents.
 // To guarantee uniqueness the sequence number is included.
 func (p *PendingPayload) Keccak256Hash() (common.Hash, error) {
+	if err := p.Validate(); err != nil {
+		return common.Hash{}, err
+	}
+
 	bz, err := p.Marshal()
 	if err != nil {
 		return common.Hash{}, err
