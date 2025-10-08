@@ -298,7 +298,7 @@ func TestRemovePayload(t *testing.T) {
 				tc.setup(t, ctx, k)
 			}
 
-			err = k.RemovePendingPayload(ctx, tc.hash)
+			err := k.RemovePendingPayload(ctx, tc.hash)
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to remove payload")
 
