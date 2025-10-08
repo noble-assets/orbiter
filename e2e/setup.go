@@ -84,6 +84,7 @@ type Suite struct {
 	hyperlaneToken             *warptypes.WrappedHypToken
 	hyperlaneHook              *hyperlanepostdispatchtypes.NoopHook
 	hyperlaneDestinationDomain uint32
+	hyperlaneOriginDomain      uint32
 }
 
 func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.Context, Suite) {
@@ -265,7 +266,9 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 
 		suite.hyperlaneToken = collateralToken
 
-		suite.hyperlaneDestinationDomain = 1
+		suite.hyperlaneOriginDomain = 1
+		suite.hyperlaneDestinationDomain = 2
+
 		receiverDomain := strconv.Itoa(int(suite.hyperlaneDestinationDomain))
 		receiverContract := "0x0000000000000000000000000000000000000000000000000000000000000000"
 		gasAmount := "0"
