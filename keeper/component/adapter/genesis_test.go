@@ -33,12 +33,15 @@ import (
 func TestInitGenesis(t *testing.T) {
 	a, deps := mocks.NewAdapterComponent(t)
 
-	defaultParams := a.GetParams(deps.SdkCtx)
+	defaultParams, err := a.GetParams(deps.SdkCtx)
+	require.Error(t, err)
 
 	// ACT: fail for invalid genesis state (nil)
-	err := a.InitGenesis(deps.SdkCtx, nil)
+	err = a.InitGenesis(deps.SdkCtx, nil)
 	require.ErrorIs(t, err, core.ErrNilPointer)
-	require.Equal(t, defaultParams, a.GetParams(deps.SdkCtx), "params should not have changed")
+
+	params, _ := a.GetParams(deps.SdkCtx)
+	require.Equal(t, defaultParams, params, "params should not have changed")
 
 	// ACT: update params for valid genesis state
 	validParams := adaptertypes.Params{MaxPassthroughPayloadSize: 1024}
@@ -52,18 +55,21 @@ func TestInitGenesis(t *testing.T) {
 
 	err = a.InitGenesis(deps.SdkCtx, &validGenState)
 	require.NoError(t, err, "failed to init genesis state")
+
+	params, err = a.GetParams(deps.SdkCtx)
+	require.NoError(t, err)
 	require.Equal(
 		t,
 		validGenState.Params,
-		a.GetParams(deps.SdkCtx),
+		params,
 		"expected params to have been updated",
 	)
 }
 
 func TestExportGenesis(t *testing.T) {
 	a, deps := mocks.NewAdapterComponent(t)
-
-	expGenState := adaptertypes.GenesisState{Params: a.GetParams(deps.SdkCtx)}
+	params, _ := a.GetParams(deps.SdkCtx)
+	expGenState := adaptertypes.GenesisState{Params: params}
 
 	genState := a.ExportGenesis(deps.SdkCtx)
 	require.Equal(t, expGenState.String(), genState.String(), "expected different gen state")

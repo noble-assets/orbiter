@@ -23,6 +23,9 @@ package adapter
 import (
 	"context"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"github.com/cosmos/cosmos-sdk/types/errors"
 
 	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
@@ -47,7 +50,10 @@ func (s queryServer) Params(
 		return nil, errors.ErrInvalidRequest
 	}
 
-	params := s.GetParams(ctx)
+	params, err := s.GetParams(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
 
 	return &adaptertypes.QueryParamsResponse{
 		Params: params,

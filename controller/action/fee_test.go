@@ -220,7 +220,7 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			feesInfo: []*actiontypes.FeeInfo{
 				{
 					Recipient:   recipient1.String(),
-					BasisPoints: core.BPSNormalizer, // 100%
+					BasisPoints: actiontypes.BPSNormalizer, // 100%
 				},
 			},
 			expFeeToDistribute: &actiontypes.FeesToDistribute{
@@ -390,7 +390,7 @@ func TestValidateAttributes(t *testing.T) {
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
-						BasisPoints: core.BPSNormalizer + 1,
+						BasisPoints: actiontypes.BPSNormalizer + 1,
 					},
 				},
 			},
@@ -446,7 +446,7 @@ func TestValidateAttributes(t *testing.T) {
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
 						Recipient:   recipient.String(),
-						BasisPoints: core.BPSNormalizer,
+						BasisPoints: actiontypes.BPSNormalizer,
 					},
 				},
 			},

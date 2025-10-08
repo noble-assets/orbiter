@@ -64,8 +64,15 @@ func TestIBCToCCTP(t *testing.T) {
 	ibcRecipient := s.IBC.CounterpartySender.FormattedAddress()
 	s.FundIBCRecipient(t, ctx, amountToSend, ibcRecipient, fromOrbiterChanID, dstUsdcDenom)
 
-	t.Run("FailingWithoutForwarding", func(t *testing.T) {
-		testIbcFailingWithoutForwarding(t, ctx, &s, dstUsdcDenom, toOrbiterChanID)
+	totalEscrow := GetIBCTotalEscrow(t, ctx, s.Chain.Validators[0], uusdcDenom)
+	require.Equal(t, totalEscrow.String(), amountToSend.String())
+
+	t.Run("FailingParsingWithoutForwarding", func(t *testing.T) {
+		testIbcFailingParsingWithoutForwarding(t, ctx, &s, dstUsdcDenom, toOrbiterChanID)
+	})
+
+	t.Run("FailingAfterParsingInvalidForwarding", func(t *testing.T) {
+		testIbcFailingAfterParsingInvalidForwarding(t, ctx, &s, dstUsdcDenom, toOrbiterChanID)
 	})
 
 	t.Run("PassingWithFeeAction", func(t *testing.T) {
@@ -77,7 +84,7 @@ func TestIBCToCCTP(t *testing.T) {
 	})
 }
 
-func testIbcFailingWithoutForwarding(
+func testIbcFailingParsingWithoutForwarding(
 	t *testing.T,
 	ctx context.Context,
 	s *Suite,
@@ -86,12 +93,14 @@ func testIbcFailingWithoutForwarding(
 ) {
 	cdc := s.Chain.GetCodec()
 	amountToSend := math.NewInt(OneE6)
+
 	initAmount, err := s.IBC.CounterpartyChain.GetBalance(
 		ctx,
 		s.IBC.CounterpartySender.FormattedAddress(),
 		dstUsdcDenom,
 	)
 	require.NoError(t, err)
+	initialEscrow := GetIBCTotalEscrow(t, ctx, s.Chain.Validators[0], uusdcDenom)
 
 	// Create a wrapped payload for the IBC memo without the required forwarding info.
 	feeRecipientAddr := testutil.NewNobleAddress()
@@ -161,6 +170,107 @@ func testIbcFailingWithoutForwarding(
 		resp,
 		"expected the address on the counterparty chain to have funds unlocked",
 	)
+	finalEscrow := GetIBCTotalEscrow(t, ctx, s.Chain.Validators[0], uusdcDenom)
+	require.Equal(t, initialEscrow.String(), finalEscrow.String())
+}
+
+func testIbcFailingAfterParsingInvalidForwarding(
+	t *testing.T,
+	ctx context.Context,
+	s *Suite,
+	dstUsdcDenom string,
+	toOrbiterChanID string,
+) {
+	cdc := s.Chain.GetCodec()
+	amountToSend := math.NewInt(OneE6)
+
+	initAmount, err := s.IBC.CounterpartyChain.GetBalance(
+		ctx,
+		s.IBC.CounterpartySender.FormattedAddress(),
+		dstUsdcDenom,
+	)
+	require.NoError(t, err)
+	initialEscrow := GetIBCTotalEscrow(t, ctx, s.Chain.Validators[0], uusdcDenom)
+
+	height, err := s.IBC.CounterpartyChain.Height(ctx)
+	require.NoError(t, err)
+
+	// By using the empty byte array we can trigger an error in the CCTP handler.
+	emptyByteArr := make([]byte, 32)
+	payload := map[string]any{
+		"orbiter": map[string]any{
+			"forwarding": map[string]any{
+				"protocol_id": 2,
+				"attributes": map[string]any{
+					"@type":          "/noble.orbiter.controller.forwarding.v1.CCTPAttributes",
+					"mint_recipient": len(emptyByteArr),
+				},
+			},
+		},
+	}
+
+	payloadBz, err := json.MarshalIndent(payload, "", "  ")
+	require.NoError(t, err)
+
+	transfer := ibc.WalletAmount{
+		Address: core.ModuleAddress.String(),
+		Denom:   dstUsdcDenom,
+		Amount:  amountToSend,
+	}
+	ibcTx, err := s.IBC.CounterpartyChain.SendIBCTransfer(
+		ctx,
+		toOrbiterChanID,
+		s.IBC.CounterpartySender.KeyName(),
+		transfer,
+		ibc.TransferOptions{
+			Memo: string(payloadBz),
+		},
+	)
+	require.NoError(t, err)
+	s.FlushRelayer(t, ctx, toOrbiterChanID)
+
+	msg, err := interchainutil.PollForAck(
+		ctx,
+		s.IBC.CounterpartyChain,
+		height,
+		height+10,
+		ibcTx.Packet,
+	)
+	require.NoError(t, err)
+
+	expectedAck := &channeltypes.Acknowledgement{}
+	err = cdc.UnmarshalJSON(msg.Acknowledgement, expectedAck)
+	require.NoError(t, err)
+	require.Contains(
+		t,
+		expectedAck.GetError(),
+		"orbiter-middleware error",
+		"expected the error in the ack to contains the orbiter middleware error",
+	)
+
+	ibcHeight := s.GetIbcTransferBlockExecution(t, ctx, height)
+	txsResult := GetTxsResult(t, ctx, s.Chain.Validators[0], strconv.Itoa(int(ibcHeight)))
+	require.Equal(t, txsResult.TotalCount, uint64(1), "expected only one tx")
+
+	found, _ := SearchEvents(txsResult.Txs[0].Events, []string{
+		"circle.cctp.v1.DepositForBurn",
+	})
+	require.False(t, found, "expected CCTP event not emitted")
+
+	resp, err := s.IBC.CounterpartyChain.GetBalance(
+		ctx,
+		s.IBC.CounterpartySender.FormattedAddress(),
+		dstUsdcDenom,
+	)
+	require.NoError(t, err)
+	require.Equal(
+		t,
+		initAmount,
+		resp,
+		"expected the address on the counterparty chain to have funds unlocked",
+	)
+	finalEscrow := GetIBCTotalEscrow(t, ctx, s.Chain.Validators[0], uusdcDenom)
+	require.Equal(t, initialEscrow.String(), finalEscrow.String())
 }
 
 func testIbcPassingWithFeeAction(

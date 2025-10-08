@@ -154,14 +154,6 @@ func (d *Dispatcher) ValidatePayload(payload *core.Payload) error {
 		return err
 	}
 
-	visitedIDs := make(map[int32]any)
-	for _, action := range payload.PreActions {
-		if _, found := visitedIDs[int32(action.Id)]; found {
-			return fmt.Errorf("received repeated action ID: %v", action.ID())
-		}
-		visitedIDs[int32(action.Id)] = nil
-	}
-
 	return nil
 }
 

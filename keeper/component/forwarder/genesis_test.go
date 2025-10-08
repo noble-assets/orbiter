@@ -102,8 +102,8 @@ func TestExportGenesis(t *testing.T) {
 
 	expPausedCrossChainIDs := []*core.CrossChainID{
 		{ProtocolId: core.PROTOCOL_IBC, CounterpartyId: "channel-1"},
-		{ProtocolId: core.PROTOCOL_CCTP, CounterpartyId: "domain-7"},
-		{ProtocolId: core.PROTOCOL_HYPERLANE, CounterpartyId: "hprln"},
+		{ProtocolId: core.PROTOCOL_CCTP, CounterpartyId: "7"},
+		{ProtocolId: core.PROTOCOL_HYPERLANE, CounterpartyId: "1"},
 	}
 	for _, id := range expPausedCrossChainIDs {
 		err := fw.SetPausedCrossChain(deps.SdkCtx, *id)

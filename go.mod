@@ -179,3 +179,5 @@ require (
 	pgregory.net/rapid v1.2.0 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
+
+replace cosmossdk.io/collections => github.com/noble-assets/cosmos-sdk/collections v0.0.0-20250923134424-edd65694c2f7

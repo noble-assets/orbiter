@@ -213,7 +213,12 @@ func (a *Adapter) CheckPassthroughPayloadSize(
 	ctx context.Context,
 	passthroughPayload []byte,
 ) error {
-	params := a.GetParams(ctx)
+	// If we obtain an error, we assume 0 allowed payload size so
+	// we can execute the transfer if no payload is specified.
+	params, err := a.GetParams(ctx)
+	if err != nil {
+		a.logger.Error("getting params returned an error", "err", err.Error())
+	}
 
 	maxSize := params.MaxPassthroughPayloadSize
 	if uint64(len(passthroughPayload)) > uint64(maxSize) {

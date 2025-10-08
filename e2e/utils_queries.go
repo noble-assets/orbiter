@@ -21,17 +21,23 @@
 package e2e
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"testing"
 
 	ismtypes "github.com/bcp-innovations/hyperlane-cosmos/x/core/01_interchain_security/types"
 	hyperlanepostdispatchtypes "github.com/bcp-innovations/hyperlane-cosmos/x/core/02_post_dispatch/types"
 	hyperlanecoretypes "github.com/bcp-innovations/hyperlane-cosmos/x/core/types"
 	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 	interchaintestcosmos "github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/stretchr/testify/require"
 
 	errorsmod "cosmossdk.io/errors"
+	"cosmossdk.io/math"
+	"github.com/cosmos/gogoproto/jsonpb"
 	"github.com/cosmos/gogoproto/proto"
+	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 )
 
 // getHyperlaneNoOpISM returns the first found No-Op ISM that's registered on the given node.
@@ -110,4 +116,25 @@ func getHyperlaneCollateralToken(
 	}
 
 	return &res.Tokens[0], nil
+}
+
+func GetIBCTotalEscrow(
+	t *testing.T,
+	ctx context.Context,
+	node *interchaintestcosmos.ChainNode,
+	denom string,
+) math.Int {
+	t.Helper()
+
+	raw, _, err := node.ExecQuery(ctx, "ibc-transfer", "total-escrow", denom)
+	require.NoError(t, err, "expected no error querying ibc total escrow")
+
+	var res transfertypes.QueryTotalEscrowForDenomResponse
+	require.NoError(
+		t,
+		jsonpb.Unmarshal(bytes.NewReader(raw), &res),
+		"expected no error parsing total escrow response",
+	)
+
+	return res.Amount.Amount
 }

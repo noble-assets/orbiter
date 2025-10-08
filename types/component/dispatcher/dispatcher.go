@@ -66,6 +66,10 @@ func (a DispatchedAmountEntry) Validate() error {
 	return nil
 }
 
+func (c DispatchCountEntry) IsPositive() bool {
+	return c.Count > 0
+}
+
 func (c DispatchCountEntry) Validate() error {
 	if c.Count == 0 {
 		return errors.New("cannot set zero count")
