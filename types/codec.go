@@ -23,6 +23,7 @@ package types
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 
 	"github.com/noble-assets/orbiter/types/component"
@@ -46,6 +47,11 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterInterface(
 		"noble.orbiter.v1.ActionAttributes",
 		(*core.ActionAttributes)(nil),
+	)
+
+	registry.RegisterImplementations(
+		(*sdk.Msg)(nil),
+		&MsgSubmitPayload{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
