@@ -150,7 +150,7 @@ func TestParsePayload(t *testing.T) {
 			},
 			expectError: false,
 		},
-		// NOTE: the following test case has been added to validate an external audit.
+		// NOTE: the following test case comes from an external audit report.
 		{
 			name: "success - orbiter payload with incomplete CCTP attributes",
 			setup: func(reg codectypes.InterfaceRegistry) {
