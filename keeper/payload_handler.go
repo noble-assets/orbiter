@@ -118,7 +118,7 @@ func (k *Keeper) validatePayloadAgainstState(
 
 	paused, err := k.forwarder.IsProtocolPaused(ctx, payload.Forwarding.ProtocolId)
 	if err != nil {
-		return errorsmod.Wrap(err, "failed to check if forwarder is paused")
+		return errorsmod.Wrap(err, "failed to check if protocol is paused")
 	}
 
 	if paused {
@@ -130,16 +130,18 @@ func (k *Keeper) validatePayloadAgainstState(
 		return err
 	}
 
-	paused, err = k.forwarder.IsCrossChainPaused(ctx, core.CrossChainID{
+	ccID := core.CrossChainID{
 		ProtocolId:     payload.Forwarding.ProtocolId,
 		CounterpartyId: cachedAttrs.CounterpartyID(),
-	})
+	}
+
+	paused, err = k.forwarder.IsCrossChainPaused(ctx, ccID)
 	if err != nil {
 		return errorsmod.Wrap(err, "failed to check if cross-chain paused")
 	}
 
 	if paused {
-		return fmt.Errorf("cross-chain paused")
+		return fmt.Errorf("cross-chain %s is paused", ccID.ID())
 	}
 
 	return nil
