@@ -79,6 +79,7 @@ func TestSubmitPayload(t *testing.T) {
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
+			ms := orbiterkeeper.NewMsgServer(k)
 
 			if tc.setup != nil {
 				tc.setup(t, ctx, k)
@@ -87,7 +88,7 @@ func TestSubmitPayload(t *testing.T) {
 			payloadJSON, err := orbitertypes.MarshalJSON(k.Codec(), tc.payload)
 			require.NoError(t, err, "failed to marshal payload")
 
-			res, err := k.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
+			res, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 				Payload: string(payloadJSON),
 			})
 			if tc.errContains == "" {

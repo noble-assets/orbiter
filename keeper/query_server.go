@@ -32,15 +32,23 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ orbitertypes.QueryServer = &Keeper{}
+var _ orbitertypes.QueryServer = &queryServer{}
 
-func (k *Keeper) PendingPayloads(
+type queryServer struct {
+	*Keeper
+}
+
+func NewQueryServer(k *Keeper) orbitertypes.QueryServer {
+	return &queryServer{k}
+}
+
+func (s *queryServer) PendingPayloads(
 	ctx context.Context,
 	req *orbitertypes.QueryPendingPayloadsRequest,
 ) (*orbitertypes.QueryPendingPayloadsResponse, error) {
 	hashes, pageRes, err := query.CollectionPaginate(
 		ctx,
-		k.pendingPayloads,
+		s.pendingPayloads,
 		req.Pagination,
 		func(hash []byte, _ core.PendingPayload) (string, error) {
 			return ethcommon.BytesToHash(hash).Hex(), nil

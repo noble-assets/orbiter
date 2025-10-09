@@ -39,7 +39,7 @@ import (
 func RegisterMsgServers(cfg module.Configurator, k *Keeper) {
 	ms := cfg.MsgServer()
 
-	orbitertypes.RegisterMsgServer(ms, k)
+	orbitertypes.RegisterMsgServer(ms, NewMsgServer(k))
 
 	forwardertypes.RegisterMsgServer(ms, forwarder.NewMsgServer(k.forwarder, k))
 	executortypes.RegisterMsgServer(ms, executor.NewMsgServer(k.executor, k))
@@ -51,7 +51,7 @@ func RegisterMsgServers(cfg module.Configurator, k *Keeper) {
 func RegisterQueryServers(cfg module.Configurator, k *Keeper) {
 	qs := cfg.QueryServer()
 
-	orbitertypes.RegisterQueryServer(qs, k)
+	orbitertypes.RegisterQueryServer(qs, NewQueryServer(k))
 
 	forwardertypes.RegisterQueryServer(qs, forwarder.NewQueryServer(k.forwarder))
 	executortypes.RegisterQueryServer(qs, executor.NewQueryServer(k.executor))

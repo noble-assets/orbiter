@@ -329,6 +329,7 @@ func TestRemovePayload(t *testing.T) {
 // be uniquely identified.
 func TestSubsequentSubmissions(t *testing.T) {
 	ctx, _, k := mockorbiter.OrbiterKeeper(t)
+	ms := orbiterkeeper.NewMsgServer(k)
 
 	validPayload := createTestPendingPayloadWithSequence(t, 0)
 	expHash, err := validPayload.Keccak256Hash()
@@ -338,7 +339,7 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.NoError(t, err, "failed to marshal payload into json")
 
 	// ACT: submit first payload
-	res, err := k.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
+	res, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 		Signer:  testutil.NewNobleAddress(),
 		Payload: string(validPayloadJSON),
 	})
@@ -349,7 +350,7 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.Equal(t, expHash.String(), gotHash.String(), "expected different hash")
 
 	// ACT: submit identical payload again
-	res2, err := k.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
+	res2, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 		Signer:  testutil.NewNobleAddress(),
 		Payload: string(validPayloadJSON),
 	})

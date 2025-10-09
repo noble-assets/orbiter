@@ -27,6 +27,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 
+	orbiterkeeper "github.com/noble-assets/orbiter/keeper"
 	"github.com/noble-assets/orbiter/testutil/mocks/orbiter"
 	orbitertypes "github.com/noble-assets/orbiter/types"
 )
@@ -72,13 +73,14 @@ func TestPendingPayloads(t *testing.T) {
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := orbiter.OrbiterKeeper(t)
+			ms := orbiterkeeper.NewQueryServer(k)
 
 			for range tc.nPayloads {
 				_, err := k.AcceptPayload(ctx, examplePayload)
 				require.NoError(t, err, "failed to setup payloads")
 			}
 
-			res, err := k.PendingPayloads(
+			res, err := ms.PendingPayloads(
 				ctx,
 				&orbitertypes.QueryPendingPayloadsRequest{
 					Pagination: tc.pagination,

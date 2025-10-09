@@ -29,14 +29,24 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ orbitertypes.MsgServer = &Keeper{}
+var _ orbitertypes.MsgServer = &msgServer{}
 
-func (k *Keeper) SubmitPayload(
+// msgServer is the main message handler for the Orbiter.
+type msgServer struct {
+	*Keeper
+}
+
+// NewMsgServer returns a new Orbiter message server.
+func NewMsgServer(keeper *Keeper) orbitertypes.MsgServer {
+	return &msgServer{keeper}
+}
+
+func (s *msgServer) SubmitPayload(
 	ctx context.Context,
 	req *orbitertypes.MsgSubmitPayload,
 ) (*orbitertypes.MsgSubmitPayloadResponse, error) {
 	var payload core.Payload
-	if err := orbitertypes.UnmarshalJSON(k.cdc, []byte(req.Payload), &payload); err != nil {
+	if err := orbitertypes.UnmarshalJSON(s.cdc, []byte(req.Payload), &payload); err != nil {
 		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}
 
@@ -44,7 +54,7 @@ func (k *Keeper) SubmitPayload(
 		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}
 
-	payloadHash, err := k.AcceptPayload(
+	payloadHash, err := s.AcceptPayload(
 		ctx,
 		&payload,
 	)
