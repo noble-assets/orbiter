@@ -26,8 +26,6 @@ import (
 	"errors"
 	"fmt"
 
-	ethcommon "github.com/ethereum/go-ethereum/common"
-
 	errorsmod "cosmossdk.io/errors"
 
 	orbitertypes "github.com/noble-assets/orbiter/types"
@@ -112,7 +110,7 @@ func (k *Keeper) validatePayloadAgainstState(
 		}
 
 		if paused {
-			return fmt.Errorf("action %s is paused", action.ID())
+			return fmt.Errorf("action %s is paused", action.ID().String())
 		}
 	}
 
@@ -122,7 +120,7 @@ func (k *Keeper) validatePayloadAgainstState(
 	}
 
 	if paused {
-		return fmt.Errorf("protocol %s is paused", payload.Forwarding.ProtocolId)
+		return fmt.Errorf("protocol %s is paused", payload.Forwarding.ProtocolId.String())
 	}
 
 	cachedAttrs, err := payload.Forwarding.CachedAttributes()
@@ -141,7 +139,7 @@ func (k *Keeper) validatePayloadAgainstState(
 	}
 
 	if paused {
-		return fmt.Errorf("cross-chain %s is paused", ccID)
+		return fmt.Errorf("cross-chain %s is paused", ccID.String())
 	}
 
 	return nil
@@ -179,7 +177,7 @@ func (k *Keeper) RemovePendingPayload(
 	}
 
 	if !found {
-		return fmt.Errorf("payload with hash %s not found", ethcommon.BytesToHash(hash).Hex())
+		return fmt.Errorf("payload with hash %q not found", hex.EncodeToString(hash))
 	}
 
 	if err = k.pendingPayloads.Remove(ctx, hash); err != nil {

@@ -22,6 +22,7 @@ package keeper_test
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"strings"
 	"testing"
@@ -259,16 +260,19 @@ func TestRemovePayload(t *testing.T) {
 			hash: expHash.Bytes(),
 		},
 		{
-			name:        "error - valid payload but not found in store",
-			setup:       nil,
-			hash:        expHash.Bytes(),
-			errContains: fmt.Sprintf("payload with hash %s not found", expHash.Hex()),
+			name:  "error - valid payload but not found in store",
+			setup: nil,
+			hash:  expHash.Bytes(),
+			errContains: fmt.Sprintf(
+				"payload with hash %q not found",
+				hex.EncodeToString(expHash.Bytes()),
+			),
 		},
 		{
 			name:        "error - nil hash",
 			setup:       nil,
 			hash:        nil,
-			errContains: fmt.Sprintf("payload with hash %s not found", ethcommon.Hash{}.Hex()),
+			errContains: fmt.Sprintf("payload with hash %q not found", hex.EncodeToString(nil)),
 		},
 	}
 
@@ -330,8 +334,8 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.NoError(t, err, "failed to submit payload")
 
 	// ASSERT: expected hash is returned
-	gotHash := ethcommon.BytesToHash(res.Hash)
-	require.Equal(t, expHash.String(), gotHash.String(), "expected different hash")
+	gotHash := hex.EncodeToString(res.Hash)
+	require.Equal(t, hex.EncodeToString(expHash.Bytes()), gotHash, "expected different hash")
 
 	// ACT: submit identical payload again
 	res2, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
@@ -345,11 +349,11 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.NoError(t, err, "failed to hash payload")
 
 	// ASSERT: expected hash is returned
-	gotHash2 := ethcommon.BytesToHash(res2.Hash)
-	require.Equal(t, expHash2.String(), gotHash2.String(), "expected different hash")
+	gotHash2 := hex.EncodeToString(res2.Hash)
+	require.Equal(t, hex.EncodeToString(expHash2.Bytes()), gotHash2, "expected different hash")
 
 	// ASSERT: hashes of subsequent submissions of the same payload are different
-	require.NotEqual(t, gotHash.String(), gotHash2.String(), "expected different hashes")
+	require.NotEqual(t, gotHash, gotHash2, "expected different hashes")
 }
 
 func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
@@ -365,7 +369,12 @@ func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 	require.NoError(t, err, "failed to hash payload")
 
 	// ASSERT: hash 1 and hash 2 are NOT equal
-	require.NotEqual(t, expHash.String(), expHash2.String(), "expected different hash")
+	require.NotEqual(
+		t,
+		hex.EncodeToString(expHash.Bytes()),
+		hex.EncodeToString(expHash2.Bytes()),
+		"expected different hash",
+	)
 }
 
 // createTestPendingPayloadWithSequence creates a new example payload that can be submitted
