@@ -12,12 +12,12 @@ option go_package = "github.com/noble-assets/orbiter/types";
 service Msg {
   option (cosmos.msg.v1.service) = true;
 
-  // SubmitPayload is the entrypoint to insert a new pending payload
+  // SubmitPayload allows to insert a new pending payload
   // into the module storage.
   rpc SubmitPayload(MsgSubmitPayload) returns (MsgSubmitPayloadResponse);
 }
 
-// MsgSubmitPayload enters a new Orbiter payload into the queue of pending
+// MsgSubmitPayload enters a new Orbiter payload into the list of pending
 // forwarding operations.
 message MsgSubmitPayload {
   option (cosmos.msg.v1.signer) = "signer";

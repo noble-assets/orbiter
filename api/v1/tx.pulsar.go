@@ -934,7 +934,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// MsgSubmitPayload enters a new Orbiter payload into the queue of pending
+// MsgSubmitPayload enters a new Orbiter payload into the list of pending
 // forwarding operations.
 type MsgSubmitPayload struct {
 	state         protoimpl.MessageState

@@ -28,7 +28,7 @@ const (
 //
 // Msg defines the RPC methods for the Orbiter module.
 type MsgClient interface {
-	// SubmitPayload is the entrypoint to insert a new pending payload
+	// SubmitPayload allows to insert a new pending payload
 	// into the module storage.
 	SubmitPayload(ctx context.Context, in *MsgSubmitPayload, opts ...grpc.CallOption) (*MsgSubmitPayloadResponse, error)
 }
@@ -57,7 +57,7 @@ func (c *msgClient) SubmitPayload(ctx context.Context, in *MsgSubmitPayload, opt
 //
 // Msg defines the RPC methods for the Orbiter module.
 type MsgServer interface {
-	// SubmitPayload is the entrypoint to insert a new pending payload
+	// SubmitPayload allows to insert a new pending payload
 	// into the module storage.
 	SubmitPayload(context.Context, *MsgSubmitPayload) (*MsgSubmitPayloadResponse, error)
 	mustEmbedUnimplementedMsgServer()
