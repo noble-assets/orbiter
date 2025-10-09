@@ -23,32 +23,13 @@ package types
 import (
 	"context"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
-// BankKeeper wraps the bank behaviors expected by the orbiter
-// keeper and its components.
-type BankKeeper interface {
-	BankKeeperForwarder
-	BankKeeperAdapter
-}
-
-// BankKeeperForwarder represents the bank behavior expected
-// by the forwarder component.
-type BankKeeperForwarder interface {
-	// Queries
-	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
-}
-
-// BankKeeperAdapter represents the bank behavior expected
-// by the adapter component.
-type BankKeeperAdapter interface {
-	// Queries
-	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
-	// Txs
-	SendCoinsFromModuleToModule(
-		ctx context.Context,
-		senderModule, recipientModule string,
-		amt sdk.Coins,
-	) error
+// PendingPayloadsHandler defines the interface to adjust and query the Orbiter module
+// state as it relates to the bookkeeping of pending payloads.
+type PendingPayloadsHandler interface {
+	Submit(ctx context.Context, payload *core.Payload) ([]byte, error)
+	RemovePendingPayload(ctx context.Context, hash []byte) error
+	PendingPayload(ctx context.Context, hash []byte) (*core.PendingPayload, error)
 }
