@@ -42,8 +42,6 @@ import (
 
 var (
 	_ orbitertypes.Authorizer             = &Keeper{}
-	_ orbitertypes.MsgServer              = &Keeper{}
-	_ orbitertypes.QueryServer            = &Keeper{}
 	_ orbitertypes.PendingPayloadsHandler = &Keeper{}
 )
 
@@ -94,17 +92,17 @@ func NewKeeper(
 		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
 		authority:    authority,
 
-		PendingPayloadsSequence: collections.NewSequence(
-			sb,
-			core.PendingPayloadsSequencePrefix,
-			core.PendingPayloadsSequenceName,
-		),
 		pendingPayloads: collections.NewMap[[]byte, core.PendingPayload](
 			sb,
 			core.PendingPayloadsPrefix,
 			core.PendingPayloadsName,
 			collections.BytesKey,
 			codec.CollValue[core.PendingPayload](cdc),
+		),
+		PendingPayloadsSequence: collections.NewSequence(
+			sb,
+			core.PendingPayloadsSequencePrefix,
+			core.PendingPayloadsSequenceName,
 		),
 	}
 
