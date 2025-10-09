@@ -50,7 +50,7 @@ func (k *Keeper) Submit(
 		return nil, errorsmod.Wrap(err, "payload failed stateful checks")
 	}
 
-	next, err := k.PendingPayloadsSequence.Next(ctx)
+	next, err := k.pendingPayloadsSequence.Next(ctx)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to get next sequence number")
 	}
@@ -141,7 +141,7 @@ func (k *Keeper) validatePayloadAgainstState(
 	}
 
 	if paused {
-		return fmt.Errorf("cross-chain %s is paused", ccID.ID())
+		return fmt.Errorf("cross-chain %s is paused", ccID)
 	}
 
 	return nil

@@ -38,7 +38,7 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-func TestAcceptPayload(t *testing.T) {
+func TestSubmit(t *testing.T) {
 	seq := uint64(0)
 	destDomain := uint32(1)
 	recipient := testutil.RandomBytes(32)
@@ -58,22 +58,6 @@ func TestAcceptPayload(t *testing.T) {
 			name:    "success - valid payload",
 			payload: func() *core.PendingPayload { return validPayload },
 			expHash: expHash.String(),
-		},
-		{
-			name: "error - payload already registered",
-			setup: func(t *testing.T, ctx context.Context, k *orbiterkeeper.Keeper) {
-				t.Helper()
-
-				_, err := k.Submit(ctx, validPayload.Payload)
-				require.NoError(t, err, "failed to accept payload during setup")
-
-				// NOTE: we're resetting the pending payloads sequence to generate the same hash for
-				// the next submission
-				err = k.PendingPayloadsSequence.Set(ctx, seq)
-				require.NoError(t, err, "failed to set pending payloads sequence")
-			},
-			payload:     func() *core.PendingPayload { return validPayload },
-			errContains: "already registered",
 		},
 		{
 			name: "error - payload contains paused action",
@@ -141,7 +125,7 @@ func TestAcceptPayload(t *testing.T) {
 
 				return &p
 			},
-			errContains: "cross-chain paused",
+			errContains: "cross-chain 2:1 is paused",
 		},
 		{
 			name: "error - invalid (empty) payload",

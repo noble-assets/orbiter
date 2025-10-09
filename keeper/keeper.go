@@ -62,11 +62,9 @@ type Keeper struct {
 
 	// pendingPayloads stores the pending payloads addressed by their keccak256 hash.
 	pendingPayloads collections.Map[[]byte, core.PendingPayload]
-	// PendingPayloadsSequence is the unique identifier of a given pending payload handled by the
+	// pendingPayloadsSequence is the unique identifier of a given pending payload handled by the
 	// orbiter.
-	//
-	// TODO: this is only exported to be able to set the sequence in tests -- make private again?
-	PendingPayloadsSequence collections.Sequence
+	pendingPayloadsSequence collections.Sequence
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -99,7 +97,7 @@ func NewKeeper(
 			collections.BytesKey,
 			codec.CollValue[core.PendingPayload](cdc),
 		),
-		PendingPayloadsSequence: collections.NewSequence(
+		pendingPayloadsSequence: collections.NewSequence(
 			sb,
 			core.PendingPayloadsSequencePrefix,
 			core.PendingPayloadsSequenceName,

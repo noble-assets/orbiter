@@ -57,23 +57,6 @@ func TestSubmitPayload(t *testing.T) {
 			payload:     &core.Payload{},
 			errContains: "forwarding is not set: invalid nil pointer",
 		},
-		{
-			name: "error - hash already set",
-			setup: func(t *testing.T, ctx context.Context, k *orbiterkeeper.Keeper) {
-				t.Helper()
-
-				preSeq, err := k.PendingPayloadsSequence.Peek(ctx)
-				require.NoError(t, err, "failed to get current payloads sequence")
-
-				_, err = k.Submit(ctx, validPayload.Payload)
-				require.NoError(t, err, "failed to accept payload")
-
-				// NOTE: we're resetting the nonce here to get the exact same hash bytes
-				require.NoError(t, k.PendingPayloadsSequence.Set(ctx, preSeq))
-			},
-			payload:     validPayload.Payload,
-			errContains: core.ErrSubmitPayload.Error(),
-		},
 	}
 
 	for _, tc := range testcases {
