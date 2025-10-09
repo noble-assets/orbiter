@@ -9,10 +9,8 @@ import (
 	_ "github.com/cosmos/cosmos-proto"
 	_ "github.com/cosmos/cosmos-sdk/types/msgservice"
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
-	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
-	core "github.com/noble-assets/orbiter/types/core"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -136,154 +134,35 @@ func (m *MsgSubmitPayloadResponse) GetHash() []byte {
 	return nil
 }
 
-// EventPayloadSubmitted is emitted after successful submission of a payload.
-type EventPayloadSubmitted struct {
-	// The keccak256 hash of the now pending payload.
-	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	// The address that has submitted the payload.
-	Submitter string `protobuf:"bytes,2,opt,name=submitter,proto3" json:"submitter,omitempty"`
-	// The submitted payload.
-	Payload core.Payload `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload"`
-}
-
-func (m *EventPayloadSubmitted) Reset()         { *m = EventPayloadSubmitted{} }
-func (m *EventPayloadSubmitted) String() string { return proto.CompactTextString(m) }
-func (*EventPayloadSubmitted) ProtoMessage()    {}
-func (*EventPayloadSubmitted) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4f89c0e5a76b9120, []int{2}
-}
-func (m *EventPayloadSubmitted) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *EventPayloadSubmitted) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_EventPayloadSubmitted.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *EventPayloadSubmitted) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EventPayloadSubmitted.Merge(m, src)
-}
-func (m *EventPayloadSubmitted) XXX_Size() int {
-	return m.Size()
-}
-func (m *EventPayloadSubmitted) XXX_DiscardUnknown() {
-	xxx_messageInfo_EventPayloadSubmitted.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_EventPayloadSubmitted proto.InternalMessageInfo
-
-func (m *EventPayloadSubmitted) GetHash() []byte {
-	if m != nil {
-		return m.Hash
-	}
-	return nil
-}
-
-func (m *EventPayloadSubmitted) GetSubmitter() string {
-	if m != nil {
-		return m.Submitter
-	}
-	return ""
-}
-
-func (m *EventPayloadSubmitted) GetPayload() core.Payload {
-	if m != nil {
-		return m.Payload
-	}
-	return core.Payload{}
-}
-
-// EventPayloadRemoved is emitted after removing a pending payload from the queue.
-type EventPayloadRemoved struct {
-	// The keccak256 hash of the removed payload.
-	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-}
-
-func (m *EventPayloadRemoved) Reset()         { *m = EventPayloadRemoved{} }
-func (m *EventPayloadRemoved) String() string { return proto.CompactTextString(m) }
-func (*EventPayloadRemoved) ProtoMessage()    {}
-func (*EventPayloadRemoved) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4f89c0e5a76b9120, []int{3}
-}
-func (m *EventPayloadRemoved) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *EventPayloadRemoved) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_EventPayloadRemoved.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *EventPayloadRemoved) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EventPayloadRemoved.Merge(m, src)
-}
-func (m *EventPayloadRemoved) XXX_Size() int {
-	return m.Size()
-}
-func (m *EventPayloadRemoved) XXX_DiscardUnknown() {
-	xxx_messageInfo_EventPayloadRemoved.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_EventPayloadRemoved proto.InternalMessageInfo
-
-func (m *EventPayloadRemoved) GetHash() []byte {
-	if m != nil {
-		return m.Hash
-	}
-	return nil
-}
-
 func init() {
 	proto.RegisterType((*MsgSubmitPayload)(nil), "noble.orbiter.v1.MsgSubmitPayload")
 	proto.RegisterType((*MsgSubmitPayloadResponse)(nil), "noble.orbiter.v1.MsgSubmitPayloadResponse")
-	proto.RegisterType((*EventPayloadSubmitted)(nil), "noble.orbiter.v1.EventPayloadSubmitted")
-	proto.RegisterType((*EventPayloadRemoved)(nil), "noble.orbiter.v1.EventPayloadRemoved")
 }
 
 func init() { proto.RegisterFile("noble/orbiter/v1/tx.proto", fileDescriptor_4f89c0e5a76b9120) }
 
 var fileDescriptor_4f89c0e5a76b9120 = []byte{
-	// 425 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x52, 0x31, 0x6f, 0xd4, 0x30,
-	0x14, 0x8e, 0x29, 0x14, 0x9d, 0x01, 0xa9, 0x98, 0x22, 0xd2, 0x0c, 0xa1, 0x04, 0x21, 0x95, 0x48,
-	0x75, 0x48, 0x91, 0x18, 0x58, 0x10, 0x87, 0x18, 0x2b, 0xa1, 0x74, 0x63, 0xa9, 0x92, 0x8b, 0xe5,
-	0x8b, 0x54, 0xc7, 0x91, 0x9f, 0x1b, 0xd1, 0x0d, 0x31, 0x32, 0xc1, 0xbf, 0xe8, 0x78, 0x03, 0x3f,
-	0xa2, 0xe3, 0x89, 0x89, 0x09, 0xa1, 0xbb, 0xe1, 0xfe, 0x06, 0x8a, 0xe3, 0xdc, 0x71, 0xe1, 0x04,
-	0x8b, 0xe5, 0xf7, 0xbe, 0xef, 0xf9, 0x7d, 0xfe, 0xde, 0xc3, 0x7b, 0xa5, 0xcc, 0xce, 0x58, 0x24,
-	0x55, 0x56, 0x68, 0xa6, 0xa2, 0x3a, 0x8e, 0xf4, 0x07, 0x5a, 0x29, 0xa9, 0x25, 0xd9, 0x31, 0x10,
-	0xb5, 0x10, 0xad, 0x63, 0xef, 0x6e, 0x2a, 0x8a, 0x52, 0x46, 0xe6, 0x6c, 0x49, 0xde, 0x83, 0x91,
-	0x04, 0x21, 0x21, 0x12, 0xc0, 0x9b, 0x62, 0x01, 0xdc, 0x02, 0x7b, 0x2d, 0x70, 0x6a, 0xa2, 0xa8,
-	0x0d, 0x2c, 0xb4, 0xcb, 0x25, 0x97, 0x6d, 0xbe, 0xb9, 0xd9, 0xec, 0xe3, 0x75, 0x25, 0x23, 0xa9,
-	0x58, 0xf3, 0x62, 0xd7, 0xde, 0x90, 0x82, 0xaf, 0x08, 0xef, 0x1c, 0x03, 0x3f, 0x39, 0xcf, 0x44,
-	0xa1, 0xdf, 0xa5, 0x17, 0x67, 0x32, 0xcd, 0xc9, 0x33, 0xbc, 0x0d, 0x05, 0x2f, 0x99, 0x72, 0xd1,
-	0x3e, 0x3a, 0x18, 0x0c, 0xdd, 0xef, 0xdf, 0x0e, 0x77, 0x6d, 0xc7, 0xd7, 0x79, 0xae, 0x18, 0xc0,
-	0x89, 0x56, 0x45, 0xc9, 0x13, 0xcb, 0x23, 0x2e, 0xbe, 0x59, 0xb5, 0xc5, 0xee, 0xb5, 0xa6, 0x24,
-	0xe9, 0xc2, 0x97, 0xf1, 0xa7, 0xc5, 0x24, 0xb4, 0xb4, 0xcf, 0x8b, 0x49, 0xf8, 0xe8, 0x2f, 0x7f,
-	0xfa, 0xed, 0x03, 0x8a, 0xdd, 0x7e, 0x2e, 0x61, 0x50, 0xc9, 0x12, 0x18, 0x21, 0xf8, 0xfa, 0x38,
-	0x85, 0xb1, 0x11, 0x76, 0x3b, 0x31, 0xf7, 0xe0, 0x12, 0xe1, 0xfb, 0x6f, 0x6b, 0x56, 0x76, 0xe4,
-	0xb6, 0x52, 0xb3, 0x7c, 0x13, 0x9b, 0xbc, 0xc0, 0x03, 0xb0, 0x04, 0xd5, 0x8a, 0xfd, 0xc7, 0xff,
-	0x56, 0x54, 0xf2, 0x66, 0xf5, 0xc5, 0xad, 0x7d, 0x74, 0x70, 0xeb, 0xc8, 0xa7, 0xeb, 0xf3, 0x6c,
-	0x0c, 0xa6, 0x75, 0x4c, 0xad, 0x8a, 0xe1, 0xe0, 0xea, 0xe7, 0x43, 0xe7, 0x72, 0x31, 0x09, 0xd1,
-	0xd2, 0x8d, 0xe0, 0x29, 0xbe, 0xf7, 0xa7, 0xd2, 0x84, 0x09, 0x59, 0x6f, 0xd6, 0x79, 0x24, 0xf0,
-	0xd6, 0x31, 0x70, 0x72, 0x8a, 0xef, 0xac, 0x0f, 0x27, 0xa0, 0xfd, 0x35, 0xa2, 0x7d, 0xb7, 0xbc,
-	0xf0, 0xff, 0x9c, 0xce, 0x51, 0xef, 0xc6, 0xc7, 0x46, 0xe2, 0xf0, 0xd5, 0xd5, 0xcc, 0x47, 0xd3,
-	0x99, 0x8f, 0x7e, 0xcd, 0x7c, 0xf4, 0x65, 0xee, 0x3b, 0xd3, 0xb9, 0xef, 0xfc, 0x98, 0xfb, 0xce,
-	0xfb, 0x27, 0xbc, 0xd0, 0xe3, 0xf3, 0x8c, 0x8e, 0xa4, 0x88, 0xcc, 0xb3, 0x87, 0x29, 0x00, 0xd3,
-	0xb0, 0x9c, 0xa1, 0xbe, 0xa8, 0x18, 0x64, 0xdb, 0x66, 0xa1, 0x9e, 0xff, 0x0e, 0x00, 0x00, 0xff,
-	0xff, 0x23, 0x59, 0x71, 0xc3, 0x01, 0x03, 0x00, 0x00,
+	// 320 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0xcc, 0xcb, 0x4f, 0xca,
+	0x49, 0xd5, 0xcf, 0x2f, 0x4a, 0xca, 0x2c, 0x49, 0x2d, 0xd2, 0x2f, 0x33, 0xd4, 0x2f, 0xa9, 0xd0,
+	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x00, 0x4b, 0xe9, 0x41, 0xa5, 0xf4, 0xca, 0x0c, 0xa5,
+	0x04, 0x13, 0x73, 0x33, 0xf3, 0xf2, 0xf5, 0xc1, 0x24, 0x44, 0x91, 0x94, 0x78, 0x72, 0x7e, 0x71,
+	0x6e, 0x7e, 0xb1, 0x7e, 0x6e, 0x71, 0x3a, 0x48, 0x73, 0x6e, 0x71, 0x3a, 0x54, 0x42, 0x12, 0x22,
+	0x11, 0x0f, 0xe6, 0xe9, 0x43, 0x38, 0x10, 0x29, 0xa5, 0x89, 0x8c, 0x5c, 0x02, 0xbe, 0xc5, 0xe9,
+	0xc1, 0xa5, 0x49, 0xb9, 0x99, 0x25, 0x01, 0x89, 0x95, 0x39, 0xf9, 0x89, 0x29, 0x42, 0x06, 0x5c,
+	0x6c, 0xc5, 0x99, 0xe9, 0x79, 0xa9, 0x45, 0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0x9c, 0x4e, 0x12, 0x97,
+	0xb6, 0xe8, 0x8a, 0x40, 0xb5, 0x39, 0xa6, 0xa4, 0x14, 0xa5, 0x16, 0x17, 0x07, 0x97, 0x14, 0x65,
+	0xe6, 0xa5, 0x07, 0x41, 0xd5, 0x09, 0x49, 0x70, 0xb1, 0x17, 0x40, 0x34, 0x4b, 0x30, 0x81, 0xb4,
+	0x04, 0xc1, 0xb8, 0x56, 0x86, 0x4d, 0xcf, 0x37, 0x68, 0x41, 0x95, 0x75, 0x3d, 0xdf, 0xa0, 0xa5,
+	0x88, 0xe1, 0x49, 0x74, 0xeb, 0x95, 0xf4, 0xb8, 0x24, 0xd0, 0xc5, 0x82, 0x52, 0x8b, 0x0b, 0xf2,
+	0xf3, 0x8a, 0x53, 0x85, 0x84, 0xb8, 0x58, 0x32, 0x12, 0x8b, 0x33, 0xc0, 0x0e, 0xe3, 0x09, 0x02,
+	0xb3, 0x8d, 0x72, 0xb9, 0x98, 0x7d, 0x8b, 0xd3, 0x85, 0xe2, 0xb9, 0x78, 0x51, 0xbd, 0xa1, 0xa4,
+	0x87, 0x1e, 0x6a, 0x7a, 0xe8, 0xe6, 0x4a, 0x69, 0x11, 0x56, 0x03, 0xb3, 0x5b, 0x8a, 0xb5, 0xe1,
+	0xf9, 0x06, 0x2d, 0x46, 0x27, 0xfb, 0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0,
+	0x48, 0x8e, 0x71, 0xc2, 0x63, 0x39, 0x86, 0x0b, 0x8f, 0xe5, 0x18, 0x6e, 0x3c, 0x96, 0x63, 0x88,
+	0x52, 0x4d, 0xcf, 0x2c, 0xc9, 0x28, 0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x07, 0x1b, 0xab, 0x9b,
+	0x58, 0x5c, 0x9c, 0x5a, 0x52, 0x0c, 0xf7, 0x6d, 0x49, 0x65, 0x41, 0x6a, 0x71, 0x12, 0x1b, 0x38,
+	0xe8, 0x8d, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0xc7, 0x67, 0x9c, 0x5b, 0xf0, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -438,83 +317,6 @@ func (m *MsgSubmitPayloadResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
-func (m *EventPayloadSubmitted) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *EventPayloadSubmitted) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *EventPayloadSubmitted) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	{
-		size, err := m.Payload.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x1a
-	if len(m.Submitter) > 0 {
-		i -= len(m.Submitter)
-		copy(dAtA[i:], m.Submitter)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Submitter)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Hash) > 0 {
-		i -= len(m.Hash)
-		copy(dAtA[i:], m.Hash)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Hash)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *EventPayloadRemoved) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *EventPayloadRemoved) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *EventPayloadRemoved) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Hash) > 0 {
-		i -= len(m.Hash)
-		copy(dAtA[i:], m.Hash)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Hash)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -544,38 +346,6 @@ func (m *MsgSubmitPayload) Size() (n int) {
 }
 
 func (m *MsgSubmitPayloadResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Hash)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	return n
-}
-
-func (m *EventPayloadSubmitted) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Hash)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.Submitter)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = m.Payload.Size()
-	n += 1 + l + sovTx(uint64(l))
-	return n
-}
-
-func (m *EventPayloadRemoved) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -735,239 +505,6 @@ func (m *MsgSubmitPayloadResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgSubmitPayloadResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Hash = append(m.Hash[:0], dAtA[iNdEx:postIndex]...)
-			if m.Hash == nil {
-				m.Hash = []byte{}
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *EventPayloadSubmitted) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: EventPayloadSubmitted: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: EventPayloadSubmitted: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Hash = append(m.Hash[:0], dAtA[iNdEx:postIndex]...)
-			if m.Hash == nil {
-				m.Hash = []byte{}
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Submitter", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Submitter = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Payload", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Payload.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *EventPayloadRemoved) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: EventPayloadRemoved: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: EventPayloadRemoved: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
