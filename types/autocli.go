@@ -28,7 +28,10 @@ func TxCommandOptions() []*autocliv1.RpcCommandOptions {
 			RpcMethod: "SubmitPayload",
 			Use:       "submit [payload]",
 			Short:     "Submit a payload to be handled by the orbiter",
-			Long:      `Submit a payload to be handled by the orbiter.`,
+			Long: `Depending on the cross-chain technology, ` +
+				`it is required to submit the Orbiter payload directly to the Noble chain ` +
+				`and then referencing the resulting hash in the bridge transaction. ` +
+				`This command submits a given payload to be forwarded.`,
 			PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 				{ProtoField: "payload"},
 			},
