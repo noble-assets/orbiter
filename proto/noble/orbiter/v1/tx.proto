@@ -13,7 +13,7 @@ service Msg {
   option (cosmos.msg.v1.service) = true;
 
   // SubmitPayload is the entrypoint to insert a new pending payload
-  // into the dispatching queue.
+  // into the module storage.
   rpc SubmitPayload(MsgSubmitPayload) returns (MsgSubmitPayloadResponse);
 }
 
