@@ -36,9 +36,9 @@ import (
 
 var _ orbitertypes.PendingPayloadsHandler = &Keeper{}
 
-// AcceptPayload adds a new pending payload into the module storage.
+// Submit adds a new pending payload into the module storage.
 // If the payload's hash is already set, an error is returned.
-func (k *Keeper) AcceptPayload(
+func (k *Keeper) Submit(
 	ctx context.Context,
 	payload *core.Payload,
 ) ([]byte, error) {

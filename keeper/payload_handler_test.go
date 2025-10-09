@@ -64,7 +64,7 @@ func TestAcceptPayload(t *testing.T) {
 			setup: func(t *testing.T, ctx context.Context, k *orbiterkeeper.Keeper) {
 				t.Helper()
 
-				_, err := k.AcceptPayload(ctx, validPayload.Payload)
+				_, err := k.Submit(ctx, validPayload.Payload)
 				require.NoError(t, err, "failed to accept payload during setup")
 
 				// NOTE: we're resetting the pending payloads sequence to generate the same hash for
@@ -162,7 +162,7 @@ func TestAcceptPayload(t *testing.T) {
 
 			pendingPayload := tc.payload()
 
-			gotHash, err := k.AcceptPayload(ctx, pendingPayload.Payload)
+			gotHash, err := k.Submit(ctx, pendingPayload.Payload)
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to accept payload")
 
@@ -207,7 +207,7 @@ func TestGetPendingPayloadWithHash(t *testing.T) {
 			setup: func(t *testing.T, ctx context.Context, handler orbitertypes.PendingPayloadsHandler) {
 				t.Helper()
 
-				_, err := handler.AcceptPayload(ctx, validPayload.Payload)
+				_, err := handler.Submit(ctx, validPayload.Payload)
 				require.NoError(t, err)
 			},
 			expPayload: validPayload,
@@ -260,7 +260,7 @@ func TestRemovePayload(t *testing.T) {
 			name: "success - valid payload",
 			setup: func(t *testing.T, ctx context.Context, handler orbitertypes.PendingPayloadsHandler) {
 				t.Helper()
-				_, err := handler.AcceptPayload(ctx, validPayload.Payload)
+				_, err := handler.Submit(ctx, validPayload.Payload)
 				require.NoError(t, err, "failed to setup testcase; accepting payload")
 
 				gotPayload, err := handler.PendingPayload(ctx, expHash.Bytes())

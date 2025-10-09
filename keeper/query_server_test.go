@@ -76,7 +76,7 @@ func TestPendingPayloads(t *testing.T) {
 			ms := orbiterkeeper.NewQueryServer(k)
 
 			for range tc.nPayloads {
-				_, err := k.AcceptPayload(ctx, examplePayload)
+				_, err := k.Submit(ctx, examplePayload)
 				require.NoError(t, err, "failed to setup payloads")
 			}
 

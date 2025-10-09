@@ -65,7 +65,7 @@ func TestSubmitPayload(t *testing.T) {
 				preSeq, err := k.PendingPayloadsSequence.Peek(ctx)
 				require.NoError(t, err, "failed to get current payloads sequence")
 
-				_, err = k.AcceptPayload(ctx, validPayload.Payload)
+				_, err = k.Submit(ctx, validPayload.Payload)
 				require.NoError(t, err, "failed to accept payload")
 
 				// NOTE: we're resetting the nonce here to get the exact same hash bytes

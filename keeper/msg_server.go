@@ -54,7 +54,7 @@ func (s *msgServer) SubmitPayload(
 		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}
 
-	payloadHash, err := s.AcceptPayload(
+	payloadHash, err := s.Submit(
 		ctx,
 		&payload,
 	)
