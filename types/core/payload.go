@@ -21,21 +21,25 @@
 package core
 
 import (
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"crypto/sha256"
+	"encoding/hex"
+	"errors"
 )
 
-// Keccak256Hash returns the keccak 256 hash of the payload contents.
+// SHA256Hash returns the SHA-256 hash of the payload contents.
 // To guarantee uniqueness the sequence number is included.
 //
 // CONTRACT: The pending payload should be validated before calling this function.
-func (p *PendingPayload) Keccak256Hash() (common.Hash, error) {
+func (p *PendingPayload) SHA256Hash() (*PayloadHash, error) {
 	bz, err := p.Marshal()
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
 
-	return crypto.Keccak256Hash(bz), nil
+	hash := sha256.Sum256(bz)
+	pHash := PayloadHash(hash)
+
+	return &pHash, nil
 }
 
 // Validate checks that the pending payload contents are valid.
@@ -45,4 +49,35 @@ func (p *PendingPayload) Validate() error {
 	}
 
 	return p.Payload.Validate()
+}
+
+// PayloadHashLength specifies the expected length of Orbiter payload hashes.
+const PayloadHashLength = 32
+
+// PayloadHash is a helper type to define a unified interface for interacting with
+// the generated SHA256 hashes for the PendingPayload type.
+type PayloadHash [PayloadHashLength]byte
+
+// ParsePayloadHash takes a string and tries to parse a PayloadHash from it.
+func ParsePayloadHash(s string) (*PayloadHash, error) {
+	bz, err := hex.DecodeString(s)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(bz) != PayloadHashLength {
+		return nil, errors.New("malformed payload hash")
+	}
+
+	pHash := PayloadHash(bz)
+
+	return &pHash, nil
+}
+
+func (p PayloadHash) Bytes() []byte {
+	return p[:]
+}
+
+func (p PayloadHash) String() string {
+	return hex.EncodeToString(p[:])
 }

@@ -87,10 +87,10 @@ func (m *MsgSubmitPayload) GetPayload() string {
 	return ""
 }
 
-// MsgSubmitPayloadResponse returns the keccak256 of the registered
+// MsgSubmitPayloadResponse returns the sha256 hash of the registered
 // pending payload.
 type MsgSubmitPayloadResponse struct {
-	// The keccak256 hash by which to reference the submitted payload.
+	// The sha256 hash that references the submitted payload in the module storage.
 	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 }
 

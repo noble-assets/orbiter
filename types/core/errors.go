@@ -33,6 +33,4 @@ var (
 	ErrUnableToPause     = errorsmod.Register(ModuleName, 8, "unable to pause")
 	ErrUnableToUnpause   = errorsmod.Register(ModuleName, 9, "unable to unpause")
 	ErrAlreadySet        = errorsmod.Register(ModuleName, 10, "value already set")
-	ErrSubmitPayload     = errorsmod.Register(ModuleName, 11, "payload submission failed")
-	ErrRemovePayload     = errorsmod.Register(ModuleName, 12, "payload removal failed")
 )

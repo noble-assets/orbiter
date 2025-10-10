@@ -91,8 +91,8 @@ func (x *fastReflection_QueryPendingPayloadRequest) Interface() protoreflect.Pro
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_QueryPendingPayloadRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if len(x.Hash) != 0 {
-		value := protoreflect.ValueOfBytes(x.Hash)
+	if x.Hash != "" {
+		value := protoreflect.ValueOfString(x.Hash)
 		if !f(fd_QueryPendingPayloadRequest_hash, value) {
 			return
 		}
@@ -113,7 +113,7 @@ func (x *fastReflection_QueryPendingPayloadRequest) Range(f func(protoreflect.Fi
 func (x *fastReflection_QueryPendingPayloadRequest) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
 	case "noble.orbiter.v1.QueryPendingPayloadRequest.hash":
-		return len(x.Hash) != 0
+		return x.Hash != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.QueryPendingPayloadRequest"))
@@ -131,7 +131,7 @@ func (x *fastReflection_QueryPendingPayloadRequest) Has(fd protoreflect.FieldDes
 func (x *fastReflection_QueryPendingPayloadRequest) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	case "noble.orbiter.v1.QueryPendingPayloadRequest.hash":
-		x.Hash = nil
+		x.Hash = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.QueryPendingPayloadRequest"))
@@ -150,7 +150,7 @@ func (x *fastReflection_QueryPendingPayloadRequest) Get(descriptor protoreflect.
 	switch descriptor.FullName() {
 	case "noble.orbiter.v1.QueryPendingPayloadRequest.hash":
 		value := x.Hash
-		return protoreflect.ValueOfBytes(value)
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.QueryPendingPayloadRequest"))
@@ -172,7 +172,7 @@ func (x *fastReflection_QueryPendingPayloadRequest) Get(descriptor protoreflect.
 func (x *fastReflection_QueryPendingPayloadRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
 	case "noble.orbiter.v1.QueryPendingPayloadRequest.hash":
-		x.Hash = value.Bytes()
+		x.Hash = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.QueryPendingPayloadRequest"))
@@ -209,7 +209,7 @@ func (x *fastReflection_QueryPendingPayloadRequest) Mutable(fd protoreflect.Fiel
 func (x *fastReflection_QueryPendingPayloadRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	case "noble.orbiter.v1.QueryPendingPayloadRequest.hash":
-		return protoreflect.ValueOfBytes(nil)
+		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.QueryPendingPayloadRequest"))
@@ -372,7 +372,7 @@ func (x *fastReflection_QueryPendingPayloadRequest) ProtoMethods() *protoiface.M
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
 				}
-				var byteLen int
+				var stringLen uint64
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
@@ -382,25 +382,23 @@ func (x *fastReflection_QueryPendingPayloadRequest) ProtoMethods() *protoiface.M
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					byteLen |= int(b&0x7F) << shift
+					stringLen |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
 				}
-				if byteLen < 0 {
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
 				}
-				postIndex := iNdEx + byteLen
+				postIndex := iNdEx + intStringLen
 				if postIndex < 0 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
 				}
 				if postIndex > l {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
-				x.Hash = append(x.Hash[:0], dAtA[iNdEx:postIndex]...)
-				if x.Hash == nil {
-					x.Hash = []byte{}
-				}
+				x.Hash = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
@@ -890,8 +888,8 @@ type QueryPendingPayloadRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// The keccak256 hash of the pending payload contents.
-	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
+	// The hex-encoded bytes of the registered hash of the payload to retrieve.
+	Hash string `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 }
 
 func (x *QueryPendingPayloadRequest) Reset() {
@@ -914,11 +912,11 @@ func (*QueryPendingPayloadRequest) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_v1_query_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *QueryPendingPayloadRequest) GetHash() []byte {
+func (x *QueryPendingPayloadRequest) GetHash() string {
 	if x != nil {
 		return x.Hash
 	}
-	return nil
+	return ""
 }
 
 type QueryPendingPayloadResponse struct {
@@ -971,7 +969,7 @@ var file_noble_orbiter_v1_query_proto_rawDesc = []byte{
 	0x76, 0x31, 0x2f, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x22, 0x30, 0x0a, 0x1a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67,
 	0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12,
-	0x0a, 0x04, 0x68, 0x61, 0x73, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x68, 0x61,
+	0x0a, 0x04, 0x68, 0x61, 0x73, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x68, 0x61,
 	0x73, 0x68, 0x22, 0x57, 0x0a, 0x1b, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x65, 0x6e, 0x64, 0x69,
 	0x6e, 0x67, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
 	0x65, 0x12, 0x38, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x18, 0x01, 0x20, 0x01,

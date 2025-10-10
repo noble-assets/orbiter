@@ -22,11 +22,11 @@ package keeper
 
 import (
 	"context"
-	"encoding/hex"
 	"errors"
 	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/types/core"
 )
@@ -49,7 +49,7 @@ func (k *Keeper) submit(
 		Payload:  payload,
 	}
 
-	hash, err := pendingPayload.Keccak256Hash()
+	hash, err := pendingPayload.SHA256Hash()
 	if err != nil {
 		return nil, err
 	}
@@ -130,16 +130,25 @@ func (k *Keeper) validatePayloadAgainstState(
 // if it is found in the module storage.
 func (k *Keeper) pendingPayload(
 	ctx context.Context,
-	hash []byte,
+	hash *core.PayloadHash,
 ) (*core.PendingPayload, error) {
-	payload, err := k.pendingPayloads.Get(ctx, hash)
+	if hash == nil {
+		return nil, core.ErrNilPointer.Wrap("payload hash")
+	}
+
+	payload, err := k.pendingPayloads.Get(ctx, hash.Bytes())
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "pending payload not found")
+		k.Logger().Error(
+			"failed to retrieve pending payload",
+			"hash", hash.String(),
+		)
+
+		return nil, sdkerrors.ErrNotFound.Wrapf("payload with hash %s", hash.String())
 	}
 
 	k.Logger().Debug(
 		"retrieved pending payload",
-		"hash", hex.EncodeToString(hash),
+		"hash", hash.String(),
 		"payload", payload.String(),
 	)
 
@@ -150,22 +159,26 @@ func (k *Keeper) pendingPayload(
 // If a payload is not found, it is a no-op but does not return an error.
 func (k *Keeper) RemovePendingPayload(
 	ctx context.Context,
-	hash []byte,
+	hash *core.PayloadHash,
 ) error {
-	found, err := k.pendingPayloads.Has(ctx, hash)
+	if hash == nil {
+		return core.ErrNilPointer.Wrap("payload hash")
+	}
+
+	found, err := k.pendingPayloads.Has(ctx, hash.Bytes())
 	if err != nil {
 		return errorsmod.Wrap(err, "failed to check pending payloads")
 	}
 
 	if !found {
-		return fmt.Errorf("payload with hash %q not found", hex.EncodeToString(hash))
+		return sdkerrors.ErrNotFound.Wrapf("payload with hash %q", hash.String())
 	}
 
-	if err = k.pendingPayloads.Remove(ctx, hash); err != nil {
-		return core.ErrRemovePayload.Wrap(err.Error())
+	if err = k.pendingPayloads.Remove(ctx, hash.Bytes()); err != nil {
+		return errorsmod.Wrap(err, "failed to remove pending payload")
 	}
 
-	k.Logger().Debug("removed pending payload", "hash", hex.EncodeToString(hash))
+	k.Logger().Debug("removed pending payload", "hash", hash.String())
 
 	return nil
 }

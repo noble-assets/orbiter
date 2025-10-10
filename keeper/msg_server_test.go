@@ -22,10 +22,8 @@ package keeper_test
 
 import (
 	"context"
-	"encoding/hex"
 	"testing"
 
-	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 
 	orbiterkeeper "github.com/noble-assets/orbiter/keeper"
@@ -41,7 +39,7 @@ func TestSubmitPayload(t *testing.T) {
 	seq := uint64(0)
 	examplePayload := createTestPendingPayloadWithSequence(t, seq)
 
-	exampleHash, err := examplePayload.Keccak256Hash()
+	exampleHash, err := examplePayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	destDomain := uint32(1)
@@ -52,12 +50,12 @@ func TestSubmitPayload(t *testing.T) {
 		setup       func(*testing.T, context.Context, *orbiterkeeper.Keeper)
 		payload     func() *core.Payload
 		errContains string
-		expHash     string
+		expHash     *core.PayloadHash
 	}{
 		{
 			name:    "success - valid payload",
 			payload: func() *core.Payload { return examplePayload.Payload },
-			expHash: exampleHash.String(),
+			expHash: exampleHash,
 		},
 		{
 			name: "error - payload contains paused action",
@@ -151,7 +149,7 @@ func TestSubmitPayload(t *testing.T) {
 			})
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to submit payload")
-				require.Equal(t, tc.expHash, ethcommon.BytesToHash(res.Hash).String())
+				require.Equal(t, tc.expHash.String(), core.PayloadHash(res.Hash).String())
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}
@@ -167,7 +165,7 @@ func TestSubsequentSubmissions(t *testing.T) {
 	ms := orbiterkeeper.NewMsgServer(k)
 
 	validPayload := createTestPendingPayloadWithSequence(t, 0)
-	expHash, err := validPayload.Keccak256Hash()
+	expHash, err := validPayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	validPayloadJSON, err := orbitertypes.MarshalJSON(k.Codec(), validPayload.Payload)
@@ -181,8 +179,8 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.NoError(t, err, "failed to submit payload")
 
 	// ASSERT: expected hash is returned
-	gotHash := hex.EncodeToString(res.Hash)
-	require.Equal(t, hex.EncodeToString(expHash.Bytes()), gotHash, "expected different hash")
+	gotHash := core.PayloadHash(res.Hash)
+	require.Equal(t, expHash.String(), gotHash.String(), "expected different hash")
 
 	// ACT: submit identical payload again
 	res2, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
@@ -192,34 +190,34 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.NoError(t, err, "failed to submit payload")
 
 	validPayload.Sequence = uint64(1)
-	expHash2, err := validPayload.Keccak256Hash()
+	expHash2, err := validPayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	// ASSERT: expected hash is returned
-	gotHash2 := hex.EncodeToString(res2.Hash)
-	require.Equal(t, hex.EncodeToString(expHash2.Bytes()), gotHash2, "expected different hash")
+	gotHash2 := core.PayloadHash(res2.Hash)
+	require.Equal(t, expHash2.String(), gotHash2.String(), "expected different hash")
 
 	// ASSERT: hashes of subsequent submissions of the same payload are different
-	require.NotEqual(t, gotHash, gotHash2, "expected different hashes")
+	require.NotEqual(t, gotHash.String(), gotHash2.String(), "expected different hashes")
 }
 
 func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 	// ACT: Generate pending payload with sequence 1
 	seq := uint64(1)
 	validForwarding := createTestPendingPayloadWithSequence(t, seq)
-	expHash, err := validForwarding.Keccak256Hash()
+	expHash, err := validForwarding.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	// ACT: Generate pending payload with sequence 2
 	validForwarding2 := createTestPendingPayloadWithSequence(t, seq+1)
-	expHash2, err := validForwarding2.Keccak256Hash()
+	expHash2, err := validForwarding2.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	// ASSERT: hash 1 and hash 2 are NOT equal
 	require.NotEqual(
 		t,
-		hex.EncodeToString(expHash.Bytes()),
-		hex.EncodeToString(expHash2.Bytes()),
+		expHash.String(),
+		expHash2.String(),
 		"expected different hash",
 	)
 }

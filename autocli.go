@@ -79,7 +79,7 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				{
 					// NOTE: we're manually moving this to the `payload` sub command for better
 					// navigation
-					RpcMethod: "PendingPayloads",
+					RpcMethod: "PendingPayload",
 					Skip:      true,
 				},
 			},

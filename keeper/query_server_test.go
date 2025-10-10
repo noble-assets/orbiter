@@ -39,14 +39,14 @@ func TestPendingPayload(t *testing.T) {
 	t.Parallel()
 
 	examplePayload := createTestPendingPayloadWithSequence(t, 0)
-	exampleHash, err := examplePayload.Keccak256Hash()
+	exampleHash, err := examplePayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	testcases := []struct {
 		name        string
 		setup       func(*testing.T, context.Context, codec.Codec, orbitertypes.MsgServer)
-		hash        []byte
 		expPayload  *core.PendingPayload
+		hash        string
 		errContains string
 	}{
 		{
@@ -63,19 +63,19 @@ func TestPendingPayload(t *testing.T) {
 				require.NoError(t, err)
 			},
 			expPayload: examplePayload,
-			hash:       exampleHash.Bytes(),
+			hash:       exampleHash.String(),
 		},
 		{
 			name:        "error - hash not found",
 			setup:       nil,
-			hash:        exampleHash.Bytes(),
 			expPayload:  examplePayload,
+			hash:        exampleHash.String(),
 			errContains: codes.NotFound.String(),
 		},
 		{
-			name:        "error - nil hash",
+			name:        "error - empty hash",
 			setup:       nil,
-			hash:        nil,
+			hash:        "",
 			errContains: codes.InvalidArgument.String(),
 		},
 	}

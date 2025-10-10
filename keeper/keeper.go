@@ -57,7 +57,7 @@ type Keeper struct {
 	dispatcher *dispatchercomp.Dispatcher
 	adapter    *adaptercomp.Adapter
 
-	// pendingPayloads stores the pending payloads addressed by their keccak256 hash.
+	// pendingPayloads stores the pending payloads addressed by their sha256 hash.
 	pendingPayloads collections.Map[[]byte, core.PendingPayload]
 	// pendingPayloadsSequence is the unique identifier of a given pending payload handled by the
 	// orbiter.

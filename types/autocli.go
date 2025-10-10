@@ -42,9 +42,13 @@ func TxCommandOptions() []*autocliv1.RpcCommandOptions {
 func QueryCommandOptions() []*autocliv1.RpcCommandOptions {
 	return []*autocliv1.RpcCommandOptions{
 		{
-			RpcMethod: "PendingPayloads",
+			RpcMethod: "PendingPayload",
 			Use:       "pending",
-			Short:     "Query pending payloads",
+			Short:     "Query a pending payload by its hash",
+			Long:      `Query a pending payload by the sha256 hash of the payload contents and its submission sequence number.`,
+			PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+				{ProtoField: "hash"},
+			},
 		},
 	}
 }

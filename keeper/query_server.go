@@ -27,6 +27,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	orbitertypes "github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 var _ orbitertypes.QueryServer = &queryServer{}
@@ -47,11 +48,12 @@ func (s queryServer) PendingPayload(
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	if len(req.Hash) != orbitertypes.PayloadHashLength {
-		return nil, status.Error(codes.InvalidArgument, "malformed hash")
+	hash, err := core.ParsePayloadHash(req.Hash)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid hash")
 	}
 
-	payload, err := s.pendingPayload(ctx, req.Hash)
+	payload, err := s.pendingPayload(ctx, hash)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "payload not found")
 	}

@@ -31,9 +31,9 @@ message MsgSubmitPayload {
   string payload = 2;
 }
 
-// MsgSubmitPayloadResponse returns the keccak256 of the registered
+// MsgSubmitPayloadResponse returns the sha256 hash of the registered
 // pending payload.
 message MsgSubmitPayloadResponse {
-  // The keccak256 hash by which to reference the submitted payload.
+  // The sha256 hash that references the submitted payload in the module storage.
   bytes hash = 1;
 }

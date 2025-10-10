@@ -22,30 +22,30 @@ package keeper_test
 
 import (
 	"context"
-	"encoding/hex"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	orbiterkeeper "github.com/noble-assets/orbiter/keeper"
 	mockorbiter "github.com/noble-assets/orbiter/testutil/mocks/orbiter"
 	orbitertypes "github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestRemovePayload(t *testing.T) {
 	t.Parallel()
 
 	validPayload := createTestPendingPayloadWithSequence(t, 0)
-	expHash, err := validPayload.Keccak256Hash()
+	expHash, err := validPayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	testcases := []struct {
 		name        string
 		setup       func(*testing.T, context.Context, codec.Codec, orbitertypes.MsgServer)
-		hash        []byte
+		hash        *core.PayloadHash
 		errContains string
 	}{
 		{
@@ -61,22 +61,22 @@ func TestRemovePayload(t *testing.T) {
 				})
 				require.NoError(t, err, "failed to setup testcase; accepting payload")
 			},
-			hash: expHash.Bytes(),
+			hash: expHash,
 		},
 		{
 			name:  "error - valid payload but not found in store",
 			setup: nil,
-			hash:  expHash.Bytes(),
-			errContains: fmt.Sprintf(
-				"payload with hash %q not found",
-				hex.EncodeToString(expHash.Bytes()),
-			),
+			hash:  expHash,
+			errContains: sdkerrors.ErrNotFound.Wrapf(
+				"payload with hash %q",
+				expHash.String(),
+			).Error(),
 		},
 		{
 			name:        "error - nil hash",
 			setup:       nil,
 			hash:        nil,
-			errContains: fmt.Sprintf("payload with hash %q not found", hex.EncodeToString(nil)),
+			errContains: core.ErrNilPointer.Wrap("payload hash").Error(),
 		},
 	}
 
@@ -99,7 +99,9 @@ func TestRemovePayload(t *testing.T) {
 				// ASSERT: value with hash was removed.
 				gotPayload, err := qs.PendingPayload(
 					ctx,
-					&orbitertypes.QueryPendingPayloadRequest{Hash: tc.hash},
+					&orbitertypes.QueryPendingPayloadRequest{
+						Hash: tc.hash.String(),
+					},
 				)
 				require.Error(t, err, "payload should not be present anymore")
 				require.Nil(t, gotPayload, "expected nil payload")

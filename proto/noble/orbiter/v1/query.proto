@@ -17,8 +17,8 @@ service Query {
 }
 
 message QueryPendingPayloadRequest {
-  // The keccak256 hash of the pending payload contents.
-  bytes hash = 1;
+  // The hex-encoded bytes of the registered hash of the payload to retrieve.
+  string hash = 1;
 }
 
 message QueryPendingPayloadResponse {
