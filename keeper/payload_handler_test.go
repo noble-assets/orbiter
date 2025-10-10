@@ -24,7 +24,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"strings"
 	"testing"
 
 	ethcommon "github.com/ethereum/go-ethereum/common"
@@ -153,19 +152,6 @@ func TestSubmit(t *testing.T) {
 
 				// ASSERT: expected hash returned
 				require.Equal(t, tc.expHash, ethcommon.BytesToHash(gotHash).String())
-
-				// ASSERT: expected event emitted
-				events := ctx.EventManager().Events()
-				require.Len(t, events, 1, "expected 1 event, got %d", len(events))
-
-				found := false
-				for _, e := range events {
-					if strings.Contains(e.Type, "EventPayloadSubmitted") {
-						require.False(t, found, "expected event to be emitted just once")
-						found = true
-					}
-				}
-				require.True(t, found, "expected event payload submitted to be found")
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}
@@ -294,17 +280,6 @@ func TestRemovePayload(t *testing.T) {
 				gotPayload, err := k.PendingPayload(ctx, tc.hash)
 				require.Error(t, err, "payload should not be present anymore")
 				require.Nil(t, gotPayload, "expected nil payload")
-
-				// ASSERT: event was emitted.
-				found := false
-				for _, event := range ctx.EventManager().ABCIEvents() {
-					if strings.Contains(event.Type, "EventPayloadRemoved") {
-						require.False(t, found, "event should only be emitted once")
-
-						found = true
-					}
-				}
-				require.True(t, found, "expected event to be emitted")
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}

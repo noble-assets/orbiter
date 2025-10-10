@@ -82,16 +82,6 @@ func (k *Keeper) Submit(
 		return nil, errorsmod.Wrap(err, "failed to set pending payload")
 	}
 
-	if err = k.eventService.EventManager(ctx).Emit(
-		ctx,
-		&orbitertypes.EventPayloadSubmitted{
-			Hash:    hashBz,
-			Payload: *payload,
-		},
-	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit payload submitted event")
-	}
-
 	return hashBz, nil
 }
 
@@ -185,13 +175,6 @@ func (k *Keeper) RemovePendingPayload(
 	}
 
 	k.Logger().Debug("removed pending payload", "hash", hex.EncodeToString(hash))
-
-	if err = k.eventService.EventManager(ctx).Emit(
-		ctx,
-		&orbitertypes.EventPayloadRemoved{Hash: hash},
-	); err != nil {
-		return errorsmod.Wrap(err, "failed to emit remove pending payload event")
-	}
 
 	return nil
 }
