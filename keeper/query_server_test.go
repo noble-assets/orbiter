@@ -68,9 +68,8 @@ func TestPendingPayload(t *testing.T) {
 			},
 		},
 		{
-			name:       "error - hash not found",
-			setup:      nil,
-			expPayload: examplePayload,
+			name:  "error - hash not found",
+			setup: nil,
 			req: &orbitertypes.QueryPendingPayloadRequest{
 				Hash: exampleHash.String(),
 			},
