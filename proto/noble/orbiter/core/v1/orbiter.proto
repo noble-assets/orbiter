@@ -74,3 +74,11 @@ message PayloadWrapper {
   // routing info and possibly pre routing actions.
   Payload orbiter = 1;
 }
+
+// PendingPayload holds the information that goes into the stored payload hash.
+message PendingPayload {
+  // The sequence number of the pending payload.
+  uint64 sequence = 1;
+  // The submitted payload that will is registered as pending.
+  Payload payload = 2;
+}
