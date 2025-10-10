@@ -46,7 +46,7 @@ func TestPendingPayload(t *testing.T) {
 		name        string
 		setup       func(*testing.T, context.Context, codec.Codec, orbitertypes.MsgServer)
 		expPayload  *core.PendingPayload
-		hash        string
+		req         *orbitertypes.QueryPendingPayloadRequest
 		errContains string
 	}{
 		{
@@ -63,19 +63,31 @@ func TestPendingPayload(t *testing.T) {
 				require.NoError(t, err)
 			},
 			expPayload: examplePayload,
-			hash:       exampleHash.String(),
+			req: &orbitertypes.QueryPendingPayloadRequest{
+				Hash: exampleHash.String(),
+			},
 		},
 		{
-			name:        "error - hash not found",
-			setup:       nil,
-			expPayload:  examplePayload,
-			hash:        exampleHash.String(),
+			name:       "error - hash not found",
+			setup:      nil,
+			expPayload: examplePayload,
+			req: &orbitertypes.QueryPendingPayloadRequest{
+				Hash: exampleHash.String(),
+			},
 			errContains: codes.NotFound.String(),
 		},
 		{
-			name:        "error - empty hash",
+			name:        "error - nil request",
 			setup:       nil,
-			hash:        "",
+			req:         nil,
+			errContains: codes.InvalidArgument.String(),
+		},
+		{
+			name:  "error - empty hash",
+			setup: nil,
+			req: &orbitertypes.QueryPendingPayloadRequest{
+				Hash: "",
+			},
 			errContains: codes.InvalidArgument.String(),
 		},
 	}
@@ -94,9 +106,8 @@ func TestPendingPayload(t *testing.T) {
 
 			got, err := qs.PendingPayload(
 				ctx,
-				&orbitertypes.QueryPendingPayloadRequest{
-					Hash: tc.hash,
-				})
+				tc.req,
+			)
 
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to get pending payload")

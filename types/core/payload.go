@@ -24,6 +24,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+
+	errorsmod "cosmossdk.io/errors"
 )
 
 // SHA256Hash returns the SHA-256 hash of the payload contents.
@@ -42,15 +44,6 @@ func (p *PendingPayload) SHA256Hash() (*PayloadHash, error) {
 	return &pHash, nil
 }
 
-// Validate checks that the pending payload contents are valid.
-func (p *PendingPayload) Validate() error {
-	if p == nil {
-		return ErrNilPointer.Wrap("pending payload")
-	}
-
-	return p.Payload.Validate()
-}
-
 // PayloadHashLength specifies the expected length of Orbiter payload hashes.
 const PayloadHashLength = 32
 
@@ -62,7 +55,7 @@ type PayloadHash [PayloadHashLength]byte
 func ParsePayloadHash(s string) (*PayloadHash, error) {
 	bz, err := hex.DecodeString(s)
 	if err != nil {
-		return nil, err
+		return nil, errorsmod.Wrap(err, "invalid payload hash")
 	}
 
 	if len(bz) != PayloadHashLength {
