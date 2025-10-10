@@ -20,16 +20,5 @@
 
 package types
 
-import (
-	"context"
-
-	"github.com/noble-assets/orbiter/types/core"
-)
-
-// PendingPayloadsHandler defines the interface to adjust and query the Orbiter module
-// state as it relates to the bookkeeping of pending payloads.
-type PendingPayloadsHandler interface {
-	Submit(ctx context.Context, payload *core.Payload) ([]byte, error)
-	RemovePendingPayload(ctx context.Context, hash []byte) error
-	PendingPayload(ctx context.Context, hash []byte) (*core.PendingPayload, error)
-}
+// PayloadHashLength specifies the expected length of Orbiter payload hashes.
+const PayloadHashLength = 32

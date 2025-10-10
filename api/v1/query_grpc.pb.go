@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Query_PendingPayloads_FullMethodName = "/noble.orbiter.v1.Query/PendingPayloads"
+	Query_PendingPayload_FullMethodName = "/noble.orbiter.v1.Query/PendingPayload"
 )
 
 // QueryClient is the client API for Query service.
@@ -28,7 +28,7 @@ const (
 //
 // Query defines the gRPC query service for the Orbiter module.
 type QueryClient interface {
-	PendingPayloads(ctx context.Context, in *QueryPendingPayloadsRequest, opts ...grpc.CallOption) (*QueryPendingPayloadsResponse, error)
+	PendingPayload(ctx context.Context, in *QueryPendingPayloadRequest, opts ...grpc.CallOption) (*QueryPendingPayloadResponse, error)
 }
 
 type queryClient struct {
@@ -39,10 +39,10 @@ func NewQueryClient(cc grpc.ClientConnInterface) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) PendingPayloads(ctx context.Context, in *QueryPendingPayloadsRequest, opts ...grpc.CallOption) (*QueryPendingPayloadsResponse, error) {
+func (c *queryClient) PendingPayload(ctx context.Context, in *QueryPendingPayloadRequest, opts ...grpc.CallOption) (*QueryPendingPayloadResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(QueryPendingPayloadsResponse)
-	err := c.cc.Invoke(ctx, Query_PendingPayloads_FullMethodName, in, out, cOpts...)
+	out := new(QueryPendingPayloadResponse)
+	err := c.cc.Invoke(ctx, Query_PendingPayload_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (c *queryClient) PendingPayloads(ctx context.Context, in *QueryPendingPaylo
 //
 // Query defines the gRPC query service for the Orbiter module.
 type QueryServer interface {
-	PendingPayloads(context.Context, *QueryPendingPayloadsRequest) (*QueryPendingPayloadsResponse, error)
+	PendingPayload(context.Context, *QueryPendingPayloadRequest) (*QueryPendingPayloadResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -66,8 +66,8 @@ type QueryServer interface {
 // pointer dereference when methods are called.
 type UnimplementedQueryServer struct{}
 
-func (UnimplementedQueryServer) PendingPayloads(context.Context, *QueryPendingPayloadsRequest) (*QueryPendingPayloadsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PendingPayloads not implemented")
+func (UnimplementedQueryServer) PendingPayload(context.Context, *QueryPendingPayloadRequest) (*QueryPendingPayloadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PendingPayload not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -90,20 +90,20 @@ func RegisterQueryServer(s grpc.ServiceRegistrar, srv QueryServer) {
 	s.RegisterService(&Query_ServiceDesc, srv)
 }
 
-func _Query_PendingPayloads_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryPendingPayloadsRequest)
+func _Query_PendingPayload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPendingPayloadRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).PendingPayloads(ctx, in)
+		return srv.(QueryServer).PendingPayload(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Query_PendingPayloads_FullMethodName,
+		FullMethod: Query_PendingPayload_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).PendingPayloads(ctx, req.(*QueryPendingPayloadsRequest))
+		return srv.(QueryServer).PendingPayload(ctx, req.(*QueryPendingPayloadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -116,8 +116,8 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "PendingPayloads",
-			Handler:    _Query_PendingPayloads_Handler,
+			MethodName: "PendingPayload",
+			Handler:    _Query_PendingPayload_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

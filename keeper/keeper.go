@@ -40,10 +40,7 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var (
-	_ orbitertypes.Authorizer             = &Keeper{}
-	_ orbitertypes.PendingPayloadsHandler = &Keeper{}
-)
+var _ orbitertypes.Authorizer = &Keeper{}
 
 // Keeper is the main module keeper.
 type Keeper struct {

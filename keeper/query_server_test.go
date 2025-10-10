@@ -22,61 +22,61 @@ package keeper_test
 
 import (
 	"context"
-	"encoding/hex"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	orbiterkeeper "github.com/noble-assets/orbiter/keeper"
 	mockorbiter "github.com/noble-assets/orbiter/testutil/mocks/orbiter"
 	orbitertypes "github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
-func TestRemovePayload(t *testing.T) {
+func TestPendingPayload(t *testing.T) {
 	t.Parallel()
 
-	validPayload := createTestPendingPayloadWithSequence(t, 0)
-	expHash, err := validPayload.Keccak256Hash()
+	examplePayload := createTestPendingPayloadWithSequence(t, 0)
+	exampleHash, err := examplePayload.Keccak256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	testcases := []struct {
 		name        string
 		setup       func(*testing.T, context.Context, codec.Codec, orbitertypes.MsgServer)
 		hash        []byte
+		expPayload  *core.PendingPayload
 		errContains string
 	}{
 		{
-			name: "success - valid payload",
+			name: "success - hash found",
 			setup: func(t *testing.T, ctx context.Context, cdc codec.Codec, ms orbitertypes.MsgServer) {
 				t.Helper()
 
-				bz, err := cdc.MarshalJSON(validPayload.Payload)
+				bz, err := cdc.MarshalJSON(examplePayload.Payload)
 				require.NoError(t, err, "failed to marshal payload")
 
 				_, err = ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 					Payload: string(bz),
 				})
-				require.NoError(t, err, "failed to setup testcase; accepting payload")
+				require.NoError(t, err)
 			},
-			hash: expHash.Bytes(),
+			expPayload: examplePayload,
+			hash:       exampleHash.Bytes(),
 		},
 		{
-			name:  "error - valid payload but not found in store",
-			setup: nil,
-			hash:  expHash.Bytes(),
-			errContains: fmt.Sprintf(
-				"payload with hash %q not found",
-				hex.EncodeToString(expHash.Bytes()),
-			),
+			name:        "error - hash not found",
+			setup:       nil,
+			hash:        exampleHash.Bytes(),
+			expPayload:  examplePayload,
+			errContains: codes.NotFound.String(),
 		},
 		{
 			name:        "error - nil hash",
 			setup:       nil,
 			hash:        nil,
-			errContains: fmt.Sprintf("payload with hash %q not found", hex.EncodeToString(nil)),
+			errContains: codes.InvalidArgument.String(),
 		},
 	}
 
@@ -92,17 +92,15 @@ func TestRemovePayload(t *testing.T) {
 				tc.setup(t, ctx, k.Codec(), ms)
 			}
 
-			err := k.RemovePendingPayload(ctx, tc.hash)
-			if tc.errContains == "" {
-				require.NoError(t, err, "failed to remove payload")
+			got, err := qs.PendingPayload(
+				ctx,
+				&orbitertypes.QueryPendingPayloadRequest{
+					Hash: tc.hash,
+				})
 
-				// ASSERT: value with hash was removed.
-				gotPayload, err := qs.PendingPayload(
-					ctx,
-					&orbitertypes.QueryPendingPayloadRequest{Hash: tc.hash},
-				)
-				require.Error(t, err, "payload should not be present anymore")
-				require.Nil(t, gotPayload, "expected nil payload")
+			if tc.errContains == "" {
+				require.NoError(t, err, "failed to get pending payload")
+				require.Equal(t, tc.expPayload.String(), got.String(), "expected different payload")
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}

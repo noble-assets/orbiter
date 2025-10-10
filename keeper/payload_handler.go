@@ -28,26 +28,17 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
-	orbitertypes "github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ orbitertypes.PendingPayloadsHandler = &Keeper{}
-
-// Submit adds a new pending payload into the module storage.
+// submit adds a new pending payload into the module storage.
 // If the payload's hash is already set, an error is returned.
-func (k *Keeper) Submit(
+//
+// CONTRACT: The payload MUST be validated before using this method.
+func (k *Keeper) submit(
 	ctx context.Context,
 	payload *core.Payload,
 ) ([]byte, error) {
-	if err := payload.Validate(); err != nil {
-		return nil, errorsmod.Wrap(err, "invalid payload")
-	}
-
-	if err := k.validatePayloadAgainstState(ctx, payload); err != nil {
-		return nil, errorsmod.Wrap(err, "payload failed stateful checks")
-	}
-
 	next, err := k.pendingPayloadsSequence.Next(ctx)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to get next sequence number")
@@ -135,9 +126,9 @@ func (k *Keeper) validatePayloadAgainstState(
 	return nil
 }
 
-// PendingPayload returns the pending payload with the given hash
+// pendingPayload returns the pending payload with the given hash
 // if it is found in the module storage.
-func (k *Keeper) PendingPayload(
+func (k *Keeper) pendingPayload(
 	ctx context.Context,
 	hash []byte,
 ) (*core.PendingPayload, error) {

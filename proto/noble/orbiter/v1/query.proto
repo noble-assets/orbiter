@@ -2,7 +2,26 @@ syntax = "proto3";
 
 package noble.orbiter.v1;
 
+import "cosmos/query/v1/query.proto";
+import "google/api/annotations.proto";
+import "noble/orbiter/core/v1/orbiter.proto";
+
 option go_package = "github.com/noble-assets/orbiter/types";
 
 // Query defines the gRPC query service for the Orbiter module.
-service Query {}
+service Query {
+  rpc PendingPayload(QueryPendingPayloadRequest) returns (QueryPendingPayloadResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/v1/payload/{hash}";
+  }
+}
+
+message QueryPendingPayloadRequest {
+  // The keccak256 hash of the pending payload contents.
+  bytes hash = 1;
+}
+
+message QueryPendingPayloadResponse {
+  // The payload contents of the registered payload.
+  noble.orbiter.core.v1.Payload payload = 1;
+}

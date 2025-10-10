@@ -51,6 +51,8 @@ func RegisterMsgServers(cfg module.Configurator, k *Keeper) {
 func RegisterQueryServers(cfg module.Configurator, k *Keeper) {
 	qs := cfg.QueryServer()
 
+	orbitertypes.RegisterQueryServer(qs, NewQueryServer(k))
+
 	forwardertypes.RegisterQueryServer(qs, forwarder.NewQueryServer(k.forwarder))
 	executortypes.RegisterQueryServer(qs, executor.NewQueryServer(k.executor))
 	adaptertypes.RegisterQueryServer(qs, adapter.NewQueryServer(k.adapter))

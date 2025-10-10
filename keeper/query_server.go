@@ -27,55 +27,36 @@ import (
 	"google.golang.org/grpc/status"
 
 	orbitertypes "github.com/noble-assets/orbiter/types"
-	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ orbitertypes.MsgServer = &msgServer{}
+var _ orbitertypes.QueryServer = &queryServer{}
 
-// msgServer is the main message handler for the Orbiter.
-type msgServer struct {
+type queryServer struct {
 	*Keeper
 }
 
-// NewMsgServer returns a new Orbiter message server.
-func NewMsgServer(keeper *Keeper) orbitertypes.MsgServer {
-	return &msgServer{keeper}
+func NewQueryServer(k *Keeper) orbitertypes.QueryServer {
+	return &queryServer{Keeper: k}
 }
 
-func (s *msgServer) SubmitPayload(
+func (s queryServer) PendingPayload(
 	ctx context.Context,
-	req *orbitertypes.MsgSubmitPayload,
-) (*orbitertypes.MsgSubmitPayloadResponse, error) {
+	req *orbitertypes.QueryPendingPayloadRequest,
+) (*orbitertypes.QueryPendingPayloadResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	var payload core.Payload
-	if err := orbitertypes.UnmarshalJSON(s.cdc, []byte(req.Payload), &payload); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to unmarshal payload: %s", err)
+	if len(req.Hash) != orbitertypes.PayloadHashLength {
+		return nil, status.Error(codes.InvalidArgument, "malformed hash")
 	}
 
-	if err := payload.Validate(); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid payload: %s", err)
-	}
-
-	if err := s.validatePayloadAgainstState(ctx, &payload); err != nil {
-		return nil, status.Errorf(
-			codes.FailedPrecondition,
-			"payload failed stateful checks: %s",
-			err,
-		)
-	}
-
-	payloadHash, err := s.submit(
-		ctx,
-		&payload,
-	)
+	payload, err := s.pendingPayload(ctx, req.Hash)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, status.Error(codes.NotFound, "payload not found")
 	}
 
-	return &orbitertypes.MsgSubmitPayloadResponse{
-		Hash: payloadHash,
+	return &orbitertypes.QueryPendingPayloadResponse{
+		Payload: payload.Payload,
 	}, nil
 }
