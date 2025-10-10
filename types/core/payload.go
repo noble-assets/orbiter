@@ -32,7 +32,7 @@ import (
 // To guarantee uniqueness the sequence number is included.
 //
 // CONTRACT: The pending payload should be validated before calling this function.
-func (p *PendingPayload) SHA256Hash() (*PayloadHash, error) {
+func (p PendingPayload) SHA256Hash() (*PayloadHash, error) {
 	bz, err := p.Marshal()
 	if err != nil {
 		return nil, err
