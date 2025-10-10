@@ -87,7 +87,7 @@ func (i IBCMiddleware) OnRecvPacket(
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
 
-	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.SourceChannel)
+	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.DestinationChannel)
 	if err != nil {
 		return newErrorAcknowledgement(err)
 	}
