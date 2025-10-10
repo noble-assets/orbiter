@@ -87,7 +87,9 @@ func (i IBCMiddleware) OnRecvPacket(
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
 
-	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.SourceChannel)
+	// NOTE: we are using destination channel here since that is the channel identifier of the
+	// source chain on Noble.
+	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.DestinationChannel)
 	if err != nil {
 		return newErrorAcknowledgement(err)
 	}
