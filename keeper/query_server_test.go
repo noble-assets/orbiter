@@ -110,7 +110,12 @@ func TestPendingPayload(t *testing.T) {
 
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to get pending payload")
-				require.Equal(t, tc.expPayload.Payload.String(), got.Payload.String(), "expected different payload")
+				require.Equal(
+					t,
+					tc.expPayload.Payload.String(),
+					got.Payload.String(),
+					"expected different payload",
+				)
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}
