@@ -41,13 +41,18 @@ func NewBankKeeper() *BankKeeper {
 	}
 }
 
-func (k BankKeeper) GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins {
+func (k BankKeeper) GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin {
 	coins, ok := k.Balances[addr.String()]
 	if !ok {
-		return sdk.Coins{}
+		return sdk.Coin{}
 	}
 
-	return coins
+	found, coin := coins.Find(denom)
+	if !found {
+		return sdk.Coin{}
+	}
+
+	return coin
 }
 
 func (k BankKeeper) SendCoins(

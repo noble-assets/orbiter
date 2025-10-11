@@ -132,29 +132,54 @@ func (a *Adapter) SetRouter(r AdapterRouter) error {
 	return nil
 }
 
-// ParsePayload implements types.PayloadAdapter.
-func (a *Adapter) ParsePayload(
-	id core.ProtocolID,
-	payloadBz []byte,
-) (bool, *core.Payload, error) {
+// AdaptPacket implements types.Adapter.
+func (a *Adapter) AdaptPacket(
+	ctx context.Context,
+	id core.CrossChainID,
+	packet []byte,
+) (*types.OrbiterPacket, error) {
 	a.logger.Debug("started payload parsing", "src_protocol", id.String())
-	adapter, found := a.router.Route(id)
-	if !found {
-		a.logger.Error("adapter for protocol not found", "src_protocol", id.String())
 
-		return false, nil, fmt.Errorf("adapter not found for protocol ID: %s", id)
+	adapter, found := a.router.Route(id.GetProtocolId())
+	if !found {
+		a.logger.Error(
+			"adapter for protocol not found",
+			"src_protocol",
+			id.GetProtocolId().String(),
+		)
+
+		return nil, fmt.Errorf("adapter not found for protocol ID: %s", id.GetProtocolId().String())
 	}
 
-	return adapter.ParsePayload(id, payloadBz)
+	parsedPacket, err := adapter.ParsePacket(packet)
+	if err != nil {
+		return nil, err
+	}
+
+	// NOTE: in case of an IBC transfer, the Denom set here is the representation
+	// of the denom on the source chain, not on Noble.
+	transferAttr, err := types.NewTransferAttributes(
+		id.GetProtocolId(),
+		id.GetCounterpartyId(),
+		parsedPacket.Coin.Denom,
+		parsedPacket.Coin.Amount,
+	)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "error creating transfer attributes")
+	}
+
+	return &types.OrbiterPacket{
+		TransferAttributes: transferAttr,
+		Payload:            &parsedPacket.Payload,
+	}, nil
 }
 
 // BeforeTransferHook implements types.PayloadAdapter.
 func (a *Adapter) BeforeTransferHook(
 	ctx context.Context,
-	sourceID core.CrossChainID,
-	payload *core.Payload,
+	packet *types.OrbiterPacket,
 ) error {
-	if err := a.commonBeforeTransferHook(ctx, payload.Forwarding.PassthroughPayload); err != nil {
+	if err := a.commonBeforeTransferHook(ctx, packet.TransferAttributes.DestinationDenom(), packet.Payload.Forwarding.PassthroughPayload); err != nil {
 		return errorsmod.Wrap(err, "generic hook failed")
 	}
 
@@ -164,41 +189,39 @@ func (a *Adapter) BeforeTransferHook(
 // AfterTransferHook implements types.PayloadAdapter.
 func (a *Adapter) AfterTransferHook(
 	ctx context.Context,
-	sourceID core.CrossChainID,
-	payload *core.Payload,
-) (*types.TransferAttributes, error) {
-	balances := a.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
-	if err := a.validateModuleBalance(balances); err != nil {
-		return nil, core.ErrValidation.Wrap(err.Error())
-	}
+	packet *types.OrbiterPacket,
+) error {
+	// balances := a.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
+	// if err := a.validateModuleBalance(balances); err != nil {
+	// 	return core.ErrValidation.Wrap(err.Error())
+	// }
 
-	transferAttr, err := types.NewTransferAttributes(
-		sourceID.GetProtocolId(),
-		sourceID.GetCounterpartyId(),
-		balances[0].GetDenom(),
-		balances[0].Amount,
-	)
-	if err != nil {
-		return nil, errorsmod.Wrap(err, "error creating transfer attributes")
-	}
+	// transferAttr, err := types.NewTransferAttributes(
+	// 	sourceID.GetProtocolId(),
+	// 	sourceID.GetCounterpartyId(),
+	// 	balances[0].GetDenom(),
+	// 	balances[0].Amount,
+	// )
+	// if err != nil {
+	// 	return nil, errorsmod.Wrap(err, "error creating transfer attributes")
+	// }
 
-	return transferAttr, nil
+	return nil
 }
 
 // ProcessPayload implements types.PayloadAdapter.
 func (a *Adapter) ProcessPayload(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
-	payload *core.Payload,
+	packet *types.OrbiterPacket,
 ) error {
-	if err := a.dispatcher.DispatchPayload(ctx, transferAttr, payload); err != nil {
+	if err := a.dispatcher.DispatchPayload(ctx, packet.TransferAttributes, packet.Payload); err != nil {
 		return errorsmod.Wrap(err, "failed to dispatch payload")
 	}
 
 	if err := a.eventService.EventManager(ctx).Emit(
 		ctx,
 		&adaptertypes.EventPayloadProcessed{
-			Payload: payload,
+			Payload: packet.Payload,
 		},
 	); err != nil {
 		return errorsmod.Wrap(err, "failed to emit payload processed event")
@@ -232,13 +255,14 @@ func (a *Adapter) CheckPassthroughPayloadSize(
 // protocol used.
 func (a *Adapter) commonBeforeTransferHook(
 	ctx context.Context,
+	denom string,
 	passthroughPayload []byte,
 ) error {
 	if err := a.CheckPassthroughPayloadSize(ctx, passthroughPayload); err != nil {
 		return err
 	}
 
-	if err := a.clearOrbiterBalances(ctx); err != nil {
+	if err := a.clearOrbiterBalances(ctx, denom); err != nil {
 		return err
 	}
 
@@ -248,9 +272,9 @@ func (a *Adapter) commonBeforeTransferHook(
 // clearOrbiterBalances sends all balances of the orbiter module account to
 // a sub-account. This method allows to start a forwarding with the module holding
 // only the coins the received transaction is transferring.
-func (a *Adapter) clearOrbiterBalances(ctx context.Context) error {
-	coins := a.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
-	if coins.IsZero() {
+func (a *Adapter) clearOrbiterBalances(ctx context.Context, denom string) error {
+	coin := a.bankKeeper.GetBalance(ctx, core.ModuleAddress, denom)
+	if coin.IsZero() {
 		return nil
 	}
 
@@ -258,17 +282,18 @@ func (a *Adapter) clearOrbiterBalances(ctx context.Context) error {
 		ctx,
 		core.ModuleName,
 		core.DustCollectorName,
-		coins,
+		sdk.NewCoins(coin),
 	)
+	return nil
 }
 
 func (a *Adapter) validateModuleBalance(coins sdk.Coins) error {
 	if coins.IsZero() {
-		return errors.New("expected orbiter module to hold coins after transfer")
+		return errors.New("expected orbiter to hold coins after transfer")
 	}
 
 	if coins.Len() != 1 {
-		return errors.New("expected module to hold only one coin")
+		return errors.New("expected orbiter to hold only one coin")
 	}
 
 	if coins[0].IsZero() {

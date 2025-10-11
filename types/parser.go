@@ -21,6 +21,8 @@
 package types
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -31,5 +33,14 @@ type PayloadParser interface {
 	// orbiter payload. It returns a boolean to inform if
 	// the bytes represent an orbiter payload or not. The
 	// parsing is executed only if the boolean is true.
-	ParsePayload(core.ProtocolID, []byte) (bool, *core.Payload, error)
+	ParsePayload([]byte) (*core.Payload, error)
+}
+
+type PacketParser interface {
+	ParsePacket([]byte) (*ParsedData, error)
+}
+
+type ParsedData struct {
+	Coin    sdk.Coin
+	Payload core.Payload
 }
