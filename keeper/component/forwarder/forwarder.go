@@ -288,19 +288,15 @@ func (f *Forwarder) validateInitialConditions(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
-	balances := f.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
+	balance := f.bankKeeper.GetBalance(
+		ctx,
+		core.ModuleAddress,
+		packet.TransferAttributes.DestinationDenom(),
+	)
 
-	if balances.Len() != 1 {
-		return fmt.Errorf("expected exactly 1 balance, got %d", balances.Len())
-	}
-
-	if balances[0].Denom != packet.TransferAttributes.DestinationDenom() {
-		return fmt.Errorf("denom mismatch: expected %s, got %s",
-			packet.TransferAttributes.DestinationDenom(), balances[0].Denom)
-	}
-	if !balances[0].Amount.Equal(packet.TransferAttributes.DestinationAmount()) {
+	if !balance.Amount.Equal(packet.TransferAttributes.DestinationAmount()) {
 		return fmt.Errorf("amount mismatch: expected %s, got %s",
-			packet.TransferAttributes.DestinationAmount(), balances[0].Amount)
+			packet.TransferAttributes.DestinationAmount(), balance.Amount)
 	}
 
 	return nil

@@ -37,14 +37,14 @@ type BankKeeper interface {
 // by the forwarder component.
 type BankKeeperForwarder interface {
 	// Queries
-	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
+	GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin
 }
 
 // BankKeeperAdapter represents the bank behavior expected
 // by the adapter component.
 type BankKeeperAdapter interface {
 	// Queries
-	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
+	GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin
 	// Txs
 	SendCoinsFromModuleToModule(
 		ctx context.Context,

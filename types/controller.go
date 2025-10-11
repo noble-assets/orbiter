@@ -43,7 +43,7 @@ type ActionController interface {
 // protocol adapter.
 type AdapterController interface {
 	Controller[core.ProtocolID]
-	PayloadParser
+	PacketParser
 }
 
 // Controller defines the behavior common to
