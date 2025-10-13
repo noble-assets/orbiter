@@ -37,10 +37,14 @@ type PayloadParser interface {
 }
 
 type PacketParser interface {
+	// ParsePacket receives a generic packet and convert it into
+	// the parsed data used in the Orbiter execution.
 	ParsePacket([]byte) (*ParsedData, error)
 }
 
 type ParsedData struct {
-	Coin    sdk.Coin
+	// Coin sent along with the packet.
+	Coin sdk.Coin
+	// Orbiter Payload contained in the packet.
 	Payload core.Payload
 }

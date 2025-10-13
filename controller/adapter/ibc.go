@@ -21,6 +21,8 @@
 package adapter
 
 import (
+	"fmt"
+
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	sdkmath "cosmossdk.io/math"
@@ -69,20 +71,18 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	}, nil
 }
 
-// ParsePacket implements types.AdapterController.
 func (a *IBCAdapter) ParsePacket(packetBz []byte) (*types.ParsedData, error) {
 	packet, err := GetICS20PacketData(packetBz)
 	if err != nil {
-		// Despite the error is not nil, we don't return it. We
-		// want the non fungible token packet data error to be
-		// returned from the ICS20 app.
-		return nil, nil
+		// We want the non fungible token packet data error to be
+		// returned from the ICS20 app. Let the ICS20 app handle it.
+		return nil, nil //nolint:nilnil
 	}
 
 	// If the packet is a valid IC20 packet but the receiver is not the Orbiter
 	// we don't have to do anything with it, just pass it along the function calls.
 	if packet.GetReceiver() != core.ModuleAddress.String() {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 
 	payload, err := a.parser.ParsePayload([]byte(packet.GetMemo()))
@@ -90,7 +90,10 @@ func (a *IBCAdapter) ParsePacket(packetBz []byte) (*types.ParsedData, error) {
 		return nil, err
 	}
 
-	amount, _ := sdkmath.NewIntFromString(packet.Amount)
+	amount, ok := sdkmath.NewIntFromString(packet.Amount)
+	if !ok {
+		return nil, fmt.Errorf("invalid amount: %s", packet.Amount)
+	}
 
 	return &types.ParsedData{
 		Coin:    sdk.NewCoin(packet.Denom, amount),

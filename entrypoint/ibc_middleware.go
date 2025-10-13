@@ -90,6 +90,10 @@ func (i IBCMiddleware) OnRecvPacket(
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
 
+	// In IBC the denom specified in the packet is the sending chain representation. We have to
+	// convert the denom into the Noble representation.
+	// TODO: can we include this logic in the adapter directly? we should pass the entire packet in
+	// bytes. Does it worth it?
 	denom, err := recoverNativeDenom(
 		orbiterPacket.TransferAttributes.SourceDenom(),
 		packet.GetSourcePort(),

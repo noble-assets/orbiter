@@ -259,7 +259,6 @@ func TestParsePacket(t *testing.T) {
 					require.Equal(t, expCoin.Amount.String(), coin.Amount.String())
 					require.Equal(t, expCoin.Denom, coin.Denom)
 				}
-
 			}
 		})
 	}

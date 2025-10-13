@@ -73,8 +73,10 @@ formatters:
       no-inline-comments: true
       no-prefix-comments: true
     gofmt:
+      simplify: true
       rewrite-rules:
         - pattern: 'interface{}'
           replacement: 'any'
     golines:
+      max-len: 100
       shorten-comments: true
