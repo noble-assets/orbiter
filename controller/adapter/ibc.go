@@ -74,15 +74,11 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 func (a *IBCAdapter) ParsePacket(packetBz []byte) (*types.ParsedData, error) {
 	packet, err := GetICS20PacketData(packetBz)
 	if err != nil {
-		// We want the non fungible token packet data error to be
-		// returned from the ICS20 app. Let the ICS20 app handle it.
-		return nil, nil //nolint:nilnil
+		return nil, core.ErrNoOrbiterPacket.Wrap("data is not ICS20 packet")
 	}
 
-	// If the packet is a valid IC20 packet but the receiver is not the Orbiter
-	// we don't have to do anything with it, just pass it along the function calls.
 	if packet.GetReceiver() != core.ModuleAddress.String() {
-		return nil, nil //nolint:nilnil
+		return nil, core.ErrNoOrbiterPacket.Wrap("receiver is not Orbiter module")
 	}
 
 	payload, err := a.parser.ParsePayload([]byte(packet.GetMemo()))
@@ -143,8 +139,8 @@ func (p *IBCParser) ParsePayload(memoBz []byte) (*core.Payload, error) {
 	return payload, nil
 }
 
-// GetICS20PacketData returns unmarshalled ICS-20 packet data if it is present in the data
-// as well as a boolean indicating the successful decoding.
+// GetICS20PacketData returns the unmarshalled ICS-20 packet data.
+// It returns an error if the data cannot be unmarshalled.
 func GetICS20PacketData(data []byte) (transfertypes.FungibleTokenPacketData, error) {
 	var ics20Data transfertypes.FungibleTokenPacketData
 	err := transfertypes.ModuleCdc.UnmarshalJSON(data, &ics20Data)

@@ -21,6 +21,9 @@
 package entrypoint
 
 import (
+	"errors"
+	"strings"
+
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
@@ -84,16 +87,16 @@ func (i IBCMiddleware) OnRecvPacket(
 	}
 
 	orbiterPacket, err := i.payloadAdapter.AdaptPacket(ctx, ccID, packet.GetData())
-	if err != nil {
+	if err != nil && !errors.Is(err, core.ErrNoOrbiterPacket) {
 		return newErrorAcknowledgement(err)
 	}
-
 	if orbiterPacket == nil {
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
 
 	// In IBC the denom specified in the packet is the sending chain representation. We have to
 	// convert the denom into the Noble representation.
+	//
 	// TODO: can we include this logic in the adapter directly? we should pass the entire packet in
 	// bytes. Does it worth it?
 	denom, err := recoverNativeDenom(
@@ -139,13 +142,21 @@ func recoverNativeDenom(denom, sourcePort, sourceChannel string) (string, error)
 
 	// Remove from the denom the prefix created on the source chain when it received
 	// the coin from Noble.
-	unprefixedDenom := denom[len(voucherPrefix):]
+	if !strings.HasPrefix(denom, voucherPrefix) {
+		return "", errorsmod.Wrapf(
+			core.ErrNonNativeCoin,
+			"denom %q missing expected IBC prefix %q",
+			denom,
+			voucherPrefix,
+		)
+	}
+	unprefixedDenom := strings.TrimPrefix(denom, voucherPrefix)
 
 	// The denomination used to send the coins is either the native denom or the hash of the path
 	// if the denomination is not native.
 	denomTrace := transfertypes.ParseDenomTrace(unprefixedDenom)
 	if !denomTrace.IsNativeDenom() {
-		return "", errorsmod.Wrapf(core.ErrNonNativeCoin, "orbter supports only native tokens")
+		return "", errorsmod.Wrapf(core.ErrNonNativeCoin, "orbiter supports only native tokens")
 	}
 
 	return unprefixedDenom, nil

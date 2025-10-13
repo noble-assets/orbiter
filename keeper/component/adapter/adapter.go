@@ -156,6 +156,9 @@ func (a *Adapter) AdaptPacket(
 	if err != nil {
 		return nil, err
 	}
+	if parsedPacket == nil {
+		return nil, core.ErrNilPointer.Wrap("parsed packet")
+	}
 
 	// NOTE: in case of an IBC transfer, the Denom set here is the representation
 	// of the denom on the source chain, not on Noble. But since this is the real
@@ -266,7 +269,7 @@ func (a *Adapter) commonBeforeTransferHook(
 // only the amount of the coin the received transaction is transferring.
 func (a *Adapter) clearOrbiterBalances(ctx context.Context, denom string) error {
 	coin := a.bankKeeper.GetBalance(ctx, core.ModuleAddress, denom)
-	if coin.IsZero() {
+	if !coin.IsPositive() {
 		return nil
 	}
 
