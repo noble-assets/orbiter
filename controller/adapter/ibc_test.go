@@ -157,6 +157,7 @@ func TestParsePacket(t *testing.T) {
 		{
 			name:      "skip - not ics20 packet",
 			payloadBz: []byte(`{"some": "other packet type"}`),
+			expErr:    "not for orbiter",
 		},
 		{
 			name: "skip - receiver is not orbiter module",
@@ -165,6 +166,7 @@ func TestParsePacket(t *testing.T) {
 				testutil.NewNobleAddress(),
 				testutil.CreateValidOrbiterPayload(),
 			),
+			expErr: "not for orbiter",
 		},
 		{
 			name: "error - when memo is not a valid json",
@@ -245,13 +247,10 @@ func TestParsePacket(t *testing.T) {
 					require.Equal(t, expPayload.Forwarding.ProtocolId, payload.Forwarding.ProtocolId, "expected different id")
 					require.Equal(t, expPayload.Forwarding.Attributes.TypeUrl, payload.Forwarding.Attributes.TypeUrl, "expected different forwarding attributes type url")
 
-					if expPayload.PreActions != nil {
-						require.Len(t, payload.PreActions, len(expPayload.PreActions))
-						if len(payload.PreActions) > 0 {
-							require.Equal(t, expPayload.PreActions[0].Id, payload.PreActions[0].Id)
-							require.Equal(t, expPayload.PreActions[0].Attributes.TypeUrl,
-								payload.PreActions[0].Attributes.TypeUrl)
-						}
+					require.Len(t, payload.PreActions, len(expPayload.PreActions))
+					if len(expPayload.PreActions) != 0 {
+						require.Equal(t, expPayload.PreActions[0].Id, payload.PreActions[0].Id)
+						require.Equal(t, expPayload.PreActions[0].Attributes.TypeUrl, payload.PreActions[0].Attributes.TypeUrl)
 					}
 
 					expCoin := tC.expParsedData.Coin
