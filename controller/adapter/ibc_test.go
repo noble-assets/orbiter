@@ -222,12 +222,10 @@ func TestParsePayload(t *testing.T) {
 					require.Equal(t, tc.expectPayload.Forwarding.ProtocolId, payload.Forwarding.ProtocolId, "expected different id")
 					require.Equal(t, tc.expectPayload.Forwarding.Attributes.TypeUrl, payload.Forwarding.Attributes.TypeUrl, "expected different forwarding attributes type url")
 
-					if tc.expectPayload.PreActions != nil {
-						require.Len(t, payload.PreActions, len(tc.expectPayload.PreActions))
-						if len(payload.PreActions) > 0 {
-							require.Equal(t, tc.expectPayload.PreActions[0].Id, payload.PreActions[0].Id)
-							require.Equal(t, tc.expectPayload.PreActions[0].Attributes.TypeUrl, payload.PreActions[0].Attributes.TypeUrl)
-						}
+					require.Len(t, payload.PreActions, len(tc.expectPayload.PreActions))
+					if len(tc.expectPayload.PreActions) != 0 {
+						require.Equal(t, tc.expectPayload.PreActions[0].Id, payload.PreActions[0].Id)
+						require.Equal(t, tc.expectPayload.PreActions[0].Attributes.TypeUrl, payload.PreActions[0].Attributes.TypeUrl)
 					}
 				} else {
 					require.Nil(t, payload)
