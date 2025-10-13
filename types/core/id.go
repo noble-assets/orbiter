@@ -47,7 +47,7 @@ func NewActionIDFromString(id string) (ActionID, error) {
 	}
 	actionID, err := NewActionID(val)
 	if err != nil {
-		return ACTION_UNSUPPORTED, fmt.Errorf("action ID %s is not supported", err.Error())
+		return ACTION_UNSUPPORTED, fmt.Errorf("action ID %s is not supported: %w", id, err.Error())
 	}
 
 	return actionID, nil
@@ -84,7 +84,11 @@ func NewProtocolIDFromString(id string) (ProtocolID, error) {
 	}
 	protocolID, err := NewProtocolID(val)
 	if err != nil {
-		return PROTOCOL_UNSUPPORTED, fmt.Errorf("protocol ID %s is not supported", err.Error())
+		return PROTOCOL_UNSUPPORTED, fmt.Errorf(
+			"protocol ID %s is not supported: %w",
+			id,
+			err.Error(),
+		)
 	}
 
 	return protocolID, nil

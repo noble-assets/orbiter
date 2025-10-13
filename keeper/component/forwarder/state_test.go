@@ -47,17 +47,17 @@ func TestGetPaginatedPausedCrossChains(t *testing.T) {
 		postChecks func(counterparties []string, pageResp *query.PageResponse)
 	}{
 		{
-			name:       "no results for protocols not stored",
+			name:       "success - no results for protocols not stored",
 			protocolID: core.ProtocolID(100),
 			expLen:     0,
 		},
 		{
-			name:       "all paused cross-chain for portocol ID 3 with no pagination",
+			name:       "success - all paused cross-chain for portocol ID 3 with no pagination",
 			protocolID: core.ProtocolID(3),
 			expLen:     5,
 		},
 		{
-			name:       "all paused cross-chain for portocol ID 3 with pagination",
+			name:       "success - all paused cross-chain for portocol ID 3 with pagination",
 			protocolID: core.ProtocolID(3),
 			pagination: &query.PageRequest{
 				Offset:     1,
@@ -73,7 +73,7 @@ func TestGetPaginatedPausedCrossChains(t *testing.T) {
 			},
 		},
 		{
-			name:       "all paused cross-chain for portocol ID 3 with pagination reversed",
+			name:       "success - all paused cross-chain for portocol ID 3 with pagination reversed",
 			protocolID: core.ProtocolID(3),
 			pagination: &query.PageRequest{
 				Offset:  1,

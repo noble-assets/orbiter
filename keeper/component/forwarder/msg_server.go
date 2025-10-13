@@ -26,7 +26,6 @@ import (
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 
-	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/controller/forwarding"
@@ -58,7 +57,7 @@ func (s msgServer) PauseProtocol(
 
 	protocolID, err := core.NewProtocolIDFromString(msg.ProtocolId)
 	if err != nil {
-		return nil, errorsmod.Wrap(core.ErrUnableToPause, err.Error())
+		return nil, core.ErrUnableToPause.Wrap(err.Error())
 	}
 
 	if err := s.Pause(ctx, protocolID, nil); err != nil {
@@ -87,7 +86,7 @@ func (s msgServer) UnpauseProtocol(
 
 	protocolID, err := core.NewProtocolIDFromString(msg.ProtocolId)
 	if err != nil {
-		return nil, errorsmod.Wrap(core.ErrUnableToUnpause, err.Error())
+		return nil, core.ErrUnableToUnpause.Wrap(err.Error())
 	}
 
 	if err := s.Unpause(ctx, protocolID, nil); err != nil {
@@ -116,7 +115,7 @@ func (s msgServer) PauseCrossChains(
 
 	protocolID, err := core.NewProtocolIDFromString(msg.ProtocolId)
 	if err != nil {
-		return nil, core.ErrUnableToUnpause.Wrapf("invalid protocol id: %s", err.Error())
+		return nil, core.ErrUnableToPause.Wrapf("invalid protocol id: %s", err.Error())
 	}
 
 	if len(msg.CounterpartyIds) > core.MaxTargetCounterparties {
@@ -159,7 +158,7 @@ func (s msgServer) UnpauseCrossChains(
 	}
 
 	if len(msg.CounterpartyIds) > core.MaxTargetCounterparties {
-		return nil, core.ErrUnableToPause.Wrapf(
+		return nil, core.ErrUnableToUnpause.Wrapf(
 			"cannot unpause more than %d counterparties in a transaction",
 			core.MaxTargetCounterparties,
 		)

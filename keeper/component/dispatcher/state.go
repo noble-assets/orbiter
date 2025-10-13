@@ -190,7 +190,7 @@ func (d *Dispatcher) GetDispatchedAmountsBySourceProtocolID(
 	if err != nil {
 		return nil, nil, errorsmod.Wrap(
 			err,
-			"error paginating dispatch amounts by destination protocol ID",
+			"error paginating dispatch amounts by source protocol ID",
 		)
 	}
 

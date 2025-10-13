@@ -174,7 +174,6 @@ func TestParsePayload(t *testing.T) {
 
 				memoBz, err := json.MarshalIndent(memo, "", "  ")
 				require.NoError(t, err)
-				print(string(memoBz))
 
 				return testutil.CreateValidIBCPacketData(
 					sender,
