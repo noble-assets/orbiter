@@ -86,13 +86,11 @@ func (a *NoOpAdapterController) Name() string {
 	return a.id.String()
 }
 
-func (a *NoOpAdapterController) ParsePayload(
-	_ core.ProtocolID,
-	bz []byte,
-) (bool, *core.Payload, error) {
+// ParsePacket implements types.AdapterController.
+func (a *NoOpAdapterController) ParsePacket(bz []byte) (*types.ParsedData, error) {
 	if string(bz) == "failing" {
-		return false, nil, errors.New("error parsing payload")
+		return nil, errors.New("error parsing payload")
 	}
 
-	return true, &core.Payload{}, nil
+	return &types.ParsedData{}, nil
 }
