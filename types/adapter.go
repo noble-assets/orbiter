@@ -26,24 +26,35 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
+// OrbiterPacket defines the abstract cross-chain transfer packet used in the Orbiter.
+type OrbiterPacket struct {
+	TransferAttributes *TransferAttributes
+	Payload            *core.Payload
+}
+
 type TransferHookHandler interface {
 	// BeforeTransferHook allows to execute logic BEFORE completing
 	// the cross-chain transfer.
-	BeforeTransferHook(context.Context, core.CrossChainID, *core.Payload) error
+	BeforeTransferHook(context.Context, *OrbiterPacket) error
 	// AfterTransferHook allows to execute logic AFTER completing
 	// the cross-chain transfer.
-	AfterTransferHook(
-		context.Context,
-		core.CrossChainID,
-		*core.Payload,
-	) (*TransferAttributes, error)
+	AfterTransferHook(context.Context, *OrbiterPacket) error
+}
+
+type PacketAdapter interface {
+	// AdaptPacket creates an Orbiter packet out of a generic cross-chain packet.
+	AdaptPacket(context.Context, core.CrossChainID, []byte) (*OrbiterPacket, error)
+}
+
+type PayloadProcessor interface {
+	// ProcessPayload processes the parsed payload.
+	ProcessPayload(context.Context, *OrbiterPacket) error
 }
 
 // PayloadAdapter defines the behavior expected by the adapter to handle
 // a generic orbiter payload.
 type PayloadAdapter interface {
-	PayloadParser
+	PacketAdapter
 	TransferHookHandler
-	// ProcessPayload processes the parsed payload.
-	ProcessPayload(context.Context, *TransferAttributes, *core.Payload) error
+	PayloadProcessor
 }

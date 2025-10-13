@@ -21,9 +21,13 @@
 package adapter
 
 import (
+	"fmt"
+
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
+	sdkmath "cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
 	"github.com/noble-assets/orbiter/controller"
@@ -67,16 +71,35 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	}, nil
 }
 
-// ParsePayload dispatches the payload parsing to the underlying IBC parser.
-func (a *IBCAdapter) ParsePayload(
-	id core.ProtocolID,
-	payloadBz []byte,
-) (bool, *core.Payload, error) {
-	return a.parser.ParsePayload(id, payloadBz)
+func (a *IBCAdapter) ParsePacket(packetBz []byte) (*types.ParsedData, error) {
+	packet, err := GetICS20PacketData(packetBz)
+	if err != nil {
+		return nil, core.ErrNoOrbiterPacket.Wrap("data is not ICS20 packet")
+	}
+
+	if packet.GetReceiver() != core.ModuleAddress.String() {
+		return nil, core.ErrNoOrbiterPacket.Wrap("receiver is not Orbiter module")
+	}
+
+	payload, err := a.parser.ParsePayload([]byte(packet.GetMemo()))
+	if err != nil {
+		return nil, err
+	}
+
+	amount, ok := sdkmath.NewIntFromString(packet.Amount)
+	if !ok {
+		return nil, fmt.Errorf("invalid amount: %s", packet.Amount)
+	}
+
+	return &types.ParsedData{
+		Coin:    sdk.NewCoin(packet.Denom, amount),
+		Payload: *payload,
+	}, nil
 }
 
 var _ types.PayloadParser = &IBCParser{}
 
+// NOTE: maybe we get rid of the IBC parser and directly use the JSON one.
 type IBCParser struct {
 	JSONParser
 }
@@ -102,34 +125,23 @@ func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 // - bool: whether the payload is intended for the Orbiter module.
 // - Payload: the parsed payload.
 // - error: an error, if one occurred during parsing.
-func (p *IBCParser) ParsePayload(_ core.ProtocolID, payloadBz []byte) (bool, *core.Payload, error) {
-	data, err := p.GetICS20PacketData(payloadBz)
+func (p *IBCParser) ParsePayload(memoBz []byte) (*core.Payload, error) {
+	payload, err := p.Parse(string(memoBz))
 	if err != nil {
-		// Despite the error is not nil, we don't return it. We
-		// want the non fungible token packet data error to be
-		// returned from the ICS20 app.
-		return false, nil, nil //nolint:nilerr
+		return nil, err
 	}
 
-	if data.GetReceiver() != core.ModuleAddress.String() {
-		return false, nil, nil
-	}
-
-	payload, err := p.Parse(data.GetMemo())
-	if err != nil {
-		return true, nil, err
-	}
-
+	// NOTE: validation should probably be not here.
 	if err := payload.Validate(); err != nil {
-		return true, payload, err
+		return payload, err
 	}
 
-	return true, payload, nil
+	return payload, nil
 }
 
-// GetICS20PacketData returns unmarshalled ICS-20 packet data if it is present in the data
-// as well as a boolean indicating the successful decoding.
-func (p *IBCParser) GetICS20PacketData(data []byte) (transfertypes.FungibleTokenPacketData, error) {
+// GetICS20PacketData returns the unmarshalled ICS-20 packet data.
+// It returns an error if the data cannot be unmarshalled.
+func GetICS20PacketData(data []byte) (transfertypes.FungibleTokenPacketData, error) {
 	var ics20Data transfertypes.FungibleTokenPacketData
 	err := transfertypes.ModuleCdc.UnmarshalJSON(data, &ics20Data)
 
