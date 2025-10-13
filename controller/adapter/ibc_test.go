@@ -34,8 +34,8 @@ import (
 	adapterctrl "github.com/noble-assets/orbiter/controller/adapter"
 	"github.com/noble-assets/orbiter/testutil"
 	"github.com/noble-assets/orbiter/testutil/testdata"
-	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -135,14 +135,8 @@ func TestParsePayload(t *testing.T) {
 
 				memoBz, err := json.MarshalIndent(memo, "", "  ")
 				require.NoError(t, err)
-
-				return testutil.CreateValidIBCPacketData(
-					sender,
-					core.ModuleAddress.String(),
-					string(memoBz),
-				)
+				return memoBz
 			}(),
-			expectIsOrbiter: true,
 			expectPayload: &core.Payload{
 				Forwarding: &core.Forwarding{
 					ProtocolId: core.PROTOCOL_CCTP,
@@ -151,7 +145,6 @@ func TestParsePayload(t *testing.T) {
 					},
 				},
 			},
-			expectError: false,
 		},
 	}
 
@@ -177,9 +170,8 @@ func TestParsePayload(t *testing.T) {
 
 				require.Len(t, payload.PreActions, len(tc.expectPayload.PreActions))
 				if len(tc.expectPayload.PreActions) != 0 {
-						require.Equal(t, tc.expectPayload.PreActions[0].Id, payload.PreActions[0].Id)
-						require.Equal(t, tc.expectPayload.PreActions[0].Attributes.TypeUrl, payload.PreActions[0].Attributes.TypeUrl)
-					}
+					require.Equal(t, tc.expectPayload.PreActions[0].Id, payload.PreActions[0].Id)
+					require.Equal(t, tc.expectPayload.PreActions[0].Attributes.TypeUrl, payload.PreActions[0].Attributes.TypeUrl)
 				}
 			}
 		})

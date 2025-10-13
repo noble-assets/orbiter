@@ -427,7 +427,7 @@ func (d *Dispatcher) GetDispatchedCountsBySourceProtocolID(
 	if err != nil {
 		return nil, nil, errorsmod.Wrap(
 			err,
-			"error paginating dispatch count by source protocol ID",
+			"error paginating dispatch counts by source protocol ID",
 		)
 	}
 
@@ -456,7 +456,7 @@ func (d *Dispatcher) GetDispatchedCountsByDestinationProtocolID(
 	if err != nil {
 		return nil, nil, errorsmod.Wrap(
 			err,
-			"error paginating dispatch count by destination protocol ID",
+			"error paginating dispatch counts by destination protocol ID",
 		)
 	}
 

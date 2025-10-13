@@ -144,7 +144,7 @@ func TestValidateCounterpartyID(t *testing.T) {
 			name:       "error - too long",
 			id:         strings.Repeat("a", core.MaxCounterpartyIDLength+1),
 			protocolID: core.PROTOCOL_CCTP,
-			expError:   "cannot contains more",
+			expError:   "cannot contain more than",
 		},
 		{
 			name:       "error - not a number with CCTP",
