@@ -202,15 +202,18 @@ func (d *Dispatcher) dispatchForwarding(
 	d.logger.Debug("started forwarding dispatching")
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {
-		errDescription := fmt.Sprintf(
+		d.logger.Error(
+			"creating forwarding packet",
+			"id",
+			forwarding.ProtocolID(),
+			"error",
+			err.Error(),
+		)
+
+		return errorsmod.Wrapf(
+			err,
 			"error creating forwarding packet for protocol ID %s",
 			forwarding.ProtocolID(),
-		)
-		d.logger.Debug(errDescription, "error", err.Error())
-
-		return errorsmod.Wrap(
-			err,
-			errDescription,
 		)
 	}
 
@@ -223,17 +226,21 @@ func (d *Dispatcher) dispatchForwarding(
 		"dest_amount",
 		transferAttr.DestinationAmount().String(),
 	)
+
 	err = d.dispatchForwardingPacket(ctx, packet)
 	if err != nil {
-		errDescription := fmt.Sprintf(
+		d.logger.Error(
+			"dispatching forwarding packet",
+			"id",
+			forwarding.ProtocolID(),
+			"error",
+			err.Error(),
+		)
+
+		return errorsmod.Wrapf(
+			err,
 			"error dispatching forwarding packet for protocol ID %s",
 			forwarding.ProtocolID(),
-		)
-		d.logger.Debug(errDescription, "error", err.Error())
-
-		return errorsmod.Wrap(
-			err,
-			errDescription,
 		)
 	}
 

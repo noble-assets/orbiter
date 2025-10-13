@@ -261,18 +261,18 @@ func (a *Adapter) commonBeforeTransferHook(
 		return err
 	}
 
-	if err := a.clearOrbiterBalances(ctx, denom); err != nil {
+	if err := a.clearOrbiterBalance(ctx, denom); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// clearOrbiterBalances sends the orbiter module account balance of the transferred coin to
+// clearOrbiterBalance sends the orbiter module account balance of the transferred coin to
 // a sub-account.
 // This method allows to start a forwarding with the module holding
 // only the amount of the coin the received transaction is transferring.
-func (a *Adapter) clearOrbiterBalances(ctx context.Context, denom string) error {
+func (a *Adapter) clearOrbiterBalance(ctx context.Context, denom string) error {
 	coin := a.bankKeeper.GetBalance(ctx, core.ModuleAddress, denom)
 	if !coin.IsPositive() {
 		return nil

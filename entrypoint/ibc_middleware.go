@@ -22,6 +22,7 @@ package entrypoint
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	errorsmod "cosmossdk.io/errors"
@@ -81,12 +82,18 @@ func (i IBCMiddleware) OnRecvPacket(
 ) ibcexported.Acknowledgement {
 	// NOTE: we are using destination channel here since that is the channel identifier of the
 	// source chain on Noble.
-	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.DestinationChannel)
+	ibcCounterpartyID := transfertypes.GetDenomPrefix(
+		packet.DestinationPort,
+		packet.DestinationChannel,
+	)
+
+	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, ibcCounterpartyID)
 	if err != nil {
 		return newErrorAcknowledgement(err)
 	}
 
 	orbiterPacket, err := i.payloadAdapter.AdaptPacket(ctx, ccID, packet.GetData())
+	// If the error is the sentinel error, we call the next middleware/app in the ICS20 stack.
 	if err != nil && !errors.Is(err, core.ErrNoOrbiterPacket) {
 		return newErrorAcknowledgement(err)
 	}
@@ -102,7 +109,7 @@ func (i IBCMiddleware) OnRecvPacket(
 		packet.GetSourceChannel(),
 	)
 	if err != nil {
-		return newErrorAcknowledgement(err)
+		return newErrorAcknowledgement(core.ErrNonNativeCoin.Wrap(err.Error()))
 	}
 
 	orbiterPacket.TransferAttributes.SetDestinationDenom(denom)
@@ -132,7 +139,7 @@ func (i IBCMiddleware) OnRecvPacket(
 
 func recoverNativeDenom(denom, sourcePort, sourceChannel string) (string, error) {
 	if transfertypes.SenderChainIsSource(sourcePort, sourceChannel, denom) {
-		return "", errorsmod.Wrapf(core.ErrNonNativeCoin, "coin is native of source chain")
+		return "", errors.New("coin is native of source chain")
 	}
 
 	voucherPrefix := transfertypes.GetDenomPrefix(sourcePort, sourceChannel)
@@ -140,8 +147,7 @@ func recoverNativeDenom(denom, sourcePort, sourceChannel string) (string, error)
 	// Remove from the denom the prefix created on the source chain when it received
 	// the coin from Noble.
 	if !strings.HasPrefix(denom, voucherPrefix) {
-		return "", errorsmod.Wrapf(
-			core.ErrNonNativeCoin,
+		return "", fmt.Errorf(
 			"denom %q missing expected IBC prefix %q",
 			denom,
 			voucherPrefix,
@@ -153,7 +159,7 @@ func recoverNativeDenom(denom, sourcePort, sourceChannel string) (string, error)
 	// if the denomination is not native.
 	denomTrace := transfertypes.ParseDenomTrace(unprefixedDenom)
 	if !denomTrace.IsNativeDenom() {
-		return "", errorsmod.Wrapf(core.ErrNonNativeCoin, "orbiter supports only native tokens")
+		return "", errors.New("orbiter supports only native tokens")
 	}
 
 	return unprefixedDenom, nil
