@@ -135,6 +135,7 @@ func TestParsePayload(t *testing.T) {
 
 				memoBz, err := json.MarshalIndent(memo, "", "  ")
 				require.NoError(t, err)
+
 				return memoBz
 			}(),
 			expectPayload: &core.Payload{
