@@ -7,7 +7,10 @@
 package orbiterv1
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,12 +18,17 @@ import (
 // Requires gRPC-Go v1.64.0 or later.
 const _ = grpc.SupportPackageIsVersion9
 
+const (
+	Query_PendingPayload_FullMethodName = "/noble.orbiter.v1.Query/PendingPayload"
+)
+
 // QueryClient is the client API for Query service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Query defines the gRPC query service for the Orbiter module.
 type QueryClient interface {
+	PendingPayload(ctx context.Context, in *QueryPendingPayloadRequest, opts ...grpc.CallOption) (*QueryPendingPayloadResponse, error)
 }
 
 type queryClient struct {
@@ -31,12 +39,23 @@ func NewQueryClient(cc grpc.ClientConnInterface) QueryClient {
 	return &queryClient{cc}
 }
 
+func (c *queryClient) PendingPayload(ctx context.Context, in *QueryPendingPayloadRequest, opts ...grpc.CallOption) (*QueryPendingPayloadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryPendingPayloadResponse)
+	err := c.cc.Invoke(ctx, Query_PendingPayload_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
 //
 // Query defines the gRPC query service for the Orbiter module.
 type QueryServer interface {
+	PendingPayload(context.Context, *QueryPendingPayloadRequest) (*QueryPendingPayloadResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -47,6 +66,9 @@ type QueryServer interface {
 // pointer dereference when methods are called.
 type UnimplementedQueryServer struct{}
 
+func (UnimplementedQueryServer) PendingPayload(context.Context, *QueryPendingPayloadRequest) (*QueryPendingPayloadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PendingPayload not implemented")
+}
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
 
@@ -68,13 +90,36 @@ func RegisterQueryServer(s grpc.ServiceRegistrar, srv QueryServer) {
 	s.RegisterService(&Query_ServiceDesc, srv)
 }
 
+func _Query_PendingPayload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPendingPayloadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PendingPayload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_PendingPayload_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PendingPayload(ctx, req.(*QueryPendingPayloadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Query_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "noble.orbiter.v1.Query",
 	HandlerType: (*QueryServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "noble/orbiter/v1/query.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "PendingPayload",
+			Handler:    _Query_PendingPayload_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "noble/orbiter/v1/query.proto",
 }
