@@ -79,7 +79,7 @@ func (i IBCMiddleware) OnRecvPacket(
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
 ) ibcexported.Acknowledgement {
-  // NOTE: we are using destination channel here since that is the channel identifier of the
+	// NOTE: we are using destination channel here since that is the channel identifier of the
 	// source chain on Noble.
 	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.DestinationChannel)
 	if err != nil {
@@ -96,9 +96,6 @@ func (i IBCMiddleware) OnRecvPacket(
 
 	// In IBC the denom specified in the packet is the sending chain representation. We have to
 	// convert the denom into the Noble representation.
-	//
-	// TODO: can we include this logic in the adapter directly? we should pass the entire packet in
-	// bytes. Does it worth it?
 	denom, err := recoverNativeDenom(
 		orbiterPacket.TransferAttributes.SourceDenom(),
 		packet.GetSourcePort(),
