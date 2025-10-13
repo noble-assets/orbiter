@@ -156,7 +156,7 @@ func ValidateCounterpartyID(id string, protocol ProtocolID) error {
 
 	if len(id) > MaxCounterpartyIDLength {
 		return fmt.Errorf(
-			"counterparty ID cannot contains more than %d characters",
+			"counterparty ID cannot contain more than %d characters",
 			MaxCounterpartyIDLength,
 		)
 	}
