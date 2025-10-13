@@ -51,8 +51,8 @@ const PayloadHashLength = 32
 // the generated SHA256 hashes for the PendingPayload type.
 type PayloadHash [PayloadHashLength]byte
 
-// ParsePayloadHash takes a string and tries to parse a PayloadHash from it.
-func ParsePayloadHash(s string) (*PayloadHash, error) {
+// NewPayloadHash takes a string and tries to parse a PayloadHash from it.
+func NewPayloadHash(s string) (*PayloadHash, error) {
 	bz, err := hex.DecodeString(s)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "invalid payload hash")

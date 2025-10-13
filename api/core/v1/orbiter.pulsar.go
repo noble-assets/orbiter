@@ -2763,7 +2763,7 @@ type PendingPayload struct {
 
 	// The sequence number of the pending payload.
 	Sequence uint64 `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
-	// The submitted payload that will is registered as pending.
+	// The submitted payload that will be registered as pending.
 	Payload *Payload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
 }
 

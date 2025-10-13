@@ -79,6 +79,6 @@ message PayloadWrapper {
 message PendingPayload {
   // The sequence number of the pending payload.
   uint64 sequence = 1;
-  // The submitted payload that will is registered as pending.
+  // The submitted payload that will be registered as pending.
   Payload payload = 2;
 }

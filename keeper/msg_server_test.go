@@ -45,7 +45,7 @@ func TestSubmitPayload(t *testing.T) {
 	destDomain := uint32(1)
 	recipient := testutil.RandomBytes(32)
 
-	testcases := []struct {
+	testCases := []struct {
 		name        string
 		setup       func(*testing.T, context.Context, *orbiterkeeper.Keeper)
 		payload     func() *core.Payload
@@ -132,7 +132,7 @@ func TestSubmitPayload(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testcases {
+	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ms := orbiterkeeper.NewMsgServer(k)

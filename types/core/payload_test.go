@@ -36,13 +36,13 @@ func TestPayloadRoundTrip(t *testing.T) {
 	hash, err := pp.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
-	parsedHash, err := core.ParsePayloadHash(hash.String())
+	parsedHash, err := core.NewPayloadHash(hash.String())
 	require.NoError(t, err, "failed to parse payload hash")
 
 	require.Equal(t, hash.String(), parsedHash.String(), "payload hash mismatch")
 }
 
-func TestParsePayloadHash(t *testing.T) {
+func TestNewPayloadHash(t *testing.T) {
 	t.Parallel()
 
 	pp := createPendingPayload(t)
@@ -75,7 +75,7 @@ func TestParsePayloadHash(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			parsed, err := core.ParsePayloadHash(tc.input)
+			parsed, err := core.NewPayloadHash(tc.input)
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to parse payload hash")
 				require.Equal(t, tc.input, parsed.String(), "payload hash mismatch")

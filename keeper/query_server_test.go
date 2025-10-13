@@ -42,7 +42,7 @@ func TestPendingPayload(t *testing.T) {
 	exampleHash, err := examplePayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
-	testcases := []struct {
+	testCases := []struct {
 		name        string
 		setup       func(*testing.T, context.Context, codec.Codec, orbitertypes.MsgServer)
 		expPayload  *core.PendingPayload
@@ -91,7 +91,7 @@ func TestPendingPayload(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testcases {
+	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
