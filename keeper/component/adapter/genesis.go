@@ -42,7 +42,12 @@ func (a *Adapter) InitGenesis(ctx context.Context, g *adaptertypes.GenesisState)
 
 // ExportGenesis returns the current state of the adapter component into a genesis state.
 func (a *Adapter) ExportGenesis(ctx context.Context) *adaptertypes.GenesisState {
+	params, err := a.GetParams(ctx)
+	if err != nil {
+		a.logger.Error("getting params returned an error", "err", err.Error())
+	}
+
 	return &adaptertypes.GenesisState{
-		Params: a.GetParams(ctx),
+		Params: params,
 	}
 }

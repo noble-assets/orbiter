@@ -122,7 +122,7 @@ func TestValidateForwarding(t *testing.T) {
 			expErr: "not set",
 		},
 		{
-			name: "success - with supported forwarding an non nil attributes",
+			name: "success - with supported forwarding and non nil attributes",
 			forwarding: &core.Forwarding{
 				ProtocolId: core.PROTOCOL_IBC,
 				Attributes: &codectypes.Any{},
@@ -168,6 +168,88 @@ func TestProtocolID(t *testing.T) {
 		t.Run(tC.name, func(t *testing.T) {
 			id := tC.forwarding.ProtocolID()
 			require.Equal(t, tC.expectedID, id)
+		})
+	}
+}
+
+func TestValidate_Payload(t *testing.T) {
+	attr := testdata.TestActionAttr{Whatever: "whatever"}
+	action, err := core.NewAction(core.ACTION_FEE, &attr)
+	require.NoError(t, err)
+
+	testCases := []struct {
+		name     string
+		payload  *core.Payload
+		expError string
+	}{
+		{
+			name:     "error - nil payload",
+			payload:  nil,
+			expError: "payload is not set",
+		},
+		{
+			name: "error - repeated actions",
+			payload: &core.Payload{
+				PreActions: []*core.Action{action, action},
+			},
+			expError: "repeated action",
+		},
+		{
+			name: "error - invalid ID",
+			payload: &core.Payload{
+				PreActions: []*core.Action{
+					{},
+				},
+				Forwarding: &core.Forwarding{},
+			},
+			expError: "ID is not supported",
+		},
+		{
+			name: "error - forwarding is not set",
+			payload: &core.Payload{
+				PreActions: []*core.Action{},
+				Forwarding: nil,
+			},
+			expError: "forwarding is not set",
+		},
+		{
+			name: "success - forwarding with one action",
+			payload: &core.Payload{
+				PreActions: []*core.Action{
+					{
+						Id:         core.ACTION_FEE,
+						Attributes: &codectypes.Any{},
+					},
+				},
+				Forwarding: &core.Forwarding{
+					ProtocolId: core.PROTOCOL_IBC,
+					Attributes: &codectypes.Any{},
+				},
+			},
+			expError: "",
+		},
+		{
+			name: "success - only forwarding",
+			payload: &core.Payload{
+				PreActions: []*core.Action{},
+				Forwarding: &core.Forwarding{
+					ProtocolId: core.PROTOCOL_IBC,
+					Attributes: &codectypes.Any{},
+				},
+			},
+			expError: "",
+		},
+	}
+
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			err := tC.payload.Validate()
+
+			if tC.expError != "" {
+				require.ErrorContains(t, err, tC.expError)
+			} else {
+				require.NoError(t, err)
+			}
 		})
 	}
 }

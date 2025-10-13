@@ -21,6 +21,7 @@
 package adapter_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -34,6 +35,7 @@ import (
 	"github.com/noble-assets/orbiter/testutil"
 	"github.com/noble-assets/orbiter/testutil/testdata"
 	"github.com/noble-assets/orbiter/types"
+	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -109,6 +111,42 @@ func TestParsePayload(t *testing.T) {
 				},
 			},
 		},
+		// NOTE: the following test case comes from an external audit report.
+		{
+			name: "success - orbiter payload with incomplete CCTP attributes",
+			setup: func(reg codectypes.InterfaceRegistry) {
+				reg.RegisterImplementations(
+					(*core.ForwardingAttributes)(nil),
+					&forwardingtypes.CCTPAttributes{},
+				)
+			},
+			payloadBz: func() []byte {
+				memo := map[string]any{
+					"orbiter": map[string]any{
+						"forwarding": map[string]any{
+							"protocol_id": 2,
+							"attributes": map[string]any{
+								"@type":          "/noble.orbiter.controller.forwarding.v1.CCTPAttributes",
+								"mint_recipient": "PNWAxASH2RPmgMV+/Tb4e78ON1WL8SoFGnwbWWHxfuA=",
+							},
+						},
+					},
+				}
+
+				memoBz, err := json.MarshalIndent(memo, "", "  ")
+				require.NoError(t, err)
+
+				return memoBz
+			}(),
+			expectPayload: &core.Payload{
+				Forwarding: &core.Forwarding{
+					ProtocolId: core.PROTOCOL_CCTP,
+					Attributes: &codectypes.Any{
+						TypeUrl: "/noble.orbiter.controller.forwarding.v1.CCTPAttributes",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -120,8 +158,7 @@ func TestParsePayload(t *testing.T) {
 			}
 
 			parser, err := adapterctrl.NewIBCParser(encCfg.Codec)
-			require.NoError(t, err)
-
+			require.NoError(t, err, "expected no error creating parser")
 			payload, err := parser.ParsePayload(tc.payloadBz)
 
 			if tc.expErr != "" {
@@ -132,12 +169,10 @@ func TestParsePayload(t *testing.T) {
 				require.Equal(t, tc.expectPayload.Forwarding.ProtocolId, payload.Forwarding.ProtocolId, "expected different id")
 				require.Equal(t, tc.expectPayload.Forwarding.Attributes.TypeUrl, payload.Forwarding.Attributes.TypeUrl, "expected different forwarding attributes type url")
 
-				if tc.expectPayload.PreActions != nil {
-					require.Len(t, payload.PreActions, len(tc.expectPayload.PreActions))
-					if len(payload.PreActions) > 0 {
-						require.Equal(t, tc.expectPayload.PreActions[0].Id, payload.PreActions[0].Id)
-						require.Equal(t, tc.expectPayload.PreActions[0].Attributes.TypeUrl, payload.PreActions[0].Attributes.TypeUrl)
-					}
+				require.Len(t, payload.PreActions, len(tc.expectPayload.PreActions))
+				if len(tc.expectPayload.PreActions) != 0 {
+					require.Equal(t, tc.expectPayload.PreActions[0].Id, payload.PreActions[0].Id)
+					require.Equal(t, tc.expectPayload.PreActions[0].Attributes.TypeUrl, payload.PreActions[0].Attributes.TypeUrl)
 				}
 			}
 		})

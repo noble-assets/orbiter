@@ -27,11 +27,13 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
+const CounterpartyID = "noble"
+
 var _ core.ForwardingAttributes = &InternalAttributes{}
 
 // CounterpartyID implements core.ForwardingAttributes.
 func (a *InternalAttributes) CounterpartyID() string {
-	return "noble"
+	return CounterpartyID
 }
 
 func NewInternalAttributes(

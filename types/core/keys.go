@@ -49,6 +49,8 @@ const (
 	// Maps names.
 	PausedCrossChainsName = "paused_cross_chains"
 	PausedProtocolsName   = "paused_protocols"
+
+	MaxTargetCounterparties = 100
 )
 
 var (
@@ -65,12 +67,6 @@ const (
 
 	// Maps names.
 	PausedActionsName = "paused_actions"
-
-	// Controllers constants.
-
-	// BPSNormalizer is used to normalize the basis points
-	// defined in a fee action execution.
-	BPSNormalizer = 10_000
 )
 
 var PausedActionsPrefix = collections.NewPrefix(20)
@@ -103,10 +99,6 @@ const (
 	AdapterControllerName = "adapter_controller"
 
 	AdapterParamsName = "adapter_params"
-
-	// CCTPNobleDomain is the identifier of the Noble domain
-	// in the CCTP protocol.
-	CCTPNobleDomain = 4
 
 	crosschainIDSeparator = ":"
 )

@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package noble.orbiter.v1;
-
-option go_package = "github.com/noble-assets/orbiter/types";
-
-// Query defines the gRPC query service for the Orbiter module.
-service Query {}

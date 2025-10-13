@@ -240,5 +240,5 @@ func ComputeFeeAmount(amount math.Int, basisPoints uint64) (math.Int, error) {
 		return math.ZeroInt(), err
 	}
 
-	return fee.QuoRaw(core.BPSNormalizer), nil
+	return fee.QuoRaw(actiontypes.BPSNormalizer), nil
 }

@@ -22,7 +22,6 @@ package dispatcher
 
 import (
 	"context"
-	"fmt"
 
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
@@ -154,14 +153,6 @@ func (d *Dispatcher) ValidatePayload(payload *core.Payload) error {
 		return err
 	}
 
-	visitedIDs := make(map[int32]any)
-	for _, action := range payload.PreActions {
-		if _, found := visitedIDs[int32(action.Id)]; found {
-			return fmt.Errorf("received repeated action ID: %v", action.ID())
-		}
-		visitedIDs[int32(action.Id)] = nil
-	}
-
 	return nil
 }
 
@@ -210,15 +201,18 @@ func (d *Dispatcher) dispatchForwarding(
 	d.logger.Debug("started forwarding dispatching")
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {
-		errDescription := fmt.Sprintf(
+		d.logger.Error(
+			"creating forwarding packet",
+			"id",
+			forwarding.ProtocolID(),
+			"error",
+			err.Error(),
+		)
+
+		return errorsmod.Wrapf(
+			err,
 			"error creating forwarding packet for protocol ID %s",
 			forwarding.ProtocolID(),
-		)
-		d.logger.Debug(errDescription, "error", err.Error())
-
-		return errorsmod.Wrap(
-			err,
-			errDescription,
 		)
 	}
 
@@ -231,17 +225,21 @@ func (d *Dispatcher) dispatchForwarding(
 		"dest_amount",
 		transferAttr.DestinationAmount().String(),
 	)
+
 	err = d.dispatchForwardingPacket(ctx, packet)
 	if err != nil {
-		errDescription := fmt.Sprintf(
+		d.logger.Error(
+			"dispatching forwarding packet",
+			"id",
+			forwarding.ProtocolID(),
+			"error",
+			err.Error(),
+		)
+
+		return errorsmod.Wrapf(
+			err,
 			"error dispatching forwarding packet for protocol ID %s",
 			forwarding.ProtocolID(),
-		)
-		d.logger.Debug(errDescription, "error", err.Error())
-
-		return errorsmod.Wrap(
-			err,
-			errDescription,
 		)
 	}
 

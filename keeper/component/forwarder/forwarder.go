@@ -135,14 +135,20 @@ func (f *Forwarder) Pause(
 	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
-	if err := ValidateCrossChains(protocolID, counterpartyIDs); err != nil {
-		return core.ErrUnableToPause.Wrap(err.Error())
+	if err := protocolID.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
 	switch {
 	case len(counterpartyIDs) == 0:
 		return f.pauseProtocol(ctx, protocolID)
 	default:
+		for _, id := range counterpartyIDs {
+			if err := core.ValidateCounterpartyID(id, protocolID); err != nil {
+				return errorsmod.Wrap(err, "invalid counterparty ID")
+			}
+		}
+
 		return f.pauseCrossChains(ctx, protocolID, counterpartyIDs)
 	}
 }
@@ -152,31 +158,21 @@ func (f *Forwarder) Unpause(
 	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
-	if err := ValidateCrossChains(protocolID, counterpartyIDs); err != nil {
-		return core.ErrUnableToUnpause.Wrap(err.Error())
+	if err := protocolID.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
 	if len(counterpartyIDs) == 0 {
 		return f.unpauseProtocol(ctx, protocolID)
 	} else {
+		for _, id := range counterpartyIDs {
+			if err := core.ValidateCounterpartyID(id, protocolID); err != nil {
+				return errorsmod.Wrap(err, "invalid counterparty ID")
+			}
+		}
+
 		return f.unpauseCrossChains(ctx, protocolID, counterpartyIDs)
 	}
-}
-
-func ValidateCrossChains(
-	protocolID core.ProtocolID,
-	counterpartyIDs []string,
-) error {
-	if err := protocolID.Validate(); err != nil {
-		return errorsmod.Wrap(err, "invalid protocol ID")
-	}
-	for _, id := range counterpartyIDs {
-		if err := core.ValidateCounterpartyID(id); err != nil {
-			return errorsmod.Wrap(err, "invalid counterparty ID")
-		}
-	}
-
-	return nil
 }
 
 func (f *Forwarder) HandlePacket(

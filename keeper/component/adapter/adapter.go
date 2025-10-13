@@ -230,7 +230,12 @@ func (a *Adapter) CheckPassthroughPayloadSize(
 	ctx context.Context,
 	passthroughPayload []byte,
 ) error {
-	params := a.GetParams(ctx)
+	// If we obtain an error, we assume 0 allowed payload size so
+	// we can execute the transfer if no payload is specified.
+	params, err := a.GetParams(ctx)
+	if err != nil {
+		a.logger.Error("getting params returned an error", "err", err.Error())
+	}
 
 	maxSize := params.MaxPassthroughPayloadSize
 	if uint64(len(passthroughPayload)) > uint64(maxSize) {
@@ -256,18 +261,18 @@ func (a *Adapter) commonBeforeTransferHook(
 		return err
 	}
 
-	if err := a.clearOrbiterBalances(ctx, denom); err != nil {
+	if err := a.clearOrbiterBalance(ctx, denom); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// clearOrbiterBalances sends the orbiter module account balance of the transferred coin to
+// clearOrbiterBalance sends the orbiter module account balance of the transferred coin to
 // a sub-account.
 // This method allows to start a forwarding with the module holding
 // only the amount of the coin the received transaction is transferring.
-func (a *Adapter) clearOrbiterBalances(ctx context.Context, denom string) error {
+func (a *Adapter) clearOrbiterBalance(ctx context.Context, denom string) error {
 	coin := a.bankKeeper.GetBalance(ctx, core.ModuleAddress, denom)
 	if !coin.IsPositive() {
 		return nil

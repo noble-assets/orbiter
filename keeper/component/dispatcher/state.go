@@ -27,6 +27,7 @@ import (
 	"cosmossdk.io/collections/indexes"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
+	"github.com/cosmos/cosmos-sdk/types/query"
 
 	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
 	"github.com/noble-assets/orbiter/types/core"
@@ -170,71 +171,59 @@ func (d *Dispatcher) SetDispatchedAmount(
 func (d *Dispatcher) GetDispatchedAmountsBySourceProtocolID(
 	ctx context.Context,
 	protocolID core.ProtocolID,
-) []*dispatchertypes.DispatchedAmountEntry {
-	amounts := []*dispatchertypes.DispatchedAmountEntry{}
-
-	rng := collections.NewPrefixedQuadRange[int32, string, string, string](int32(protocolID))
-
-	err := d.dispatchedAmounts.Walk(
+	pagination *query.PageRequest,
+) ([]*dispatchertypes.DispatchedAmountEntry, *query.PageResponse, error) {
+	amounts, pageRes, err := query.CollectionPaginate(
 		ctx,
-		rng,
-		func(k DispatchedAmountsKey, v dispatchertypes.AmountDispatched) (stop bool, err error) {
+		d.dispatchedAmounts,
+		pagination,
+		func(k DispatchedAmountsKey, v dispatchertypes.AmountDispatched) (*dispatchertypes.DispatchedAmountEntry, error) {
 			entry, err := d.getDispatchedAmountEntryFromKey(ctx, k)
 			if err != nil {
-				return true, err
+				return nil, err
 			}
 
-			amounts = append(amounts, &entry)
-
-			return false, nil
+			return &entry, nil
 		},
+		WithCollectionPaginationQuadPrefix[int32, string, string, string](int32(protocolID)),
 	)
 	if err != nil {
-		d.logger.Error(
-			"error in dispatched amounts walking by source protocol ID",
-			"error",
+		return nil, nil, errorsmod.Wrap(
 			err,
+			"error paginating dispatch amounts by source protocol ID",
 		)
-
-		return []*dispatchertypes.DispatchedAmountEntry{}
 	}
 
-	return amounts
+	return amounts, pageRes, nil
 }
 
 func (d *Dispatcher) GetDispatchedAmountsByDestinationProtocolID(
 	ctx context.Context,
 	protocolID core.ProtocolID,
-) []*dispatchertypes.DispatchedAmountEntry {
-	amounts := []*dispatchertypes.DispatchedAmountEntry{}
-
-	rng := collections.NewPrefixedPairRange[int32, DispatchedAmountsKey](int32(protocolID))
-
-	err := d.dispatchedAmounts.Indexes.ByDestinationProtocolID.Walk(
+	pagination *query.PageRequest,
+) ([]*dispatchertypes.DispatchedAmountEntry, *query.PageResponse, error) {
+	amounts, pageRes, err := query.CollectionPaginate[collections.Pair[int32, DispatchedAmountsKey], collections.NoValue](
 		ctx,
-		rng,
-		func(_ int32, k DispatchedAmountsKey) (stop bool, err error) {
-			entry, err := d.getDispatchedAmountEntryFromKey(ctx, k)
+		d.dispatchedAmounts.Indexes.ByDestinationProtocolID,
+		pagination,
+		func(k collections.Pair[int32, DispatchedAmountsKey], _ collections.NoValue) (*dispatchertypes.DispatchedAmountEntry, error) {
+			entry, err := d.getDispatchedAmountEntryFromKey(ctx, k.K2())
 			if err != nil {
-				return true, err
+				return nil, err
 			}
 
-			amounts = append(amounts, &entry)
-
-			return false, nil
+			return &entry, nil
 		},
+		query.WithCollectionPaginationPairPrefix[int32, DispatchedAmountsKey](int32(protocolID)),
 	)
 	if err != nil {
-		d.logger.Error(
-			"error in dispatched amounts walking by destination protocol ID index",
-			"error",
+		return nil, nil, errorsmod.Wrap(
 			err,
+			"error paginating dispatch amounts by destination protocol ID",
 		)
-
-		return []*dispatchertypes.DispatchedAmountEntry{}
 	}
 
-	return amounts
+	return amounts, pageRes, nil
 }
 
 func (d *Dispatcher) GetAllDispatchedAmounts(
@@ -419,61 +408,59 @@ func (d *Dispatcher) GetAllDispatchedCounts(
 func (d *Dispatcher) GetDispatchedCountsBySourceProtocolID(
 	ctx context.Context,
 	id core.ProtocolID,
-) []*dispatchertypes.DispatchCountEntry {
-	counts := []*dispatchertypes.DispatchCountEntry{}
-
-	rng := collections.NewPrefixedQuadRange[int32, string, int32, string](int32(id))
-	err := d.dispatchedCounts.Walk(
+	pagination *query.PageRequest,
+) ([]*dispatchertypes.DispatchCountEntry, *query.PageResponse, error) {
+	counts, pageRes, err := query.CollectionPaginate(
 		ctx,
-		rng,
-		func(k DispatchedCountsKey, v uint64) (stop bool, err error) {
+		d.dispatchedCounts,
+		pagination,
+		func(k DispatchedCountsKey, v uint64) (*dispatchertypes.DispatchCountEntry, error) {
 			entry, err := d.getDispatchCountEntryFromKey(ctx, k)
 			if err != nil {
-				return true, err
+				return nil, err
 			}
 
-			counts = append(counts, &entry)
-
-			return false, nil
+			return &entry, nil
 		},
+		WithCollectionPaginationQuadPrefix[int32, string, int32, string](int32(id)),
 	)
 	if err != nil {
-		d.logger.Error("error in dispatched counts walking by source protocol ID")
-
-		return []*dispatchertypes.DispatchCountEntry{}
+		return nil, nil, errorsmod.Wrap(
+			err,
+			"error paginating dispatch counts by source protocol ID",
+		)
 	}
 
-	return counts
+	return counts, pageRes, nil
 }
 
 func (d *Dispatcher) GetDispatchedCountsByDestinationProtocolID(
 	ctx context.Context,
 	id core.ProtocolID,
-) []*dispatchertypes.DispatchCountEntry {
-	counts := []*dispatchertypes.DispatchCountEntry{}
-
-	rng := collections.NewPrefixedPairRange[int32, DispatchedCountsKey](int32(id))
-	err := d.dispatchedCounts.Indexes.ByDestinationProtocolID.Walk(
+	pagination *query.PageRequest,
+) ([]*dispatchertypes.DispatchCountEntry, *query.PageResponse, error) {
+	counts, pageRes, err := query.CollectionPaginate[collections.Pair[int32, DispatchedCountsKey], collections.NoValue](
 		ctx,
-		rng,
-		func(_ int32, k DispatchedCountsKey) (stop bool, err error) {
-			entry, err := d.getDispatchCountEntryFromKey(ctx, k)
+		d.dispatchedCounts.Indexes.ByDestinationProtocolID,
+		pagination,
+		func(k collections.Pair[int32, DispatchedCountsKey], _ collections.NoValue) (*dispatchertypes.DispatchCountEntry, error) {
+			entry, err := d.getDispatchCountEntryFromKey(ctx, k.K2())
 			if err != nil {
-				return true, err
+				return nil, err
 			}
 
-			counts = append(counts, &entry)
-
-			return false, nil
+			return &entry, nil
 		},
+		query.WithCollectionPaginationPairPrefix[int32, DispatchedCountsKey](int32(id)),
 	)
 	if err != nil {
-		d.logger.Error("error in dispatched counts walking by destination protocol ID index")
-
-		return []*dispatchertypes.DispatchCountEntry{}
+		return nil, nil, errorsmod.Wrap(
+			err,
+			"error paginating dispatch counts by destination protocol ID",
+		)
 	}
 
-	return counts
+	return counts, pageRes, nil
 }
 
 func (d *Dispatcher) getDispatchCountEntryFromKey(
