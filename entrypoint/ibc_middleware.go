@@ -109,7 +109,7 @@ func (i IBCMiddleware) OnRecvPacket(
 		packet.GetSourceChannel(),
 	)
 	if err != nil {
-		return newErrorAcknowledgement(core.ErrNonNativeCoin.Wrap(err.Error()))
+		return newErrorAcknowledgement(errorsmod.Wrap(err, "coin is not native"))
 	}
 
 	orbiterPacket.TransferAttributes.SetDestinationDenom(denom)
