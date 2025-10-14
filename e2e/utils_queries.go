@@ -118,6 +118,8 @@ func getHyperlaneCollateralToken(
 	return &res.Tokens[0], nil
 }
 
+// GetIBCTotalEscrow returns the amount in the IBC escrow account
+// associated with the provided denom.
 func GetIBCTotalEscrow(
 	t *testing.T,
 	ctx context.Context,
