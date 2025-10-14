@@ -59,6 +59,8 @@ type Keeper struct {
 
 	// pendingPayloads stores the pending payloads addressed by their sha256 hash.
 	pendingPayloads collections.Map[[]byte, core.PendingPayload]
+	// payloadHashesByTime stores the registered payload hashes by the block time when they were processed.
+	payloadHashesByTime collections.Map[collections.Pair[int64, []byte], struct{}]
 	// pendingPayloadsSequence is the unique identifier of a given pending payload handled by the
 	// orbiter.
 	pendingPayloadsSequence collections.Sequence
@@ -87,12 +89,22 @@ func NewKeeper(
 		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
 		authority:    authority,
 
-		pendingPayloads: collections.NewMap[[]byte, core.PendingPayload](
+		pendingPayloads: collections.NewMap[
+			[]byte,
+			core.PendingPayload,
+		](
 			sb,
 			core.PendingPayloadsPrefix,
 			core.PendingPayloadsName,
 			collections.BytesKey,
 			codec.CollValue[core.PendingPayload](cdc),
+		),
+		payloadHashesByTime: collections.NewMap[collections.Pair[int64, []byte], struct{}](
+			sb,
+			core.PayloadHashesByTimePrefix,
+			core.PayloadHashesByTimeName,
+			collections.PairKeyCodec(collections.Int64Key, collections.BytesKey),
+			collections.NoValue,
 		),
 		pendingPayloadsSequence: collections.NewSequence(
 			sb,

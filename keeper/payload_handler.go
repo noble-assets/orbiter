@@ -22,10 +22,11 @@ package keeper
 
 import (
 	"context"
+	"cosmossdk.io/collections"
+	errorsmod "cosmossdk.io/errors"
 	"errors"
 	"fmt"
-
-	errorsmod "cosmossdk.io/errors"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/types/core"
@@ -69,8 +70,20 @@ func (k *Keeper) submit(
 
 	k.Logger().Debug("payload registered", "hash", hash.String(), "payload", payload.String())
 
+	// TODO: add blocktime to generated hash?
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	blockTime := sdkCtx.BlockTime()
+
 	if err = k.pendingPayloads.Set(ctx, hashBz, pendingPayload); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to set pending payload")
+	}
+
+	if err = k.payloadHashesByTime.Set(
+		ctx,
+		collections.Join(blockTime.UnixNano(), hashBz),
+		nil,
+	); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to set payload hash by time")
 	}
 
 	return hashBz, nil

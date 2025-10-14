@@ -122,9 +122,13 @@ var AdapterParamsPrefix = collections.NewPrefix(40)
 const (
 	PendingPayloadsName         = "pending_payloads"
 	PendingPayloadsSequenceName = "pending_payloads_sequence"
+
+	PayloadHashesByTimeName = "payload_hashes_by_time"
 )
 
 var (
 	PendingPayloadsPrefix         = collections.NewPrefix(50)
 	PendingPayloadsSequencePrefix = collections.NewPrefix(51)
+
+	PayloadHashesByTimePrefix = collections.NewPrefix(52)
 )
