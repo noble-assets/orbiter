@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	"cosmossdk.io/collections/indexes"
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/event"
 	"cosmossdk.io/core/store"
@@ -58,12 +59,29 @@ type Keeper struct {
 	adapter    *adaptercomp.Adapter
 
 	// pendingPayloads stores the pending payloads addressed by their sha256 hash.
-	pendingPayloads collections.Map[[]byte, core.PendingPayload]
-	// payloadHashesByTime stores the registered payload hashes by the block time when they were processed.
-	payloadHashesByTime collections.Map[collections.Pair[int64, []byte], struct{}]
+	pendingPayloads *collections.IndexedMap[[]byte, core.PendingPayload, HashToTimeIndex]
 	// pendingPayloadsSequence is the unique identifier of a given pending payload handled by the
 	// orbiter.
 	pendingPayloadsSequence collections.Sequence
+}
+
+type HashToTimeIndex struct {
+	*indexes.Multi[int64, []byte, core.PendingPayload]
+}
+
+func NewHashToTimeIndex(sb *collections.SchemaBuilder) HashToTimeIndex {
+	return HashToTimeIndex{
+		Multi: indexes.NewMulti(
+			sb,
+			core.HashesByTimeIndexPrefix,
+			core.HashesByTimeIndexName,
+			collections.Int64Key,
+			collections.BytesKey,
+			func(hash []byte, payload core.PendingPayload) (int64, error) {
+				return payload.Timestamp, nil
+			},
+		),
+	}
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -89,22 +107,17 @@ func NewKeeper(
 		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
 		authority:    authority,
 
-		pendingPayloads: collections.NewMap[
+		pendingPayloads: collections.NewIndexedMap[
 			[]byte,
 			core.PendingPayload,
+			HashToTimeIndex,
 		](
 			sb,
 			core.PendingPayloadsPrefix,
 			core.PendingPayloadsName,
 			collections.BytesKey,
 			codec.CollValue[core.PendingPayload](cdc),
-		),
-		payloadHashesByTime: collections.NewMap[collections.Pair[int64, []byte], struct{}](
-			sb,
-			core.PayloadHashesByTimePrefix,
-			core.PayloadHashesByTimeName,
-			collections.PairKeyCodec(collections.Int64Key, collections.BytesKey),
-			collections.NoValue,
+			NewHashToTimeIndex(sb),
 		),
 		pendingPayloadsSequence: collections.NewSequence(
 			sb,

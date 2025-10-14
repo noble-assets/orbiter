@@ -23,6 +23,7 @@ package keeper_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -38,7 +39,11 @@ import (
 func TestPendingPayload(t *testing.T) {
 	t.Parallel()
 
+	nowUTC := time.Now().UTC()
+
 	examplePayload := createTestPendingPayloadWithSequence(t, 0)
+	examplePayload.Timestamp = nowUTC.UnixNano()
+
 	exampleHash, err := examplePayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
@@ -98,6 +103,9 @@ func TestPendingPayload(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ms := orbiterkeeper.NewMsgServer(k)
 			qs := orbiterkeeper.NewQueryServer(k)
+
+			// NOTE: we have to set this because the block time is included in the hash value.
+			ctx = ctx.WithBlockTime(nowUTC)
 
 			if tc.setup != nil {
 				tc.setup(t, ctx, k.Codec(), ms)

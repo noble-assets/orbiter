@@ -22,10 +22,14 @@ package keeper
 
 import (
 	"context"
-	"cosmossdk.io/collections"
-	errorsmod "cosmossdk.io/errors"
+	"encoding/hex"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
+	"cosmossdk.io/collections"
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -45,9 +49,12 @@ func (k *Keeper) submit(
 		return nil, errorsmod.Wrap(err, "failed to get next sequence number")
 	}
 
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
 	pendingPayload := core.PendingPayload{
-		Sequence: next,
-		Payload:  payload,
+		Sequence:  next,
+		Payload:   payload,
+		Timestamp: sdkCtx.BlockTime().UnixNano(),
 	}
 
 	hash, err := pendingPayload.SHA256Hash()
@@ -70,18 +77,14 @@ func (k *Keeper) submit(
 
 	k.Logger().Debug("payload registered", "hash", hash.String(), "payload", payload.String())
 
-	// TODO: add blocktime to generated hash?
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	blockTime := sdkCtx.BlockTime()
-
 	if err = k.pendingPayloads.Set(ctx, hashBz, pendingPayload); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to set pending payload")
 	}
 
-	if err = k.payloadHashesByTime.Set(
+	if err = k.pendingPayloads.Set(
 		ctx,
-		collections.Join(blockTime.UnixNano(), hashBz),
-		nil,
+		hashBz,
+		pendingPayload,
 	); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to set payload hash by time")
 	}
@@ -192,6 +195,50 @@ func (k *Keeper) RemovePendingPayload(
 	}
 
 	k.Logger().Debug("removed pending payload", "hash", hash.String())
+
+	return nil
+}
+
+// RemoveExpiredPayloads ranges over the payloads by their submission timestamps
+// and removes those that are older than the cutoff date.
+func (k *Keeper) RemoveExpiredPayloads(
+	ctx context.Context,
+	cutoff time.Time,
+) error {
+	// TODO: check if this is really required? I don't want to necessarily include this
+	// but it seems required because a collections.Pair is demanded by the ranger.
+	startHash := make([]byte, 32)
+	endHash, err := hex.DecodeString(strings.Repeat("f", 64))
+	if err != nil {
+		return errorsmod.Wrap(err, "failed to decode expired payloads")
+	}
+
+	rng := new(collections.Range[collections.Pair[int64, []byte]]).
+		StartInclusive(collections.Join(int64(0), startHash)).
+		EndInclusive(collections.Join(cutoff.UnixNano(), endHash))
+
+	if err = k.pendingPayloads.Indexes.Walk(
+		ctx,
+		rng,
+		func(_ int64, hash []byte) (stop bool, err error) {
+			h := core.PayloadHash(hash)
+
+			err = k.RemovePendingPayload(ctx, &h)
+			if err != nil {
+				k.Logger().Error(
+					"failed to remove pending payload",
+					"hash", h.String(),
+					"error", err.Error(),
+				)
+
+				return true, err
+			}
+
+			return false, nil
+		},
+	); err != nil {
+		return errorsmod.Wrap(err, "failed to iterate pending payloads")
+	}
 
 	return nil
 }

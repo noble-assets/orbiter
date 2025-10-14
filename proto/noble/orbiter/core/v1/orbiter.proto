@@ -81,4 +81,6 @@ message PendingPayload {
   uint64 sequence = 1;
   // The submitted payload that will be registered as pending.
   Payload payload = 2;
+  // The block time of inclusion of the payload in nanoseconds.
+  int64 timestamp = 3;
 }

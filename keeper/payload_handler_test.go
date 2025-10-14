@@ -23,10 +23,12 @@ package keeper_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	orbiterkeeper "github.com/noble-assets/orbiter/keeper"
@@ -109,5 +111,80 @@ func TestRemovePayload(t *testing.T) {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}
 		})
+	}
+}
+
+const timeBetweenBlocks = 1 * time.Second
+
+func TestRemovePayloads(t *testing.T) {
+	nowUTC := time.Now().UTC()
+
+	testCases := []struct {
+		name         string
+		setup        func(*testing.T, sdk.Context, codec.Codec, orbitertypes.MsgServer)
+		cutoff       time.Time
+		expRemaining int
+		errContains  string
+	}{
+		{
+			name:         "success - remove only expired payloads",
+			setup:        setupPayloadsInState,
+			cutoff:       nowUTC.Add(4 * timeBetweenBlocks),
+			expRemaining: 2,
+		},
+		{
+			name:   "success - nothing should be removed if all are not expired",
+			setup:  setupPayloadsInState,
+			cutoff: nowUTC,
+		},
+		{
+			name:   "success - no submitted payloads",
+			setup:  nil,
+			cutoff: nowUTC.Add(2 * timeBetweenBlocks),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx, _, k := mockorbiter.OrbiterKeeper(t)
+			ms := orbiterkeeper.NewMsgServer(k)
+
+			if tc.setup != nil {
+				tc.setup(t, ctx, k.Codec(), ms)
+			}
+
+			err := k.RemoveExpiredPayloads(ctx, tc.cutoff)
+			if tc.errContains == "" {
+				require.NoError(t, err, "failed to remove expired payloads")
+
+				// TODO: check if better assertion can be made without having to make
+				// `pendingPayloads` public
+			} else {
+				require.ErrorContains(t, err, tc.errContains, "expected different error")
+			}
+		})
+	}
+}
+
+func setupPayloadsInState(
+	t *testing.T,
+	ctx sdk.Context,
+	codec codec.Codec,
+	ms orbitertypes.MsgServer,
+) {
+	t.Helper()
+
+	nPayloads := 4
+	validPayload := createTestPendingPayloadWithSequence(t, 0)
+	payloadBz, err := codec.MarshalJSON(validPayload.Payload)
+	require.NoError(t, err, "failed to marshal payload")
+
+	for range nPayloads {
+		ctx = ctx.WithBlockTime(ctx.BlockTime().Add(timeBetweenBlocks))
+
+		_, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
+			Payload: string(payloadBz),
+		})
+		require.NoError(t, err, "failed to submit payload during setup")
 	}
 }
