@@ -24,6 +24,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
@@ -97,7 +98,6 @@ func (s *Suite) GetIbcTransferBlockExecution(
 	maxHeight := startHeight + MaxSearchBlocks
 
 	for height := startHeight; height <= maxHeight; height++ {
-
 		_, err := cosmos.PollForMessage[*channeltypes.MsgRecvPacket](
 			ctx,
 			s.Chain,
@@ -184,11 +184,17 @@ func GetTxsResult(
 	t *testing.T,
 	ctx context.Context,
 	validator *cosmos.ChainNode,
-	height string,
+	height int64,
 ) *sdk.SearchTxsResult {
 	t.Helper()
 
-	raw, _, err := validator.ExecQuery(ctx, "txs", "--query", fmt.Sprintf("tx.height = %s", height))
+	strHeight := strconv.Itoa(int(height))
+	raw, _, err := validator.ExecQuery(
+		ctx,
+		"txs",
+		"--query",
+		fmt.Sprintf("tx.height = %s", strHeight),
+	)
 	require.NoError(t, err, "expected no error querying block results")
 
 	var res sdk.SearchTxsResult
