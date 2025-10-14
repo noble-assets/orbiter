@@ -82,12 +82,7 @@ func (i IBCMiddleware) OnRecvPacket(
 ) ibcexported.Acknowledgement {
 	// NOTE: we are using destination channel here since that is the channel identifier of the
 	// source chain on Noble.
-	ibcCounterpartyID := transfertypes.GetDenomPrefix(
-		packet.DestinationPort,
-		packet.DestinationChannel,
-	)
-
-	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, ibcCounterpartyID)
+	ccID, err := core.NewCrossChainID(core.PROTOCOL_IBC, packet.DestinationChannel)
 	if err != nil {
 		return newErrorAcknowledgement(err)
 	}
