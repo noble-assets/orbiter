@@ -24,7 +24,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"strconv"
 	"testing"
 
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
