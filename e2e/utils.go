@@ -188,12 +188,11 @@ func GetTxsResult(
 ) *sdk.SearchTxsResult {
 	t.Helper()
 
-	strHeight := strconv.Itoa(int(height))
 	raw, _, err := validator.ExecQuery(
 		ctx,
 		"txs",
 		"--query",
-		fmt.Sprintf("tx.height = %s", strHeight),
+		fmt.Sprintf("tx.height = %d", height),
 	)
 	require.NoError(t, err, "expected no error querying block results")
 
