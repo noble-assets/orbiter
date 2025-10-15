@@ -23,6 +23,7 @@ package keeper_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -37,7 +38,9 @@ import (
 
 func TestSubmitPayload(t *testing.T) {
 	seq := uint64(0)
-	examplePayload := createTestPendingPayloadWithSequence(t, seq)
+
+	nowUTC := time.Now().UTC()
+	examplePayload := createTestPendingPayloadWithSequence(t, seq, nowUTC)
 
 	exampleHash, err := examplePayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
@@ -137,6 +140,8 @@ func TestSubmitPayload(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ms := orbiterkeeper.NewMsgServer(k)
 
+			ctx = ctx.WithBlockTime(nowUTC)
+
 			if tc.setup != nil {
 				tc.setup(t, ctx, k)
 			}
@@ -164,7 +169,12 @@ func TestSubsequentSubmissions(t *testing.T) {
 	ctx, _, k := mockorbiter.OrbiterKeeper(t)
 	ms := orbiterkeeper.NewMsgServer(k)
 
-	validPayload := createTestPendingPayloadWithSequence(t, 0)
+	nowUTC := time.Now().UTC()
+	ctx = ctx.WithBlockTime(nowUTC)
+
+	validPayload := createTestPendingPayloadWithSequence(t, 0, nowUTC)
+	validPayload.Timestamp = nowUTC.UnixNano()
+
 	expHash, err := validPayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
@@ -204,12 +214,15 @@ func TestSubsequentSubmissions(t *testing.T) {
 func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 	// ACT: Generate pending payload with sequence 1
 	seq := uint64(1)
-	validForwarding := createTestPendingPayloadWithSequence(t, seq)
+
+	nowUTC := time.Now().UTC()
+
+	validForwarding := createTestPendingPayloadWithSequence(t, seq, nowUTC)
 	expHash, err := validForwarding.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	// ACT: Generate pending payload with sequence 2
-	validForwarding2 := createTestPendingPayloadWithSequence(t, seq+1)
+	validForwarding2 := createTestPendingPayloadWithSequence(t, seq+1, nowUTC)
 	expHash2, err := validForwarding2.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
@@ -227,6 +240,7 @@ func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 func createTestPendingPayloadWithSequence(
 	t *testing.T,
 	sequence uint64,
+	timestamp time.Time,
 ) *core.PendingPayload {
 	t.Helper()
 
@@ -247,7 +261,8 @@ func createTestPendingPayloadWithSequence(
 	}
 
 	return &core.PendingPayload{
-		Sequence: sequence,
-		Payload:  validPayload,
+		Sequence:  sequence,
+		Payload:   validPayload,
+		Timestamp: timestamp.UnixNano(),
 	}
 }

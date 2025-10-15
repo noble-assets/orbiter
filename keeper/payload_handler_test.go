@@ -40,7 +40,9 @@ import (
 func TestRemovePayload(t *testing.T) {
 	t.Parallel()
 
-	validPayload := createTestPendingPayloadWithSequence(t, 0)
+	nowUTC := time.Now().UTC()
+
+	validPayload := createTestPendingPayloadWithSequence(t, 0, nowUTC)
 	expHash, err := validPayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
@@ -89,6 +91,8 @@ func TestRemovePayload(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ms := orbiterkeeper.NewMsgServer(k)
 			qs := orbiterkeeper.NewQueryServer(k)
+
+			ctx = ctx.WithBlockTime(nowUTC)
 
 			if tc.setup != nil {
 				tc.setup(t, ctx, k.Codec(), ms)
@@ -175,7 +179,7 @@ func setupPayloadsInState(
 	t.Helper()
 
 	nPayloads := 4
-	validPayload := createTestPendingPayloadWithSequence(t, 0)
+	validPayload := createTestPendingPayloadWithSequence(t, 0, time.Now().UTC())
 	payloadBz, err := codec.MarshalJSON(validPayload.Payload)
 	require.NoError(t, err, "failed to marshal payload")
 
