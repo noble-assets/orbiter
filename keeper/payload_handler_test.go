@@ -160,9 +160,6 @@ func TestRemovePayloads(t *testing.T) {
 			err := k.RemoveExpiredPayloads(ctx, tc.cutoff)
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to remove expired payloads")
-
-				// TODO: check if better assertion can be made without having to make
-				// `pendingPayloads` public
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}
