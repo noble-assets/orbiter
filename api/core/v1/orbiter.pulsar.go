@@ -2183,7 +2183,7 @@ func (x *Forwarding) GetPassthroughPayload() []byte {
 	return nil
 }
 
-// Payload represents the data the x/orbiter module
+// Payload represents the data the orbiter module
 // requires to handle cross-chain packets.
 type Payload struct {
 	state         protoimpl.MessageState

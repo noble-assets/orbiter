@@ -337,7 +337,7 @@ func createOrbiterChainSpec(
 			Type:                "cosmos",
 			Name:                "orbiter",
 			ChainID:             "orbiter-1",
-			AdditionalStartArgs: []string{"--log_level", "*:info,x/orbiter:trace"},
+			AdditionalStartArgs: []string{"--log_level", "*:info,orbiter:trace"},
 			Bin:                 "simd",
 			Bech32Prefix:        "noble",
 			Denom:               uusdcDenom,

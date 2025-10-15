@@ -30,6 +30,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
@@ -149,9 +150,10 @@ func (e *Executor) HandlePacket(
 		return core.ErrValidation.Wrap(err.Error())
 	}
 
-	controller, found := e.router.Route(packet.Action.ID())
+	actionID := packet.Action.ID()
+	controller, found := e.router.Route(actionID)
 	if !found {
-		return fmt.Errorf("controller not found for action ID: %s", packet.Action.ID())
+		return sdkerrors.ErrNotFound.Wrapf("controller for action ID: %s", actionID)
 	}
 
 	return controller.HandlePacket(ctx, packet)

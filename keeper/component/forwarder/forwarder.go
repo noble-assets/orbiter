@@ -30,6 +30,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
@@ -185,7 +186,7 @@ func (f *Forwarder) HandlePacket(
 
 	controller, found := f.router.Route(packet.Forwarding.ProtocolID())
 	if !found {
-		return fmt.Errorf(
+		return sdkerrors.ErrNotFound.Wrapf(
 			"controller not found for forwarding with protocol ID: %s",
 			packet.Forwarding.ProtocolID(),
 		)

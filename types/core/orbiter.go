@@ -23,7 +23,6 @@ package core
 import (
 	"fmt"
 
-	errorsmod "cosmossdk.io/errors"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/gogoproto/proto"
@@ -53,14 +52,14 @@ func NewAction(id ActionID, attr ActionAttributes) (*Action, error) {
 // Validate returns an error if the action is not valid.
 func (a *Action) Validate() error {
 	if a == nil {
-		return errorsmod.Wrap(ErrNilPointer, "action is not set")
+		return ErrNilPointer.Wrap("action is not set")
 	}
 	if err := a.Id.Validate(); err != nil {
 		return err
 	}
 
 	if a.Attributes == nil {
-		return errorsmod.Wrap(ErrNilPointer, "action attributes are not set")
+		return ErrNilPointer.Wrap("action attributes are not set")
 	}
 
 	return nil
@@ -81,11 +80,11 @@ func (a *Action) ID() ActionID {
 // attributes set.
 func (a *Action) CachedAttributes() (ActionAttributes, error) {
 	if a == nil {
-		return nil, errorsmod.Wrap(ErrNilPointer, "action is not set")
+		return nil, ErrNilPointer.Wrap("action is not set")
 	}
 
 	if a.Attributes == nil {
-		return nil, errorsmod.Wrap(ErrNilPointer, "action attributes are not set")
+		return nil, ErrNilPointer.Wrap("action attributes are not set")
 	}
 	av := a.Attributes.GetCachedValue()
 	attr, ok := av.(ActionAttributes)
@@ -103,7 +102,7 @@ func (a *Action) CachedAttributes() (ActionAttributes, error) {
 // SetAttributes sets the action attributes into the action as codec Any type.
 func (a *Action) SetAttributes(attr ActionAttributes) error {
 	if a == nil {
-		return errorsmod.Wrap(ErrNilPointer, "action is not set")
+		return ErrNilPointer.Wrap("action is not set")
 	}
 
 	m, ok := attr.(proto.Message)
@@ -124,7 +123,7 @@ func (a *Action) SetAttributes(attr ActionAttributes) error {
 // an Any type into an interface registered in the codec.
 func (a *Action) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 	if a == nil {
-		return errorsmod.Wrap(ErrNilPointer, "action is not set")
+		return ErrNilPointer.Wrap("action is not set")
 	}
 	var attributes ActionAttributes
 
@@ -162,13 +161,13 @@ func NewForwarding(
 // Validate returns an error if the forwarding is not valid.
 func (f *Forwarding) Validate() error {
 	if f == nil {
-		return errorsmod.Wrap(ErrNilPointer, "forwarding is not set")
+		return ErrNilPointer.Wrap("forwarding is not set")
 	}
 	if err := f.ProtocolId.Validate(); err != nil {
 		return err
 	}
 	if f.Attributes == nil {
-		return errorsmod.Wrap(ErrNilPointer, "forwarding attributes are not set")
+		return ErrNilPointer.Wrap("forwarding attributes are not set")
 	}
 
 	return nil
@@ -189,10 +188,10 @@ func (f *Forwarding) ProtocolID() ProtocolID {
 // attributes set.
 func (f *Forwarding) CachedAttributes() (ForwardingAttributes, error) {
 	if f == nil {
-		return nil, errorsmod.Wrap(ErrNilPointer, "forwarding is not set")
+		return nil, ErrNilPointer.Wrap("forwarding is not set")
 	}
 	if f.Attributes == nil {
-		return nil, errorsmod.Wrap(ErrNilPointer, "forwarding attributes are not set")
+		return nil, ErrNilPointer.Wrap("forwarding attributes are not set")
 	}
 	av := f.Attributes.GetCachedValue()
 	a, ok := av.(ForwardingAttributes)
@@ -210,7 +209,7 @@ func (f *Forwarding) CachedAttributes() (ForwardingAttributes, error) {
 // SetAttributes sets the attributes as codec Any type.
 func (f *Forwarding) SetAttributes(a ForwardingAttributes) error {
 	if f == nil {
-		return errorsmod.Wrap(ErrNilPointer, "forwarding is not set")
+		return ErrNilPointer.Wrap("forwarding is not set")
 	}
 	// The interface we want to pack as any must
 	// implement the proto Message interface.
@@ -234,7 +233,7 @@ func (f *Forwarding) SetAttributes(a ForwardingAttributes) error {
 // an Any type into an interface registered in the codec.
 func (f *Forwarding) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 	if f == nil {
-		return errorsmod.Wrap(ErrNilPointer, "forwarding is not set")
+		return ErrNilPointer.Wrap("forwarding is not set")
 	}
 
 	var attributes ForwardingAttributes
@@ -268,7 +267,7 @@ func NewPayload(
 // not valid.
 func (p *Payload) Validate() error {
 	if p == nil {
-		return errorsmod.Wrap(ErrNilPointer, "payload is not set")
+		return ErrNilPointer.Wrap("payload is not set")
 	}
 
 	visitedIDs := make(map[int32]any)
@@ -292,7 +291,7 @@ var _ cdctypes.UnpackInterfacesMessage = &Payload{}
 
 func (p *Payload) UnpackInterfaces(unpacker cdctypes.AnyUnpacker) error {
 	if p == nil {
-		return errorsmod.Wrap(ErrNilPointer, "payload is not set")
+		return ErrNilPointer.Wrap("payload is not set")
 	}
 
 	if p.PreActions != nil {
@@ -335,7 +334,7 @@ func NewPayloadWrapper(
 // contains non valid fields.
 func (pw *PayloadWrapper) Validate() error {
 	if pw == nil {
-		return errorsmod.Wrap(ErrNilPointer, "payload wrapper is not set")
+		return ErrNilPointer.Wrap("payload wrapper is not set")
 	}
 
 	return pw.Orbiter.Validate()

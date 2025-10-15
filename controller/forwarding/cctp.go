@@ -59,7 +59,7 @@ func NewCCTPController(
 	id := core.PROTOCOL_CCTP
 	baseController, err := controller.NewBase(id)
 	if err != nil {
-		return nil, err
+		return nil, errorsmod.Wrap(err, "error creating base controller for CCTP controller")
 	}
 
 	handler, err := NewCCTPHandler(msgServer)
@@ -67,13 +67,17 @@ func NewCCTPController(
 		return nil, err
 	}
 
-	cctpController := CCTPController{
+	c := &CCTPController{
 		logger:         logger.With(core.ForwardingControllerName, baseController.Name()),
 		BaseController: baseController,
 		handler:        handler,
 	}
 
-	return &cctpController, cctpController.Validate()
+	if err := c.Validate(); err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }
 
 // Validate returns an error if the instance of the controller
@@ -94,13 +98,14 @@ func (c *CCTPController) Validate() error {
 
 // HandlePacket validates and process a CCTP cross-chain transfer.
 func (c *CCTPController) HandlePacket(ctx context.Context, packet *types.ForwardingPacket) error {
+	c.logger.Debug("handling CCTP packet")
 	if packet == nil {
-		return errorsmod.Wrap(core.ErrNilPointer, "CCTP controller received nil packet")
+		return core.ErrNilPointer.Wrap("CCTP controller received nil packet")
 	}
 
 	attr, err := c.ExtractAttributes(packet.Forwarding)
 	if err != nil {
-		return core.ErrInvalidAttributes.Wrap(err.Error())
+		return core.ErrValidation.Wrapf("invalid CCTP forwarding: %s", err.Error())
 	}
 
 	err = c.ValidateAttributes(attr)

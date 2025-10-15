@@ -52,7 +52,7 @@ func (a *InternalAttributes) Validate() error {
 	}
 
 	if a.Recipient == "" {
-		return errorsmod.Wrapf(core.ErrEmptyString, "invalid recipient address")
+		return core.ErrEmptyString.Wrap("invalid recipient address")
 	}
 
 	if _, err := sdk.AccAddressFromBech32(a.Recipient); err != nil {
