@@ -149,9 +149,10 @@ func (e *Executor) HandlePacket(
 		return core.ErrValidation.Wrap(err.Error())
 	}
 
-	controller, found := e.router.Route(packet.Action.ID())
+	actionID := packet.Action.ID()
+	controller, found := e.router.Route(actionID)
 	if !found {
-		return fmt.Errorf("controller not found for action ID: %s", packet.Action.ID())
+		return fmt.Errorf("controller not found for action ID: %s", actionID)
 	}
 
 	return controller.HandlePacket(ctx, packet)

@@ -22,7 +22,6 @@ package keeper
 
 import (
 	"errors"
-	"fmt"
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
@@ -78,7 +77,7 @@ func NewKeeper(
 	k := Keeper{
 		cdc:          cdc,
 		eventService: eventService,
-		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
+		logger:       logger.With("module", core.ModuleName),
 		authority:    authority,
 	}
 
@@ -128,7 +127,7 @@ func validateKeeperInputs(
 	}
 	_, err := addressCdc.StringToBytes(authority)
 	if err != nil {
-		return errors.New("authority for x/orbiter module is not valid")
+		return errors.New("authority for orbiter module is not valid")
 	}
 
 	return nil

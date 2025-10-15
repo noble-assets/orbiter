@@ -141,7 +141,7 @@ func (a *Adapter) AdaptPacket(
 
 	a.logger.Debug("started payload parsing", "src_protocol", protocolID)
 
-	adapter, found := a.router.Route(id.GetProtocolId())
+	adapter, found := a.router.Route(protocolID)
 	if !found {
 		a.logger.Error(
 			"adapter for protocol not found",
@@ -189,7 +189,7 @@ func (a *Adapter) BeforeTransferHook(
 		packet.TransferAttributes.DestinationDenom(),
 		packet.Payload.Forwarding.PassthroughPayload,
 	); err != nil {
-		return errorsmod.Wrap(err, "generic hook failed")
+		return errorsmod.Wrap(err, "generic before transfer hook failed")
 	}
 
 	return nil

@@ -1,6 +1,6 @@
 # Architecture
 
-This document provides a detailed overview of the `x/orbiter` module architecture and logic.
+This document provides a detailed overview of the `orbiter` module architecture and logic.
 
 ## Data Flow
 
@@ -14,8 +14,9 @@ This document provides a detailed overview of the `x/orbiter` module architectur
    , specific hooks can be used.
 4. **Payload Dispatching**: The **dispatcher component** coordinates the dispatch of the orbiter
    payload content to the **executor component** and the **forwarder component**.
-5. **Action Handling**: Before passing the sent funds to the forwarding mechanism, socalled pre-actions are dispatched sequentially to the executor. For
-   every action, a specific **action controller** is required to execute the business logic.
+5. **Action Handling**: Before passing the sent funds to the forwarding mechanism, socalled
+   pre-actions are dispatched sequentially to the executor. For every action, a specific **action
+   controller** is required to execute the business logic.
 6. **Orbit Handling**: Next, the cross-chain forwarding is dispatched. Similar to the action
    processing, every protocol is handled by a specific **forwarding controller**.
 7. **Statistics Update**: The dispatcher records metrics for monitoring.

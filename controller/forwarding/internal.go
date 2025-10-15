@@ -93,7 +93,7 @@ func (c *InternalController) HandlePacket(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
-	c.logger.Debug("Handling internal packet")
+	c.logger.Debug("handling internal packet")
 
 	if packet == nil {
 		return core.ErrNilPointer.Wrap("internal controller received nil packet")
@@ -106,7 +106,7 @@ func (c *InternalController) HandlePacket(
 
 	err = c.ValidateForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
-		return errorsmod.Wrap(err, "error validating internal forwarding")
+		return core.ErrValidation.Wrapf("error validating internal forwarding: %s", err.Error())
 	}
 
 	err = c.executeForwarding(
@@ -116,7 +116,7 @@ func (c *InternalController) HandlePacket(
 		packet.Forwarding.PassthroughPayload,
 	)
 	if err != nil {
-		return errorsmod.Wrap(err, "Hyperlane controller execution error")
+		return errorsmod.Wrap(err, "internal controller execution error")
 	}
 
 	return nil

@@ -149,11 +149,7 @@ func (d *Dispatcher) DispatchPayload(
 
 // ValidatePayload checks if the payload is valid.
 func (d *Dispatcher) ValidatePayload(payload *core.Payload) error {
-	if err := payload.Validate(); err != nil {
-		return err
-	}
-
-	return nil
+	return payload.Validate()
 }
 
 // dispatchActions iterates through all the actions, creates
@@ -166,15 +162,17 @@ func (d *Dispatcher) dispatchActions(
 	d.logger.Debug("started actions dispatching", "num_actions", len(actions))
 
 	for _, action := range actions {
+		actionID := action.ID()
+
 		packet, err := types.NewActionPacket(transferAttr, action)
 		if err != nil {
-			return errorsmod.Wrapf(err, "error creating action %s packet", action.ID())
+			return errorsmod.Wrapf(err, "error creating action %s packet", actionID)
 		}
 
 		d.logger.Debug(
 			"dispatching action",
 			"id",
-			action.ID(),
+			actionID,
 			"dest_denom",
 			transferAttr.DestinationDenom(),
 			"dest_amount",
@@ -182,7 +180,7 @@ func (d *Dispatcher) dispatchActions(
 		)
 		err = d.dispatchActionPacket(ctx, packet)
 		if err != nil {
-			return errorsmod.Wrapf(err, "error dispatching action %s packet", action.ID())
+			return errorsmod.Wrapf(err, "error dispatching action %s packet", actionID)
 		}
 	}
 
@@ -198,28 +196,24 @@ func (d *Dispatcher) dispatchForwarding(
 	transferAttr *types.TransferAttributes,
 	forwarding *core.Forwarding,
 ) error {
+	protocolID := forwarding.ProtocolID()
+
 	d.logger.Debug("started forwarding dispatching")
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {
-		d.logger.Error(
-			"creating forwarding packet",
-			"id",
-			forwarding.ProtocolID(),
-			"error",
-			err.Error(),
-		)
+		d.logger.Error("creating forwarding packet", "id", protocolID, "error", err)
 
 		return errorsmod.Wrapf(
 			err,
 			"error creating forwarding packet for protocol ID %s",
-			forwarding.ProtocolID(),
+			protocolID,
 		)
 	}
 
 	d.logger.Debug(
 		"dispatching forwarding",
 		"id",
-		forwarding.ProtocolID(),
+		protocolID,
 		"dest_denom",
 		transferAttr.DestinationDenom(),
 		"dest_amount",
@@ -228,18 +222,12 @@ func (d *Dispatcher) dispatchForwarding(
 
 	err = d.dispatchForwardingPacket(ctx, packet)
 	if err != nil {
-		d.logger.Error(
-			"dispatching forwarding packet",
-			"id",
-			forwarding.ProtocolID(),
-			"error",
-			err.Error(),
-		)
+		d.logger.Error("dispatching forwarding packet", "id", protocolID, "error", err)
 
 		return errorsmod.Wrapf(
 			err,
 			"error dispatching forwarding packet for protocol ID %s",
-			forwarding.ProtocolID(),
+			protocolID,
 		)
 	}
 
