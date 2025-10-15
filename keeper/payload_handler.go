@@ -70,12 +70,12 @@ func (k *Keeper) submit(
 	}
 
 	if found {
-		k.Logger().Error("payload hash already registered", "hash", hash.String())
+		k.logger.Error("payload hash already registered", "hash", hash.String())
 
 		return nil, errors.New("payload hash already registered")
 	}
 
-	k.Logger().Debug("payload registered", "hash", hash.String(), "payload", payload.String())
+	k.logger.Debug("payload registered", "hash", hash.String(), "payload", payload.String())
 
 	if err = k.pendingPayloads.Set(ctx, hashBz, pendingPayload); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to set pending payload")
@@ -199,6 +199,14 @@ func (k *Keeper) RemovePendingPayload(
 	return nil
 }
 
+// ExpiredPayloadsLimit defines the maximum number of expired payloads
+// removed during the ABCI hooks.
+//
+// We're limiting the amount of payloads handled here to avoid
+// impacts of spam attacks that would slow down the begin block logic
+// by iterating over thousands of spam payloads.
+const ExpiredPayloadsLimit = 200
+
 // RemoveExpiredPayloads ranges over the payloads by their submission timestamps
 // and removes those that are older than the cutoff date.
 func (k *Keeper) RemoveExpiredPayloads(
@@ -217,10 +225,16 @@ func (k *Keeper) RemoveExpiredPayloads(
 		StartInclusive(collections.Join(int64(0), startHash)).
 		EndInclusive(collections.Join(cutoff.UnixNano(), endHash))
 
+	var count int
 	if err = k.pendingPayloads.Indexes.Walk(
 		ctx,
 		rng,
 		func(_ int64, hash []byte) (stop bool, err error) {
+			count++
+			if count > ExpiredPayloadsLimit {
+				return true, nil
+			}
+
 			h := core.PayloadHash(hash)
 
 			err = k.RemovePendingPayload(ctx, &h)
