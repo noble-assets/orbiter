@@ -81,14 +81,6 @@ func (k *Keeper) submit(
 		return nil, errorsmod.Wrap(err, "failed to set pending payload")
 	}
 
-	if err = k.pendingPayloads.Set(
-		ctx,
-		hashBz,
-		pendingPayload,
-	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to set payload hash by time")
-	}
-
 	return hash, nil
 }
 
