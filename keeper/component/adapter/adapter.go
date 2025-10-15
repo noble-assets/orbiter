@@ -23,7 +23,6 @@ package adapter
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/event"
@@ -31,6 +30,7 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/types"
 	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
@@ -149,7 +149,7 @@ func (a *Adapter) AdaptPacket(
 			protocolID,
 		)
 
-		return nil, fmt.Errorf("adapter not found for protocol ID: %s", protocolID)
+		return nil, sdkerrors.ErrNotFound.Wrapf("adapter not found for protocol ID: %s", protocolID)
 	}
 
 	parsedPacket, err := adapter.ParsePacket(packet)

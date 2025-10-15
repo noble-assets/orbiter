@@ -23,8 +23,6 @@ package executor
 import (
 	"context"
 
-	errorsmod "cosmossdk.io/errors"
-
 	"github.com/noble-assets/orbiter/types"
 	executortypes "github.com/noble-assets/orbiter/types/component/executor"
 	"github.com/noble-assets/orbiter/types/core"
@@ -54,7 +52,7 @@ func (s msgServer) PauseAction(
 
 	actionID, err := core.NewActionIDFromString(msg.ActionId)
 	if err != nil {
-		return nil, errorsmod.Wrap(core.ErrUnableToPause, err.Error())
+		return nil, core.ErrUnableToPause.Wrap(err.Error())
 	}
 
 	if err := s.Pause(ctx, actionID); err != nil {
@@ -86,7 +84,7 @@ func (s msgServer) UnpauseAction(
 
 	actionID, err := core.NewActionIDFromString(msg.ActionId)
 	if err != nil {
-		return nil, errorsmod.Wrap(core.ErrUnableToUnpause, err.Error())
+		return nil, core.ErrUnableToUnpause.Wrap(err.Error())
 	}
 
 	if err := s.Unpause(ctx, actionID); err != nil {

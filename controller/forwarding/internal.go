@@ -106,7 +106,7 @@ func (c *InternalController) HandlePacket(
 
 	err = c.ValidateForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
-		return core.ErrValidation.Wrapf("error validating internal forwarding: %s", err.Error())
+		return core.ErrValidation.Wrapf("invalid internal forwarding: %s", err.Error())
 	}
 
 	err = c.executeForwarding(

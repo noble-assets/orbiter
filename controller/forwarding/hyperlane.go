@@ -97,7 +97,7 @@ func (c *HyperlaneController) HandlePacket(
 	c.logger.Debug("handling Hyperlane packet")
 
 	if packet == nil {
-		return errorsmod.Wrap(core.ErrNilPointer, "Hyperlane controller received nil packet")
+		return core.ErrNilPointer.Wrap("Hyperlane controller received nil packet")
 	}
 
 	attr, err := c.ExtractAttributes(packet.Forwarding)
@@ -117,7 +117,7 @@ func (c *HyperlaneController) HandlePacket(
 
 	err = c.ValidateForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
-		return core.ErrValidation.Wrapf("error validating Hyperlane forwarding: %s", err.Error())
+		return core.ErrValidation.Wrapf("invalid Hyperlane forwarding: %s", err.Error())
 	}
 
 	err = c.executeForwarding(
