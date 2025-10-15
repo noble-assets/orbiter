@@ -154,7 +154,7 @@ func TestSubmitPayload(t *testing.T) {
 			})
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to submit payload")
-				require.Equal(t, tc.expHash.String(), core.PayloadHash(res.Hash).String())
+				require.Equal(t, tc.expHash.String(), res.Hash, "expected different hash")
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}
@@ -189,8 +189,7 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.NoError(t, err, "failed to submit payload")
 
 	// ASSERT: expected hash is returned
-	gotHash := core.PayloadHash(res.Hash)
-	require.Equal(t, expHash.String(), gotHash.String(), "expected different hash")
+	require.Equal(t, expHash.String(), res.Hash, "expected different hash")
 
 	// ACT: submit identical payload again
 	res2, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
@@ -204,11 +203,10 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.NoError(t, err, "failed to hash payload")
 
 	// ASSERT: expected hash is returned
-	gotHash2 := core.PayloadHash(res2.Hash)
-	require.Equal(t, expHash2.String(), gotHash2.String(), "expected different hash")
+	require.Equal(t, expHash2.String(), res2.Hash, "expected different hash")
 
 	// ASSERT: hashes of subsequent submissions of the same payload are different
-	require.NotEqual(t, gotHash.String(), gotHash2.String(), "expected different hashes")
+	require.NotEqual(t, res.Hash, res2.Hash, "expected different hashes")
 }
 
 func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {

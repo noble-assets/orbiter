@@ -76,6 +76,6 @@ func (s *msgServer) SubmitPayload(
 	}
 
 	return &orbitertypes.MsgSubmitPayloadResponse{
-		Hash: payloadHash,
+		Hash: payloadHash.String(),
 	}, nil
 }

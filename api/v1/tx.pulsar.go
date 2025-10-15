@@ -575,8 +575,8 @@ func (x *fastReflection_MsgSubmitPayloadResponse) Interface() protoreflect.Proto
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_MsgSubmitPayloadResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if len(x.Hash) != 0 {
-		value := protoreflect.ValueOfBytes(x.Hash)
+	if x.Hash != "" {
+		value := protoreflect.ValueOfString(x.Hash)
 		if !f(fd_MsgSubmitPayloadResponse_hash, value) {
 			return
 		}
@@ -597,7 +597,7 @@ func (x *fastReflection_MsgSubmitPayloadResponse) Range(f func(protoreflect.Fiel
 func (x *fastReflection_MsgSubmitPayloadResponse) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
 	case "noble.orbiter.v1.MsgSubmitPayloadResponse.hash":
-		return len(x.Hash) != 0
+		return x.Hash != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.MsgSubmitPayloadResponse"))
@@ -615,7 +615,7 @@ func (x *fastReflection_MsgSubmitPayloadResponse) Has(fd protoreflect.FieldDescr
 func (x *fastReflection_MsgSubmitPayloadResponse) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	case "noble.orbiter.v1.MsgSubmitPayloadResponse.hash":
-		x.Hash = nil
+		x.Hash = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.MsgSubmitPayloadResponse"))
@@ -634,7 +634,7 @@ func (x *fastReflection_MsgSubmitPayloadResponse) Get(descriptor protoreflect.Fi
 	switch descriptor.FullName() {
 	case "noble.orbiter.v1.MsgSubmitPayloadResponse.hash":
 		value := x.Hash
-		return protoreflect.ValueOfBytes(value)
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.MsgSubmitPayloadResponse"))
@@ -656,7 +656,7 @@ func (x *fastReflection_MsgSubmitPayloadResponse) Get(descriptor protoreflect.Fi
 func (x *fastReflection_MsgSubmitPayloadResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
 	case "noble.orbiter.v1.MsgSubmitPayloadResponse.hash":
-		x.Hash = value.Bytes()
+		x.Hash = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.MsgSubmitPayloadResponse"))
@@ -693,7 +693,7 @@ func (x *fastReflection_MsgSubmitPayloadResponse) Mutable(fd protoreflect.FieldD
 func (x *fastReflection_MsgSubmitPayloadResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	case "noble.orbiter.v1.MsgSubmitPayloadResponse.hash":
-		return protoreflect.ValueOfBytes(nil)
+		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.v1.MsgSubmitPayloadResponse"))
@@ -856,7 +856,7 @@ func (x *fastReflection_MsgSubmitPayloadResponse) ProtoMethods() *protoiface.Met
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
 				}
-				var byteLen int
+				var stringLen uint64
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
@@ -866,25 +866,23 @@ func (x *fastReflection_MsgSubmitPayloadResponse) ProtoMethods() *protoiface.Met
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					byteLen |= int(b&0x7F) << shift
+					stringLen |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
 				}
-				if byteLen < 0 {
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
 				}
-				postIndex := iNdEx + byteLen
+				postIndex := iNdEx + intStringLen
 				if postIndex < 0 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
 				}
 				if postIndex > l {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
-				x.Hash = append(x.Hash[:0], dAtA[iNdEx:postIndex]...)
-				if x.Hash == nil {
-					x.Hash = []byte{}
-				}
+				x.Hash = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
@@ -989,8 +987,8 @@ type MsgSubmitPayloadResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// The sha256 hash that references the submitted payload in the module storage.
-	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
+	// The hex representation of the hash that references the submitted payload in the module storage.
+	Hash string `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 }
 
 func (x *MsgSubmitPayloadResponse) Reset() {
@@ -1013,11 +1011,11 @@ func (*MsgSubmitPayloadResponse) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_v1_tx_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *MsgSubmitPayloadResponse) GetHash() []byte {
+func (x *MsgSubmitPayloadResponse) GetHash() string {
 	if x != nil {
 		return x.Hash
 	}
-	return nil
+	return ""
 }
 
 var File_noble_orbiter_v1_tx_proto protoreflect.FileDescriptor
@@ -1042,7 +1040,7 @@ var file_noble_orbiter_v1_tx_proto_rawDesc = []byte{
 	0x74, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0x2e, 0x0a, 0x18, 0x4d, 0x73, 0x67, 0x53,
 	0x75, 0x62, 0x6d, 0x69, 0x74, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70,
 	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x61, 0x73, 0x68, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0c, 0x52, 0x04, 0x68, 0x61, 0x73, 0x68, 0x32, 0x6d, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12,
+	0x28, 0x09, 0x52, 0x04, 0x68, 0x61, 0x73, 0x68, 0x32, 0x6d, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12,
 	0x5f, 0x0a, 0x0d, 0x53, 0x75, 0x62, 0x6d, 0x69, 0x74, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64,
 	0x12, 0x22, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e, 0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72,
 	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x75, 0x62, 0x6d, 0x69, 0x74, 0x50, 0x61, 0x79,

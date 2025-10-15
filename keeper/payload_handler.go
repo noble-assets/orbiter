@@ -43,7 +43,7 @@ import (
 func (k *Keeper) submit(
 	ctx context.Context,
 	payload *core.Payload,
-) ([]byte, error) {
+) (*core.PayloadHash, error) {
 	next, err := k.pendingPayloadsSequence.Next(ctx)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to get next sequence number")
@@ -89,7 +89,7 @@ func (k *Keeper) submit(
 		return nil, errorsmod.Wrap(err, "failed to set payload hash by time")
 	}
 
-	return hashBz, nil
+	return hash, nil
 }
 
 // validatePayloadAgainstState checks if the payload is valid with respect
