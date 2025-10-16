@@ -27,6 +27,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -42,7 +43,9 @@ func TestRemovePayload(t *testing.T) {
 
 	nowUTC := time.Now().UTC()
 
-	validPayload := createTestPendingPayloadWithSequence(t, 0, nowUTC)
+	validPayload, err := createTestPendingPayloadWithSequence(0, nowUTC)
+	require.NoError(t, err, "creating test pending payload")
+
 	expHash, err := validPayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
@@ -125,20 +128,24 @@ func TestRemovePayloads(t *testing.T) {
 
 	testCases := []struct {
 		name         string
-		setup        func(*testing.T, sdk.Context, codec.Codec, orbitertypes.MsgServer)
+		setup        func(sdk.Context, codec.Codec, orbitertypes.MsgServer) error
 		cutoff       time.Time
 		expRemaining int
 		errContains  string
 	}{
 		{
-			name:         "success - remove only expired payloads",
-			setup:        setupPayloadsInState,
+			name: "success - remove only expired payloads",
+			setup: func(ctx sdk.Context, cdc codec.Codec, ms orbitertypes.MsgServer) error {
+				return setupPayloadsInState(ctx, cdc, ms, 4)
+			},
 			cutoff:       nowUTC.Add(4 * timeBetweenBlocks),
 			expRemaining: 2,
 		},
 		{
-			name:   "success - nothing should be removed if all are not expired",
-			setup:  setupPayloadsInState,
+			name: "success - nothing should be removed if all are not expired",
+			setup: func(ctx sdk.Context, cdc codec.Codec, ms orbitertypes.MsgServer) error {
+				return setupPayloadsInState(ctx, cdc, ms, 4)
+			},
 			cutoff: nowUTC,
 		},
 		{
@@ -154,7 +161,8 @@ func TestRemovePayloads(t *testing.T) {
 			ms := orbiterkeeper.NewMsgServer(k)
 
 			if tc.setup != nil {
-				tc.setup(t, ctx, k.Codec(), ms)
+				err := tc.setup(ctx, k.Codec(), ms)
+				require.NoError(t, err, "failed to setup testcase")
 			}
 
 			err := k.RemoveExpiredPayloads(ctx, tc.cutoff)
@@ -168,17 +176,20 @@ func TestRemovePayloads(t *testing.T) {
 }
 
 func setupPayloadsInState(
-	t *testing.T,
 	ctx sdk.Context,
 	codec codec.Codec,
 	ms orbitertypes.MsgServer,
-) {
-	t.Helper()
+	nPayloads int,
+) error {
+	validPayload, err := createTestPendingPayloadWithSequence(0, time.Now().UTC())
+	if err != nil {
+		return errorsmod.Wrap(err, "failed to create test payload")
+	}
 
-	nPayloads := 4
-	validPayload := createTestPendingPayloadWithSequence(t, 0, time.Now().UTC())
 	payloadBz, err := codec.MarshalJSON(validPayload.Payload)
-	require.NoError(t, err, "failed to marshal payload")
+	if err != nil {
+		return errorsmod.Wrap(err, "failed to marshal payload")
+	}
 
 	for range nPayloads {
 		ctx = ctx.WithBlockTime(ctx.BlockTime().Add(timeBetweenBlocks))
@@ -186,6 +197,78 @@ func setupPayloadsInState(
 		_, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 			Payload: string(payloadBz),
 		})
-		require.NoError(t, err, "failed to submit payload during setup")
+
+		return errorsmod.Wrap(err, "failed to submit payload during setup")
+	}
+
+	return nil
+}
+
+func BenchmarkRemovePendingPayload(b *testing.B) {
+	b.StopTimer()
+
+	ctx, _, k := mockorbiter.OrbiterKeeper(b)
+	ms := orbiterkeeper.NewMsgServer(k)
+
+	pending, err := createTestPendingPayloadWithSequence(0, ctx.BlockTime())
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	payloadBz, err := orbitertypes.MarshalJSON(k.Codec(), pending.Payload)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ResetTimer()
+
+	for range b.N {
+		res, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
+			Payload: string(payloadBz),
+		})
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		hash, err := core.NewPayloadHash(res.Hash)
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		b.StartTimer()
+
+		err = k.RemovePendingPayload(ctx, hash)
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		b.StopTimer()
+	}
+}
+
+func BenchmarkRemoveExpiredPayloads(b *testing.B) {
+	b.StopTimer()
+	b.ResetTimer()
+
+	ctx, _, k := mockorbiter.OrbiterKeeper(b)
+	ms := orbiterkeeper.NewMsgServer(k)
+
+	for range b.N {
+		if err := setupPayloadsInState(
+			ctx,
+			k.Codec(),
+			ms,
+			orbiterkeeper.ExpiredPayloadsLimit,
+		); err != nil {
+			b.Fatal(err)
+		}
+
+		b.StartTimer()
+
+		if err := k.RemoveExpiredPayloads(ctx, ctx.BlockTime()); err != nil {
+			b.Fatal(err)
+		}
+
+		b.StopTimer()
 	}
 }

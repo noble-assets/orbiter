@@ -41,7 +41,8 @@ func TestPendingPayload(t *testing.T) {
 
 	nowUTC := time.Now().UTC()
 
-	examplePayload := createTestPendingPayloadWithSequence(t, 0, nowUTC)
+	examplePayload, err := createTestPendingPayloadWithSequence(0, nowUTC)
+	require.NoError(t, err, "failed to create test payload")
 
 	exampleHash, err := examplePayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")

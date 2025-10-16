@@ -37,7 +37,9 @@ func TestBeginBlock(t *testing.T) {
 	ms := orbiterkeeper.NewMsgServer(k)
 	qs := orbiterkeeper.NewQueryServer(k)
 
-	pendingPayload := createTestPendingPayloadWithSequence(t, 0, ctx.BlockTime())
+	pendingPayload, err := createTestPendingPayloadWithSequence(0, ctx.BlockTime())
+	require.NoError(t, err, "failed to create pending payload")
+
 	hash, err := pendingPayload.SHA256Hash()
 	require.NoError(t, err, "failed to create payload hash")
 

@@ -27,6 +27,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	errorsmod "cosmossdk.io/errors"
+
 	orbiterkeeper "github.com/noble-assets/orbiter/keeper"
 	"github.com/noble-assets/orbiter/testutil"
 	mockorbiter "github.com/noble-assets/orbiter/testutil/mocks/orbiter"
@@ -40,7 +42,8 @@ func TestSubmitPayload(t *testing.T) {
 	seq := uint64(0)
 
 	nowUTC := time.Now().UTC()
-	examplePayload := createTestPendingPayloadWithSequence(t, seq, nowUTC)
+	examplePayload, err := createTestPendingPayloadWithSequence(seq, nowUTC)
+	require.NoError(t, err, "failed to create test payload")
 
 	exampleHash, err := examplePayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
@@ -172,7 +175,9 @@ func TestSubsequentSubmissions(t *testing.T) {
 	nowUTC := time.Now().UTC()
 	ctx = ctx.WithBlockTime(nowUTC)
 
-	validPayload := createTestPendingPayloadWithSequence(t, 0, nowUTC)
+	validPayload, err := createTestPendingPayloadWithSequence(0, nowUTC)
+	require.NoError(t, err, "failed to create pending payload")
+
 	validPayload.Timestamp = nowUTC.UnixNano()
 
 	expHash, err := validPayload.SHA256Hash()
@@ -215,12 +220,16 @@ func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 
 	nowUTC := time.Now().UTC()
 
-	validForwarding := createTestPendingPayloadWithSequence(t, seq, nowUTC)
+	validForwarding, err := createTestPendingPayloadWithSequence(seq, nowUTC)
+	require.NoError(t, err, "failed to create pending payload")
+
 	expHash, err := validForwarding.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	// ACT: Generate pending payload with sequence 2
-	validForwarding2 := createTestPendingPayloadWithSequence(t, seq+1, nowUTC)
+	validForwarding2, err := createTestPendingPayloadWithSequence(seq+1, nowUTC)
+	require.NoError(t, err, "failed to create payload")
+
 	expHash2, err := validForwarding2.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
@@ -236,12 +245,9 @@ func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 // createTestPendingPayloadWithSequence creates a new example payload that can be submitted
 // to the state handler.
 func createTestPendingPayloadWithSequence(
-	t *testing.T,
 	sequence uint64,
 	timestamp time.Time,
-) *core.PendingPayload {
-	t.Helper()
-
+) (*core.PendingPayload, error) {
 	recipient := make([]byte, 32)
 	copy(recipient[32-3:], []byte{1, 2, 3})
 
@@ -251,7 +257,9 @@ func createTestPendingPayloadWithSequence(
 		recipient,
 		nil,
 	)
-	require.NoError(t, err, "failed to create valid forwarding")
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to create valid forwarding")
+	}
 
 	validPayload := &core.Payload{
 		PreActions: nil,
@@ -262,5 +270,5 @@ func createTestPendingPayloadWithSequence(
 		Sequence:  sequence,
 		Payload:   validPayload,
 		Timestamp: timestamp.UnixNano(),
-	}
+	}, nil
 }
