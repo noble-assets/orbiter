@@ -2,6 +2,7 @@
 
 # NOTE: this file should be executed from the project root.
 
+rm -rf api/
 cd ./proto || exit 1
 buf generate --template buf.gen.gogo.yaml
 buf generate --template buf.gen.pulsar.yaml
