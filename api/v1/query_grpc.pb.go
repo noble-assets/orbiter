@@ -7,7 +7,10 @@
 package orbiterv1
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,12 +18,19 @@ import (
 // Requires gRPC-Go v1.64.0 or later.
 const _ = grpc.SupportPackageIsVersion9
 
+const (
+	Query_ActionIDs_FullMethodName   = "/noble.orbiter.v1.Query/ActionIDs"
+	Query_ProtocolIDs_FullMethodName = "/noble.orbiter.v1.Query/ProtocolIDs"
+)
+
 // QueryClient is the client API for Query service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Query defines the gRPC query service for the Orbiter module.
 type QueryClient interface {
+	ActionIDs(ctx context.Context, in *QueryActionIDsRequest, opts ...grpc.CallOption) (*QueryActionIDsResponse, error)
+	ProtocolIDs(ctx context.Context, in *QueryProtocolIDsRequest, opts ...grpc.CallOption) (*QueryProtocolIDsResponse, error)
 }
 
 type queryClient struct {
@@ -31,12 +41,34 @@ func NewQueryClient(cc grpc.ClientConnInterface) QueryClient {
 	return &queryClient{cc}
 }
 
+func (c *queryClient) ActionIDs(ctx context.Context, in *QueryActionIDsRequest, opts ...grpc.CallOption) (*QueryActionIDsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryActionIDsResponse)
+	err := c.cc.Invoke(ctx, Query_ActionIDs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ProtocolIDs(ctx context.Context, in *QueryProtocolIDsRequest, opts ...grpc.CallOption) (*QueryProtocolIDsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryProtocolIDsResponse)
+	err := c.cc.Invoke(ctx, Query_ProtocolIDs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
 //
 // Query defines the gRPC query service for the Orbiter module.
 type QueryServer interface {
+	ActionIDs(context.Context, *QueryActionIDsRequest) (*QueryActionIDsResponse, error)
+	ProtocolIDs(context.Context, *QueryProtocolIDsRequest) (*QueryProtocolIDsResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -47,6 +79,12 @@ type QueryServer interface {
 // pointer dereference when methods are called.
 type UnimplementedQueryServer struct{}
 
+func (UnimplementedQueryServer) ActionIDs(context.Context, *QueryActionIDsRequest) (*QueryActionIDsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActionIDs not implemented")
+}
+func (UnimplementedQueryServer) ProtocolIDs(context.Context, *QueryProtocolIDsRequest) (*QueryProtocolIDsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProtocolIDs not implemented")
+}
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
 
@@ -68,13 +106,58 @@ func RegisterQueryServer(s grpc.ServiceRegistrar, srv QueryServer) {
 	s.RegisterService(&Query_ServiceDesc, srv)
 }
 
+func _Query_ActionIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryActionIDsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ActionIDs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_ActionIDs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ActionIDs(ctx, req.(*QueryActionIDsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ProtocolIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryProtocolIDsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ProtocolIDs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_ProtocolIDs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ProtocolIDs(ctx, req.(*QueryProtocolIDsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Query_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "noble.orbiter.v1.Query",
 	HandlerType: (*QueryServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "noble/orbiter/v1/query.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ActionIDs",
+			Handler:    _Query_ActionIDs_Handler,
+		},
+		{
+			MethodName: "ProtocolIDs",
+			Handler:    _Query_ProtocolIDs_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "noble/orbiter/v1/query.proto",
 }
