@@ -11,11 +11,11 @@ option go_package = "github.com/noble-assets/orbiter/types";
 service Query {
   rpc ActionIDs(QueryActionIDsRequest) returns (QueryActionIDsResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/noble/orbiter/v1/action_ids";
+    option (google.api.http).get = "/noble/orbiter/v1/identifiers/actions";
   }
   rpc ProtocolIDs(QueryProtocolIDsRequest) returns (QueryProtocolIDsResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/noble/orbiter/v1/protocol_ids";
+    option (google.api.http).get = "/noble/orbiter/v1/identifiers/protocols";
   }
 }
 

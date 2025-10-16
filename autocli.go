@@ -38,7 +38,6 @@ import (
 func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
 		Tx: &autocliv1.ServiceCommandDescriptor{
-			Service: orbiterv1.Msg_ServiceDesc.ServiceName,
 			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
 				"executor": {
 					Service:           executortypes.Msg_serviceDesc.ServiceName,
@@ -78,12 +77,12 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 						{
 							RpcMethod: "ActionIDs",
-							Use:       "action-ids",
-							Short:     "List available actiond IDs",
+							Use:       "actions",
+							Short:     "List available action IDs",
 						},
 						{
 							RpcMethod: "ProtocolIDs",
-							Use:       "protocol-ids",
+							Use:       "protocols",
 							Short:     "List available protocol IDs",
 						},
 					},
