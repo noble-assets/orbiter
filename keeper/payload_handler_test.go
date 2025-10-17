@@ -50,10 +50,10 @@ func TestRemovePayload(t *testing.T) {
 	require.NoError(t, err, "failed to hash payload")
 
 	testcases := []struct {
-		name        string
-		setup       func(*testing.T, context.Context, codec.Codec, orbitertypes.MsgServer)
-		hash        *core.PayloadHash
-		errContains string
+		name     string
+		setup    func(*testing.T, context.Context, codec.Codec, orbitertypes.MsgServer)
+		hash     *core.PayloadHash
+		expError string
 	}{
 		{
 			name: "success - valid payload",
@@ -74,16 +74,16 @@ func TestRemovePayload(t *testing.T) {
 			name:  "error - valid payload but not found in store",
 			setup: nil,
 			hash:  expHash,
-			errContains: sdkerrors.ErrNotFound.Wrapf(
+			expError: sdkerrors.ErrNotFound.Wrapf(
 				"payload with hash %q",
 				expHash.String(),
 			).Error(),
 		},
 		{
-			name:        "error - nil hash",
-			setup:       nil,
-			hash:        nil,
-			errContains: core.ErrNilPointer.Wrap("payload hash").Error(),
+			name:     "error - nil hash",
+			setup:    nil,
+			hash:     nil,
+			expError: core.ErrNilPointer.Wrap("payload hash").Error(),
 		},
 	}
 
@@ -102,7 +102,7 @@ func TestRemovePayload(t *testing.T) {
 			}
 
 			err := k.RemovePendingPayload(ctx, tc.hash)
-			if tc.errContains == "" {
+			if tc.expError == "" {
 				require.NoError(t, err, "failed to remove payload")
 
 				// ASSERT: value with hash was removed.
@@ -115,7 +115,7 @@ func TestRemovePayload(t *testing.T) {
 				require.Error(t, err, "payload should not be present anymore")
 				require.Nil(t, gotPayload, "expected nil payload")
 			} else {
-				require.ErrorContains(t, err, tc.errContains, "expected different error")
+				require.ErrorContains(t, err, tc.expError, "expected different error")
 			}
 		})
 	}
@@ -127,11 +127,11 @@ func TestRemovePayloads(t *testing.T) {
 	nowUTC := time.Now().UTC()
 
 	testCases := []struct {
-		name        string
-		setup       func(sdk.Context, codec.Codec, orbitertypes.MsgServer) ([]string, error)
-		cutoff      time.Time
-		expRemoved  int
-		errContains string
+		name       string
+		setup      func(sdk.Context, codec.Codec, orbitertypes.MsgServer) ([]string, error)
+		cutoff     time.Time
+		expRemoved int
+		expError   string
 	}{
 		{
 			name: "success - remove only expired payloads",
@@ -173,7 +173,7 @@ func TestRemovePayloads(t *testing.T) {
 			}
 
 			err := k.RemoveExpiredPayloads(ctx, tc.cutoff)
-			if tc.errContains == "" {
+			if tc.expError == "" {
 				require.NoError(t, err, "failed to remove expired payloads")
 
 				// ASSERT: outdated ones were removed.
@@ -188,7 +188,7 @@ func TestRemovePayloads(t *testing.T) {
 					require.NoError(t, err, "payload should not have been removed")
 				}
 			} else {
-				require.ErrorContains(t, err, tc.errContains, "expected different error")
+				require.ErrorContains(t, err, tc.expError, "expected different error")
 			}
 		})
 	}

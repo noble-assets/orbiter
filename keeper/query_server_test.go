@@ -48,11 +48,11 @@ func TestPendingPayload(t *testing.T) {
 	require.NoError(t, err, "failed to hash payload")
 
 	testCases := []struct {
-		name        string
-		setup       func(*testing.T, context.Context, codec.Codec, orbitertypes.MsgServer)
-		expPayload  *core.PendingPayload
-		req         *orbitertypes.QueryPendingPayloadRequest
-		errContains string
+		name       string
+		setup      func(*testing.T, context.Context, codec.Codec, orbitertypes.MsgServer)
+		expPayload *core.PendingPayload
+		req        *orbitertypes.QueryPendingPayloadRequest
+		expError   string
 	}{
 		{
 			name: "success - hash found",
@@ -78,13 +78,13 @@ func TestPendingPayload(t *testing.T) {
 			req: &orbitertypes.QueryPendingPayloadRequest{
 				Hash: exampleHash.String(),
 			},
-			errContains: codes.NotFound.String(),
+			expError: codes.NotFound.String(),
 		},
 		{
-			name:        "error - nil request",
-			setup:       nil,
-			req:         nil,
-			errContains: codes.InvalidArgument.String(),
+			name:     "error - nil request",
+			setup:    nil,
+			req:      nil,
+			expError: codes.InvalidArgument.String(),
 		},
 		{
 			name:  "error - empty hash",
@@ -92,7 +92,7 @@ func TestPendingPayload(t *testing.T) {
 			req: &orbitertypes.QueryPendingPayloadRequest{
 				Hash: "",
 			},
-			errContains: codes.InvalidArgument.String(),
+			expError: codes.InvalidArgument.String(),
 		},
 	}
 
@@ -116,7 +116,7 @@ func TestPendingPayload(t *testing.T) {
 				tc.req,
 			)
 
-			if tc.errContains == "" {
+			if tc.expError == "" {
 				require.NoError(t, err, "failed to get pending payload")
 				require.Equal(
 					t,
@@ -125,7 +125,7 @@ func TestPendingPayload(t *testing.T) {
 					"expected different payload",
 				)
 			} else {
-				require.ErrorContains(t, err, tc.errContains, "expected different error")
+				require.ErrorContains(t, err, tc.expError, "expected different error")
 			}
 		})
 	}

@@ -52,11 +52,11 @@ func TestSubmitPayload(t *testing.T) {
 	recipient := testutil.RandomBytes(32)
 
 	testCases := []struct {
-		name        string
-		setup       func(*testing.T, context.Context, *orbiterkeeper.Keeper)
-		payload     func() *core.Payload
-		errContains string
-		expHash     *core.PayloadHash
+		name     string
+		setup    func(*testing.T, context.Context, *orbiterkeeper.Keeper)
+		payload  func() *core.Payload
+		expError string
+		expHash  *core.PayloadHash
 	}{
 		{
 			name:    "success - valid payload",
@@ -84,7 +84,7 @@ func TestSubmitPayload(t *testing.T) {
 
 				return &p
 			},
-			errContains: "action ACTION_FEE is paused",
+			expError: "action ACTION_FEE is paused",
 		},
 		{
 			name: "error - payload contains paused protocol",
@@ -104,7 +104,7 @@ func TestSubmitPayload(t *testing.T) {
 
 				return &p
 			},
-			errContains: "protocol PROTOCOL_CCTP is paused",
+			expError: "protocol PROTOCOL_CCTP is paused",
 		},
 		{
 			name: "error - payload contains paused cross-chain",
@@ -129,12 +129,12 @@ func TestSubmitPayload(t *testing.T) {
 
 				return &p
 			},
-			errContains: "cross-chain 2:1 is paused",
+			expError: "cross-chain 2:1 is paused",
 		},
 		{
-			name:        "error - invalid (empty) payload",
-			payload:     func() *core.Payload { return &core.Payload{} },
-			errContains: "forwarding is not set: invalid nil pointer",
+			name:     "error - invalid (empty) payload",
+			payload:  func() *core.Payload { return &core.Payload{} },
+			expError: "forwarding is not set: invalid nil pointer",
 		},
 	}
 
@@ -155,11 +155,11 @@ func TestSubmitPayload(t *testing.T) {
 			res, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 				Payload: string(payloadJSON),
 			})
-			if tc.errContains == "" {
+			if tc.expError == "" {
 				require.NoError(t, err, "failed to submit payload")
 				require.Equal(t, tc.expHash.String(), res.Hash, "expected different hash")
 			} else {
-				require.ErrorContains(t, err, tc.errContains, "expected different error")
+				require.ErrorContains(t, err, tc.expError, "expected different error")
 			}
 		})
 	}
