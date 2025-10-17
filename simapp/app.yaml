@@ -4,7 +4,7 @@ modules:
       '@type': cosmos.app.runtime.v1alpha1.Module
       app_name: SimApp
       pre_blockers: [upgrade]
-      begin_blockers: [capability, staking, ibc]
+      begin_blockers: [capability, staking, ibc, orbiter]
       end_blockers: [staking]
       init_genesis:
         [

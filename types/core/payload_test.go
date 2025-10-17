@@ -51,23 +51,23 @@ func TestNewPayloadHash(t *testing.T) {
 	require.NoError(t, err, "failed to hash payload")
 
 	testcases := []struct {
-		name        string
-		input       string
-		errContains string
+		name     string
+		input    string
+		expError string
 	}{
 		{
 			name:  "success - valid hash",
 			input: hash.String(),
 		},
 		{
-			name:        "error - invalid hash",
-			input:       "abcdefg",
-			errContains: "invalid payload hash",
+			name:     "error - invalid hash",
+			input:    "abcdefg",
+			expError: "invalid payload hash",
 		},
 		{
-			name:        "error - too short hash",
-			input:       "0123ab",
-			errContains: "malformed payload hash",
+			name:     "error - too short hash",
+			input:    "0123ab",
+			expError: "malformed payload hash",
 		},
 	}
 
@@ -76,11 +76,11 @@ func TestNewPayloadHash(t *testing.T) {
 			t.Parallel()
 
 			parsed, err := core.NewPayloadHash(tc.input)
-			if tc.errContains == "" {
+			if tc.expError == "" {
 				require.NoError(t, err, "failed to parse payload hash")
 				require.Equal(t, tc.input, parsed.String(), "payload hash mismatch")
 			} else {
-				require.ErrorContains(t, err, tc.errContains)
+				require.ErrorContains(t, err, tc.expError)
 			}
 		})
 	}
