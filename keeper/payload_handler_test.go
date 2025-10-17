@@ -127,26 +127,27 @@ func TestRemovePayloads(t *testing.T) {
 	nowUTC := time.Now().UTC()
 
 	testCases := []struct {
-		name         string
-		setup        func(sdk.Context, codec.Codec, orbitertypes.MsgServer) error
-		cutoff       time.Time
-		expRemaining int
-		errContains  string
+		name        string
+		setup       func(sdk.Context, codec.Codec, orbitertypes.MsgServer) ([]string, error)
+		cutoff      time.Time
+		expRemoved  int
+		errContains string
 	}{
 		{
 			name: "success - remove only expired payloads",
-			setup: func(ctx sdk.Context, cdc codec.Codec, ms orbitertypes.MsgServer) error {
+			setup: func(ctx sdk.Context, cdc codec.Codec, ms orbitertypes.MsgServer) ([]string, error) {
 				return setupPayloadsInState(ctx, cdc, ms, 4)
 			},
-			cutoff:       nowUTC.Add(4 * timeBetweenBlocks),
-			expRemaining: 2,
+			cutoff:     nowUTC.Add(2 * timeBetweenBlocks),
+			expRemoved: 2,
 		},
 		{
 			name: "success - nothing should be removed if all are not expired",
-			setup: func(ctx sdk.Context, cdc codec.Codec, ms orbitertypes.MsgServer) error {
+			setup: func(ctx sdk.Context, cdc codec.Codec, ms orbitertypes.MsgServer) ([]string, error) {
 				return setupPayloadsInState(ctx, cdc, ms, 4)
 			},
-			cutoff: nowUTC,
+			cutoff:     nowUTC,
+			expRemoved: 0,
 		},
 		{
 			name:   "success - no submitted payloads",
@@ -159,15 +160,33 @@ func TestRemovePayloads(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ms := orbiterkeeper.NewMsgServer(k)
+			qs := orbiterkeeper.NewQueryServer(k)
 
+			// we set the context's block time to be sure of the behavior
+			ctx.WithBlockTime(nowUTC)
+
+			var hashes []string
 			if tc.setup != nil {
-				err := tc.setup(ctx, k.Codec(), ms)
+				var err error
+				hashes, err = tc.setup(ctx, k.Codec(), ms)
 				require.NoError(t, err, "failed to setup testcase")
 			}
 
 			err := k.RemoveExpiredPayloads(ctx, tc.cutoff)
 			if tc.errContains == "" {
 				require.NoError(t, err, "failed to remove expired payloads")
+
+				// ASSERT: outdated ones were removed.
+				for _, hash := range hashes[:tc.expRemoved] {
+					_, err = qs.PendingPayload(ctx, &orbitertypes.QueryPendingPayloadRequest{Hash: hash})
+					require.ErrorContains(t, err, "payload not found", "payload should have been removed")
+				}
+
+				// ASSERT: active ones are not removed.
+				for _, hash := range hashes[tc.expRemoved:] {
+					_, err = qs.PendingPayload(ctx, &orbitertypes.QueryPendingPayloadRequest{Hash: hash})
+					require.NoError(t, err, "payload should not have been removed")
+				}
 			} else {
 				require.ErrorContains(t, err, tc.errContains, "expected different error")
 			}
@@ -180,28 +199,32 @@ func setupPayloadsInState(
 	codec codec.Codec,
 	ms orbitertypes.MsgServer,
 	nPayloads int,
-) error {
-	validPayload, err := createTestPendingPayloadWithSequence(0, time.Now().UTC())
+) ([]string, error) {
+	validPayload, err := createTestPendingPayloadWithSequence(0, ctx.BlockTime().UTC())
 	if err != nil {
-		return errorsmod.Wrap(err, "failed to create test payload")
+		return nil, errorsmod.Wrap(err, "failed to create test payload")
 	}
 
 	payloadBz, err := codec.MarshalJSON(validPayload.Payload)
 	if err != nil {
-		return errorsmod.Wrap(err, "failed to marshal payload")
+		return nil, errorsmod.Wrap(err, "failed to marshal payload")
 	}
 
-	for range nPayloads {
-		ctx = ctx.WithBlockTime(ctx.BlockTime().Add(timeBetweenBlocks))
-
-		_, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
+	hashes := make([]string, nPayloads)
+	for i := range nPayloads {
+		res, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 			Payload: string(payloadBz),
 		})
+		if err != nil {
+			return nil, errorsmod.Wrap(err, "failed to submit payload during setup")
+		}
 
-		return errorsmod.Wrap(err, "failed to submit payload during setup")
+		hashes[i] = res.Hash
+
+		ctx = ctx.WithBlockTime(ctx.BlockTime().Add(timeBetweenBlocks))
 	}
 
-	return nil
+	return hashes, nil
 }
 
 func BenchmarkRemovePendingPayload(b *testing.B) {
@@ -222,7 +245,7 @@ func BenchmarkRemovePendingPayload(b *testing.B) {
 
 	b.ResetTimer()
 
-	for range b.N {
+	for b.Loop() {
 		res, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 			Payload: string(payloadBz),
 		})
@@ -253,8 +276,8 @@ func BenchmarkRemoveExpiredPayloads(b *testing.B) {
 	ctx, _, k := mockorbiter.OrbiterKeeper(b)
 	ms := orbiterkeeper.NewMsgServer(k)
 
-	for range b.N {
-		if err := setupPayloadsInState(
+	for b.Loop() {
+		if _, err := setupPayloadsInState(
 			ctx,
 			k.Codec(),
 			ms,
