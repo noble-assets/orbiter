@@ -207,7 +207,7 @@ func (k *Keeper) RemoveExpiredPayloads(
 	rng := collections.NewPrefixUntilPairRange[int64, []byte](cutoff.UnixNano())
 
 	var count int
-	if err := k.pendingPayloads.Indexes.Multi.Walk(
+	if err := k.pendingPayloads.Indexes.Walk(
 		ctx,
 		rng,
 		func(_ int64, hash []byte) (stop bool, err error) {

@@ -178,13 +178,24 @@ func TestRemovePayloads(t *testing.T) {
 
 				// ASSERT: outdated ones were removed.
 				for _, hash := range hashes[:tc.expRemoved] {
-					_, err = qs.PendingPayload(ctx, &orbitertypes.QueryPendingPayloadRequest{Hash: hash})
-					require.ErrorContains(t, err, "payload not found", "payload should have been removed")
+					_, err = qs.PendingPayload(
+						ctx,
+						&orbitertypes.QueryPendingPayloadRequest{Hash: hash},
+					)
+					require.ErrorContains(
+						t,
+						err,
+						"payload not found",
+						"payload should have been removed",
+					)
 				}
 
 				// ASSERT: active ones are not removed.
 				for _, hash := range hashes[tc.expRemoved:] {
-					_, err = qs.PendingPayload(ctx, &orbitertypes.QueryPendingPayloadRequest{Hash: hash})
+					_, err = qs.PendingPayload(
+						ctx,
+						&orbitertypes.QueryPendingPayloadRequest{Hash: hash},
+					)
 					require.NoError(t, err, "payload should not have been removed")
 				}
 			} else {
