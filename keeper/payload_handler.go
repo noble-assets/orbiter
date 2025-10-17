@@ -36,6 +36,14 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
+// ExpiredPayloadsLimit defines the maximum number of expired payloads
+// removed during the ABCI hooks.
+//
+// We're limiting the amount of payloads handled here to avoid
+// impacts of spam attacks that would slow down the begin block logic
+// by iterating over thousands of spam payloads.
+const ExpiredPayloadsLimit = 200
+
 // submit adds a new pending payload into the module storage.
 // If the payload's hash is already set, an error is returned.
 //
@@ -190,14 +198,6 @@ func (k *Keeper) RemovePendingPayload(
 
 	return nil
 }
-
-// ExpiredPayloadsLimit defines the maximum number of expired payloads
-// removed during the ABCI hooks.
-//
-// We're limiting the amount of payloads handled here to avoid
-// impacts of spam attacks that would slow down the begin block logic
-// by iterating over thousands of spam payloads.
-const ExpiredPayloadsLimit = 200
 
 // RemoveExpiredPayloads ranges over the payloads by their submission timestamps
 // and removes those that are older than the cutoff date.
