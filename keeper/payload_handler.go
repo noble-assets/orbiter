@@ -22,10 +22,8 @@ package keeper
 
 import (
 	"context"
-	"encoding/hex"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"cosmossdk.io/collections"
@@ -205,20 +203,11 @@ func (k *Keeper) RemoveExpiredPayloads(
 	ctx context.Context,
 	cutoff time.Time,
 ) error {
-	// TODO: check if this is really required? I don't want to necessarily include this
-	// but it seems required because a collections.Pair is demanded by the ranger.
-	startHash := make([]byte, 32)
-	endHash, err := hex.DecodeString(strings.Repeat("f", 64))
-	if err != nil {
-		return errorsmod.Wrap(err, "failed to decode expired payloads")
-	}
-
-	rng := new(collections.Range[collections.Pair[int64, []byte]]).
-		StartInclusive(collections.Join(int64(0), startHash)).
-		EndInclusive(collections.Join(cutoff.UnixNano(), endHash))
+	// NOTE: we range over all hashes from zero time UNTIL the cutoff.
+	rng := collections.NewPrefixUntilPairRange[int64, []byte](cutoff.UnixNano())
 
 	var count int
-	if err = k.pendingPayloads.Indexes.Walk(
+	if err := k.pendingPayloads.Indexes.Multi.Walk(
 		ctx,
 		rng,
 		func(_ int64, hash []byte) (stop bool, err error) {
