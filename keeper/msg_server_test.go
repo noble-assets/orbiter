@@ -23,8 +23,11 @@ package keeper_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
+
+	errorsmod "cosmossdk.io/errors"
 
 	orbiterkeeper "github.com/noble-assets/orbiter/keeper"
 	"github.com/noble-assets/orbiter/testutil"
@@ -37,7 +40,10 @@ import (
 
 func TestSubmitPayload(t *testing.T) {
 	seq := uint64(0)
-	examplePayload := createTestPendingPayloadWithSequence(t, seq)
+
+	nowUTC := time.Now().UTC()
+	examplePayload, err := createTestPendingPayloadWithSequence(seq, nowUTC)
+	require.NoError(t, err, "failed to create test payload")
 
 	exampleHash, err := examplePayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
@@ -46,11 +52,11 @@ func TestSubmitPayload(t *testing.T) {
 	recipient := testutil.RandomBytes(32)
 
 	testCases := []struct {
-		name        string
-		setup       func(*testing.T, context.Context, *orbiterkeeper.Keeper)
-		payload     func() *core.Payload
-		errContains string
-		expHash     *core.PayloadHash
+		name     string
+		setup    func(*testing.T, context.Context, *orbiterkeeper.Keeper)
+		payload  func() *core.Payload
+		expError string
+		expHash  *core.PayloadHash
 	}{
 		{
 			name:    "success - valid payload",
@@ -78,7 +84,7 @@ func TestSubmitPayload(t *testing.T) {
 
 				return &p
 			},
-			errContains: "action ACTION_FEE is paused",
+			expError: "action ACTION_FEE is paused",
 		},
 		{
 			name: "error - payload contains paused protocol",
@@ -98,7 +104,7 @@ func TestSubmitPayload(t *testing.T) {
 
 				return &p
 			},
-			errContains: "protocol PROTOCOL_CCTP is paused",
+			expError: "protocol PROTOCOL_CCTP is paused",
 		},
 		{
 			name: "error - payload contains paused cross-chain",
@@ -123,12 +129,12 @@ func TestSubmitPayload(t *testing.T) {
 
 				return &p
 			},
-			errContains: "cross-chain 2:1 is paused",
+			expError: "cross-chain 2:1 is paused",
 		},
 		{
-			name:        "error - invalid (empty) payload",
-			payload:     func() *core.Payload { return &core.Payload{} },
-			errContains: "forwarding is not set: invalid nil pointer",
+			name:     "error - invalid (empty) payload",
+			payload:  func() *core.Payload { return &core.Payload{} },
+			expError: "forwarding is not set: invalid nil pointer",
 		},
 	}
 
@@ -136,6 +142,8 @@ func TestSubmitPayload(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx, _, k := mockorbiter.OrbiterKeeper(t)
 			ms := orbiterkeeper.NewMsgServer(k)
+
+			ctx = ctx.WithBlockTime(nowUTC)
 
 			if tc.setup != nil {
 				tc.setup(t, ctx, k)
@@ -147,11 +155,11 @@ func TestSubmitPayload(t *testing.T) {
 			res, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
 				Payload: string(payloadJSON),
 			})
-			if tc.errContains == "" {
+			if tc.expError == "" {
 				require.NoError(t, err, "failed to submit payload")
-				require.Equal(t, tc.expHash.String(), core.PayloadHash(res.Hash).String())
+				require.Equal(t, tc.expHash.String(), res.Hash, "expected different hash")
 			} else {
-				require.ErrorContains(t, err, tc.errContains, "expected different error")
+				require.ErrorContains(t, err, tc.expError, "expected different error")
 			}
 		})
 	}
@@ -164,7 +172,14 @@ func TestSubsequentSubmissions(t *testing.T) {
 	ctx, _, k := mockorbiter.OrbiterKeeper(t)
 	ms := orbiterkeeper.NewMsgServer(k)
 
-	validPayload := createTestPendingPayloadWithSequence(t, 0)
+	nowUTC := time.Now().UTC()
+	ctx = ctx.WithBlockTime(nowUTC)
+
+	validPayload, err := createTestPendingPayloadWithSequence(0, nowUTC)
+	require.NoError(t, err, "failed to create pending payload")
+
+	validPayload.Timestamp = nowUTC.UnixNano()
+
 	expHash, err := validPayload.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
@@ -179,8 +194,7 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.NoError(t, err, "failed to submit payload")
 
 	// ASSERT: expected hash is returned
-	gotHash := core.PayloadHash(res.Hash)
-	require.Equal(t, expHash.String(), gotHash.String(), "expected different hash")
+	require.Equal(t, expHash.String(), res.Hash, "expected different hash")
 
 	// ACT: submit identical payload again
 	res2, err := ms.SubmitPayload(ctx, &orbitertypes.MsgSubmitPayload{
@@ -194,22 +208,28 @@ func TestSubsequentSubmissions(t *testing.T) {
 	require.NoError(t, err, "failed to hash payload")
 
 	// ASSERT: expected hash is returned
-	gotHash2 := core.PayloadHash(res2.Hash)
-	require.Equal(t, expHash2.String(), gotHash2.String(), "expected different hash")
+	require.Equal(t, expHash2.String(), res2.Hash, "expected different hash")
 
 	// ASSERT: hashes of subsequent submissions of the same payload are different
-	require.NotEqual(t, gotHash.String(), gotHash2.String(), "expected different hashes")
+	require.NotEqual(t, res.Hash, res2.Hash, "expected different hashes")
 }
 
 func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 	// ACT: Generate pending payload with sequence 1
 	seq := uint64(1)
-	validForwarding := createTestPendingPayloadWithSequence(t, seq)
+
+	nowUTC := time.Now().UTC()
+
+	validForwarding, err := createTestPendingPayloadWithSequence(seq, nowUTC)
+	require.NoError(t, err, "failed to create pending payload")
+
 	expHash, err := validForwarding.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
 	// ACT: Generate pending payload with sequence 2
-	validForwarding2 := createTestPendingPayloadWithSequence(t, seq+1)
+	validForwarding2, err := createTestPendingPayloadWithSequence(seq+1, nowUTC)
+	require.NoError(t, err, "failed to create payload")
+
 	expHash2, err := validForwarding2.SHA256Hash()
 	require.NoError(t, err, "failed to hash payload")
 
@@ -225,11 +245,9 @@ func TestDifferentSequenceGeneratesDifferentHash(t *testing.T) {
 // createTestPendingPayloadWithSequence creates a new example payload that can be submitted
 // to the state handler.
 func createTestPendingPayloadWithSequence(
-	t *testing.T,
 	sequence uint64,
-) *core.PendingPayload {
-	t.Helper()
-
+	timestamp time.Time,
+) (*core.PendingPayload, error) {
 	recipient := make([]byte, 32)
 	copy(recipient[32-3:], []byte{1, 2, 3})
 
@@ -239,7 +257,9 @@ func createTestPendingPayloadWithSequence(
 		recipient,
 		nil,
 	)
-	require.NoError(t, err, "failed to create valid forwarding")
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to create valid forwarding")
+	}
 
 	validPayload := &core.Payload{
 		PreActions: nil,
@@ -247,7 +267,8 @@ func createTestPendingPayloadWithSequence(
 	}
 
 	return &core.PendingPayload{
-		Sequence: sequence,
-		Payload:  validPayload,
-	}
+		Sequence:  sequence,
+		Payload:   validPayload,
+		Timestamp: timestamp.UnixNano(),
+	}, nil
 }

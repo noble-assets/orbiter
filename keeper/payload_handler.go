@@ -24,12 +24,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
+	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/types/core"
 )
+
+// ExpiredPayloadsLimit defines the maximum number of expired payloads
+// removed during the ABCI hooks.
+//
+// We're limiting the amount of payloads handled here to avoid
+// impacts of spam attacks that would slow down the begin block logic
+// by iterating over thousands of spam payloads.
+const ExpiredPayloadsLimit = 200
 
 // submit adds a new pending payload into the module storage.
 // If the payload's hash is already set, an error is returned.
@@ -38,15 +49,18 @@ import (
 func (k *Keeper) submit(
 	ctx context.Context,
 	payload *core.Payload,
-) ([]byte, error) {
+) (*core.PayloadHash, error) {
 	next, err := k.pendingPayloadsSequence.Next(ctx)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to get next sequence number")
 	}
 
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
 	pendingPayload := core.PendingPayload{
-		Sequence: next,
-		Payload:  payload,
+		Sequence:  next,
+		Payload:   payload,
+		Timestamp: sdkCtx.BlockTime().UnixNano(),
 	}
 
 	hash, err := pendingPayload.SHA256Hash()
@@ -62,18 +76,18 @@ func (k *Keeper) submit(
 	}
 
 	if found {
-		k.Logger().Error("payload hash already registered", "hash", hash.String())
+		k.logger.Error("payload hash already registered", "hash", hash.String())
 
 		return nil, errors.New("payload hash already registered")
 	}
 
-	k.Logger().Debug("payload registered", "hash", hash.String(), "payload", payload.String())
+	k.logger.Debug("payload registered", "hash", hash.String(), "payload", payload.String())
 
 	if err = k.pendingPayloads.Set(ctx, hashBz, pendingPayload); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to set pending payload")
 	}
 
-	return hashBz, nil
+	return hash, nil
 }
 
 // validatePayloadAgainstState checks if the payload is valid with respect
@@ -179,6 +193,47 @@ func (k *Keeper) RemovePendingPayload(
 	}
 
 	k.Logger().Debug("removed pending payload", "hash", hash.String())
+
+	return nil
+}
+
+// RemoveExpiredPayloads ranges over the payloads by their submission timestamps
+// and removes those that are older than the cutoff date.
+func (k *Keeper) RemoveExpiredPayloads(
+	ctx context.Context,
+	cutoff time.Time,
+) error {
+	// NOTE: we range over all hashes from zero time UNTIL the cutoff.
+	rng := collections.NewPrefixUntilPairRange[int64, []byte](cutoff.UnixNano())
+
+	var count int
+	if err := k.pendingPayloads.Indexes.Walk(
+		ctx,
+		rng,
+		func(_ int64, hash []byte) (stop bool, err error) {
+			count++
+			if count > ExpiredPayloadsLimit {
+				return true, nil
+			}
+
+			h := core.PayloadHash(hash)
+
+			err = k.RemovePendingPayload(ctx, &h)
+			if err != nil {
+				k.Logger().Error(
+					"failed to remove pending payload",
+					"hash", h.String(),
+					"error", err.Error(),
+				)
+
+				return true, err
+			}
+
+			return false, nil
+		},
+	); err != nil {
+		return errorsmod.Wrap(err, "failed to iterate pending payloads")
+	}
 
 	return nil
 }

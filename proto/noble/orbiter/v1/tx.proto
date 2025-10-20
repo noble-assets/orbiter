@@ -34,6 +34,6 @@ message MsgSubmitPayload {
 // MsgSubmitPayloadResponse returns the sha256 hash of the registered
 // pending payload.
 message MsgSubmitPayloadResponse {
-  // The sha256 hash that references the submitted payload in the module storage.
-  bytes hash = 1;
+  // The hex representation of the hash that references the submitted payload in the module storage.
+  string hash = 1;
 }
