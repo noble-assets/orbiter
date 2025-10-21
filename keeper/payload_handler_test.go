@@ -125,6 +125,7 @@ const timeBetweenBlocks = 1 * time.Second
 
 func TestRemovePayloads(t *testing.T) {
 	nowUTC := time.Now().UTC()
+	startUTC := nowUTC.Add(1 * time.Second)
 
 	testCases := []struct {
 		name       string
@@ -138,7 +139,7 @@ func TestRemovePayloads(t *testing.T) {
 			setup: func(ctx sdk.Context, cdc codec.Codec, ms orbitertypes.MsgServer) ([]string, error) {
 				return setupPayloadsInState(ctx, cdc, ms, 4)
 			},
-			cutoff:     nowUTC.Add(2 * timeBetweenBlocks),
+			cutoff:     startUTC.Add(3 * timeBetweenBlocks / 2),
 			expRemoved: 2,
 		},
 		{
@@ -152,7 +153,7 @@ func TestRemovePayloads(t *testing.T) {
 		{
 			name:   "success - no submitted payloads",
 			setup:  nil,
-			cutoff: nowUTC.Add(2 * timeBetweenBlocks),
+			cutoff: startUTC.Add(2 * timeBetweenBlocks),
 		},
 	}
 
@@ -163,7 +164,7 @@ func TestRemovePayloads(t *testing.T) {
 			qs := orbiterkeeper.NewQueryServer(k)
 
 			// we set the context's block time to be sure of the behavior
-			ctx = ctx.WithBlockTime(nowUTC)
+			ctx = ctx.WithBlockTime(startUTC)
 
 			var hashes []string
 			if tc.setup != nil {
