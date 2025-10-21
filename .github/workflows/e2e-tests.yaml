@@ -80,3 +80,11 @@ jobs:
         run: docker image load -i ${{ env.TAR_PATH }}
       - name: Run Tests
         run: cd e2e && go test -race -v -timeout 15m -run ^${{ matrix.test }}$ .
+  e2e-tests:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check E2E Test Matrix Status
+        if: needs.test.result != 'success'
+        run: exit 1
