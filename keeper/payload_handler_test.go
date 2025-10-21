@@ -163,7 +163,7 @@ func TestRemovePayloads(t *testing.T) {
 			qs := orbiterkeeper.NewQueryServer(k)
 
 			// we set the context's block time to be sure of the behavior
-			ctx.WithBlockTime(nowUTC)
+			ctx = ctx.WithBlockTime(nowUTC)
 
 			var hashes []string
 			if tc.setup != nil {

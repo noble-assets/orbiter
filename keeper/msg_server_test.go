@@ -92,7 +92,7 @@ func TestSubmitPayload(t *testing.T) {
 				t.Helper()
 
 				err := k.Forwarder().Pause(ctx, core.PROTOCOL_CCTP, nil)
-				require.NoError(t, err, "failed to unpause fee action")
+				require.NoError(t, err, "failed to pause protocol")
 			},
 			payload: func() *core.Payload {
 				p := *examplePayload.Payload
