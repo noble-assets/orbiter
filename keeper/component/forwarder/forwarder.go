@@ -30,6 +30,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
@@ -135,14 +136,20 @@ func (f *Forwarder) Pause(
 	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
-	if err := ValidateCrossChains(protocolID, counterpartyIDs); err != nil {
-		return core.ErrUnableToPause.Wrap(err.Error())
+	if err := protocolID.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
 	switch {
 	case len(counterpartyIDs) == 0:
 		return f.pauseProtocol(ctx, protocolID)
 	default:
+		for _, id := range counterpartyIDs {
+			if err := core.ValidateCounterpartyID(id, protocolID); err != nil {
+				return errorsmod.Wrap(err, "invalid counterparty ID")
+			}
+		}
+
 		return f.pauseCrossChains(ctx, protocolID, counterpartyIDs)
 	}
 }
@@ -152,31 +159,21 @@ func (f *Forwarder) Unpause(
 	protocolID core.ProtocolID,
 	counterpartyIDs []string,
 ) error {
-	if err := ValidateCrossChains(protocolID, counterpartyIDs); err != nil {
-		return core.ErrUnableToUnpause.Wrap(err.Error())
+	if err := protocolID.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid protocol ID")
 	}
 
 	if len(counterpartyIDs) == 0 {
 		return f.unpauseProtocol(ctx, protocolID)
 	} else {
+		for _, id := range counterpartyIDs {
+			if err := core.ValidateCounterpartyID(id, protocolID); err != nil {
+				return errorsmod.Wrap(err, "invalid counterparty ID")
+			}
+		}
+
 		return f.unpauseCrossChains(ctx, protocolID, counterpartyIDs)
 	}
-}
-
-func ValidateCrossChains(
-	protocolID core.ProtocolID,
-	counterpartyIDs []string,
-) error {
-	if err := protocolID.Validate(); err != nil {
-		return errorsmod.Wrap(err, "invalid protocol ID")
-	}
-	for _, id := range counterpartyIDs {
-		if err := core.ValidateCounterpartyID(id); err != nil {
-			return errorsmod.Wrap(err, "invalid counterparty ID")
-		}
-	}
-
-	return nil
 }
 
 func (f *Forwarder) HandlePacket(
@@ -189,7 +186,7 @@ func (f *Forwarder) HandlePacket(
 
 	controller, found := f.router.Route(packet.Forwarding.ProtocolID())
 	if !found {
-		return fmt.Errorf(
+		return sdkerrors.ErrNotFound.Wrapf(
 			"controller not found for forwarding with protocol ID: %s",
 			packet.Forwarding.ProtocolID(),
 		)
@@ -288,19 +285,15 @@ func (f *Forwarder) validateInitialConditions(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
-	balances := f.bankKeeper.GetAllBalances(ctx, core.ModuleAddress)
+	balance := f.bankKeeper.GetBalance(
+		ctx,
+		core.ModuleAddress,
+		packet.TransferAttributes.DestinationDenom(),
+	)
 
-	if balances.Len() != 1 {
-		return fmt.Errorf("expected exactly 1 balance, got %d", balances.Len())
-	}
-
-	if balances[0].Denom != packet.TransferAttributes.DestinationDenom() {
-		return fmt.Errorf("denom mismatch: expected %s, got %s",
-			packet.TransferAttributes.DestinationDenom(), balances[0].Denom)
-	}
-	if !balances[0].Amount.Equal(packet.TransferAttributes.DestinationAmount()) {
+	if !balance.Amount.Equal(packet.TransferAttributes.DestinationAmount()) {
 		return fmt.Errorf("amount mismatch: expected %s, got %s",
-			packet.TransferAttributes.DestinationAmount(), balances[0].Amount)
+			packet.TransferAttributes.DestinationAmount(), balance.Amount)
 	}
 
 	return nil

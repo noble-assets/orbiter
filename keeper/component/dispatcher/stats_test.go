@@ -22,11 +22,12 @@ package dispatcher_test
 
 import (
 	"context"
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"cosmossdk.io/math"
+	sdkmath "cosmossdk.io/math"
 
 	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
 	"github.com/noble-assets/orbiter/testutil/mocks"
@@ -41,9 +42,9 @@ func TestUpdateStats(t *testing.T) {
 		t.Helper()
 		ta, err := types.NewTransferAttributes(
 			core.PROTOCOL_IBC,
-			"hyperliquid",
+			"channel-1",
 			"uusdc",
-			math.NewInt(100),
+			sdkmath.NewInt(100),
 		)
 		require.NoError(t, err)
 
@@ -53,7 +54,7 @@ func TestUpdateStats(t *testing.T) {
 	defaultForwarding := func() *core.Forwarding {
 		t.Helper()
 		attr := &testdata.TestForwardingAttr{
-			Planet: "ethereum",
+			Planet: "1",
 		}
 		f, err := core.NewForwarding(core.PROTOCOL_CCTP, attr, []byte{})
 		require.NoError(t, err)
@@ -105,13 +106,38 @@ func TestUpdateStats(t *testing.T) {
 			expErr: "forwarding attributes are not set",
 		},
 		{
+			name: "error - dispatched counts overflow",
+			setup: func(ctx context.Context, d *dispatcher.Dispatcher) {
+				sourceID := core.CrossChainID{
+					ProtocolId:     core.PROTOCOL_IBC,
+					CounterpartyId: "channel-1",
+				}
+
+				destID := core.CrossChainID{
+					ProtocolId:     core.PROTOCOL_CCTP,
+					CounterpartyId: "1",
+				}
+
+				err := d.SetDispatchedCounts(ctx, &sourceID, &destID, math.MaxUint64)
+				require.NoError(t, err)
+			},
+			attr: func() *types.TransferAttributes {
+				ta := defaultAttr()
+				ta.SetDestinationAmount(sdkmath.NewInt(95))
+
+				return ta
+			},
+			forwarding: defaultForwarding,
+			expErr:     "overflow",
+		},
+		{
 			name:       "success - same amount and denom",
 			attr:       defaultAttr,
 			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
-					Incoming: math.NewInt(100),
-					Outgoing: math.NewInt(100),
+					Incoming: sdkmath.NewInt(100),
+					Outgoing: sdkmath.NewInt(100),
 				},
 			},
 			expCounts: 1,
@@ -120,15 +146,15 @@ func TestUpdateStats(t *testing.T) {
 			name: "success - same denom and different amount",
 			attr: func() *types.TransferAttributes {
 				ta := defaultAttr()
-				ta.SetDestinationAmount(math.NewInt(95))
+				ta.SetDestinationAmount(sdkmath.NewInt(95))
 
 				return ta
 			},
 			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
-					Incoming: math.NewInt(100),
-					Outgoing: math.NewInt(95),
+					Incoming: sdkmath.NewInt(100),
+					Outgoing: sdkmath.NewInt(95),
 				},
 			},
 			expCounts: 1,
@@ -138,19 +164,19 @@ func TestUpdateStats(t *testing.T) {
 			attr: func() *types.TransferAttributes {
 				ta := defaultAttr()
 				ta.SetDestinationDenom("gwei")
-				ta.SetDestinationAmount(math.NewInt(50))
+				ta.SetDestinationAmount(sdkmath.NewInt(50))
 
 				return ta
 			},
 			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
-					Incoming: math.NewInt(100),
-					Outgoing: math.ZeroInt(),
+					Incoming: sdkmath.NewInt(100),
+					Outgoing: sdkmath.ZeroInt(),
 				},
 				"gwei": {
-					Incoming: math.ZeroInt(),
-					Outgoing: math.NewInt(50),
+					Incoming: sdkmath.ZeroInt(),
+					Outgoing: sdkmath.NewInt(50),
 				},
 			},
 			expCounts: 1,
@@ -160,20 +186,20 @@ func TestUpdateStats(t *testing.T) {
 			setup: func(ctx context.Context, d *dispatcher.Dispatcher) {
 				sourceID := core.CrossChainID{
 					ProtocolId:     core.PROTOCOL_IBC,
-					CounterpartyId: "hyperliquid",
+					CounterpartyId: "channel-1",
 				}
 
 				destID := core.CrossChainID{
 					ProtocolId:     core.PROTOCOL_CCTP,
-					CounterpartyId: "ethereum",
+					CounterpartyId: "1",
 				}
 
 				err := d.SetDispatchedCounts(ctx, &sourceID, &destID, 10)
 				require.NoError(t, err)
 
 				da := dispatchertypes.AmountDispatched{
-					Incoming: math.NewInt(1_000),
-					Outgoing: math.NewInt(1_000),
+					Incoming: sdkmath.NewInt(1_000),
+					Outgoing: sdkmath.NewInt(1_000),
 				}
 				err = d.SetDispatchedAmount(ctx, &sourceID, &destID, "uusdc", da)
 				require.NoError(t, err)
@@ -185,19 +211,19 @@ func TestUpdateStats(t *testing.T) {
 				ta := defaultAttr()
 
 				ta.SetDestinationDenom("gwei")
-				ta.SetDestinationAmount(math.NewInt(50))
+				ta.SetDestinationAmount(sdkmath.NewInt(50))
 
 				return ta
 			},
 			forwarding: defaultForwarding,
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
-					Incoming: math.NewInt(1_100),
-					Outgoing: math.NewInt(1_000),
+					Incoming: sdkmath.NewInt(1_100),
+					Outgoing: sdkmath.NewInt(1_000),
 				},
 				"gwei": {
-					Incoming: math.ZeroInt(),
-					Outgoing: math.NewInt(50),
+					Incoming: sdkmath.ZeroInt(),
+					Outgoing: sdkmath.NewInt(50),
 				},
 			},
 			expCounts: 11, // 1 from the test + 10 from the setup
@@ -265,52 +291,52 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 		{
 			name: "single entry with same denoms",
 			transferAttributes: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				ta, err := types.NewTransferAttributes(1, "channel-1", "uusdc", sdkmath.NewInt(100))
 				require.NoError(t, err)
 
 				return ta
 			},
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
-					Incoming: math.NewInt(100),
-					Outgoing: math.NewInt(100),
+					Incoming: sdkmath.NewInt(100),
+					Outgoing: sdkmath.NewInt(100),
 				},
 			},
 		},
 		{
 			name: "single entry with same denoms but different amounts",
 			transferAttributes: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				ta, err := types.NewTransferAttributes(1, "channel-1", "uusdc", sdkmath.NewInt(100))
 				require.NoError(t, err)
-				ta.SetDestinationAmount(math.NewInt(50))
+				ta.SetDestinationAmount(sdkmath.NewInt(50))
 
 				return ta
 			},
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
-					Incoming: math.NewInt(100),
-					Outgoing: math.NewInt(50),
+					Incoming: sdkmath.NewInt(100),
+					Outgoing: sdkmath.NewInt(50),
 				},
 			},
 		},
 		{
 			name: "two entries with different denoms",
 			transferAttributes: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "hyperliquid", "uusdc", math.NewInt(100))
+				ta, err := types.NewTransferAttributes(1, "channel-1", "uusdc", sdkmath.NewInt(100))
 				require.NoError(t, err)
 				ta.SetDestinationDenom("gwei")
-				ta.SetDestinationAmount(math.NewInt(50))
+				ta.SetDestinationAmount(sdkmath.NewInt(50))
 
 				return ta
 			},
 			expAmounts: map[string]dispatchertypes.AmountDispatched{
 				"uusdc": {
-					Incoming: math.NewInt(100),
-					Outgoing: math.ZeroInt(),
+					Incoming: sdkmath.NewInt(100),
+					Outgoing: sdkmath.ZeroInt(),
 				},
 				"gwei": {
-					Incoming: math.ZeroInt(),
-					Outgoing: math.NewInt(50),
+					Incoming: sdkmath.ZeroInt(),
+					Outgoing: sdkmath.NewInt(50),
 				},
 			},
 		},

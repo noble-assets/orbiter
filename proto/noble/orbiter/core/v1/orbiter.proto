@@ -54,7 +54,7 @@ message Forwarding {
   bytes passthrough_payload = 3;
 }
 
-// Payload represents the data the x/orbiter module
+// Payload represents the data the orbiter module
 // requires to handle cross-chain packets.
 message Payload {
   // pre_actions are a list of actions the orbiter module can interpret

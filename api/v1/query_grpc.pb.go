@@ -19,6 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	Query_ActionIDs_FullMethodName      = "/noble.orbiter.v1.Query/ActionIDs"
+	Query_ProtocolIDs_FullMethodName    = "/noble.orbiter.v1.Query/ProtocolIDs"
 	Query_PendingPayload_FullMethodName = "/noble.orbiter.v1.Query/PendingPayload"
 )
 
@@ -28,6 +30,8 @@ const (
 //
 // Query defines the gRPC query service for the Orbiter module.
 type QueryClient interface {
+	ActionIDs(ctx context.Context, in *QueryActionIDsRequest, opts ...grpc.CallOption) (*QueryActionIDsResponse, error)
+	ProtocolIDs(ctx context.Context, in *QueryProtocolIDsRequest, opts ...grpc.CallOption) (*QueryProtocolIDsResponse, error)
 	PendingPayload(ctx context.Context, in *QueryPendingPayloadRequest, opts ...grpc.CallOption) (*QueryPendingPayloadResponse, error)
 }
 
@@ -37,6 +41,26 @@ type queryClient struct {
 
 func NewQueryClient(cc grpc.ClientConnInterface) QueryClient {
 	return &queryClient{cc}
+}
+
+func (c *queryClient) ActionIDs(ctx context.Context, in *QueryActionIDsRequest, opts ...grpc.CallOption) (*QueryActionIDsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryActionIDsResponse)
+	err := c.cc.Invoke(ctx, Query_ActionIDs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ProtocolIDs(ctx context.Context, in *QueryProtocolIDsRequest, opts ...grpc.CallOption) (*QueryProtocolIDsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryProtocolIDsResponse)
+	err := c.cc.Invoke(ctx, Query_ProtocolIDs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *queryClient) PendingPayload(ctx context.Context, in *QueryPendingPayloadRequest, opts ...grpc.CallOption) (*QueryPendingPayloadResponse, error) {
@@ -55,6 +79,8 @@ func (c *queryClient) PendingPayload(ctx context.Context, in *QueryPendingPayloa
 //
 // Query defines the gRPC query service for the Orbiter module.
 type QueryServer interface {
+	ActionIDs(context.Context, *QueryActionIDsRequest) (*QueryActionIDsResponse, error)
+	ProtocolIDs(context.Context, *QueryProtocolIDsRequest) (*QueryProtocolIDsResponse, error)
 	PendingPayload(context.Context, *QueryPendingPayloadRequest) (*QueryPendingPayloadResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
@@ -66,6 +92,12 @@ type QueryServer interface {
 // pointer dereference when methods are called.
 type UnimplementedQueryServer struct{}
 
+func (UnimplementedQueryServer) ActionIDs(context.Context, *QueryActionIDsRequest) (*QueryActionIDsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActionIDs not implemented")
+}
+func (UnimplementedQueryServer) ProtocolIDs(context.Context, *QueryProtocolIDsRequest) (*QueryProtocolIDsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProtocolIDs not implemented")
+}
 func (UnimplementedQueryServer) PendingPayload(context.Context, *QueryPendingPayloadRequest) (*QueryPendingPayloadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PendingPayload not implemented")
 }
@@ -88,6 +120,42 @@ func RegisterQueryServer(s grpc.ServiceRegistrar, srv QueryServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&Query_ServiceDesc, srv)
+}
+
+func _Query_ActionIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryActionIDsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ActionIDs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_ActionIDs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ActionIDs(ctx, req.(*QueryActionIDsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ProtocolIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryProtocolIDsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ProtocolIDs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_ProtocolIDs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ProtocolIDs(ctx, req.(*QueryProtocolIDsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Query_PendingPayload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -115,6 +183,14 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "noble.orbiter.v1.Query",
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ActionIDs",
+			Handler:    _Query_ActionIDs_Handler,
+		},
+		{
+			MethodName: "ProtocolIDs",
+			Handler:    _Query_ProtocolIDs_Handler,
+		},
 		{
 			MethodName: "PendingPayload",
 			Handler:    _Query_PendingPayload_Handler,

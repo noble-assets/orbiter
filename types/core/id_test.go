@@ -22,6 +22,7 @@ package core_test
 
 import (
 	fmt "fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -93,10 +94,9 @@ func TestParseCrossChainID(t *testing.T) {
 			expErr: "invalid cross-chain ID",
 		},
 		{
-			name:              "success - when the format is not valid (multiple colons)",
-			id:                "1:channel:1",
-			expProtocolID:     core.PROTOCOL_IBC,
-			expCounterpartyID: "channel:1",
+			name:   "error - when the format is not valid (multiple colons)",
+			id:     "1:channel:1",
+			expErr: "invalid cross-chain ID",
 		},
 		{
 			name:              "success - with valid IBC ID",
@@ -122,6 +122,68 @@ func TestParseCrossChainID(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, tC.expProtocolID, ccID.GetProtocolId())
 				require.Equal(t, tC.expCounterpartyID, ccID.GetCounterpartyId())
+			}
+		})
+	}
+}
+
+func TestValidateCounterpartyID(t *testing.T) {
+	testCases := []struct {
+		name       string
+		id         string
+		protocolID core.ProtocolID
+		expError   string
+	}{
+		{
+			name:       "error - empty id",
+			id:         "",
+			protocolID: core.PROTOCOL_CCTP,
+			expError:   "cannot be empty",
+		},
+		{
+			name:       "error - too long",
+			id:         strings.Repeat("a", core.MaxCounterpartyIDLength+1),
+			protocolID: core.PROTOCOL_CCTP,
+			expError:   "cannot contain more than",
+		},
+		{
+			name:       "error - not a number with CCTP",
+			id:         " counterparty ",
+			protocolID: core.PROTOCOL_CCTP,
+			expError:   "invalid counterparty ID",
+		},
+		{
+			name:       "error - wrong string format with IBC",
+			id:         " counterparty ",
+			protocolID: core.PROTOCOL_IBC,
+			expError:   "invalid counterparty ID",
+		},
+		{
+			name:     "error - with default protocol ID",
+			id:       "12345",
+			expError: "invalid counterparty ID",
+		},
+		{
+			name:       "success - valid id with CCTP",
+			id:         "12345",
+			protocolID: core.PROTOCOL_CCTP,
+			expError:   "",
+		},
+		{
+			name:       "success - valid id with IBC",
+			id:         "channel-1",
+			protocolID: core.PROTOCOL_IBC,
+			expError:   "",
+		},
+	}
+
+	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			err := core.ValidateCounterpartyID(tC.id, tC.protocolID)
+			if tC.expError != "" {
+				require.ErrorContains(t, err, tC.expError)
+			} else {
+				require.NoError(t, err)
 			}
 		})
 	}

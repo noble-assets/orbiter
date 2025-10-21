@@ -236,9 +236,9 @@ func (c *FeeController) extractAttributes(
 func ComputeFeeAmount(amount math.Int, basisPoints uint64) (math.Int, error) {
 	basisPointsInt := math.NewIntFromUint64(basisPoints)
 	fee, err := amount.SafeMul(basisPointsInt)
-	if err != nil || fee.IsZero() {
+	if err != nil || !fee.IsPositive() {
 		return math.ZeroInt(), err
 	}
 
-	return fee.QuoRaw(core.BPSNormalizer), nil
+	return fee.QuoRaw(actiontypes.BPSNormalizer), nil
 }

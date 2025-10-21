@@ -27,6 +27,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	errorsmod "cosmossdk.io/errors"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	orbitertypes "github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
@@ -42,7 +43,49 @@ func NewQueryServer(k *Keeper) orbitertypes.QueryServer {
 	return &queryServer{Keeper: k}
 }
 
-func (s queryServer) PendingPayload(
+func (q *queryServer) ActionIDs(
+	_ context.Context,
+	req *orbitertypes.QueryActionIDsRequest,
+) (*orbitertypes.QueryActionIDsResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest
+	}
+
+	ids := map[int32]string{}
+	for id, action := range core.ActionID_name {
+		if action == core.ACTION_UNSUPPORTED.String() {
+			continue
+		}
+		ids[id] = action
+	}
+
+	return &orbitertypes.QueryActionIDsResponse{
+		ActionIds: ids,
+	}, nil
+}
+
+func (q *queryServer) ProtocolIDs(
+	_ context.Context,
+	req *orbitertypes.QueryProtocolIDsRequest,
+) (*orbitertypes.QueryProtocolIDsResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest
+	}
+
+	ids := map[int32]string{}
+	for id, protocol := range core.ProtocolID_name {
+		if protocol == core.PROTOCOL_UNSUPPORTED.String() {
+			continue
+		}
+		ids[id] = protocol
+	}
+
+	return &orbitertypes.QueryProtocolIDsResponse{
+		ProtocolIds: ids,
+	}, nil
+}
+
+func (s *queryServer) PendingPayload(
 	ctx context.Context,
 	req *orbitertypes.QueryPendingPayloadRequest,
 ) (*orbitertypes.QueryPendingPayloadResponse, error) {

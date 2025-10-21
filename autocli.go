@@ -51,19 +51,16 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				"executor": {
 					Service:           executortypes.Msg_serviceDesc.ServiceName,
 					Short:             "Actions executor management commands",
-					SubCommands:       map[string]*autocliv1.ServiceCommandDescriptor{},
 					RpcCommandOptions: executor.TxCommandOptions(),
 				},
 				"forwarder": {
 					Service:           forwardertypes.Msg_serviceDesc.ServiceName,
 					Short:             "Cross-chain forwarder management commands",
-					SubCommands:       map[string]*autocliv1.ServiceCommandDescriptor{},
 					RpcCommandOptions: forwarder.TxCommandOptions(),
 				},
 				"adapter": {
 					Service:           adaptertypes.Msg_serviceDesc.ServiceName,
 					Short:             "Cross-chain adapter management commands",
-					SubCommands:       map[string]*autocliv1.ServiceCommandDescriptor{},
 					RpcCommandOptions: adapter.TxCommandOptions(),
 				},
 				"payload": {
@@ -76,6 +73,16 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 		Query: &autocliv1.ServiceCommandDescriptor{
 			Service: orbiterv1.Query_ServiceDesc.ServiceName,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
+				// NOTE: we enforce autocli to skip these methods so we can assign them to
+				// a subcommand.
+				{
+					RpcMethod: "ActionIDs",
+					Skip:      true,
+				},
+				{
+					RpcMethod: "ProtocolIDs",
+					Skip:      true,
+				},
 				{
 					// NOTE: we're manually moving this to the `payload` sub command for better
 					// navigation
@@ -84,28 +91,40 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				},
 			},
 			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
+				"identifiers": {
+					Service: orbitertypes.Query_serviceDesc.ServiceName,
+					Short:   "Action and Protocol identifiers",
+					RpcCommandOptions: []*autocliv1.RpcCommandOptions{
+						{
+							RpcMethod: "ActionIDs",
+							Use:       "actions",
+							Short:     "List available action IDs",
+						},
+						{
+							RpcMethod: "ProtocolIDs",
+							Use:       "protocols",
+							Short:     "List available protocol IDs",
+						},
+					},
+				},
 				"adapter": {
 					Service:           adaptertypes.Query_serviceDesc.ServiceName,
 					Short:             "Cross-chain adapter query commands",
-					SubCommands:       map[string]*autocliv1.ServiceCommandDescriptor{},
 					RpcCommandOptions: adapter.QueryCommandOptions(),
 				},
 				"dispatcher": {
 					Service:           dispatchertypes.Query_serviceDesc.ServiceName,
 					Short:             "Payload dispatch statistics query commands",
-					SubCommands:       map[string]*autocliv1.ServiceCommandDescriptor{},
 					RpcCommandOptions: dispatcher.QueryCommandOptions(),
 				},
 				"executor": {
 					Service:           executortypes.Query_serviceDesc.ServiceName,
 					Short:             "Actions executor query commands",
-					SubCommands:       map[string]*autocliv1.ServiceCommandDescriptor{},
 					RpcCommandOptions: executor.QueryCommandOptions(),
 				},
 				"forwarder": {
 					Service:           forwardertypes.Query_serviceDesc.ServiceName,
 					Short:             "Cross-chain forwarder query commands",
-					SubCommands:       map[string]*autocliv1.ServiceCommandDescriptor{},
 					RpcCommandOptions: forwarder.QueryCommandOptions(),
 				},
 				"payload": {

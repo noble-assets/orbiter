@@ -27,6 +27,10 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
+// CCTPNobleDomain is the identifier of the Noble domain
+// in the CCTP protocol.
+const CCTPNobleDomain = 4
+
 var _ core.ForwardingAttributes = &CCTPAttributes{}
 
 // CounterpartyID implements core.ForwardingAttributes.
@@ -55,7 +59,7 @@ func (a *CCTPAttributes) Validate() error {
 		return core.ErrNilPointer.Wrap("CCTP attributes")
 	}
 
-	if a.DestinationDomain == core.CCTPNobleDomain {
+	if a.DestinationDomain == CCTPNobleDomain {
 		return errors.New("destination domain cannot be Noble")
 	}
 	if len(a.MintRecipient) == 0 {

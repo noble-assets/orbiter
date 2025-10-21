@@ -18,19 +18,18 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package adapter
+package dispatcher
 
 import (
-	"context"
-
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
+	"cosmossdk.io/collections"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
-// GetParams returns the adapter params from state.
-func (a *Adapter) GetParams(ctx context.Context) (adaptertypes.Params, error) {
-	return a.params.Get(ctx)
-}
-
-func (a *Adapter) SetParams(ctx context.Context, params adaptertypes.Params) error {
-	return a.params.Set(ctx, params)
+func WithCollectionPaginationQuadPrefix[K1, K2, K3, K4 any](
+	prefix K1,
+) func(o *query.CollectionsPaginateOptions[collections.Quad[K1, K2, K3, K4]]) {
+	return func(o *query.CollectionsPaginateOptions[collections.Quad[K1, K2, K3, K4]]) {
+		prefix := collections.QuadPrefix[K1, K2, K3, K4](prefix)
+		o.Prefix = &prefix
+	}
 }

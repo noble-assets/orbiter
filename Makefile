@@ -102,7 +102,11 @@ nancy:
 	@go list -json -deps ./... | docker run --rm -i \
 	  --volume "$(PWD)":/workspace \
 	  --workdir /workspace \
+	  -e NANCY_USER \
+	  -e NANCY_TOKEN \
 	  $(NANCY_IMAGE) sleuth \
+       --username $(NANCY_USER) \
+       --token $(NANCY_TOKEN) \
 	  --exclude-vulnerability-file .nancy-ignore
 	@echo "Completed Nancy vulnerability scan!"
 

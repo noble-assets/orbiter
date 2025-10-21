@@ -26,7 +26,6 @@ import (
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 
-	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/controller/forwarding"
@@ -56,10 +55,14 @@ func (s msgServer) PauseProtocol(
 		return nil, err
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
+	protocolID, err := core.NewProtocolIDFromString(msg.ProtocolId)
+	if err != nil {
+		return nil, core.ErrUnableToPause.Wrap(err.Error())
+	}
+
 	if err := s.Pause(ctx, protocolID, nil); err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
-			"protocol: %s", err.Error(),
+			"error setting paused state: %s", err.Error(),
 		)
 	}
 
@@ -67,7 +70,7 @@ func (s msgServer) PauseProtocol(
 		ctx,
 		&forwardertypes.EventProtocolPaused{ProtocolId: protocolID},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit protocol paused event")
+		return nil, core.ErrUnableToPause.Wrapf("failed to emit event: %s", err.Error())
 	}
 
 	return &forwardertypes.MsgPauseProtocolResponse{}, nil
@@ -81,10 +84,14 @@ func (s msgServer) UnpauseProtocol(
 		return nil, err
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
+	protocolID, err := core.NewProtocolIDFromString(msg.ProtocolId)
+	if err != nil {
+		return nil, core.ErrUnableToUnpause.Wrap(err.Error())
+	}
+
 	if err := s.Unpause(ctx, protocolID, nil); err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
-			"protocol: %s", err.Error(),
+			"error setting unpaused state: %s", err.Error(),
 		)
 	}
 
@@ -92,7 +99,7 @@ func (s msgServer) UnpauseProtocol(
 		ctx,
 		&forwardertypes.EventProtocolUnpaused{ProtocolId: protocolID},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit protocol unpaused event")
+		return nil, core.ErrUnableToUnpause.Wrapf("failed to emit event: %s", err.Error())
 	}
 
 	return &forwardertypes.MsgUnpauseProtocolResponse{}, nil
@@ -106,10 +113,21 @@ func (s msgServer) PauseCrossChains(
 		return nil, err
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
+	protocolID, err := core.NewProtocolIDFromString(msg.ProtocolId)
+	if err != nil {
+		return nil, core.ErrUnableToPause.Wrapf("invalid protocol id: %s", err.Error())
+	}
+
+	if len(msg.CounterpartyIds) > core.MaxTargetCounterparties {
+		return nil, core.ErrUnableToPause.Wrapf(
+			"cannot pause more than %d counterparties in a transaction",
+			core.MaxTargetCounterparties,
+		)
+	}
+
 	if err := s.Pause(ctx, protocolID, msg.CounterpartyIds); err != nil {
 		return nil, core.ErrUnableToPause.Wrapf(
-			"cross-chains: %s", err.Error(),
+			"error setting paused state: %s", err.Error(),
 		)
 	}
 
@@ -120,7 +138,7 @@ func (s msgServer) PauseCrossChains(
 			CounterpartyIds: msg.CounterpartyIds,
 		},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit cross-chains paused event")
+		return nil, core.ErrUnableToPause.Wrapf("failed to emit event: %s", err.Error())
 	}
 
 	return &forwardertypes.MsgPauseCrossChainsResponse{}, nil
@@ -134,10 +152,21 @@ func (s msgServer) UnpauseCrossChains(
 		return nil, err
 	}
 
-	protocolID := core.ProtocolID(core.ProtocolID_value[msg.ProtocolId])
+	protocolID, err := core.NewProtocolIDFromString(msg.ProtocolId)
+	if err != nil {
+		return nil, core.ErrUnableToUnpause.Wrapf("invalid protocol id: %s", err.Error())
+	}
+
+	if len(msg.CounterpartyIds) > core.MaxTargetCounterparties {
+		return nil, core.ErrUnableToUnpause.Wrapf(
+			"cannot unpause more than %d counterparties in a transaction",
+			core.MaxTargetCounterparties,
+		)
+	}
+
 	if err := s.Unpause(ctx, protocolID, msg.CounterpartyIds); err != nil {
 		return nil, core.ErrUnableToUnpause.Wrapf(
-			"cross-chains: %s", err.Error(),
+			"error setting unpaused state: %s", err.Error(),
 		)
 	}
 
@@ -148,7 +177,7 @@ func (s msgServer) UnpauseCrossChains(
 			CounterpartyIds: msg.CounterpartyIds,
 		},
 	); err != nil {
-		return nil, errorsmod.Wrap(err, "failed to emit cross-chains unpaused event")
+		return nil, core.ErrUnableToUnpause.Wrapf("failed to emit event: %s", err.Error())
 	}
 
 	return &forwardertypes.MsgUnpauseCrossChainsResponse{}, nil
