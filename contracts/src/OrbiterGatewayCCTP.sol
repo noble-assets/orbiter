@@ -54,10 +54,9 @@ contract OrbiterGatewayCCTP {
      * passing are executed successfully.
      * @param transferNonce Nonce of the CCTP deposit for burn message.
      * @param payloadNonce Nonce of the GMP message containing the payload hash.
-     * @param payloadHash Hash of the Orbiter payload.
      */
     event DepositForBurnWithOrbiterPayload(
-        uint256 indexed transferNonce, uint256 indexed payloadNonce, bytes32 indexed payloadHash
+        uint256 indexed transferNonce, uint256 indexed payloadNonce
     );
 
     /// @notice Noble chain identifier
@@ -108,13 +107,13 @@ contract OrbiterGatewayCCTP {
      * @param amount Amount of tokens to transfer.
      * @param blocktimeDeadline Blocktime after which the permit expires.
      * @param permitSignature ABI encoded secp256k1 signature of the user.
-     * @param payloadHash Hash of the Orbiter payload that will be executed.
+     * @param orbiterPayload Bytes of the Orbiter payload.
      */
     function depositForBurnWithOrbiterPayload(
         uint256 amount,
         uint256 blocktimeDeadline,
         bytes calldata permitSignature,
-        bytes32 payloadHash
+        bytes calldata orbiterPayload
     ) external {
         // NOTE: maybe we can save gas passing directly v, s, and r.
         (uint8 v, bytes32 r, bytes32 s) = abi.decode(permitSignature, (uint8, bytes32, bytes32));
@@ -131,9 +130,9 @@ contract OrbiterGatewayCCTP {
             DESTINATION_DOMAIN,
             MINT_RECIPIENT,
             DESTINATION_CALLER,
-            abi.encodePacked(transferNonce, payloadHash)
+            abi.encodePacked(transferNonce, orbiterPayload)
         );
 
-        emit DepositForBurnWithOrbiterPayload(transferNonce, payloadNonce, payloadHash);
+        emit DepositForBurnWithOrbiterPayload(transferNonce, payloadNonce);
     }
 }

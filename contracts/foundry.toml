@@ -1,5 +1,6 @@
 [profile.default]
 remappings = ["forge-std/=node_modules/forge-std/src/"]
+libs = ["node_modules", "lib"]
 
 [fmt]
 multiline_func_header = "attributes_first"

@@ -34,7 +34,7 @@ contract TestOrbiterGatewayCCTP is Test {
     bytes32 public constant DESTINATION_CALLER = bytes32(uint256(uint160(address(0x2))));
 
     /// @notice The payload hash is not decoded in the gateway so it could be a generic 32 bytes
-    bytes32 public constant PAYLOAD_HASH = keccak256("test payload");
+    bytes public constant PAYLOAD = bytes("test payload");
     bytes32 public constant ORBITER_ADDRESS =
         bytes32(0x000000000000000000000000a197eb1a9bfe6143b2d6499897fc1e3c1cfacbb2);
 
@@ -109,10 +109,10 @@ contract TestOrbiterGatewayCCTP is Test {
 
         // Expect events
         vm.expectEmit(true, true, true, true);
-        emit OrbiterGatewayCCTP.DepositForBurnWithOrbiterPayload(0, 0, PAYLOAD_HASH);
+        emit OrbiterGatewayCCTP.DepositForBurnWithOrbiterPayload(0, 0);
 
         gateway.depositForBurnWithOrbiterPayload(
-            TRANSFER_AMOUNT, PERMIT_DEADLINE, permitSig, PAYLOAD_HASH
+            TRANSFER_AMOUNT, PERMIT_DEADLINE, permitSig, PAYLOAD
         );
 
         vm.stopPrank();
@@ -129,12 +129,12 @@ contract TestOrbiterGatewayCCTP is Test {
 
         // First deposit
         gateway.depositForBurnWithOrbiterPayload(
-            TRANSFER_AMOUNT / 2, PERMIT_DEADLINE, permitSig, PAYLOAD_HASH
+            TRANSFER_AMOUNT / 2, PERMIT_DEADLINE, permitSig, PAYLOAD
         );
 
         // Second deposit
         gateway.depositForBurnWithOrbiterPayload(
-            TRANSFER_AMOUNT / 2, PERMIT_DEADLINE, permitSig, PAYLOAD_HASH
+            TRANSFER_AMOUNT / 2, PERMIT_DEADLINE, permitSig, PAYLOAD
         );
 
         vm.stopPrank();
