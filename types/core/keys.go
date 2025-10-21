@@ -106,3 +106,21 @@ const (
 var OrbiterPrefix = ModuleName
 
 var AdapterParamsPrefix = collections.NewPrefix(40)
+
+// ====================================================================================================
+// Keeper
+// ====================================================================================================.
+
+const (
+	PendingPayloadsName         = "pending_payloads"
+	PendingPayloadsSequenceName = "pending_payloads_sequence"
+
+	HashesByTimeIndexName = "payload_hashes_by_time"
+)
+
+var (
+	PendingPayloadsPrefix         = collections.NewPrefix(50)
+	PendingPayloadsSequencePrefix = collections.NewPrefix(51)
+
+	HashesByTimeIndexPrefix = collections.NewPrefix(52)
+)

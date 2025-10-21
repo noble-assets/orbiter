@@ -23,6 +23,10 @@ package keeper
 import (
 	"context"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
+	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	orbitertypes "github.com/noble-assets/orbiter/types"
@@ -78,5 +82,28 @@ func (q *queryServer) ProtocolIDs(
 
 	return &orbitertypes.QueryProtocolIDsResponse{
 		ProtocolIds: ids,
+	}, nil
+}
+
+func (s *queryServer) PendingPayload(
+	ctx context.Context,
+	req *orbitertypes.QueryPendingPayloadRequest,
+) (*orbitertypes.QueryPendingPayloadResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "empty request")
+	}
+
+	hash, err := core.NewPayloadHash(req.Hash)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, errorsmod.Wrap(err, "invalid hash").Error())
+	}
+
+	payload, err := s.pendingPayload(ctx, hash)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, errorsmod.Wrap(err, "payload not found").Error())
+	}
+
+	return &orbitertypes.QueryPendingPayloadResponse{
+		Payload: payload.Payload,
 	}, nil
 }
