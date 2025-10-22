@@ -49,6 +49,11 @@ contract OrbiterGatewayCCTP {
     /// @notice Thrown when the address of the destination caller is the zero address.
     error ZeroDestinationCaller();
 
+    /// @notice Thrown when the transfer from fails.
+    error TransferFailed();
+    /// @notice Thrown when the approaval for transfer from failed.
+    error ApproveFailed();
+
     /**
      * @notice Emitted when the deposit for burn and the general message
      * passing are executed successfully.
@@ -56,7 +61,7 @@ contract OrbiterGatewayCCTP {
      * @param payloadNonce Nonce of the GMP message containing the payload hash.
      */
     event DepositForBurnWithOrbiterPayload(
-        uint256 indexed transferNonce, uint256 indexed payloadNonce
+        uint64 indexed transferNonce, uint64 indexed payloadNonce
     );
 
     /// @notice Noble chain identifier
@@ -119,8 +124,12 @@ contract OrbiterGatewayCCTP {
         (uint8 v, bytes32 r, bytes32 s) = abi.decode(permitSignature, (uint8, bytes32, bytes32));
 
         TOKEN.permit(msg.sender, address(this), amount, blocktimeDeadline, v, r, s);
-        TOKEN.transferFrom(msg.sender, address(this), amount);
-        TOKEN.approve(address(TOKEN_MESSENGER), amount);
+        if (!TOKEN.transferFrom(msg.sender, address(this), amount)) {
+            revert TransferFailed();
+        }
+        if (!TOKEN.approve(address(TOKEN_MESSENGER), amount)) {
+            revert ApproveFailed();
+        }
 
         uint64 transferNonce = TOKEN_MESSENGER.depositForBurnWithCaller(
             amount, DESTINATION_DOMAIN, MINT_RECIPIENT, address(TOKEN), DESTINATION_CALLER
