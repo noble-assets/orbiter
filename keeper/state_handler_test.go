@@ -21,7 +21,10 @@
 package keeper_test
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
+	"encoding/hex"
 	"fmt"
 	"strings"
 	"testing"
@@ -36,6 +39,9 @@ import (
 	"github.com/noble-assets/orbiter/types/controller/action"
 	"github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types/core"
+
+	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestAcceptPayload(t *testing.T) {
@@ -411,4 +417,53 @@ func createTestPendingPayloadWithSequence(
 		Sequence: sequence,
 		Payload:  validPayload,
 	}
+}
+
+func TestFullPendingPayload(t *testing.T) {
+	fee1, err := action.NewFeeAction(
+		&action.FeeInfo{
+			Recipient:   testutil.NewNobleAddress(),
+			BasisPoints: 100,
+		},
+		&action.FeeInfo{
+			Recipient:   testutil.NewNobleAddress(),
+			BasisPoints: 200,
+		},
+	)
+	require.NoError(t, err, "failed to create fee action")
+
+	fw, err := forwarding.NewHyperlaneForwarding(
+		testutil.RandomBytes(32),
+		0,
+		testutil.RandomBytes(32),
+		testutil.RandomBytes(32),
+		"",
+		sdkmath.NewInt(100),
+		sdk.NewCoin("usdc", sdkmath.NewInt(100)),
+		testutil.RandomBytes(32),
+	)
+	require.NoError(t, err, "failed to create forwarding")
+
+	payload, err := core.NewPayload(fw, fee1)
+	require.NoError(t, err, "failed to create payload")
+
+	bz, err := payload.Marshal()
+	require.NoError(t, err, "failed to marshal payload")
+
+	encoded := hex.EncodeToString(bz)
+	t.Log(encoded)
+
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+
+	_, err = gz.Write(bz)
+	require.NoError(t, err, "failed to write to gzip writer")
+
+	err = gz.Close()
+	require.NoError(t, err, "failed to close gzip writer")
+
+	compressed := buf.Bytes()
+
+	t.Log(hex.EncodeToString(compressed))
+	require.False(t, true)
 }
