@@ -2,6 +2,6 @@
   "name": "contracts",
   "private": true,
   "devDependencies": {
-    "forge-std": "github:foundry-rs/forge-std#1.4.3-stable"
+    "forge-std": "github:foundry-rs/forge-std"
   }
 }
