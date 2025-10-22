@@ -98,7 +98,8 @@ contract TestOrbiterHypERC20 is Test {
         remoteMailbox.setRequiredHook(address(noopHook));
 
         // Deploy the Orbiter gateway contract.
-        gateway = new OrbiterGateway();
+        uint32 nobleDomain = 1;
+        gateway = new OrbiterGateway(nobleDomain);
 
         // Set up Orbiter transient store.
         OrbiterTransientStorage ots = new OrbiterTransientStorage(address(gateway));

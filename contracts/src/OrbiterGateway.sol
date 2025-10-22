@@ -33,7 +33,7 @@ import { OrbiterHypERC20 } from "./OrbiterHypERC20.sol";
 contract OrbiterGateway {
     uint32 private destinationDomain;
 
-    function constructor(uint32 _domain) {
+    constructor(uint32 _domain) {
         destinationDomain = _domain;
     }
 
