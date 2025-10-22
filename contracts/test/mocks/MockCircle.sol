@@ -40,9 +40,15 @@ contract MockFiatToken is IFiatToken {
         return true;
     }
 
-    function permit(address owner, address spender, uint256 value, uint256, uint8, bytes32, bytes32)
-        external
-    {
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256,
+        uint8,
+        bytes32,
+        bytes32
+    ) external {
         allowances[owner][spender] = value;
     }
 
