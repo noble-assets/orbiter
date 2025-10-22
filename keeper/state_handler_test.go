@@ -29,6 +29,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/andybalholm/brotli"
 	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 
@@ -429,6 +430,10 @@ func TestFullPendingPayload(t *testing.T) {
 			Recipient:   testutil.NewNobleAddress(),
 			BasisPoints: 200,
 		},
+		&action.FeeInfo{
+			Recipient:   testutil.NewNobleAddress(),
+			BasisPoints: 300,
+		},
 	)
 	require.NoError(t, err, "failed to create fee action")
 
@@ -440,7 +445,7 @@ func TestFullPendingPayload(t *testing.T) {
 		"",
 		sdkmath.NewInt(100),
 		sdk.NewCoin("usdc", sdkmath.NewInt(100)),
-		testutil.RandomBytes(32),
+		nil,
 	)
 	require.NoError(t, err, "failed to create forwarding")
 
@@ -451,7 +456,7 @@ func TestFullPendingPayload(t *testing.T) {
 	require.NoError(t, err, "failed to marshal payload")
 
 	encoded := hex.EncodeToString(bz)
-	t.Log(encoded)
+	t.Logf("uncompressed: %d bytes: %s", len(bz), encoded)
 
 	var buf bytes.Buffer
 	gz := gzip.NewWriter(&buf)
@@ -462,8 +467,19 @@ func TestFullPendingPayload(t *testing.T) {
 	err = gz.Close()
 	require.NoError(t, err, "failed to close gzip writer")
 
-	compressed := buf.Bytes()
+	compressed := hex.EncodeToString(buf.Bytes())
+	t.Logf("gzip: %d bytes: %s", len(buf.Bytes()), compressed)
 
-	t.Log(hex.EncodeToString(compressed))
+	var buf2 bytes.Buffer
+	br := brotli.NewWriter(&buf2)
+	_, err = br.Write(bz)
+	require.NoError(t, err, "failed to write to brotli writer")
+
+	err = br.Close()
+	require.NoError(t, err, "failed to close brotli writer")
+
+	compressed2 := hex.EncodeToString(buf2.Bytes())
+
+	t.Logf("brotli: %d bytes: %s", len(buf2.Bytes()), compressed2)
 	require.False(t, true)
 }
