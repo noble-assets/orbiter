@@ -122,11 +122,11 @@ contract OrbiterGatewayCCTP {
         TOKEN.transferFrom(msg.sender, address(this), amount);
         TOKEN.approve(address(TOKEN_MESSENGER), amount);
 
-        uint256 transferNonce = TOKEN_MESSENGER.depositForBurnWithCaller(
+        uint64 transferNonce = TOKEN_MESSENGER.depositForBurnWithCaller(
             amount, DESTINATION_DOMAIN, MINT_RECIPIENT, address(TOKEN), DESTINATION_CALLER
         );
 
-        uint256 payloadNonce = MESSAGE_TRANSMITTER.sendMessageWithCaller(
+        uint64 payloadNonce = MESSAGE_TRANSMITTER.sendMessageWithCaller(
             DESTINATION_DOMAIN,
             MINT_RECIPIENT,
             DESTINATION_CALLER,
