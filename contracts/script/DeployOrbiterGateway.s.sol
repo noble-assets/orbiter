@@ -8,9 +8,11 @@ import { OrbiterGateway } from "../src/OrbiterGateway.sol";
 
 contract DeployOrbiterGateway is Script {
     function run() external {
+        uint32 nobleDomain = 6;
+
         vm.startBroadcast();
 
-        OrbiterGateway gw = new OrbiterGateway();
+        OrbiterGateway gw = new OrbiterGateway(nobleDomain);
         console.log("deployed hyperlane gateway at: ", address(gw));
 
         vm.stopBroadcast();

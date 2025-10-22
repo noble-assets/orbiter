@@ -20,7 +20,6 @@ pragma solidity ^0.8.24;
 import "forge-std/Test.sol";
 
 import { OrbiterHypERC20 } from "../src/OrbiterHypERC20.sol";
-import { OrbiterTransientStorage } from "../src/OrbiterTransientStorage.sol";
 import { OrbiterGateway } from "../src/OrbiterGateway.sol";
 
 import { Mailbox } from "@hyperlane/Mailbox.sol";
@@ -29,6 +28,7 @@ import { TypeCasts } from "@hyperlane/libs/TypeCasts.sol";
 import { Message } from "@hyperlane/libs/Message.sol";
 import { MockMailbox } from "@hyperlane/mock/MockMailbox.sol";
 import { TestPostDispatchHook } from "@hyperlane/test/TestPostDispatchHook.sol";
+import { HypERC20 } from "@hyperlane/token/HypERC20.sol";
 import { TokenMessage } from "@hyperlane/token/libs/TokenMessage.sol";
 import { TokenRouter } from "@hyperlane/token/libs/TokenRouter.sol";
 
@@ -98,24 +98,20 @@ contract TestOrbiterHypERC20 is Test {
         remoteMailbox.setRequiredHook(address(noopHook));
 
         // Deploy the Orbiter gateway contract.
-        gateway = new OrbiterGateway();
-
-        // Set up Orbiter transient store.
-        OrbiterTransientStorage ots = new OrbiterTransientStorage(address(gateway));
+        uint32 nobleDomain = 6;
+        gateway = new OrbiterGateway(nobleDomain);
 
         // Deploy Orbiter compatible token with a proxy.
         localToken = deployOrbiterHypERC20(
             address(originMailbox),
             address(noopHook),
-            HYP_OWNER,
-            address(ots)
+            HYP_OWNER
         );
 
         remoteToken = deployOrbiterHypERC20(
             address(remoteMailbox),
             address(noopHook),
-            HYP_OWNER,
-            address(ots)
+            HYP_OWNER
         );
 
         // After setting up the state we need to fund the test accounts
@@ -172,7 +168,7 @@ contract TestOrbiterHypERC20 is Test {
         // Approve the gateway contract to spend ALICE's tokens
         require(localToken.approve(address(gateway), sentAmount), "failed to approve gateway");
 
-        bytes32 sentPayloadHash = bytes32(uint256(1234));
+        bytes memory sentPayload = abi.encodePacked(uint256(123));
 
         // NOTE: the expected message is the wrapped token message with the contained payload.
         bytes memory expectedMessage = _formatMessageWithMemoryBody(
@@ -184,7 +180,7 @@ contract TestOrbiterHypERC20 is Test {
             TokenMessage.format(
                 BOB.addressToBytes32(),
                 sentAmount,
-                abi.encodePacked(sentPayloadHash)
+                sentPayload
             )
         );
 
@@ -198,10 +194,9 @@ contract TestOrbiterHypERC20 is Test {
 
         bytes32 messageID = gateway.sendForwardedTransfer(
             address(localToken),
-            DESTINATION,
             BOB.addressToBytes32(),
             sentAmount,
-            sentPayloadHash
+            sentPayload
         );
         assertNotEq32(messageID, 0, "expected non-zero message ID");
 
@@ -235,20 +230,6 @@ contract TestOrbiterHypERC20 is Test {
         require(localToken.balanceOf(ALICE) == initialBalance - sentAmount, "expected tokens to be sent");
     }
 
-    /// @notice This test shows that the Orbiter transient storage cannot be
-    /// called from external addresses but only from the Gateway contract
-    /// that is its owner.
-    function testSetPendingPayload() public {
-        OrbiterTransientStorage ots = localToken.getOrbiterTransientStore();
-
-        vm.prank(address(gateway));
-        ots.setPendingPayloadHash(bytes32(uint256(123)));
-
-        vm.prank(ALICE);
-        vm.expectRevert("Ownable: caller is not the owner");
-        ots.setPendingPayloadHash(bytes32(uint256(123)));
-    }
-
     /// @notice Helper function to format a message with bytes memory body
     /// @dev This is needed because Message.formatMessage expects bytes calldata.
     ///
@@ -279,12 +260,10 @@ contract TestOrbiterHypERC20 is Test {
     /// @param _mailboxAddress Address of the used mailbox for this Hyperlane token.
     /// @param _hook Address of the used post-dispatch hook.
     /// @param _owner Address of the contract owner.
-    /// @param _otsAddress Address of the Orbiter transient storage associated with this contract.
     function deployOrbiterHypERC20(
         address _mailboxAddress,
         address _hook,
-        address _owner,
-        address _otsAddress
+        address _owner
     ) internal returns (OrbiterHypERC20) {
         OrbiterHypERC20 implementation = new OrbiterHypERC20(
             DECIMALS,
@@ -296,16 +275,14 @@ contract TestOrbiterHypERC20 is Test {
             address(implementation),
             msg.sender,
             abi.encodeWithSelector(
-                OrbiterHypERC20.initialize.selector,
+                HypERC20.initialize.selector,
                 // default HypERC20 initialization arguments
                 TOTAL_SUPPLY,
                 NAME,
                 SYMBOL,
                 _hook,
                 address(0), // using no IGP here
-                _owner,
-                // custom OrbiterHypERC20 initialization arguments
-                _otsAddress
+                _owner
             )
         );
 

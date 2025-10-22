@@ -16,17 +16,16 @@ contract SendForwardedTransfer is Script {
         uint32 destinationDomain = 1;
         bytes32 recipient = bytes32(0);
         uint256 amount = 123;
-        bytes32 payloadHash = bytes32(uint256(10203040));
+        bytes memory payload = abi.encodePacked(uint256(10203040));
 
         vm.startBroadcast();
 
         OrbiterGateway gw = OrbiterGateway(gateway);
         bytes32 messageID = gw.sendForwardedTransfer(
             tokenAddress,
-            destinationDomain,
             recipient,
             amount,
-            payloadHash
+            payload
         );
 
         console.log("sent message ID: ");
