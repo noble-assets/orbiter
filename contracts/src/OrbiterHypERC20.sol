@@ -25,6 +25,9 @@ import { TokenMessage } from "@hyperlane/token/libs/TokenMessage.sol";
 /// @notice Extends the HypERC20 contracts to include custom payload handling
 /// for cross-chain transfers using Noble's Orbiter.
 contract OrbiterHypERC20 is HypERC20 {
+    /// @notice The error raised when receiving empty payload bytes.
+    error EmptyPayload();
+
     /// @notice Calls the constructor method of the underlying HypERC20 contract.
     /// @param _decimals The decimals of the ERC-20 token.
     /// @param _scale The scaling factor to apply for cross-chain transfers.
@@ -40,6 +43,7 @@ contract OrbiterHypERC20 is HypERC20 {
     /// @param _destination The destination domain for the cross-chain transfer.
     /// @param _recipient The bytes32 representation of the recipient address.
     /// @param _amount The sent token amount.
+    /// @param _payload The orbiter payload sent along with the token transfer.
     /// @return messageID The message ID of the dispatched Hyperlane message.
     function transferRemoteWithPayload(
         uint32 _destination,
@@ -58,6 +62,16 @@ contract OrbiterHypERC20 is HypERC20 {
         );
     }
 
+    /// @notice Transfer assets cross-chain using the Hyperlane message passing
+    /// framework and send a payload along with it.
+    /// @param _destination The destination domain for the cross-chain transfer.
+    /// @param _recipient The bytes32 representation of the recipient address.
+    /// @param _amount The sent token amount.
+    /// @param _value The sent amount of native denomination sent along with the contract call.
+    /// @param _hookMetadata Any metadata required for the registered hook for this token.
+    /// @param _hook The address of the hook contract.
+    /// @param _payload The orbiter payload sent along with the token transfer.
+    /// @return messageID The message ID of the dispatched Hyperlane message.
     function _transferRemoteWithPayload(
         uint32 _destination,
         bytes32 _recipient,
@@ -66,19 +80,22 @@ contract OrbiterHypERC20 is HypERC20 {
         bytes memory _hookMetadata,
         address _hook,
         bytes calldata _payload
-    ) internal virtual returns (bytes32) {
+    ) internal virtual returns (bytes32 messageID) {
         // Run default logic for HypERC20 token.
         HypERC20._transferFromSender(_amount);
 
         // We only want to handle transfers with a non-zero payload.
-        require(_payload.length != 0, "not supporting empty payloads");
+        if (_payload.length == 0) {
+            revert EmptyPayload();
+        }
+
         bytes memory _tokenMessage = TokenMessage.format(
             _recipient,
             _amount,
             _payload
         );
 
-        bytes32 messageID = _Router_dispatch(
+        messageID = _Router_dispatch(
             _destination,
             _value,
             _tokenMessage,

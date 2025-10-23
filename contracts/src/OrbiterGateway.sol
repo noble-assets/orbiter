@@ -32,6 +32,8 @@ import { OrbiterHypERC20 } from "./OrbiterHypERC20.sol";
 contract OrbiterGateway {
     uint32 private destinationDomain;
 
+    /// @notice Creates a new instance of the OrbiterGateway contract.
+    /// @param _domain The Hyperlane domain of the Noble network, which is the destination domain for Orbiter transfers.
     constructor(uint32 _domain) {
         destinationDomain = _domain;
     }
