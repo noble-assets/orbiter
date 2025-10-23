@@ -40,12 +40,8 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var (
-	// General interface compliance.
-	_ orbitertypes.Authorizer             = &Keeper{}
-	_ orbitertypes.MsgServer              = &Keeper{}
-	_ orbitertypes.PendingPayloadsHandler = &Keeper{}
-)
+// General interface compliance.
+var _ orbitertypes.Authorizer = &Keeper{}
 
 // Keeper is the main module keeper.
 type Keeper struct {
@@ -61,14 +57,6 @@ type Keeper struct {
 	forwarder  *forwardercomp.Forwarder
 	dispatcher *dispatchercomp.Dispatcher
 	adapter    *adaptercomp.Adapter
-
-	// pendingPayloads stores the pending payloads addressed by their keccak256 hash.
-	pendingPayloads collections.Map[[]byte, core.PendingPayload]
-	// PendingPayloadsSequence is the unique identifier of a given pending payload handled by the
-	// orbiter.
-	//
-	// TODO: this is only exported to be able to set the sequence in tests -- make private again?
-	PendingPayloadsSequence collections.Sequence
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -93,19 +81,6 @@ func NewKeeper(
 		eventService: eventService,
 		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
 		authority:    authority,
-
-		PendingPayloadsSequence: collections.NewSequence(
-			sb,
-			core.PendingPayloadsSequencePrefix,
-			core.PendingPayloadsSequenceName,
-		),
-		pendingPayloads: collections.NewMap[[]byte, core.PendingPayload](
-			sb,
-			core.PendingPayloadsPrefix,
-			core.PendingPayloadsName,
-			collections.BytesKey,
-			codec.CollValue[core.PendingPayload](cdc),
-		),
 	}
 
 	if err := k.setComponents(k.cdc, k.logger, k.eventService, sb, bankKeeper); err != nil {

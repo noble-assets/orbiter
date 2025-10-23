@@ -24,8 +24,6 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/noble-assets/orbiter/types/core"
 )
 
 // BankKeeper wraps the bank behaviors expected by the orbiter
@@ -53,12 +51,4 @@ type BankKeeperAdapter interface {
 		senderModule, recipientModule string,
 		amt sdk.Coins,
 	) error
-}
-
-// PendingPayloadsHandler defines the interface to adjust and query the Orbiter module
-// state as it relates to the bookkeeping of pending payloads.
-type PendingPayloadsHandler interface {
-	AcceptPayload(ctx context.Context, payload *core.Payload) ([]byte, error)
-	RemovePendingPayload(ctx context.Context, hash []byte) error
-	PendingPayload(ctx context.Context, hash []byte) (*core.PendingPayload, error)
 }

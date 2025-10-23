@@ -168,7 +168,6 @@ func InjectAdapterControllers(in ComponentsInputs) {
 
 	hyperlane, err := adapterctrl.NewHyperlaneAdapter(
 		in.Orbiters.Logger(),
-		in.Orbiters,
 		in.HyperlaneCoreKeeper,
 		in.WarpKeeper,
 	)

@@ -30,10 +30,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/noble-assets/orbiter/testutil"
+	"github.com/noble-assets/orbiter/types/controller/action"
+	"github.com/noble-assets/orbiter/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/types/core"
 	"github.com/noble-assets/orbiter/types/hyperlane"
 )
 
 func TestPayloadConversion(t *testing.T) {
+	testutil.SetSDKConfig()
+
 	testAddr := ethcommon.BytesToAddress(testutil.AddressBytes())
 	testAmount := big.NewInt(1000)
 
@@ -42,20 +47,20 @@ func TestPayloadConversion(t *testing.T) {
 
 	bz := expWarpPayload.Bytes()
 
-	testPayloadHash := ethcommon.LeftPadBytes(
-		[]byte{1, 0, 0, 1, 1, 0, 0, 0},
-		hyperlane.PAYLOAD_HASH_LENGTH,
-	)
+	testPayload := createTestPayload(t)
 
-	fullPayload := make([]byte, hyperlane.ORBITER_PAYLOAD_SIZE)
-	copy(fullPayload[:len(bz)], bz)
-	copy(fullPayload[len(bz):], testPayloadHash)
+	testPayloadBz, err := testPayload.Marshal()
+	require.NoError(t, err, "failed to marshal test payload")
 
-	gotHash, err := hyperlane.GetPayloadHashFromWarpMessageBody(fullPayload)
-	require.NoError(t, err, "failed to get orbiter hash")
-	require.Equal(t, testPayloadHash, gotHash, "expected different payload hash")
+	fullPayloadBz := make([]byte, len(bz)+len(testPayloadBz))
+	copy(fullPayloadBz[:len(bz)], bz)
+	copy(fullPayloadBz[len(bz):], testPayloadBz)
 
-	message := hyperlaneutil.HyperlaneMessage{Body: fullPayload}
+	gotPayload, err := hyperlane.GetPayloadFromWarpMessageBody(fullPayloadBz)
+	require.NoError(t, err, "failed to get orbiter payload")
+	require.Equal(t, testPayload.String(), gotPayload.String(), "expected different payload")
+
+	message := hyperlaneutil.HyperlaneMessage{Body: fullPayloadBz}
 
 	warpMessage, err := hyperlane.GetReducedWarpMessageFromOrbiterMessage(message)
 	require.NoError(t, err, "failed to get reduced warp message")
@@ -69,4 +74,27 @@ func TestPayloadConversion(t *testing.T) {
 		warpPayload.Recipient(),
 		"expected different warp recipient",
 	)
+}
+
+func createTestPayload(t *testing.T) *core.Payload {
+	t.Helper()
+
+	feeAction, err := action.NewFeeAction(&action.FeeInfo{
+		Recipient:   "noble1vpq5ecul8v3ecq5hl4dhneekwu08sjwkugm979",
+		BasisPoints: 123,
+	})
+	require.NoError(t, err, "failed to build fee action")
+
+	fw, err := forwarding.NewCCTPForwarding(
+		0,
+		testutil.RandomBytes(32),
+		testutil.RandomBytes(32),
+		nil,
+	)
+	require.NoError(t, err, "failed to build forwarding")
+
+	payload, err := core.NewPayload(fw, feeAction)
+	require.NoError(t, err, "failed to build payload")
+
+	return payload
 }

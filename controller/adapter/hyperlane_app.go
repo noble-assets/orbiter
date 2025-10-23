@@ -104,7 +104,6 @@ func (ha *HyperlaneAdapter) Exists(
 	_ context.Context,
 	_ hyperlaneutil.HexAddress,
 ) (bool, error) {
-	// return ha.HandledHyperlaneTransfers.Has(ctx, handledPayload.GetInternalId())
 	return true, nil
 }
 
