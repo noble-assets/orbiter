@@ -98,7 +98,7 @@ contract TestOrbiterHypERC20 is Test {
         remoteMailbox.setRequiredHook(address(noopHook));
 
         // Deploy the Orbiter gateway contract.
-        uint32 nobleDomain = 6;
+        uint32 nobleDomain = 1;
         gateway = new OrbiterGateway(nobleDomain);
 
         // Deploy Orbiter compatible token with a proxy.

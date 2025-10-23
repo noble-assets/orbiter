@@ -8,7 +8,7 @@ import { OrbiterGateway } from "../src/OrbiterGateway.sol";
 
 contract DeployOrbiterGateway is Script {
     function run() external {
-        uint32 nobleDomain = 6;
+        uint32 nobleDomain = 1;
 
         vm.startBroadcast();
 
