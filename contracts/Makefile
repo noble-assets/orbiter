@@ -16,7 +16,7 @@ deps:
 	@bun install
 
 # ------------------------------
-# Testing
+# Linting
 # ------------------------------
 .PHONY: lint lint-solidity
 lint: lint-solidity

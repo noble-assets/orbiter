@@ -22,19 +22,19 @@ package e2e
 
 import (
 	"context"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
-	ethcommon "github.com/ethereum/go-ethereum/common"
-	orbitertypes "github.com/noble-assets/orbiter/types"
-	"github.com/strangelove-ventures/interchaintest/v8"
-	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"testing"
 
+	ethcommon "github.com/ethereum/go-ethereum/common"
+	"github.com/strangelove-ventures/interchaintest/v8"
+	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/stretchr/testify/require"
 
 	sdkmath "cosmossdk.io/math"
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/noble-assets/orbiter"
 	"github.com/noble-assets/orbiter/testutil"
+	orbitertypes "github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types/core"
 )
