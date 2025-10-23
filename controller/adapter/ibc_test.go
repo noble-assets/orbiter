@@ -164,7 +164,6 @@ func TestParsePayload(t *testing.T) {
 			t.Log("len of payload:", len(tc.payloadBz))
 
 			isOrbiterPayload, payload, err := parser.ParsePayload(
-				t.Context(),
 				core.PROTOCOL_IBC,
 				tc.payloadBz,
 			)

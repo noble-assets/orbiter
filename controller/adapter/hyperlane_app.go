@@ -51,7 +51,7 @@ func (ha *HyperlaneAdapter) Handle(
 	mailboxId hyperlaneutil.HexAddress,
 	message hyperlaneutil.HyperlaneMessage,
 ) error {
-	_, payload, err := ha.ParsePayload(ctx, core.PROTOCOL_HYPERLANE, message.Body)
+	_, payload, err := ha.ParsePayload(core.PROTOCOL_HYPERLANE, message.Body)
 	if err != nil {
 		return errorsmod.Wrap(err, "failed to parse payload")
 	}

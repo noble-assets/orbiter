@@ -21,8 +21,6 @@
 package adapter
 
 import (
-	"context"
-
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 
@@ -87,8 +85,6 @@ func NewHyperlaneAdapter(
 // ParsePayload delegates the parsing of a Hyperlane message body to the underlying
 // Parser implementation.
 func (ha *HyperlaneAdapter) ParsePayload(
-	// TODO: can be removed
-	_ context.Context,
 	_ core.ProtocolID,
 	payloadBz []byte,
 ) (bool, *core.Payload, error) {

@@ -76,7 +76,6 @@ func (i IBCMiddleware) OnRecvPacket(
 	relayer sdk.AccAddress,
 ) ibcexported.Acknowledgement {
 	isOrbiterPayload, orbiterPayload, err := i.payloadAdapter.ParsePayload(
-		ctx,
 		core.PROTOCOL_IBC,
 		packet.GetData(),
 	)

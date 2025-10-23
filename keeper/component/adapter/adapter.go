@@ -134,7 +134,6 @@ func (a *Adapter) SetRouter(r AdapterRouter) error {
 
 // ParsePayload implements types.PayloadAdapter.
 func (a *Adapter) ParsePayload(
-	ctx context.Context,
 	id core.ProtocolID,
 	payloadBz []byte,
 ) (bool, *core.Payload, error) {
@@ -146,7 +145,7 @@ func (a *Adapter) ParsePayload(
 		return false, nil, fmt.Errorf("adapter not found for protocol ID: %s", id)
 	}
 
-	return adapter.ParsePayload(ctx, id, payloadBz)
+	return adapter.ParsePayload(id, payloadBz)
 }
 
 // BeforeTransferHook implements types.PayloadAdapter.

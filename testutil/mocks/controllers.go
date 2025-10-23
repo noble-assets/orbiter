@@ -87,7 +87,6 @@ func (a *NoOpAdapterController) Name() string {
 }
 
 func (a *NoOpAdapterController) ParsePayload(
-	_ context.Context,
 	_ core.ProtocolID,
 	bz []byte,
 ) (bool, *core.Payload, error) {

@@ -21,8 +21,6 @@
 package adapter
 
 import (
-	"context"
-
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -71,11 +69,10 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 
 // ParsePayload dispatches the payload parsing to the underlying IBC parser.
 func (a *IBCAdapter) ParsePayload(
-	ctx context.Context,
 	id core.ProtocolID,
 	payloadBz []byte,
 ) (bool, *core.Payload, error) {
-	return a.parser.ParsePayload(ctx, id, payloadBz)
+	return a.parser.ParsePayload(id, payloadBz)
 }
 
 var _ types.PayloadParser = &IBCParser{}
@@ -106,7 +103,6 @@ func NewIBCParser(cdc codec.Codec) (*IBCParser, error) {
 // - Payload: the parsed payload.
 // - error: an error, if one occurred during parsing.
 func (p *IBCParser) ParsePayload(
-	_ context.Context,
 	_ core.ProtocolID,
 	payloadBz []byte,
 ) (bool, *core.Payload, error) {
