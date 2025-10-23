@@ -21,15 +21,11 @@
 package keeper_test
 
 import (
-	"bytes"
-	"compress/gzip"
 	"context"
-	"encoding/hex"
 	"fmt"
 	"strings"
 	"testing"
 
-	"github.com/andybalholm/brotli"
 	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 
@@ -40,9 +36,6 @@ import (
 	"github.com/noble-assets/orbiter/types/controller/action"
 	"github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types/core"
-
-	sdkmath "cosmossdk.io/math"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestAcceptPayload(t *testing.T) {
@@ -418,68 +411,4 @@ func createTestPendingPayloadWithSequence(
 		Sequence: sequence,
 		Payload:  validPayload,
 	}
-}
-
-func TestFullPendingPayload(t *testing.T) {
-	fee1, err := action.NewFeeAction(
-		&action.FeeInfo{
-			Recipient:   testutil.NewNobleAddress(),
-			BasisPoints: 100,
-		},
-		&action.FeeInfo{
-			Recipient:   testutil.NewNobleAddress(),
-			BasisPoints: 200,
-		},
-		&action.FeeInfo{
-			Recipient:   testutil.NewNobleAddress(),
-			BasisPoints: 300,
-		},
-	)
-	require.NoError(t, err, "failed to create fee action")
-
-	fw, err := forwarding.NewHyperlaneForwarding(
-		testutil.RandomBytes(32),
-		0,
-		testutil.RandomBytes(32),
-		testutil.RandomBytes(32),
-		"",
-		sdkmath.NewInt(100),
-		sdk.NewCoin("usdc", sdkmath.NewInt(100)),
-		nil,
-	)
-	require.NoError(t, err, "failed to create forwarding")
-
-	payload, err := core.NewPayload(fw, fee1)
-	require.NoError(t, err, "failed to create payload")
-
-	bz, err := payload.Marshal()
-	require.NoError(t, err, "failed to marshal payload")
-
-	encoded := hex.EncodeToString(bz)
-	t.Logf("uncompressed: %d bytes: %s", len(bz), encoded)
-
-	var buf bytes.Buffer
-	gz := gzip.NewWriter(&buf)
-
-	_, err = gz.Write(bz)
-	require.NoError(t, err, "failed to write to gzip writer")
-
-	err = gz.Close()
-	require.NoError(t, err, "failed to close gzip writer")
-
-	compressed := hex.EncodeToString(buf.Bytes())
-	t.Logf("gzip: %d bytes: %s", len(buf.Bytes()), compressed)
-
-	var buf2 bytes.Buffer
-	br := brotli.NewWriter(&buf2)
-	_, err = br.Write(bz)
-	require.NoError(t, err, "failed to write to brotli writer")
-
-	err = br.Close()
-	require.NoError(t, err, "failed to close brotli writer")
-
-	compressed2 := hex.EncodeToString(buf2.Bytes())
-
-	t.Logf("brotli: %d bytes: %s", len(buf2.Bytes()), compressed2)
-	require.False(t, true)
 }
