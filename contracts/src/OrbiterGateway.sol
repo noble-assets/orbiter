@@ -28,7 +28,7 @@ import { OrbiterHypERC20 } from "./OrbiterHypERC20.sol";
 /// and eventually forward the resulting assets to another destination through one of the available
 /// bridging mechanisms (e.g. IBC, CCTP).
 ///
-/// TODO: make upgradeable
+/// TODO: make upgradeable?
 contract OrbiterGateway {
     uint32 private destinationDomain;
 
@@ -46,7 +46,7 @@ contract OrbiterGateway {
         address _tokenAddress,
         bytes32 _recipient,
         uint256 _amount,
-        bytes memory _payload
+        bytes calldata _payload
     ) external returns (bytes32 messageID) {
         OrbiterHypERC20 token = OrbiterHypERC20(_tokenAddress);
 

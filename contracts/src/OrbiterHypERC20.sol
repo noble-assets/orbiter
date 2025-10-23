@@ -45,7 +45,7 @@ contract OrbiterHypERC20 is HypERC20 {
         uint32 _destination,
         bytes32 _recipient,
         uint256 _amount,
-        bytes memory _payload
+        bytes calldata _payload
     ) external payable virtual returns (bytes32 messageID) {
         return _transferRemoteWithPayload(
             _destination,
@@ -65,7 +65,7 @@ contract OrbiterHypERC20 is HypERC20 {
         uint256 _value,
         bytes memory _hookMetadata,
         address _hook,
-        bytes memory _payload
+        bytes calldata _payload
     ) internal virtual returns (bytes32) {
         // Run default logic for HypERC20 token.
         HypERC20._transferFromSender(_amount);

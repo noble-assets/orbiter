@@ -13,7 +13,6 @@ contract SendForwardedTransfer is Script {
         address tokenAddress = vm.envAddress("NOBLEDOLLAR");
         require(tokenAddress != address(0), "noble dollar address not set");
 
-        uint32 destinationDomain = 1;
         bytes32 recipient = bytes32(0);
         uint256 amount = 123;
         bytes memory payload = abi.encodePacked(uint256(10203040));
