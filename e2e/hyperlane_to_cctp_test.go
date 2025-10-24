@@ -21,12 +21,9 @@
 package e2e
 
 import (
-	"context"
 	"testing"
 
-	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/strangelove-ventures/interchaintest/v8"
-	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/stretchr/testify/require"
 
 	sdkmath "cosmossdk.io/math"
@@ -34,9 +31,6 @@ import (
 
 	"github.com/noble-assets/orbiter"
 	"github.com/noble-assets/orbiter/testutil"
-	orbitertypes "github.com/noble-assets/orbiter/types"
-	"github.com/noble-assets/orbiter/types/controller/forwarding"
-	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestHyperlaneToCCTP(t *testing.T) {
@@ -58,44 +52,17 @@ func TestHyperlaneToCCTP(t *testing.T) {
 		s.Chain,
 	)[0]
 
-	cctpDestinationCaller := make([]byte, 32)
-	copy(cctpDestinationCaller[32-3:], []byte{1, 2, 3})
-
-	fw, err := forwarding.NewCCTPForwarding(
-		s.destinationDomain,
-		cctpDestinationCaller,
-		cctpDestinationCaller,
-		nil,
-	)
-	require.NoError(t, err, "invalid forwarding")
-
-	submittedPayload, err := core.NewPayload(fw)
-	require.NoError(t, err, "invalid payload")
-
-	submittedBytes, err := s.Chain.GetCodec().MarshalJSON(submittedPayload)
-	require.NoError(t, err, "failed to marshal submitted payload")
-
 	node := s.Chain.GetFullNode()
 
-	_, err = node.ExecTx(
-		ctx,
-		relayer.KeyName(),
-		"orbiter",
-		"payload",
-		"submit",
-		string(submittedBytes),
-	)
-	require.NoError(t, err, "failed to submit payload")
-
-	registeredHashes := getPendingPayloadHashes(t, ctx, node)
-	require.Len(t, registeredHashes, 1, "expected one registered hash")
+	testPayload, err := createTestPayload()
+	require.NoError(t, err, "failed to create test payload")
 
 	inputs := &orbHypTransferInputs{
 		amount:            transferAmount,
 		destinationDomain: s.hyperlaneDestinationDomain,
 		nonce:             0,
 		originDomain:      s.hyperlaneOriginDomain,
-		payloadHash:       ethcommon.HexToHash("0x" + registeredHashes[0]),
+		payload:           testPayload,
 		recipient:         sdktypes.MustAccAddressFromBech32(recipient),
 	}
 
@@ -119,23 +86,4 @@ func TestHyperlaneToCCTP(t *testing.T) {
 		message.String(),
 	)
 	require.NoError(t, err, "failed to handle orbiter message with hyperlane")
-}
-
-func getPendingPayloadHashes(
-	t *testing.T,
-	ctx context.Context,
-	node *cosmos.ChainNode,
-) []string {
-	t.Helper()
-
-	stdOut, _, err := node.ExecQuery(ctx, "orbiter", "payload", "pending")
-	require.NoError(t, err, "failed to get pending payload")
-
-	cc, ok := node.Chain.(*cosmos.CosmosChain)
-	require.True(t, ok)
-
-	var res orbitertypes.QueryPendingPayloadsResponse
-	require.NoError(t, cc.GetCodec().UnmarshalJSON(stdOut, &res), "failed to unmarshal response")
-
-	return res.Hashes
 }
