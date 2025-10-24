@@ -27,12 +27,30 @@ import (
 	"strings"
 
 	errorsmod "cosmossdk.io/errors"
+	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
+)
+
+const (
+	MaxCounterpartyIDLength = 32
 )
 
 type IdentifierConstraint interface {
 	ProtocolID | ActionID
 	Validate() error
 	String() string
+}
+
+func NewActionIDFromString(id string) (ActionID, error) {
+	val, exists := ActionID_value[id]
+	if !exists {
+		return ACTION_UNSUPPORTED, fmt.Errorf("action ID %s does not exist", id)
+	}
+	actionID, err := NewActionID(val)
+	if err != nil {
+		return ACTION_UNSUPPORTED, fmt.Errorf("action ID %s is not supported: %w", id, err)
+	}
+
+	return actionID, nil
 }
 
 // NewActionID returns a validated action ID from an int32. If
@@ -50,13 +68,26 @@ func NewActionID(id int32) (ActionID, error) {
 // Validate returns an error if the ID is not valid.
 func (id ActionID) Validate() error {
 	if id == ACTION_UNSUPPORTED {
-		return errorsmod.Wrapf(ErrIDNotSupported, "action ID: %s", id.String())
+		return ErrIDNotSupported.Wrapf("action ID: %s", id)
 	}
 	if _, found := ActionID_name[int32(id)]; !found {
-		return fmt.Errorf("action ID is unknown: %d", int32(id))
+		return fmt.Errorf("action ID is unknown: %s", id)
 	}
 
 	return nil
+}
+
+func NewProtocolIDFromString(id string) (ProtocolID, error) {
+	val, exists := ProtocolID_value[id]
+	if !exists {
+		return PROTOCOL_UNSUPPORTED, fmt.Errorf("protocol ID %s does not exist", id)
+	}
+	protocolID, err := NewProtocolID(val)
+	if err != nil {
+		return PROTOCOL_UNSUPPORTED, fmt.Errorf("protocol ID %s is not supported: %w", id, err)
+	}
+
+	return protocolID, nil
 }
 
 // NewProtocolID returns a validated protocol ID from an int32. If
@@ -73,11 +104,11 @@ func NewProtocolID(id int32) (ProtocolID, error) {
 // Validate returns an error if the ID is not valid.
 func (id ProtocolID) Validate() error {
 	if id == PROTOCOL_UNSUPPORTED {
-		return errorsmod.Wrapf(ErrIDNotSupported, "protocol ID: %s", id.String())
+		return ErrIDNotSupported.Wrapf("protocol ID: %s", id)
 	}
 	// Check if the protocol ID exists in the proto generated enum map
 	if _, found := ProtocolID_name[int32(id)]; !found {
-		return fmt.Errorf("protocol ID is unknown: %d", int32(id))
+		return fmt.Errorf("protocol ID is unknown: %s", id)
 	}
 
 	return nil
@@ -111,19 +142,52 @@ func (i CrossChainID) Validate() error {
 	if err := i.ProtocolId.Validate(); err != nil {
 		return err
 	}
-	if err := ValidateCounterpartyID(i.CounterpartyId); err != nil {
+	if err := ValidateCounterpartyID(i.CounterpartyId, i.ProtocolId); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func ValidateCounterpartyID(id string) error {
+func ValidateCounterpartyID(id string, protocol ProtocolID) error {
 	if id == "" {
 		return errors.New("counterparty ID cannot be empty string")
 	}
 
+	if len(id) > MaxCounterpartyIDLength {
+		return fmt.Errorf(
+			"counterparty ID cannot contain more than %d characters",
+			MaxCounterpartyIDLength,
+		)
+	}
+
+	var valid bool
+	switch protocol {
+	case PROTOCOL_IBC:
+		valid = channeltypes.IsValidChannelID(id)
+	case PROTOCOL_CCTP, PROTOCOL_HYPERLANE:
+		valid = isInteger(id)
+	case PROTOCOL_INTERNAL:
+		valid = true
+	case PROTOCOL_UNSUPPORTED:
+		valid = false
+	default:
+		valid = false
+	}
+
+	if !valid {
+		return fmt.Errorf("invalid counterparty ID for protocol %s", protocol.String())
+	}
+
 	return nil
+}
+
+// isInteger returns true if the string can be converted to
+// an integer, false otherwise.
+func isInteger(s string) bool {
+	_, err := strconv.Atoi(s)
+
+	return err == nil
 }
 
 // ID generates an internal identifier for a tuple (bridge protocol, chain).

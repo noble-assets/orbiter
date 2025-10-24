@@ -2,7 +2,31 @@ syntax = "proto3";
 
 package noble.orbiter.v1;
 
+import "cosmos/query/v1/query.proto";
+import "google/api/annotations.proto";
+
 option go_package = "github.com/noble-assets/orbiter/types";
 
 // Query defines the gRPC query service for the Orbiter module.
-service Query {}
+service Query {
+  rpc ActionIDs(QueryActionIDsRequest) returns (QueryActionIDsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/v1/identifiers/actions";
+  }
+  rpc ProtocolIDs(QueryProtocolIDsRequest) returns (QueryProtocolIDsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/v1/identifiers/protocols";
+  }
+}
+
+message QueryActionIDsRequest {}
+
+message QueryActionIDsResponse {
+  map<int32, string> action_ids = 1;
+}
+
+message QueryProtocolIDsRequest {}
+
+message QueryProtocolIDsResponse {
+  map<int32, string> protocol_ids = 1;
+}

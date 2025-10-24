@@ -123,7 +123,7 @@ func (m *Forwarding) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Forwarding proto.InternalMessageInfo
 
-// Payload represents the data the x/orbiter module
+// Payload represents the data the orbiter module
 // requires to handle cross-chain packets.
 type Payload struct {
 	// pre_actions are a list of actions the orbiter module can interpret

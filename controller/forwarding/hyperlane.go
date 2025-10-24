@@ -59,7 +59,7 @@ func NewHyperlaneController(
 
 	b, err := controller.NewBase(core.PROTOCOL_HYPERLANE)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "error creating base controller for hyperlane controller")
+		return nil, errorsmod.Wrap(err, "error creating base controller for Hyperlane controller")
 	}
 	c := &HyperlaneController{
 		BaseController: b,
@@ -94,10 +94,10 @@ func (c *HyperlaneController) HandlePacket(
 	ctx context.Context,
 	packet *types.ForwardingPacket,
 ) error {
-	c.logger.Debug("Handling hyperlane packet")
+	c.logger.Debug("handling Hyperlane packet")
 
 	if packet == nil {
-		return errorsmod.Wrap(core.ErrNilPointer, "Hyperlane controller received nil packet")
+		return core.ErrNilPointer.Wrap("Hyperlane controller received nil packet")
 	}
 
 	attr, err := c.ExtractAttributes(packet.Forwarding)
@@ -106,10 +106,10 @@ func (c *HyperlaneController) HandlePacket(
 	}
 
 	c.logger.Debug(
-		"Forwarding attributes",
-		"tokenID",
+		"forwarding attributes",
+		"token_id",
 		string(attr.TokenId),
-		"destination-domain",
+		"destination_domain",
 		attr.DestinationDomain,
 		"recipient",
 		hyperlaneutil.HexAddress(attr.Recipient),
@@ -117,7 +117,7 @@ func (c *HyperlaneController) HandlePacket(
 
 	err = c.ValidateForwarding(ctx, packet.TransferAttributes, attr)
 	if err != nil {
-		return errorsmod.Wrap(err, "error validating Hyperlane forwarding")
+		return core.ErrValidation.Wrapf("invalid Hyperlane forwarding: %s", err.Error())
 	}
 
 	err = c.executeForwarding(

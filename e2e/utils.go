@@ -97,7 +97,6 @@ func (s *Suite) GetIbcTransferBlockExecution(
 	maxHeight := startHeight + MaxSearchBlocks
 
 	for height := startHeight; height <= maxHeight; height++ {
-
 		_, err := cosmos.PollForMessage[*channeltypes.MsgRecvPacket](
 			ctx,
 			s.Chain,
@@ -184,11 +183,16 @@ func GetTxsResult(
 	t *testing.T,
 	ctx context.Context,
 	validator *cosmos.ChainNode,
-	height string,
+	height int64,
 ) *sdk.SearchTxsResult {
 	t.Helper()
 
-	raw, _, err := validator.ExecQuery(ctx, "txs", "--query", fmt.Sprintf("tx.height = %s", height))
+	raw, _, err := validator.ExecQuery(
+		ctx,
+		"txs",
+		"--query",
+		fmt.Sprintf("tx.height = %d", height),
+	)
 	require.NoError(t, err, "expected no error querying block results")
 
 	var res sdk.SearchTxsResult

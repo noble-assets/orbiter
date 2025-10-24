@@ -22,7 +22,6 @@ package keeper
 
 import (
 	"errors"
-	"fmt"
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
@@ -78,7 +77,7 @@ func NewKeeper(
 	k := Keeper{
 		cdc:          cdc,
 		eventService: eventService,
-		logger:       logger.With("module", fmt.Sprintf("x/%s", core.ModuleName)),
+		logger:       logger.With("module", core.ModuleName),
 		authority:    authority,
 	}
 
@@ -128,7 +127,7 @@ func validateKeeperInputs(
 	}
 	_, err := addressCdc.StringToBytes(authority)
 	if err != nil {
-		return errors.New("authority for x/orbiter module is not valid")
+		return errors.New("authority for orbiter module is not valid")
 	}
 
 	return nil
@@ -177,40 +176,46 @@ func (k *Keeper) Adapter() *adaptercomp.Adapter {
 	return k.adapter
 }
 
-func (k *Keeper) SetForwardingControllers(controllers ...types.ForwardingController) {
+func (k *Keeper) SetForwardingControllers(controllers ...types.ForwardingController) error {
 	router := k.forwarder.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
-			panic(err)
+			return errorsmod.Wrap(err, "error adding forwarder controllers")
 		}
 	}
 	if err := k.forwarder.SetRouter(router); err != nil {
-		panic(err)
+		return errorsmod.Wrap(err, "error setting forwarder router")
 	}
+
+	return nil
 }
 
-func (k *Keeper) SetActionControllers(controllers ...types.ActionController) {
+func (k *Keeper) SetActionControllers(controllers ...types.ActionController) error {
 	router := k.executor.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
-			panic(err)
+			return errorsmod.Wrap(err, "error adding action controllers")
 		}
 	}
 	if err := k.executor.SetRouter(router); err != nil {
-		panic(err)
+		return errorsmod.Wrap(err, "error setting executor router")
 	}
+
+	return nil
 }
 
-func (k *Keeper) SetAdapterControllers(controllers ...types.AdapterController) {
+func (k *Keeper) SetAdapterControllers(controllers ...types.AdapterController) error {
 	router := k.adapter.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
-			panic(err)
+			return errorsmod.Wrap(err, "error adding adapter controllers")
 		}
 	}
 	if err := k.adapter.SetRouter(router); err != nil {
-		panic(err)
+		return errorsmod.Wrap(err, "error setting adapter router")
 	}
+
+	return nil
 }
 
 // RequireAuthority returns an error is the signer is not the

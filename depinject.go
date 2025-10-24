@@ -74,7 +74,7 @@ type ModuleOutputs struct {
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
 	if in.Config.GetAuthority() == "" {
-		panic("authority for x/orbiter module must be set")
+		panic("authority for orbiter module must be set")
 	}
 
 	authority := authtypes.NewModuleAddressOrBech32Address(in.Config.GetAuthority())
@@ -138,7 +138,9 @@ func InjectForwardingControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating internal controller"))
 	}
 
-	in.Orbiters.SetForwardingControllers(cctp, hyperlane, internal)
+	if err := in.Orbiters.SetForwardingControllers(cctp, hyperlane, internal); err != nil {
+		panic(errorsmod.Wrap(err, "error setting forwarder controllers"))
+	}
 }
 
 func InjectActionControllers(in ComponentsInputs) {
@@ -151,7 +153,9 @@ func InjectActionControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating fee controller"))
 	}
 
-	in.Orbiters.SetActionControllers(fee)
+	if err := in.Orbiters.SetActionControllers(fee); err != nil {
+		panic(errorsmod.Wrap(err, "error setting action controllers"))
+	}
 }
 
 func InjectAdapterControllers(in ComponentsInputs) {
@@ -163,5 +167,7 @@ func InjectAdapterControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating IBC adapter"))
 	}
 
-	in.Orbiters.SetAdapterControllers(ibc)
+	if err := in.Orbiters.SetAdapterControllers(ibc); err != nil {
+		panic(errorsmod.Wrap(err, "error setting adapter controllers"))
+	}
 }

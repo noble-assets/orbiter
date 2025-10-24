@@ -27,6 +27,7 @@ import (
 	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
 	"github.com/noble-assets/orbiter/keeper/component/executor"
 	"github.com/noble-assets/orbiter/keeper/component/forwarder"
+	"github.com/noble-assets/orbiter/types"
 	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
 	executortypes "github.com/noble-assets/orbiter/types/component/executor"
@@ -46,6 +47,7 @@ func RegisterMsgServers(cfg module.Configurator, k *Keeper) {
 // with the module configurator.
 func RegisterQueryServers(cfg module.Configurator, k *Keeper) {
 	qs := cfg.QueryServer()
+	types.RegisterQueryServer(qs, NewQueryServer(k))
 	forwardertypes.RegisterQueryServer(qs, forwarder.NewQueryServer(k.forwarder))
 	executortypes.RegisterQueryServer(qs, executor.NewQueryServer(k.executor))
 	adaptertypes.RegisterQueryServer(qs, adapter.NewQueryServer(k.adapter))

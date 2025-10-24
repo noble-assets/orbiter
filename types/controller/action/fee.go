@@ -29,6 +29,15 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
+const (
+	// BPSNormalizer is used to normalize the basis points
+	// defined in a fee action execution.
+	BPSNormalizer = 10_000
+	// MaxFeeRecipients is the maximum number of addresses that can
+	// be specified for a fee payment.
+	MaxFeeRecipients = 5
+)
+
 func NewFeeAction(feesInfo ...*FeeInfo) (*core.Action, error) {
 	attr, err := NewFeeAttributes(feesInfo...)
 	if err != nil {
@@ -51,6 +60,14 @@ func (f *FeeAttributes) Validate() error {
 		return core.ErrNilPointer.Wrap("fee attributes")
 	}
 
+	if len(f.FeesInfo) > MaxFeeRecipients {
+		return fmt.Errorf(
+			"maximum fee recipients %d, received %d",
+			MaxFeeRecipients,
+			len(f.FeesInfo),
+		)
+	}
+
 	for _, i := range f.FeesInfo {
 		if err := i.Validate(); err != nil {
 			return err
@@ -65,10 +82,10 @@ func (f *FeeInfo) Validate() error {
 		return core.ErrNilPointer.Wrap("fee info")
 	}
 
-	if f.BasisPoints == 0 || f.BasisPoints > core.BPSNormalizer {
+	if f.BasisPoints == 0 || f.BasisPoints > BPSNormalizer {
 		return fmt.Errorf(
 			"fee basis point must be > 0 and < %d, received %d",
-			core.BPSNormalizer,
+			BPSNormalizer,
 			f.BasisPoints,
 		)
 	}

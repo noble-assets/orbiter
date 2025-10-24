@@ -340,7 +340,7 @@ func TestHandlePacket_Hyperlane(t *testing.T) {
 					Forwarding:         validForwarding,
 				}
 			},
-			expError: "error validating Hyperlane forwarding",
+			expError: "invalid Hyperlane forwarding",
 		},
 		{
 			name: "error - when the remote transfer fails",

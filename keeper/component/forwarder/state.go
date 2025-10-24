@@ -25,6 +25,7 @@ import (
 
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
+	"github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/noble-assets/orbiter/types/core"
 )
@@ -183,44 +184,26 @@ func (f *Forwarder) GetAllPausedCrossChainIDs(
 	return crossChainIDs, nil
 }
 
-// GetPausedCrossChainsMap returns all the paused cross-chain IDs in a map for easier display in
-// query results.
-//
-// NOTE: this method is intended to ONLY be used for queries.
-func (f *Forwarder) GetPausedCrossChainsMap(
+func (f *Forwarder) GetPaginatedPausedCrossChains(
 	ctx context.Context,
-	protocolID *core.ProtocolID,
-) (map[int32][]string, error) {
-	var err error
-	var iter collections.KeySetIterator[collections.Pair[int32, string]]
-	if protocolID != nil {
-		rng := collections.NewPrefixedPairRange[int32, string](int32(*protocolID))
-		iter, err = f.pausedCrossChains.Iterate(ctx, rng)
-	} else {
-		iter, err = f.pausedCrossChains.Iterate(ctx, nil)
-	}
-
+	protocolID core.ProtocolID,
+	pagination *query.PageRequest,
+) ([]string, *query.PageResponse, error) {
+	counterparties, pageRes, err := query.CollectionPaginate(
+		ctx,
+		f.pausedCrossChains,
+		pagination,
+		func(key collections.Pair[int32, string], value collections.NoValue) (string, error) {
+			return key.K2(), nil
+		},
+		query.WithCollectionPaginationPairPrefix[int32, string](int32(protocolID)),
+	)
 	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		_ = iter.Close()
-	}()
-
-	paused := make(map[int32][]string)
-
-	// Process each key-value pair
-	for ; iter.Valid(); iter.Next() {
-		key, err := iter.Key()
-		if err != nil {
-			return nil, errorsmod.Wrap(err, "failed to get key from iterator")
-		}
-
-		pID := key.K1()
-		cID := key.K2()
-
-		paused[pID] = append(paused[pID], cID)
+		return nil, nil, errorsmod.Wrap(
+			err,
+			"error paginating paused cross-chains",
+		)
 	}
 
-	return paused, nil
+	return counterparties, pageRes, nil
 }

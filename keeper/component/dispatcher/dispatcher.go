@@ -22,7 +22,6 @@ package dispatcher
 
 import (
 	"context"
-	"fmt"
 
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
@@ -150,19 +149,7 @@ func (d *Dispatcher) DispatchPayload(
 
 // ValidatePayload checks if the payload is valid.
 func (d *Dispatcher) ValidatePayload(payload *core.Payload) error {
-	if err := payload.Validate(); err != nil {
-		return err
-	}
-
-	visitedIDs := make(map[int32]any)
-	for _, action := range payload.PreActions {
-		if _, found := visitedIDs[int32(action.Id)]; found {
-			return fmt.Errorf("received repeated action ID: %v", action.ID())
-		}
-		visitedIDs[int32(action.Id)] = nil
-	}
-
-	return nil
+	return payload.Validate()
 }
 
 // dispatchActions iterates through all the actions, creates
@@ -175,15 +162,17 @@ func (d *Dispatcher) dispatchActions(
 	d.logger.Debug("started actions dispatching", "num_actions", len(actions))
 
 	for _, action := range actions {
+		actionID := action.ID()
+
 		packet, err := types.NewActionPacket(transferAttr, action)
 		if err != nil {
-			return errorsmod.Wrapf(err, "error creating action %s packet", action.ID())
+			return errorsmod.Wrapf(err, "error creating action %s packet", actionID)
 		}
 
 		d.logger.Debug(
 			"dispatching action",
 			"id",
-			action.ID(),
+			actionID,
 			"dest_denom",
 			transferAttr.DestinationDenom(),
 			"dest_amount",
@@ -191,7 +180,7 @@ func (d *Dispatcher) dispatchActions(
 		)
 		err = d.dispatchActionPacket(ctx, packet)
 		if err != nil {
-			return errorsmod.Wrapf(err, "error dispatching action %s packet", action.ID())
+			return errorsmod.Wrapf(err, "error dispatching action %s packet", actionID)
 		}
 	}
 
@@ -207,41 +196,38 @@ func (d *Dispatcher) dispatchForwarding(
 	transferAttr *types.TransferAttributes,
 	forwarding *core.Forwarding,
 ) error {
+	protocolID := forwarding.ProtocolID()
+
 	d.logger.Debug("started forwarding dispatching")
 	packet, err := types.NewForwardingPacket(transferAttr, forwarding)
 	if err != nil {
-		errDescription := fmt.Sprintf(
-			"error creating forwarding packet for protocol ID %s",
-			forwarding.ProtocolID(),
-		)
-		d.logger.Debug(errDescription, "error", err.Error())
+		d.logger.Error("creating forwarding packet", "id", protocolID, "error", err)
 
-		return errorsmod.Wrap(
+		return errorsmod.Wrapf(
 			err,
-			errDescription,
+			"error creating forwarding packet for protocol ID %s",
+			protocolID,
 		)
 	}
 
 	d.logger.Debug(
 		"dispatching forwarding",
 		"id",
-		forwarding.ProtocolID(),
+		protocolID,
 		"dest_denom",
 		transferAttr.DestinationDenom(),
 		"dest_amount",
 		transferAttr.DestinationAmount().String(),
 	)
+
 	err = d.dispatchForwardingPacket(ctx, packet)
 	if err != nil {
-		errDescription := fmt.Sprintf(
-			"error dispatching forwarding packet for protocol ID %s",
-			forwarding.ProtocolID(),
-		)
-		d.logger.Debug(errDescription, "error", err.Error())
+		d.logger.Error("dispatching forwarding packet", "id", protocolID, "error", err)
 
-		return errorsmod.Wrap(
+		return errorsmod.Wrapf(
 			err,
-			errDescription,
+			"error dispatching forwarding packet for protocol ID %s",
+			protocolID,
 		)
 	}
 

@@ -18,69 +18,65 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package executor
+package keeper
 
 import (
 	"context"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	executortypes "github.com/noble-assets/orbiter/types/component/executor"
+	orbitertypes "github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ executortypes.QueryServer = &queryServer{}
+var _ orbitertypes.QueryServer = &queryServer{}
 
 type queryServer struct {
-	*Executor
+	*Keeper
 }
 
-func NewQueryServer(e *Executor) queryServer {
-	return queryServer{Executor: e}
+func NewQueryServer(k *Keeper) orbitertypes.QueryServer {
+	return &queryServer{Keeper: k}
 }
 
-// IsActionPaused implements executor.QueryServer.
-func (s queryServer) IsActionPaused(
-	ctx context.Context,
-	req *executortypes.QueryIsActionPausedRequest,
-) (*executortypes.QueryIsActionPausedResponse, error) {
+func (q *queryServer) ActionIDs(
+	_ context.Context,
+	req *orbitertypes.QueryActionIDsRequest,
+) (*orbitertypes.QueryActionIDsResponse, error) {
 	if req == nil {
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	actionID, err := core.NewActionIDFromString(req.ActionId)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+	ids := map[int32]string{}
+	for id, action := range core.ActionID_name {
+		if action == core.ACTION_UNSUPPORTED.String() {
+			continue
+		}
+		ids[id] = action
 	}
 
-	paused, err := s.Executor.IsActionPaused(ctx, actionID)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	return &executortypes.QueryIsActionPausedResponse{
-		IsPaused: paused,
+	return &orbitertypes.QueryActionIDsResponse{
+		ActionIds: ids,
 	}, nil
 }
 
-// PausedActions implements executor.QueryServer.
-func (s queryServer) PausedActions(
-	ctx context.Context,
-	req *executortypes.QueryPausedActionsRequest,
-) (*executortypes.QueryPausedActionsResponse, error) {
+func (q *queryServer) ProtocolIDs(
+	_ context.Context,
+	req *orbitertypes.QueryProtocolIDsRequest,
+) (*orbitertypes.QueryProtocolIDsResponse, error) {
 	if req == nil {
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
-	paused, err := s.GetPausedActions(ctx)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+	ids := map[int32]string{}
+	for id, protocol := range core.ProtocolID_name {
+		if protocol == core.PROTOCOL_UNSUPPORTED.String() {
+			continue
+		}
+		ids[id] = protocol
 	}
 
-	return &executortypes.QueryPausedActionsResponse{
-		ActionIds: paused,
+	return &orbitertypes.QueryProtocolIDsResponse{
+		ProtocolIds: ids,
 	}, nil
 }

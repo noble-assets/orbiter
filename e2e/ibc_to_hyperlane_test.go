@@ -21,7 +21,6 @@
 package e2e
 
 import (
-	"strconv"
 	"strings"
 	"testing"
 
@@ -126,7 +125,7 @@ func TestIBCToHyperlane(t *testing.T) {
 	s.FlushRelayer(t, ctx, toOrbiterChannelID)
 
 	ibcHeight := s.GetIbcTransferBlockExecution(t, ctx, height)
-	txsResult := GetTxsResult(t, ctx, s.Chain.Validators[0], strconv.Itoa(int(ibcHeight)))
+	txsResult := GetTxsResult(t, ctx, s.Chain.Validators[0], ibcHeight)
 	require.Equal(t, txsResult.TotalCount, uint64(1), "expected only one tx")
 
 	found, events := SearchEvents(txsResult.Txs[0].Events, []string{

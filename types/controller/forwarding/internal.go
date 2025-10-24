@@ -27,11 +27,13 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
+const CounterpartyID = "noble"
+
 var _ core.ForwardingAttributes = &InternalAttributes{}
 
 // CounterpartyID implements core.ForwardingAttributes.
 func (a *InternalAttributes) CounterpartyID() string {
-	return "noble"
+	return CounterpartyID
 }
 
 func NewInternalAttributes(
@@ -50,7 +52,7 @@ func (a *InternalAttributes) Validate() error {
 	}
 
 	if a.Recipient == "" {
-		return errorsmod.Wrapf(core.ErrEmptyString, "invalid recipient address")
+		return core.ErrEmptyString.Wrap("invalid recipient address")
 	}
 
 	if _, err := sdk.AccAddressFromBech32(a.Recipient); err != nil {
