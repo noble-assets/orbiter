@@ -5,8 +5,8 @@ import { console } from "forge-std/console.sol";
 import { Script } from "forge-std/Script.sol";
 
 import { OrbiterHypERC20 } from "../src/OrbiterHypERC20.sol";
-import { OrbiterTransientStorage } from "../src/OrbiterTransientStorage.sol";
 
+import { HypERC20 } from "@hyperlane/token/HypERC20.sol";
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 contract DeployOrbiterHypERC20 is Script {
@@ -30,9 +30,6 @@ contract DeployOrbiterHypERC20 is Script {
 
         vm.startBroadcast();
 
-        // Deploy the Orbiter transient store for the HypERC20 token.
-        OrbiterTransientStorage ots = new OrbiterTransientStorage(gateway);
-
         // Deploy the implementation behind a proxy.
         OrbiterHypERC20 implementation = new OrbiterHypERC20(
             decimals,
@@ -44,14 +41,13 @@ contract DeployOrbiterHypERC20 is Script {
             address(implementation),
             proxyAdmin,
             abi.encodeWithSelector(
-                OrbiterHypERC20.initialize.selector,
+                HypERC20.initialize.selector,
                 initialSupply,
                 name,
                 symbol,
                 hook,
                 ism,
-                msg.sender,
-                address(ots)
+                msg.sender
             )
         );
 

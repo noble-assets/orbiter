@@ -21,8 +21,6 @@
 package adapter
 
 import (
-	"context"
-
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 
@@ -48,8 +46,6 @@ type HyperlaneAdapter struct {
 
 	logger log.Logger
 
-	stateHandler orbitertypes.PendingPayloadsHandler
-
 	// Hyperlane dependencies
 	hyperlaneCore adaptertypes.HyperlaneCoreKeeper
 	hyperlaneWarp adaptertypes.HyperlaneWarpKeeper
@@ -58,7 +54,6 @@ type HyperlaneAdapter struct {
 // NewHyperlaneAdapter returns a reference to a new HyperlaneAdapter instance.
 func NewHyperlaneAdapter(
 	logger log.Logger,
-	payloadsHandler orbitertypes.PendingPayloadsHandler,
 	hyperlaneCoreKeeper adaptertypes.HyperlaneCoreKeeper,
 	hyperlaneWarpKeeper adaptertypes.HyperlaneWarpKeeper,
 ) (*HyperlaneAdapter, error) {
@@ -69,10 +64,6 @@ func NewHyperlaneAdapter(
 	baseController, err := controller.NewBase(core.PROTOCOL_HYPERLANE)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to create base controller")
-	}
-
-	if payloadsHandler == nil {
-		return nil, core.ErrNilPointer.Wrap("orbiter state handler cannot be nil")
 	}
 
 	if hyperlaneCoreKeeper == nil {
@@ -86,7 +77,6 @@ func NewHyperlaneAdapter(
 	return &HyperlaneAdapter{
 		BaseController: baseController,
 		logger:         logger.With(core.AdapterControllerName, baseController.Name()),
-		stateHandler:   payloadsHandler,
 		hyperlaneCore:  hyperlaneCoreKeeper,
 		hyperlaneWarp:  hyperlaneWarpKeeper,
 	}, nil
@@ -95,19 +85,13 @@ func NewHyperlaneAdapter(
 // ParsePayload delegates the parsing of a Hyperlane message body to the underlying
 // Parser implementation.
 func (ha *HyperlaneAdapter) ParsePayload(
-	ctx context.Context,
 	_ core.ProtocolID,
 	payloadBz []byte,
 ) (bool, *core.Payload, error) {
-	payloadHash, err := hyperlane.GetPayloadHashFromWarpMessageBody(payloadBz)
+	payload, err := hyperlane.GetPayloadFromWarpMessageBody(payloadBz)
 	if err != nil {
 		return false, nil, errorsmod.Wrap(err, "failed to parse payload")
 	}
 
-	pendingPayload, err := ha.stateHandler.PendingPayload(ctx, payloadHash)
-	if err != nil {
-		return false, nil, errorsmod.Wrap(err, "failed to get pending payload")
-	}
-
-	return true, pendingPayload.Payload, nil
+	return true, payload, nil
 }

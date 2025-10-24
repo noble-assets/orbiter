@@ -23,12 +23,10 @@ package orbiter
 import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 
-	orbiterv1 "github.com/noble-assets/orbiter/api/v1"
 	"github.com/noble-assets/orbiter/keeper/component/adapter"
 	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
 	"github.com/noble-assets/orbiter/keeper/component/executor"
 	"github.com/noble-assets/orbiter/keeper/component/forwarder"
-	orbitertypes "github.com/noble-assets/orbiter/types"
 	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
 	executortypes "github.com/noble-assets/orbiter/types/component/executor"
@@ -38,15 +36,6 @@ import (
 func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
 		Tx: &autocliv1.ServiceCommandDescriptor{
-			Service: orbiterv1.Msg_ServiceDesc.ServiceName,
-			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
-				{
-					// NOTE: we're manually moving this to the `payload` sub command for better
-					// navigation
-					RpcMethod: "SubmitPayload",
-					Skip:      true,
-				},
-			},
 			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
 				"executor": {
 					Service:           executortypes.Msg_serviceDesc.ServiceName,
@@ -66,23 +55,9 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					SubCommands:       map[string]*autocliv1.ServiceCommandDescriptor{},
 					RpcCommandOptions: adapter.TxCommandOptions(),
 				},
-				"payload": {
-					Service:           orbitertypes.Msg_serviceDesc.ServiceName,
-					Short:             "Payload management commands",
-					RpcCommandOptions: orbitertypes.TxCommandOptions(),
-				},
 			},
 		},
 		Query: &autocliv1.ServiceCommandDescriptor{
-			Service: orbiterv1.Query_ServiceDesc.ServiceName,
-			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
-				{
-					// NOTE: we're manually moving this to the `payload` sub command for better
-					// navigation
-					RpcMethod: "PendingPayloads",
-					Skip:      true,
-				},
-			},
 			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
 				"adapter": {
 					Service:           adaptertypes.Query_serviceDesc.ServiceName,
@@ -107,11 +82,6 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:             "Cross-chain forwarder query commands",
 					SubCommands:       map[string]*autocliv1.ServiceCommandDescriptor{},
 					RpcCommandOptions: forwarder.QueryCommandOptions(),
-				},
-				"payload": {
-					Service:           orbitertypes.Query_serviceDesc.ServiceName,
-					Short:             "Payload management commands",
-					RpcCommandOptions: orbitertypes.QueryCommandOptions(),
 				},
 			},
 		},

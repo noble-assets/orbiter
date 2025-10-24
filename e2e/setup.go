@@ -267,7 +267,7 @@ func NewSuite(t *testing.T, isZeroFees bool, isIBC, isHyperlane bool) (context.C
 		suite.hyperlaneToken = collateralToken
 
 		suite.hyperlaneOriginDomain = 1
-		suite.hyperlaneDestinationDomain = 2
+		suite.hyperlaneDestinationDomain = forwardingtypes.HypNobleMainnetDomain
 
 		receiverDomain := strconv.Itoa(int(suite.hyperlaneDestinationDomain))
 		receiverContract := "0x0000000000000000000000000000000000000000000000000000000000000000"

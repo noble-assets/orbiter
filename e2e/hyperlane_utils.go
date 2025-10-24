@@ -27,10 +27,14 @@ import (
 	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 	ethcommon "github.com/ethereum/go-ethereum/common"
 
+	errorsmod "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/noble-assets/orbiter/types/hyperlane"
+	"github.com/noble-assets/orbiter/testutil"
+	"github.com/noble-assets/orbiter/types/controller/action"
+	"github.com/noble-assets/orbiter/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/types/core"
 )
 
 type orbHypTransferInputs struct {
@@ -38,7 +42,7 @@ type orbHypTransferInputs struct {
 	destinationDomain uint32
 	nonce             uint32
 	originDomain      uint32
-	payloadHash       ethcommon.Hash
+	payload           *core.Payload
 	recipient         sdktypes.AccAddress
 }
 
@@ -51,8 +55,8 @@ func (o *orbHypTransferInputs) Validate() error {
 		return errors.New("invalid amount")
 	}
 
-	if o.payloadHash.Hex() == (ethcommon.Hash{}).Hex() {
-		return errors.New("empty payload hash")
+	if err := o.payload.Validate(); err != nil {
+		return errorsmod.Wrap(err, "invalid payload")
 	}
 
 	return nil
@@ -72,9 +76,26 @@ func buildHyperlaneOrbiterMessage(
 		return nil, err
 	}
 
-	fullPayload := make([]byte, hyperlane.ORBITER_PAYLOAD_SIZE)
-	copy(fullPayload[:len(warpPayload.Bytes())], warpPayload.Bytes())
-	copy(fullPayload[hyperlane.ORBITER_PAYLOAD_SIZE-len(in.payloadHash):], in.payloadHash.Bytes())
+	warpPayloadBz := warpPayload.Bytes()
+
+	testPayload, err := createTestPayload()
+	if err != nil {
+		return nil, err
+	}
+
+	testPayloadBz, err := testPayload.Marshal()
+	if err != nil {
+		return nil, err
+	}
+
+	fullPayloadBz := make([]byte, len(warpPayloadBz)+len(testPayloadBz))
+	copy(fullPayloadBz[:len(warpPayloadBz)], warpPayloadBz)
+	copy(fullPayloadBz[len(warpPayloadBz):], testPayloadBz)
+
+	orbModAddr32Bz, err := LeftPadBytes(core.ModuleAddress.Bytes())
+	if err != nil {
+		return nil, err
+	}
 
 	return &hyperlaneutil.HyperlaneMessage{
 		Version:     3,
@@ -82,7 +103,35 @@ func buildHyperlaneOrbiterMessage(
 		Origin:      in.originDomain,
 		Sender:      hyperlaneutil.HexAddress{},
 		Destination: in.destinationDomain,
-		Recipient:   hyperlaneutil.HexAddress(in.recipient.Bytes()),
-		Body:        fullPayload,
+		// TODO: the recipient here has to be the handler for the custom Hyperlane packages
+		Recipient: hyperlaneutil.HexAddress(orbModAddr32Bz),
+		Body:      fullPayloadBz,
 	}, nil
+}
+
+func createTestPayload() (*core.Payload, error) {
+	feeAction, err := action.NewFeeAction(&action.FeeInfo{
+		Recipient:   "noble1vpq5ecul8v3ecq5hl4dhneekwu08sjwkugm979",
+		BasisPoints: 123,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	fw, err := forwarding.NewCCTPForwarding(
+		0,
+		testutil.RandomBytes(32),
+		testutil.RandomBytes(32),
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	payload, err := core.NewPayload(fw, feeAction)
+	if err != nil {
+		return nil, err
+	}
+
+	return payload, nil
 }

@@ -17,9 +17,7 @@
  */
 pragma solidity ^0.8.24;
 
-import { OrbiterTransientStorage } from "./OrbiterTransientStorage.sol";
-import { OrbiterHypERC20 } from "./OrbiterHypERC20.sol";
-
+import {OrbiterHypERC20} from './OrbiterHypERC20.sol';
 
 /// @title Orbiter Gateway Contract
 /// @author Noble Core Team
@@ -29,44 +27,49 @@ import { OrbiterHypERC20 } from "./OrbiterHypERC20.sol";
 /// and eventually forward the resulting assets to another destination through one of the available
 /// bridging mechanisms (e.g. IBC, CCTP).
 ///
-/// TODO: make upgradeable
+/// TODO: make upgradeable?
 contract OrbiterGateway {
-    uint32 private destinationDomain;
+  uint32 private destinationDomain;
 
-    constructor(uint32 _domain) {
-        destinationDomain = _domain;
-    }
+  /// @notice Creates a new instance of the OrbiterGateway contract.
+  /// @param _domain The Hyperlane domain of the Noble network, which is the destination domain for Orbiter transfers.
+  constructor(uint32 _domain) {
+    destinationDomain = _domain;
+  }
 
-    /// @notice Send an asset transfer to the Orbiter, that should be forwarded to another Hyperlane domain.
-    /// @param tokenAddress Address of the token to forward using Orbiter.
-    /// @param destinationDomain The destination domain of the Noble chain (where the Orbiter lives).
-    /// @param recipient A bytes32 representation of the token recipient on the receiving chain.
-    /// @param amount The amount of tokens to transfer.
-    /// @param payloadHash The payload hash to associate with the cross-chain transfer.
-    /// @return messageID The ID of the dispatched Hyperlane message.
-    function sendForwardedTransfer(
-        address tokenAddress,
-        uint32 destinationDomain,
-        bytes32 recipient,
-        uint256 amount,
-        bytes32 payloadHash
-    ) external returns (bytes32 messageID) {
-        OrbiterHypERC20 token = OrbiterHypERC20(tokenAddress);
+  /// @notice Send an asset transfer to the Orbiter, that should be forwarded to another Hyperlane domain.
+  /// @param _tokenAddress Address of the token to forward using Orbiter.
+  /// @param _recipient A bytes32 representation of the token recipient on the receiving chain.
+  /// @param _amount The amount of tokens to transfer.
+  /// @param _payload The payload passed along with the asset transfer.
+  /// @return messageID The ID of the dispatched Hyperlane message.
+  function sendForwardedTransfer(
+    address _tokenAddress,
+    bytes32 _recipient,
+    uint256 _amount,
+    bytes calldata _payload
+  ) external returns (bytes32 messageID) {
+    OrbiterHypERC20 token = OrbiterHypERC20(_tokenAddress);
 
-        OrbiterTransientStorage ots = token.getOrbiterTransientStore();
-        ots.setPendingPayloadHash(payloadHash);
+    /*
+     * Transfer tokens from the user to this contract first.
+     * This is required since transferRemote is burning from msg.sender,
+     * which is this contract.
+     */
+    token.transferFrom(msg.sender, address(this), _amount);
 
-        /*
-         * Transfer tokens from the user to this contract first.
-         * This is required since transferRemote is burning from msg.sender,
-         * which is this contract.
-         */
-        token.transferFrom(msg.sender, address(this), amount);
-
-        /*
-         * Call transferRemote directly on the token contract.
-         * The token contract will handle the transfer and return the message ID.
-         */
-        return token.transferRemote(destinationDomain, recipient, amount);
-    }
+    /*
+     * We call the transfer remote function on the token contract,
+     * which will create the corresponding Hyperlane message.
+     * The token contract will handle the transfer and return the message ID.
+     */
+    return
+      token.transferRemoteWithPayload(
+        destinationDomain,
+        _recipient,
+        _amount,
+        _payload
+      );
+  }
 }
+
