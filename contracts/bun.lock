@@ -4,11 +4,11 @@
     "": {
       "name": "contracts",
       "devDependencies": {
-        "forge-std": "github:foundry-rs/forge-std#v1.10.0",
+        "forge-std": "github:foundry-rs/forge-std#v1.11.0",
       },
     },
   },
   "packages": {
-    "forge-std": ["forge-std@github:foundry-rs/forge-std#8bbcf6e", {}, "foundry-rs-forge-std-8bbcf6e"],
+    "forge-std": ["forge-std@github:foundry-rs/forge-std#8e40513", {}, "foundry-rs-forge-std-8e40513"],
   }
 }

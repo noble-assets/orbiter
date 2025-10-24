@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 pragma solidity 0.8.30;
 
 /*
@@ -34,7 +33,7 @@ pragma solidity 0.8.30;
 	 ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═════╝   ╚═╝   ╚═╝
 */
 
-import {IFiatToken, ITokenMessenger, IMessageTransmitter} from "./interfaces/Circle.sol";
+import {IFiatToken, IMessageTransmitter, ITokenMessenger} from "./interfaces/Circle.sol";
 
 /**
  * @title OrbiterGatewayCCTP

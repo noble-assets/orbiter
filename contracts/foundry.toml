@@ -1,6 +1,9 @@
 [profile.default]
+libs = ["node_modules"]
 remappings = ["forge-std/=node_modules/forge-std/src/"]
-libs = ["node_modules", "lib"]
+
+[rpc_endpoints]
+mainnet = "https://ethereum-rpc.publicnode.com"
 
 [fmt]
 multiline_func_header = "attributes_first"
