@@ -23,6 +23,7 @@ package types
 import (
 	"context"
 
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -43,7 +44,11 @@ type TransferHookHandler interface {
 
 type PacketAdapter interface {
 	// AdaptPacket creates an Orbiter packet out of a generic cross-chain packet.
-	AdaptPacket(context.Context, core.CrossChainID, []byte) (*OrbiterPacket, error)
+	AdaptPacket(
+		context.Context,
+		core.CrossChainID,
+		adaptertypes.CrossChainPacket,
+	) (*OrbiterPacket, error)
 }
 
 type PayloadProcessor interface {

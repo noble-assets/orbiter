@@ -23,6 +23,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -39,7 +40,7 @@ type PayloadParser interface {
 type PacketParser interface {
 	// ParsePacket receives a generic packet and convert it into
 	// the parsed data used in the Orbiter execution.
-	ParsePacket([]byte) (*ParsedData, error)
+	ParsePacket(adaptertypes.CrossChainPacket) (*ParsedData, error)
 }
 
 type ParsedData struct {

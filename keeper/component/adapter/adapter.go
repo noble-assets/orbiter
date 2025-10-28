@@ -135,7 +135,7 @@ func (a *Adapter) SetRouter(r AdapterRouter) error {
 func (a *Adapter) AdaptPacket(
 	ctx context.Context,
 	id core.CrossChainID,
-	packet []byte,
+	packet adaptertypes.CrossChainPacket,
 ) (*types.OrbiterPacket, error) {
 	protocolID := id.GetProtocolId()
 

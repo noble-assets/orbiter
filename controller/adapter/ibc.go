@@ -32,6 +32,7 @@ import (
 
 	"github.com/noble-assets/orbiter/controller"
 	"github.com/noble-assets/orbiter/types"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -71,8 +72,15 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 	}, nil
 }
 
-func (a *IBCAdapter) ParsePacket(packetBz []byte) (*types.ParsedData, error) {
-	packet, err := GetICS20PacketData(packetBz)
+func (a *IBCAdapter) ParsePacket(
+	ccPacket adaptertypes.CrossChainPacket,
+) (*types.ParsedData, error) {
+	ibcPacket, ok := ccPacket.(*adaptertypes.IBCCrossChainPacket)
+	if !ok {
+		return nil, fmt.Errorf("expected IBCCrossChainPacket, got %T", ccPacket)
+	}
+
+	packet, err := GetICS20PacketData(ibcPacket.Packet())
 	if err != nil {
 		return nil, core.ErrNoOrbiterPacket.Wrap("data is not ICS20 packet")
 	}
@@ -91,8 +99,19 @@ func (a *IBCAdapter) ParsePacket(packetBz []byte) (*types.ParsedData, error) {
 		return nil, fmt.Errorf("invalid amount: %s", packet.Amount)
 	}
 
+	// In IBC the denom specified in the packet is the sending chain representation. We have to
+	// convert the denom into the Noble representation.
+	denom, err := RecoverNativeDenom(
+		packet.Denom,
+		ibcPacket.SourcePort(),
+		ibcPacket.SourceChannel(),
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	return &types.ParsedData{
-		Coin:    sdk.NewCoin(packet.Denom, amount),
+		Coin:    sdk.NewCoin(denom, amount),
 		Payload: *payload,
 	}, nil
 }
