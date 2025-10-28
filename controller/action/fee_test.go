@@ -486,7 +486,7 @@ func TestHandlePacket(t *testing.T) {
 		},
 	)
 	require.NoError(t, err)
-	transferAttr, err := types.NewTransferAttributes(
+	transferAttr, err := core.NewTransferAttributes(
 		core.PROTOCOL_CCTP,
 		"1",
 		"uusdc",
@@ -498,8 +498,8 @@ func TestHandlePacket(t *testing.T) {
 		name            string
 		setup           func(*mocks.Mocks)
 		action          func() *core.Action
-		transferAttr    func() *types.TransferAttributes
-		expTransferAttr func() *types.TransferAttributes
+		transferAttr    func() *core.TransferAttributes
+		expTransferAttr func() *core.TransferAttributes
 		postCheck       func(*mocks.Mocks)
 		expErr          string
 	}{
@@ -514,7 +514,7 @@ func TestHandlePacket(t *testing.T) {
 
 				return action
 			},
-			transferAttr: func() *types.TransferAttributes {
+			transferAttr: func() *core.TransferAttributes {
 				return transferAttr
 			},
 			expErr: "expected *action.FeeAttributes",
@@ -529,7 +529,7 @@ func TestHandlePacket(t *testing.T) {
 			action: func() *core.Action {
 				return validAction
 			},
-			transferAttr: func() *types.TransferAttributes {
+			transferAttr: func() *core.TransferAttributes {
 				return transferAttr
 			},
 			postCheck: func(m *mocks.Mocks) {
@@ -537,7 +537,7 @@ func TestHandlePacket(t *testing.T) {
 				require.Len(t, recipientBalance, 1)
 				require.Equal(t, sdkmath.NewInt(1_000), recipientBalance[0].Amount)
 			},
-			expTransferAttr: func() *types.TransferAttributes {
+			expTransferAttr: func() *core.TransferAttributes {
 				expTransferAttr := transferAttr
 				expTransferAttr.SetDestinationAmount(
 					transferAttr.DestinationAmount().SubRaw(1_000),

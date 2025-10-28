@@ -32,15 +32,14 @@ import (
 	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
 	"github.com/noble-assets/orbiter/testutil/mocks"
 	"github.com/noble-assets/orbiter/testutil/testdata"
-	"github.com/noble-assets/orbiter/types"
 	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
 func TestUpdateStats(t *testing.T) {
-	defaultAttr := func() *types.TransferAttributes {
+	defaultAttr := func() *core.TransferAttributes {
 		t.Helper()
-		ta, err := types.NewTransferAttributes(
+		ta, err := core.NewTransferAttributes(
 			core.PROTOCOL_IBC,
 			"channel-1",
 			"uusdc",
@@ -65,15 +64,15 @@ func TestUpdateStats(t *testing.T) {
 	testCases := []struct {
 		name       string
 		setup      func(context.Context, *dispatcher.Dispatcher)
-		attr       func() *types.TransferAttributes // used to create source ID
-		forwarding func() *core.Forwarding          // used to create destination ID
+		attr       func() *core.TransferAttributes // used to create source ID
+		forwarding func() *core.Forwarding         // used to create destination ID
 		expErr     string
 		expAmounts map[string]dispatchertypes.AmountDispatched
 		expCounts  uint64
 	}{
 		{
 			name:       "error - nil transfer attributes",
-			attr:       func() *types.TransferAttributes { return nil },
+			attr:       func() *core.TransferAttributes { return nil },
 			forwarding: defaultForwarding,
 			expErr:     "nil transfer attributes",
 		},
@@ -121,7 +120,7 @@ func TestUpdateStats(t *testing.T) {
 				err := d.SetDispatchedCounts(ctx, &sourceID, &destID, math.MaxUint64)
 				require.NoError(t, err)
 			},
-			attr: func() *types.TransferAttributes {
+			attr: func() *core.TransferAttributes {
 				ta := defaultAttr()
 				ta.SetDestinationAmount(sdkmath.NewInt(95))
 
@@ -144,7 +143,7 @@ func TestUpdateStats(t *testing.T) {
 		},
 		{
 			name: "success - same denom and different amount",
-			attr: func() *types.TransferAttributes {
+			attr: func() *core.TransferAttributes {
 				ta := defaultAttr()
 				ta.SetDestinationAmount(sdkmath.NewInt(95))
 
@@ -161,7 +160,7 @@ func TestUpdateStats(t *testing.T) {
 		},
 		{
 			name: "success - different denom",
-			attr: func() *types.TransferAttributes {
+			attr: func() *core.TransferAttributes {
 				ta := defaultAttr()
 				ta.SetDestinationDenom("gwei")
 				ta.SetDestinationAmount(sdkmath.NewInt(50))
@@ -207,7 +206,7 @@ func TestUpdateStats(t *testing.T) {
 				err = d.SetDispatchedAmount(ctx, &destID, &sourceID, "uusdc", da)
 				require.NoError(t, err)
 			},
-			attr: func() *types.TransferAttributes {
+			attr: func() *core.TransferAttributes {
 				ta := defaultAttr()
 
 				ta.SetDestinationDenom("gwei")
@@ -279,19 +278,19 @@ func TestUpdateStats(t *testing.T) {
 func TestBuildDenomDispatchedAmounts(t *testing.T) {
 	testCases := []struct {
 		name               string
-		transferAttributes func() *types.TransferAttributes
+		transferAttributes func() *core.TransferAttributes
 		expAmounts         map[string]dispatchertypes.AmountDispatched
 		expErr             string
 	}{
 		{
 			name:               "error - nil transfer attributes",
-			transferAttributes: func() *types.TransferAttributes { return nil },
+			transferAttributes: func() *core.TransferAttributes { return nil },
 			expErr:             "nil transfer attributes",
 		},
 		{
 			name: "single entry with same denoms",
-			transferAttributes: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "channel-1", "uusdc", sdkmath.NewInt(100))
+			transferAttributes: func() *core.TransferAttributes {
+				ta, err := core.NewTransferAttributes(1, "channel-1", "uusdc", sdkmath.NewInt(100))
 				require.NoError(t, err)
 
 				return ta
@@ -305,8 +304,8 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 		},
 		{
 			name: "single entry with same denoms but different amounts",
-			transferAttributes: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "channel-1", "uusdc", sdkmath.NewInt(100))
+			transferAttributes: func() *core.TransferAttributes {
+				ta, err := core.NewTransferAttributes(1, "channel-1", "uusdc", sdkmath.NewInt(100))
 				require.NoError(t, err)
 				ta.SetDestinationAmount(sdkmath.NewInt(50))
 
@@ -321,8 +320,8 @@ func TestBuildDenomDispatchedAmounts(t *testing.T) {
 		},
 		{
 			name: "two entries with different denoms",
-			transferAttributes: func() *types.TransferAttributes {
-				ta, err := types.NewTransferAttributes(1, "channel-1", "uusdc", sdkmath.NewInt(100))
+			transferAttributes: func() *core.TransferAttributes {
+				ta, err := core.NewTransferAttributes(1, "channel-1", "uusdc", sdkmath.NewInt(100))
 				require.NoError(t, err)
 				ta.SetDestinationDenom("gwei")
 				ta.SetDestinationAmount(sdkmath.NewInt(50))

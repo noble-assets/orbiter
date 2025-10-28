@@ -163,7 +163,7 @@ func (a *Adapter) AdaptPacket(
 	// NOTE: in case of an IBC transfer, the Denom set here is the representation
 	// of the denom on the source chain, not on Noble. But since this is the real
 	// source denom, we set the Noble denom as the destination later on.
-	transferAttr, err := types.NewTransferAttributes(
+	transferAttr, err := core.NewTransferAttributes(
 		protocolID,
 		id.GetCounterpartyId(),
 		parsedPacket.Coin.Denom,

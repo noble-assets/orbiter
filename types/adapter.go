@@ -27,12 +27,6 @@ import (
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-// OrbiterPacket defines the abstract cross-chain transfer packet used in the Orbiter.
-type OrbiterPacket struct {
-	TransferAttributes *TransferAttributes
-	Payload            *core.Payload
-}
-
 type TransferHookHandler interface {
 	// BeforeTransferHook allows to execute logic BEFORE completing
 	// the cross-chain transfer.

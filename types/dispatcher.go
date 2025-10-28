@@ -30,5 +30,5 @@ import (
 // to be used as a payload dispatcher.
 type PayloadDispatcher interface {
 	// Dispatch the payload component to the proper handler.
-	DispatchPayload(context.Context, *TransferAttributes, *core.Payload) error
+	DispatchPayload(context.Context, *core.TransferAttributes, *core.Payload) error
 }

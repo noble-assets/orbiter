@@ -146,7 +146,7 @@ func (c *InternalController) ExtractAttributes(
 // ValidateForwarding checks whether the forwarding attributes are valid or not.
 func (c *InternalController) ValidateForwarding(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
+	transferAttr *core.TransferAttributes,
 	intAttr *forwardingtypes.InternalAttributes,
 ) error {
 	if err := transferAttr.Validate(); err != nil {
@@ -163,7 +163,7 @@ func (c *InternalController) ValidateForwarding(
 // executeForwarding initiates an internal transfer.
 func (c *InternalController) executeForwarding(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
+	transferAttr *core.TransferAttributes,
 	intAttr *forwardingtypes.InternalAttributes,
 	_ []byte,
 ) error {
