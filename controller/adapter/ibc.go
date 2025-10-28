@@ -28,6 +28,7 @@ import (
 	sdkmath "cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
 	"github.com/noble-assets/orbiter/controller"
@@ -77,7 +78,11 @@ func (a *IBCAdapter) ParsePacket(
 ) (*types.ParsedData, error) {
 	ibcPacket, ok := ccPacket.(*adaptertypes.IBCCrossChainPacket)
 	if !ok {
-		return nil, fmt.Errorf("expected IBCCrossChainPacket, got %T", ccPacket)
+		return nil, sdkerrors.ErrInvalidType.Wrapf(
+			"expected %T, got %T",
+			&adaptertypes.IBCCrossChainPacket{},
+			ccPacket,
+		)
 	}
 
 	packet, err := GetICS20PacketData(ibcPacket.Packet())

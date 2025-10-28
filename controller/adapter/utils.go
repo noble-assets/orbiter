@@ -50,7 +50,7 @@ func RecoverNativeDenom(denom, sourcePort, sourceChannel string) (string, error)
 	// if the denomination is not native.
 	denomTrace := transfertypes.ParseDenomTrace(unprefixedDenom)
 	if !denomTrace.IsNativeDenom() {
-		return "", errors.New("orbiter supports only native tokens")
+		return "", errors.New("orbiter supports only native coins")
 	}
 
 	return unprefixedDenom, nil

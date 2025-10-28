@@ -23,6 +23,7 @@ package adapter
 var _ CrossChainPacket = (*IBCCrossChainPacket)(nil)
 
 type CrossChainPacket interface {
+	// Returns the underlying protocol packet.
 	Packet() []byte
 }
 
