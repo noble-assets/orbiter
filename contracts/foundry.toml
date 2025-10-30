@@ -9,5 +9,7 @@ mainnet = "https://ethereum-rpc.publicnode.com"
 multiline_func_header = "attributes_first"
 line_length = 100
 number_underscore = "thousands"
+bracket_spacing = true
+wrap_comments = true
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
