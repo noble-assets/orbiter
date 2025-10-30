@@ -38,14 +38,14 @@ func TestRecoverNativeDenom(t *testing.T) {
 		expDenom      string
 	}{
 		{
-			name:          "error - non native denom (multi-hop)",
+			name:          "error - coin is native to source chain",
 			denom:         "transfer/channel-2/transfer/channel-3/uusdc",
 			sourcePort:    "transfer",
 			sourceChannel: "channel-1",
 			expErr:        "coin is native of source chain",
 		},
 		{
-			name:          "error - non native denom (multi-hop)",
+			name:          "error - denom has multi-hop IBC path",
 			denom:         "transfer/channel-1/transfer/channel-2/uusdc",
 			sourcePort:    "transfer",
 			sourceChannel: "channel-1",

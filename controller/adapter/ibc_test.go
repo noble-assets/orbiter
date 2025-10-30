@@ -194,11 +194,14 @@ func TestParsePacket(t *testing.T) {
 		{
 			name: "skip - not ics20 packet",
 			ccPacket: func() adaptertypes.CrossChainPacket {
-				return adaptertypes.NewIBCCrossChainPacket(
+				p, err := adaptertypes.NewIBCCrossChainPacket(
 					"nontransfer",
 					"channel-1",
 					[]byte(`{"some": "other packet type"}`),
 				)
+				require.NoError(t, err)
+
+				return p
 			},
 			expErr: "not for orbiter",
 		},
@@ -211,11 +214,14 @@ func TestParsePacket(t *testing.T) {
 					testutil.CreateValidOrbiterPayload(),
 				)
 
-				return adaptertypes.NewIBCCrossChainPacket(
+				p, err := adaptertypes.NewIBCCrossChainPacket(
 					"nontransfer",
 					"channel-1",
 					data,
 				)
+				require.NoError(t, err)
+
+				return p
 			},
 			expErr: "not for orbiter",
 		},
@@ -228,11 +234,14 @@ func TestParsePacket(t *testing.T) {
 					"not json memo",
 				)
 
-				return adaptertypes.NewIBCCrossChainPacket(
+				p, err := adaptertypes.NewIBCCrossChainPacket(
 					"nontransfer",
 					"channel-1",
 					data,
 				)
+				require.NoError(t, err)
+
+				return p
 			},
 			expErr: "not a valid json",
 		},
@@ -257,11 +266,14 @@ func TestParsePacket(t *testing.T) {
 					testutil.CreateValidOrbiterPayloadWithActions(),
 				)
 
-				return adaptertypes.NewIBCCrossChainPacket(
+				p, err := adaptertypes.NewIBCCrossChainPacket(
 					"transfer",
 					"channel-1",
 					data.GetBytes(),
 				)
+				require.NoError(t, err)
+
+				return p
 			},
 			expErr: "coin is native of source",
 		},
@@ -286,11 +298,14 @@ func TestParsePacket(t *testing.T) {
 					testutil.CreateValidOrbiterPayloadWithActions(),
 				)
 
-				return adaptertypes.NewIBCCrossChainPacket(
+				p, err := adaptertypes.NewIBCCrossChainPacket(
 					"transfer",
 					"channel-1",
 					data.GetBytes(),
 				)
+				require.NoError(t, err)
+
+				return p
 			},
 			expErr: "coin is native of source",
 		},
@@ -315,11 +330,14 @@ func TestParsePacket(t *testing.T) {
 					testutil.CreateValidOrbiterPayloadWithActions(),
 				)
 
-				return adaptertypes.NewIBCCrossChainPacket(
+				p, err := adaptertypes.NewIBCCrossChainPacket(
 					"transfer",
 					"channel-1",
 					data.GetBytes(),
 				)
+				require.NoError(t, err)
+
+				return p
 			},
 			expParsedData: &types.ParsedData{
 				Coin: sdk.Coin{

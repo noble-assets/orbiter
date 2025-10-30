@@ -20,6 +20,8 @@
 
 package adapter
 
+import fmt "fmt"
+
 var _ CrossChainPacket = (*IBCCrossChainPacket)(nil)
 
 type CrossChainPacket interface {
@@ -41,9 +43,9 @@ type IBCCrossChainPacket struct {
 func NewIBCCrossChainPacket(
 	sourcePort, sourceChannel string,
 	data []byte,
-) *IBCCrossChainPacket {
+) (*IBCCrossChainPacket, error) {
 	if sourcePort == "" || sourceChannel == "" {
-		panic("source port and channel must not be empty")
+		return nil, fmt.Errorf("source port and channel must not be empty")
 	}
 
 	dataCopy := make([]byte, len(data))
@@ -53,7 +55,7 @@ func NewIBCCrossChainPacket(
 		sourcePort:    sourcePort,
 		sourceChannel: sourceChannel,
 		data:          dataCopy,
-	}
+	}, nil
 }
 
 // Packet returns the raw packet data bytes.

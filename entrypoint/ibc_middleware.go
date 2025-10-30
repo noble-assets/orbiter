@@ -85,11 +85,14 @@ func (i IBCMiddleware) OnRecvPacket(
 		return newErrorAcknowledgement(err)
 	}
 
-	ccPacket := adaptertypes.NewIBCCrossChainPacket(
+	ccPacket, err := adaptertypes.NewIBCCrossChainPacket(
 		packet.GetSourcePort(),
 		packet.GetSourceChannel(),
 		packet.GetData(),
 	)
+	if err != nil {
+		return newErrorAcknowledgement(err)
+	}
 
 	orbiterPacket, err := i.payloadAdapter.AdaptPacket(ctx, ccID, ccPacket)
 	// If the error is the sentinel error, we call the next middleware/app in the ICS20 stack.
