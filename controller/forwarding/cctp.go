@@ -158,7 +158,7 @@ func (c *CCTPController) ValidateAttributes(attr *forwardingtypes.CCTPAttributes
 // initiate a cross-chain transfer.
 func (c *CCTPController) executeForwarding(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
+	transferAttr *core.TransferAttributes,
 	cctpAttr *forwardingtypes.CCTPAttributes,
 ) error {
 	if len(cctpAttr.DestinationCaller) == 0 {

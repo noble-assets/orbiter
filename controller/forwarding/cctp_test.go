@@ -79,7 +79,7 @@ func TestNewCCTPController(t *testing.T) {
 }
 
 func TestHandlePacket_CCTP(t *testing.T) {
-	transferAttr, err := types.NewTransferAttributes(
+	transferAttr, err := core.NewTransferAttributes(
 		core.PROTOCOL_IBC,
 		"channel-01",
 		"uusdc",

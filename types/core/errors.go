@@ -33,5 +33,6 @@ var (
 	ErrUnableToPause     = errorsmod.Register(ModuleName, 8, "unable to pause")
 	ErrUnableToUnpause   = errorsmod.Register(ModuleName, 9, "unable to unpause")
 	ErrAlreadySet        = errorsmod.Register(ModuleName, 10, "value already set")
-	ErrNoOrbiterPacket   = errorsmod.Register(ModuleName, 11, "packet is not for orbiter")
+	// ErrNoOrbiterPacket is a sentinel error used in the incoming IBC flow.
+	ErrNoOrbiterPacket = errorsmod.Register(ModuleName, 11, "packet is not for orbiter")
 )

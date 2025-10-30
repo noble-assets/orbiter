@@ -124,7 +124,7 @@ func (d *Dispatcher) Logger() log.Logger {
 // of an orbiter payload.
 func (d *Dispatcher) DispatchPayload(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
+	transferAttr *core.TransferAttributes,
 	payload *core.Payload,
 ) error {
 	if err := d.ValidatePayload(payload); err != nil {
@@ -156,7 +156,7 @@ func (d *Dispatcher) ValidatePayload(payload *core.Payload) error {
 // the action packets and dispatch them for execution.
 func (d *Dispatcher) dispatchActions(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
+	transferAttr *core.TransferAttributes,
 	actions []*core.Action,
 ) error {
 	d.logger.Debug("started actions dispatching", "num_actions", len(actions))
@@ -193,7 +193,7 @@ func (d *Dispatcher) dispatchActions(
 // it for execution.
 func (d *Dispatcher) dispatchForwarding(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
+	transferAttr *core.TransferAttributes,
 	forwarding *core.Forwarding,
 ) error {
 	protocolID := forwarding.ProtocolID()

@@ -15,6 +15,7 @@ graph TD
       CORE["types/core"]
       ROUTER["types/router"]
       COMPONENT["types/component"]
+      COMP_ADAPT["types/component/adapter"]
       COMP_DISP["types/component/dispatcher"]
       COMP_EXEC["types/component/executor"]
       COMP_FORW["types/component/forwarder"]
@@ -25,7 +26,11 @@ graph TD
       %% Dependencies
       TYPES --> CORE
       TYPES --> ROUTER
+      TYPES --> COMPONENT
+      TYPES --> CONTROLLER
+
       ROUTER --> CORE
+      COMPONENT --> COMP_ADAPT
       COMPONENT --> COMP_EXEC
       COMPONENT --> COMP_FORW
       COMP_DISP --> CORE
@@ -38,5 +43,5 @@ graph TD
       class CORE coreClass
       class TYPES mainClass
       class ROUTER routerClass
-      class COMPONENT,COMP_DISP,COMP_EXEC,COMP_FORW,CONTROLLER,CTRL_ACTION,CTRL_FORW subClass
+      class COMPONENT,COMP_ADAPT,COMP_DISP,COMP_EXEC,COMP_FORW,CONTROLLER,CTRL_ACTION,CTRL_FORW subClass
 ```

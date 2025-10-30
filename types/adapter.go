@@ -23,14 +23,9 @@ package types
 import (
 	"context"
 
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/core"
 )
-
-// OrbiterPacket defines the abstract cross-chain transfer packet used in the Orbiter.
-type OrbiterPacket struct {
-	TransferAttributes *TransferAttributes
-	Payload            *core.Payload
-}
 
 type TransferHookHandler interface {
 	// BeforeTransferHook allows to execute logic BEFORE completing
@@ -43,7 +38,11 @@ type TransferHookHandler interface {
 
 type PacketAdapter interface {
 	// AdaptPacket creates an Orbiter packet out of a generic cross-chain packet.
-	AdaptPacket(context.Context, core.CrossChainID, []byte) (*OrbiterPacket, error)
+	AdaptPacket(
+		context.Context,
+		core.CrossChainID,
+		adaptertypes.CrossChainPacket,
+	) (*OrbiterPacket, error)
 }
 
 type PayloadProcessor interface {
