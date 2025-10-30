@@ -24,6 +24,7 @@ import (
 	"errors"
 
 	"cosmossdk.io/collections"
+	"cosmossdk.io/collections/indexes"
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/event"
 	"cosmossdk.io/core/store"
@@ -35,11 +36,11 @@ import (
 	dispatchercomp "github.com/noble-assets/orbiter/keeper/component/dispatcher"
 	executorcomp "github.com/noble-assets/orbiter/keeper/component/executor"
 	forwardercomp "github.com/noble-assets/orbiter/keeper/component/forwarder"
-	"github.com/noble-assets/orbiter/types"
+	orbitertypes "github.com/noble-assets/orbiter/types"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
-var _ types.Authorizer = &Keeper{}
+var _ orbitertypes.Authorizer = &Keeper{}
 
 // Keeper is the main module keeper.
 type Keeper struct {
@@ -55,6 +56,31 @@ type Keeper struct {
 	forwarder  *forwardercomp.Forwarder
 	dispatcher *dispatchercomp.Dispatcher
 	adapter    *adaptercomp.Adapter
+
+	// pendingPayloads stores the pending payloads addressed by their sha256 hash.
+	pendingPayloads *collections.IndexedMap[[]byte, core.PendingPayload, HashToTimeIndex]
+	// pendingPayloadsSequence is the unique identifier of a given pending payload handled by the
+	// orbiter.
+	pendingPayloadsSequence collections.Sequence
+}
+
+type HashToTimeIndex struct {
+	*indexes.Multi[int64, []byte, core.PendingPayload]
+}
+
+func NewHashToTimeIndex(sb *collections.SchemaBuilder) HashToTimeIndex {
+	return HashToTimeIndex{
+		Multi: indexes.NewMulti(
+			sb,
+			core.HashesByTimeIndexPrefix,
+			core.HashesByTimeIndexName,
+			collections.Int64Key,
+			collections.BytesKey,
+			func(hash []byte, payload core.PendingPayload) (int64, error) {
+				return payload.Timestamp, nil
+			},
+		),
+	}
 }
 
 // NewKeeper returns a reference to a validated instance of the keeper.
@@ -66,7 +92,7 @@ func NewKeeper(
 	eventService event.Service,
 	storeService store.KVStoreService,
 	authority string,
-	bankKeeper types.BankKeeper,
+	bankKeeper orbitertypes.BankKeeper,
 ) *Keeper {
 	if err := validateKeeperInputs(cdc, addressCdc, logger, eventService, storeService, bankKeeper, authority); err != nil {
 		panic(err)
@@ -79,6 +105,24 @@ func NewKeeper(
 		eventService: eventService,
 		logger:       logger.With("module", core.ModuleName),
 		authority:    authority,
+
+		pendingPayloads: collections.NewIndexedMap[
+			[]byte,
+			core.PendingPayload,
+			HashToTimeIndex,
+		](
+			sb,
+			core.PendingPayloadsPrefix,
+			core.PendingPayloadsName,
+			collections.BytesKey,
+			codec.CollValue[core.PendingPayload](cdc),
+			NewHashToTimeIndex(sb),
+		),
+		pendingPayloadsSequence: collections.NewSequence(
+			sb,
+			core.PendingPayloadsSequencePrefix,
+			core.PendingPayloadsSequenceName,
+		),
 	}
 
 	if err := k.setComponents(k.cdc, k.logger, k.eventService, sb, bankKeeper); err != nil {
@@ -104,7 +148,7 @@ func validateKeeperInputs(
 	logger log.Logger,
 	eventService event.Service,
 	storeService store.KVStoreService,
-	bankKeeper types.BankKeeper,
+	bankKeeper orbitertypes.BankKeeper,
 	authority string,
 ) error {
 	if cdc == nil {
@@ -176,7 +220,7 @@ func (k *Keeper) Adapter() *adaptercomp.Adapter {
 	return k.adapter
 }
 
-func (k *Keeper) SetForwardingControllers(controllers ...types.ForwardingController) error {
+func (k *Keeper) SetForwardingControllers(controllers ...orbitertypes.ForwardingController) error {
 	router := k.forwarder.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -190,7 +234,7 @@ func (k *Keeper) SetForwardingControllers(controllers ...types.ForwardingControl
 	return nil
 }
 
-func (k *Keeper) SetActionControllers(controllers ...types.ActionController) error {
+func (k *Keeper) SetActionControllers(controllers ...orbitertypes.ActionController) error {
 	router := k.executor.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -204,7 +248,7 @@ func (k *Keeper) SetActionControllers(controllers ...types.ActionController) err
 	return nil
 }
 
-func (k *Keeper) SetAdapterControllers(controllers ...types.AdapterController) error {
+func (k *Keeper) SetAdapterControllers(controllers ...orbitertypes.AdapterController) error {
 	router := k.adapter.Router()
 	for _, c := range controllers {
 		if err := router.AddRoute(c); err != nil {
@@ -234,7 +278,7 @@ func (k *Keeper) setComponents(
 	logger log.Logger,
 	eventService event.Service,
 	sb *collections.SchemaBuilder,
-	bankKeeper types.BankKeeper,
+	bankKeeper orbitertypes.BankKeeper,
 ) error {
 	executor, err := executorcomp.New(cdc, sb, logger, eventService)
 	if err != nil {

@@ -13,6 +13,6 @@ cp -r api/noble/orbiter/* api/
 # the following command requires GNU sed
 find api/ -type f -name "*.go" -exec sed -i 's|github.com/noble-assets/orbiter/api/noble/orbiter|github.com/noble-assets/orbiter/api|g' {} +
 
-rm -rf github.com/noble-assets/orbiter
+rm -rf github.com
 rm -rf api/noble
 rm -rf noble

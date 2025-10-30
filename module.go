@@ -53,6 +53,8 @@ var (
 	_ module.HasConsensusVersion = AppModule{}
 	_ module.HasGenesis          = AppModule{}
 	_ module.HasServices         = AppModule{}
+
+	_ appmodule.HasBeginBlocker = AppModule{}
 )
 
 type AppModuleBasic struct{}
@@ -149,4 +151,8 @@ func (m AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawM
 	genesis := m.keeper.ExportGenesis(ctx)
 
 	return cdc.MustMarshalJSON(genesis)
+}
+
+func (m AppModule) BeginBlock(ctx context.Context) error {
+	return m.keeper.BeginBlock(ctx)
 }

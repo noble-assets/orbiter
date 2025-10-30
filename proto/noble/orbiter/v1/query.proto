@@ -4,6 +4,7 @@ package noble.orbiter.v1;
 
 import "cosmos/query/v1/query.proto";
 import "google/api/annotations.proto";
+import "noble/orbiter/core/v1/orbiter.proto";
 
 option go_package = "github.com/noble-assets/orbiter/types";
 
@@ -17,6 +18,10 @@ service Query {
     option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http).get = "/noble/orbiter/v1/identifiers/protocols";
   }
+  rpc PendingPayload(QueryPendingPayloadRequest) returns (QueryPendingPayloadResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/noble/orbiter/v1/payload/{hash}";
+  }
 }
 
 message QueryActionIDsRequest {}
@@ -29,4 +34,14 @@ message QueryProtocolIDsRequest {}
 
 message QueryProtocolIDsResponse {
   map<int32, string> protocol_ids = 1;
+}
+
+message QueryPendingPayloadRequest {
+  // The hex-encoded bytes of the registered hash of the payload to retrieve.
+  string hash = 1;
+}
+
+message QueryPendingPayloadResponse {
+  // The payload contents of the registered payload.
+  noble.orbiter.core.v1.Payload payload = 1;
 }
