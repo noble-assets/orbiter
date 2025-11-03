@@ -33,7 +33,7 @@ pragma solidity 0.8.30;
 	 ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═════╝   ╚═╝   ╚═╝
 */
 
-import {IFiatToken, IMessageTransmitter, ITokenMessenger} from "./interfaces/Circle.sol";
+import { IFiatToken, IMessageTransmitter, ITokenMessenger } from "./interfaces/Circle.sol";
 
 /**
  * @title OrbiterGatewayCCTP
@@ -87,7 +87,8 @@ contract OrbiterGatewayCCTP {
      * @param token_ Address of the token to transfer.
      * @param tokenMessenger_ Address of the CCTP TokenMessenger contract.
      * @param destinationCaller_ Address of the relayer that will complete the transfer to the
-     * Noble chain.
+     * Noble chain. The destination caller is required in the constructor because the relayer
+     * must be able to group CCTP transactions before relaying them to Noble.
      */
     constructor(address token_, address tokenMessenger_, bytes32 destinationCaller_) {
         if (token_ == address(0)) revert ZeroTokenAddress();
@@ -142,5 +143,13 @@ contract OrbiterGatewayCCTP {
         );
 
         emit DepositForBurnWithOrbiterPayload(transferNonce, payloadNonce);
+    }
+
+    /**
+     * @notice Returns the zero left-padded bytes of the address used for the destination caller.
+     * @return bytes32 Bytes associated with the destination caller address on Noble.
+     */
+    function destinationCaller() public view returns (bytes32) {
+        return DESTINATION_CALLER;
     }
 }

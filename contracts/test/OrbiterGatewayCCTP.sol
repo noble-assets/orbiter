@@ -17,9 +17,10 @@
  */
 pragma solidity 0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {IFiatToken, IMessageTransmitter, ITokenMessenger} from "../src/interfaces/Circle.sol";
-import {OrbiterGatewayCCTP} from "../src/OrbiterGatewayCCTP.sol";
+import { Test } from "forge-std/Test.sol";
+import { console } from "forge-std/console.sol";
+import { IFiatToken, IMessageTransmitter, ITokenMessenger } from "../src/interfaces/Circle.sol";
+import { OrbiterGatewayCCTP } from "../src/OrbiterGatewayCCTP.sol";
 
 contract TestOrbiterGatewayCCTP is Test {
     // https://developers.circle.com/stablecoins/usdc-contract-addresses
@@ -70,10 +71,12 @@ contract TestOrbiterGatewayCCTP is Test {
                 token.PERMIT_TYPEHASH(), user, gateway, amount, token.nonces(user), permitDeadline
             )
         );
+        // prefix is: hex"1901"
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             userKey, keccak256(abi.encodePacked("\x19\x01", token.DOMAIN_SEPARATOR(), structHash))
         );
         bytes memory permitSig = abi.encode(v, r, s);
+        // console.logBytes(permitSig);
         return (permitSig, permitDeadline);
     }
 
