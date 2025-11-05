@@ -141,3 +141,8 @@ test-e2e:
 	@echo "Running e2e tests..."
 	@cd e2e/interchaintests && go test -timeout 15m -race -v ./...
 	@echo "Completed e2e tests!"
+
+generate-bindings:
+	@echo "==================================================================="
+	@echo "Generating Solidity bindings..."
+	@abigen --abi ./contracts/abi/OrbiterGatewayCCTP.abi --pkg types --type OrbiterGatewayCCTP --out ./e2e/gateway/types/gateway.go 1> /dev/null
