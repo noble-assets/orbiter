@@ -53,7 +53,7 @@ jobs:
         id: set-matrix
         run: |
           # Run the command and convert its output to a JSON array
-          TESTS=$(cd e2e && go test -list . | grep -v "^ok " | jq -R -s -c 'split("\n")[:-1]')
+          TESTS=$(cd e2e/interchaintests && go test -list . | grep -v "^ok " | jq -R -s -c 'split("\n")[:-1]')
           echo "matrix=${TESTS}" >> $GITHUB_OUTPUT
   test:
     needs:
@@ -79,7 +79,7 @@ jobs:
       - name: Load Docker Image
         run: docker image load -i ${{ env.TAR_PATH }}
       - name: Run Tests
-        run: cd e2e && go test -race -v -timeout 15m -run ^${{ matrix.test }}$ .
+        run: cd e2e/interchaintests && go test -race -v -timeout 15m -run ^${{ matrix.test }}$ .
   e2e-tests:
     needs: test
     runs-on: ubuntu-latest

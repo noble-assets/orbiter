@@ -133,11 +133,11 @@ test-unit-viz:
 local-image:
 	@echo "==================================================================="
 	@echo "Building image..."
-	@heighliner build --chain orbiter-simd --file e2e/chains.yaml --local 1> /dev/null
+	@heighliner build --chain orbiter-simd --file e2e/interchaintests/chains.yaml --local 1> /dev/null
 	@echo "Completed build!"
 
 test-e2e:
 	@echo "==================================================================="
 	@echo "Running e2e tests..."
-	@cd e2e && go test -timeout 15m -race -v ./...
+	@cd e2e/interchaintests && go test -timeout 15m -race -v ./...
 	@echo "Completed e2e tests!"
