@@ -130,9 +130,7 @@ contract TestOrbiterGatewayCCTP is Test {
         emit OrbiterGatewayCCTP.DepositForBurnWithOrbiter(nonce, nonce + 1);
 
         (bytes memory permitSig, uint256 permitDeadline) = generatePermit(TRANSFER_AMOUNT);
-        gateway.depositForBurnWithOrbiter(
-            TRANSFER_AMOUNT, permitDeadline, permitSig, PAYLOAD
-        );
+        gateway.depositForBurnWithOrbiter(TRANSFER_AMOUNT, permitDeadline, permitSig, PAYLOAD);
 
         vm.stopPrank();
     }
@@ -146,9 +144,7 @@ contract TestOrbiterGatewayCCTP is Test {
         emit OrbiterGatewayCCTP.DepositForBurnWithOrbiter(nonce, nonce + 1);
 
         (bytes memory permitSig1, uint256 permitDeadline1) = generatePermit(TRANSFER_AMOUNT / 2);
-        gateway.depositForBurnWithOrbiter(
-            TRANSFER_AMOUNT / 2, permitDeadline1, permitSig1, PAYLOAD
-        );
+        gateway.depositForBurnWithOrbiter(TRANSFER_AMOUNT / 2, permitDeadline1, permitSig1, PAYLOAD);
 
         // Second deposit
         nonce = messageTransmitter.nextAvailableNonce();
@@ -156,9 +152,7 @@ contract TestOrbiterGatewayCCTP is Test {
         emit OrbiterGatewayCCTP.DepositForBurnWithOrbiter(nonce, nonce + 1);
 
         (bytes memory permitSig2, uint256 permitDeadline2) = generatePermit(TRANSFER_AMOUNT / 2);
-        gateway.depositForBurnWithOrbiter(
-            TRANSFER_AMOUNT / 2, permitDeadline2, permitSig2, PAYLOAD
-        );
+        gateway.depositForBurnWithOrbiter(TRANSFER_AMOUNT / 2, permitDeadline2, permitSig2, PAYLOAD);
 
         vm.stopPrank();
     }
