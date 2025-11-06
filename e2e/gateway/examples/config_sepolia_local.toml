@@ -1,0 +1,15 @@
+# Ethereum Configuration.
+[ethereum]
+# RPC endpoint for Ethereum node.
+rpc_endpoint = "http://127.0.0.1:8545"
+# HEX encoded private key (without 0x prefix).
+# Mnemonic: void modify social cup bone scene pave project high race hello gentle
+# Address:  0x048bb14d17E997F11e3D156cc0C7C00b35b3bd20
+# The account holds both ETH and USDC.
+private_key = "279c39a4a6c2bd28d6e72df5dd94af2db148ca2e0dd413a0ff970695875e8c69"
+
+[ethereum.contracts]
+# Circle's USDC contract address.
+usdc = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+# Orbiter gateway contract address.
+gateway = "0x16C632BafA9b3ce39bdCDdB00c3D486741685425"

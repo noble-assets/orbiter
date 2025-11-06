@@ -6,7 +6,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-const ConfigDir = ".config/"
+const ConfigDir = "./"
 
 // Config holds the complete configuration.
 type Config struct {

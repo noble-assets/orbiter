@@ -1,0 +1,12 @@
+# Ethereum Configuration.
+[ethereum]
+# RPC endpoint for Ethereum node.
+rpc_endpoint = ""
+# HEX encoded private key (without 0x prefix).
+private_key = ""
+
+[ethereum.contracts]
+# Circle's USDC contract address.
+usdc = ""
+# Orbiter gateway contract address.
+gateway = ""

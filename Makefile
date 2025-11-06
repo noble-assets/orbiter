@@ -142,6 +142,27 @@ test-e2e:
 	@cd e2e/interchaintests && go test -timeout 15m -race -v ./...
 	@echo "Completed e2e tests!"
 
+
+#=============================================================================#
+#                            Smart Contracts                                  #
+#=============================================================================#
+
+compile-contracts:
+	@echo "==================================================================="
+	@echo "Compiling smart contracts..."
+	@cd ./contracts && forge compile
+
+deps-contracts:
+	@echo "==================================================================="
+	@echo "Installing smart contracts dependencies..."
+	@forge clean && rm -rf node_modules/
+	@bun install
+
+generate-abi:
+	@echo "==================================================================="
+	@echo "Generating Solidity bindings..."
+	@cd ./contracts/ && jq '.abi' ./out/OrbiterGatewayCCTP.sol/OrbiterGatewayCCTP.json > ./abi/OrbiterGatewayCCTP.abi
+
 generate-bindings:
 	@echo "==================================================================="
 	@echo "Generating Solidity bindings..."

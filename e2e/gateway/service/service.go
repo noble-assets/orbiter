@@ -2,13 +2,12 @@ package service
 
 import (
 	"context"
-	"crypto/ecdsa"
-	"errors"
 	"fmt"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind/v2"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	gethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 
 	"github.com/noble-assets/orbiter/e2e/gateway/config"
@@ -19,19 +18,18 @@ import (
 type Service struct {
 	cfg *config.EthereumConfig
 
-	client  *ethclient.Client
+	client  EVMClient
 	chainID *big.Int
 
-	privateKey *ecdsa.PrivateKey
-	address    common.Address
+	signer *types.Signer
 
 	// gateway is the instance of the Orbiter Gateway contract for the CCTP protocol.
-	gateway *types.OrbiterGatewayCCTP
+	gateway *types.Contract[types.OrbiterGatewayCCTP]
 	// usdc is the instance of the Fiat Token V2 contract.
-	usdc *types.FiatToken
+	usdc *types.Contract[types.FiatToken]
 }
 
-func NewService(cfg *config.EthereumConfig) (*Service, error) {
+func NewService(ctx context.Context, cfg *config.EthereumConfig) (*Service, error) {
 	s := &Service{
 		cfg: cfg,
 	}
@@ -40,7 +38,7 @@ func NewService(cfg *config.EthereumConfig) (*Service, error) {
 		return nil, err
 	}
 
-	if err := s.setClient(cfg.RPCEndpoint); err != nil {
+	if err := s.setClient(ctx, cfg.RPCEndpoint); err != nil {
 		return nil, err
 	}
 
@@ -51,37 +49,91 @@ func NewService(cfg *config.EthereumConfig) (*Service, error) {
 	return s, nil
 }
 
-func (c *Service) Close() {
-	if c.client != nil {
-		c.client.Close()
+func (s *Service) Close() {
+	if s.client != nil {
+		s.client.Close()
 	}
 }
 
-func (s *Service) setSigner(privateKeyHex string) error {
-	privateKey, err := crypto.HexToECDSA(privateKeyHex)
+func (s *Service) Signer() *types.Signer {
+	return s.signer
+}
+
+func (s *Service) GatewayAddress() common.Address {
+	return s.gateway.Address()
+}
+
+func (s *Service) USDCAddress() common.Address {
+	return s.usdc.Address()
+}
+
+func (s *Service) BlockTime(ctx context.Context) (uint64, error) {
+	block, err := s.client.BlockByNumber(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("failed to load private key: %w", err)
+		return 0, err
 	}
 
-	publicKey := privateKey.Public()
-	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-	if !ok {
-		return fmt.Errorf("failed to cast public key to ECDSA public key")
+	return block.Time(), nil
+}
+
+func (s Service) TxOpts(ctx context.Context) (*bind.TransactOpts, error) {
+	signer := s.Signer()
+
+	txOpts, err := signer.CreateTransactor(s.chainID)
+	if err != nil {
+		return nil, err
 	}
 
-	s.privateKey = privateKey
-	s.address = crypto.PubkeyToAddress(*publicKeyECDSA)
+	nonce, err := s.client.PendingNonceAt(ctx, signer.Address())
+	if err != nil {
+		return nil, fmt.Errorf("failed to get nonce: %w", err)
+	}
+
+	gasPrice, err := s.client.SuggestGasPrice(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get gas price: %w", err)
+	}
+
+	txOpts.Nonce = big.NewInt(int64(nonce))
+	txOpts.GasPrice = gasPrice
+	txOpts.GasLimit = uint64(300000)
+
+	return txOpts, nil
+}
+
+func (s *Service) WaitForTransaction(
+	ctx context.Context,
+	txHash common.Hash,
+) (*gethtypes.Receipt, error) {
+	receipt, err := bind.WaitMined(ctx, s.client, txHash)
+	if err != nil {
+		return nil, fmt.Errorf("failed to wait for transaction: %w", err)
+	}
+
+	if receipt.Status == 0 {
+		return receipt, fmt.Errorf("transaction failed with status 0")
+	}
+
+	return receipt, nil
+}
+
+func (s *Service) setSigner(privateKeyHex string) error {
+	signer, err := types.NewSigner(privateKeyHex)
+	if err != nil {
+		return err
+	}
+	s.signer = signer
 
 	return nil
 }
 
-func (s *Service) setClient(rpcEndpoint string) error {
+func (s *Service) setClient(ctx context.Context, rpcEndpoint string) error {
 	client, err := ethclient.Dial(rpcEndpoint)
 	if err != nil {
 		return fmt.Errorf("failed to connect to Ethereum node: %w", err)
 	}
 
-	chainID, err := client.ChainID(context.Background())
+	chainID, err := client.ChainID(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to retrieve chain ID: %w", err)
 	}
@@ -93,16 +145,14 @@ func (s *Service) setClient(rpcEndpoint string) error {
 }
 
 func (s *Service) setContracts(cfg config.ContractsConfig) error {
-	gatewayAddr := common.HexToAddress(cfg.Gateway)
-	gateway, err := types.NewOrbiterGatewayCCTP(gatewayAddr, s.client)
+	gateway, err := types.NewContract(s.client, cfg.Gateway, types.NewOrbiterGatewayCCTP)
 	if err != nil {
 		return fmt.Errorf("failed to create Orbiter gateway instance: %w", err)
 	}
 
-	usdcAddr := common.HexToAddress(cfg.USDC)
-	usdc, err := types.NewFiatToken(usdcAddr, s.client)
+	usdc, err := types.NewContract(s.client, cfg.USDC, types.NewFiatToken)
 	if err != nil {
-		return fmt.Errorf("failed to create usdc token instance: %w", err)
+		return fmt.Errorf("failed to create USDC instance: %w", err)
 	}
 
 	s.gateway = gateway

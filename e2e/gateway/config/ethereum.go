@@ -7,10 +7,8 @@ import (
 // EthereumConfig holds Ethereum-specific configuration.
 type EthereumConfig struct {
 	RPCEndpoint string `toml:"rpc_endpoint"`
-	ChainID     int64  `toml:"chain_id"`
 	// PrivateKey used to send transactions on the EVM chain.
 	PrivateKey string          `toml:"private_key"`
-	GasLimit   uint64          `toml:"gas_limit"`
 	Contracts  ContractsConfig `toml:"contracts"`
 }
 
@@ -18,14 +16,8 @@ func (c *EthereumConfig) Validate() error {
 	if c.RPCEndpoint == "" {
 		return fmt.Errorf("ethereum.rpc_endpoint is required")
 	}
-	if c.ChainID == 0 {
-		return fmt.Errorf("ethereum.chain_id is required")
-	}
 	if c.PrivateKey == "" {
 		return fmt.Errorf("ethereum.private_key is required")
-	}
-	if c.GasLimit == 0 {
-		c.GasLimit = 300000 // Default gas limit
 	}
 
 	if err := c.Contracts.Validate(); err != nil {
@@ -45,9 +37,6 @@ type ContractsConfig struct {
 func (c *ContractsConfig) Validate() error {
 	if c.USDC == "" {
 		return fmt.Errorf("contracts.usdc is required")
-	}
-	if c.TokenMessenger == "" {
-		return fmt.Errorf("contracts.token_messenger is required")
 	}
 	if c.Gateway == "" {
 		return fmt.Errorf("contracts.gateway is required")
