@@ -109,18 +109,19 @@ contract OrbiterGatewayCCTP {
      * Noble chain in the same tx.
      * @param amount Amount of tokens to transfer.
      * @param blocktimeDeadline Blocktime after which the permit expires.
-     * @param permitSignature ABI encoded secp256k1 signature of the user.
+     * @param v The recovery byte of the permit signature.
+     * @param r The first 32 bytes of the permit signature.
+     * @param s The second 32 bytes of the permit signature.
      * @param orbiterPayload Bytes of the Orbiter payload.
      */
     function depositForBurnWithOrbiter(
         uint256 amount,
         uint256 blocktimeDeadline,
-        bytes calldata permitSignature,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
         bytes calldata orbiterPayload
     ) external {
-        // NOTE: maybe we can save gas passing directly v, s, and r.
-        (uint8 v, bytes32 r, bytes32 s) = abi.decode(permitSignature, (uint8, bytes32, bytes32));
-
         TOKEN.permit(msg.sender, address(this), amount, blocktimeDeadline, v, r, s);
         if (!TOKEN.transferFrom(msg.sender, address(this), amount)) {
             revert TransferFailed();
@@ -141,13 +142,5 @@ contract OrbiterGatewayCCTP {
         );
 
         emit DepositForBurnWithOrbiter(transferNonce, payloadNonce);
-    }
-
-    /**
-     * @notice Returns the zero left-padded bytes of the address used for the destination caller.
-     * @return bytes32 Bytes associated with the destination caller address on Noble.
-     */
-    function destinationCaller() public view returns (bytes32) {
-        return DESTINATION_CALLER;
     }
 }
