@@ -17,10 +17,10 @@
  */
 pragma solidity 0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {console} from "forge-std/console.sol";
-import {IFiatToken, IMessageTransmitter, ITokenMessenger} from "../src/interfaces/Circle.sol";
-import {OrbiterGatewayCCTP} from "../src/OrbiterGatewayCCTP.sol";
+import { Test } from "forge-std/Test.sol";
+import { console } from "forge-std/console.sol";
+import { IFiatToken, IMessageTransmitter, ITokenMessenger } from "../src/interfaces/Circle.sol";
+import { OrbiterGatewayCCTP } from "../src/OrbiterGatewayCCTP.sol";
 
 contract TestOrbiterGatewayCCTP is Test {
     // https://developers.circle.com/stablecoins/usdc-contract-addresses
@@ -56,19 +56,27 @@ contract TestOrbiterGatewayCCTP is Test {
         messageTransmitter = tokenMessenger.localMessageTransmitter();
         vm.label(address(messageTransmitter), "MessageTransmitter");
 
-        gateway = new OrbiterGatewayCCTP(TOKEN_ADDRESS, TOKEN_MESSENGER_ADDRESS, DESTINATION_CALLER_ADDRESS);
+        gateway = new OrbiterGatewayCCTP(
+            TOKEN_ADDRESS, TOKEN_MESSENGER_ADDRESS, DESTINATION_CALLER_ADDRESS
+        );
 
         (user, userKey) = makeAddrAndKey("user");
         deal(TOKEN_ADDRESS, user, TRANSFER_AMOUNT);
     }
 
-    function generatePermit(uint256 amount) internal view returns (uint8, bytes32, bytes32, uint256) {
+    function generatePermit(uint256 amount)
+        internal
+        view
+        returns (uint8, bytes32, bytes32, uint256)
+    {
         uint256 deadline = block.timestamp + 60;
-        bytes32 structHash =
-            keccak256(abi.encode(token.PERMIT_TYPEHASH(), user, gateway, amount, token.nonces(user), deadline));
+        bytes32 structHash = keccak256(
+            abi.encode(token.PERMIT_TYPEHASH(), user, gateway, amount, token.nonces(user), deadline)
+        );
         // prefix is: hex"1901"
-        (uint8 v, bytes32 r, bytes32 s) =
-            vm.sign(userKey, keccak256(abi.encodePacked("\x19\x01", token.DOMAIN_SEPARATOR(), structHash)));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
+            userKey, keccak256(abi.encodePacked("\x19\x01", token.DOMAIN_SEPARATOR(), structHash))
+        );
         return (v, r, s, deadline);
     }
 
@@ -79,14 +87,20 @@ contract TestOrbiterGatewayCCTP is Test {
     function testConstructor() public view {
         assertEq(address(gateway.TOKEN()), TOKEN_ADDRESS, "token address should be different");
         assertEq(
-            address(gateway.TOKEN_MESSENGER()), TOKEN_MESSENGER_ADDRESS, "token messenger address should be different"
+            address(gateway.TOKEN_MESSENGER()),
+            TOKEN_MESSENGER_ADDRESS,
+            "token messenger address should be different"
         );
         assertEq(
             address(gateway.MESSAGE_TRANSMITTER()),
             address(messageTransmitter),
             "message transmitter address should be different"
         );
-        assertEq(gateway.DESTINATION_CALLER(), DESTINATION_CALLER_ADDRESS, "destination caller should be different");
+        assertEq(
+            gateway.DESTINATION_CALLER(),
+            DESTINATION_CALLER_ADDRESS,
+            "destination caller should be different"
+        );
     }
 
     function testConstructorZeroTokenAddressRevert() public {
