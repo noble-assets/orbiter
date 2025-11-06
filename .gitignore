@@ -1,7 +1,14 @@
 .claude
+.env
 .idea
 .orbiter
 build
+cache
 coverage**.out
 go.work.sum
 heighliner**
+
+# Foundry
+node_modules
+out
+*/broadcast/*

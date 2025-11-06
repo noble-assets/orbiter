@@ -1,0 +1,7 @@
+{
+  "name": "@noble-assets/orbiter-cctp-gateway",
+  "private": true,
+  "devDependencies": {
+    "forge-std": "github:foundry-rs/forge-std#v1.11.0"
+  }
+}
