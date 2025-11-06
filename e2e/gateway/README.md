@@ -27,7 +27,10 @@ anvil --fork-url https://ethereum-sepolia-rpc.publicnode.com -vvvv
 Once the node is running via anvil, we can deploy the Gateway contract:
 
 ```sh
-forge script ./contracts/script/OrbiterGatewayCCTP.s.sol:OrbiterGatewayCCTPScript_testnet --root ./contracts/ --fork-url http://localhost:8545  --broadcast --interactives 1 -vvvv
+forge script ./contracts/script/OrbiterGatewayCCTP.s.sol:OrbiterGatewayCCTPScript_testnet \
+--root ./contracts/ \
+--fork-url http://localhost:8545  \
+--broadcast --interactives 1 -vvvv
 ```
 
 It will be asked you o insert the private key for the deployment, and then the gateway will be ready
