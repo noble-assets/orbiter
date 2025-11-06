@@ -119,44 +119,44 @@ contract TestOrbiterGatewayCCTP is Test {
     }
 
     // =============================================================================
-    // depositForBurnWithOrbiterPayload tests
+    // depositForBurnWithOrbiter tests
     // =============================================================================
 
-    function testDepositForBurnWithOrbiterPayload() public {
+    function testDepositForBurnWithOrbiter() public {
         vm.startPrank(user);
 
         uint64 nonce = messageTransmitter.nextAvailableNonce();
         vm.expectEmit(true, true, true, true);
-        emit OrbiterGatewayCCTP.DepositForBurnWithOrbiterPayload(nonce, nonce + 1);
+        emit OrbiterGatewayCCTP.DepositForBurnWithOrbiter(nonce, nonce + 1);
 
         (bytes memory permitSig, uint256 permitDeadline) = generatePermit(TRANSFER_AMOUNT);
-        gateway.depositForBurnWithOrbiterPayload(
+        gateway.depositForBurnWithOrbiter(
             TRANSFER_AMOUNT, permitDeadline, permitSig, PAYLOAD
         );
 
         vm.stopPrank();
     }
 
-    function testDepositForBurnWithOrbiterPayloadMultipleDeposits() public {
+    function testDepositForBurnWithOrbiterMultipleDeposits() public {
         vm.startPrank(user);
 
         // First deposit
         uint64 nonce = messageTransmitter.nextAvailableNonce();
         vm.expectEmit(true, true, true, true);
-        emit OrbiterGatewayCCTP.DepositForBurnWithOrbiterPayload(nonce, nonce + 1);
+        emit OrbiterGatewayCCTP.DepositForBurnWithOrbiter(nonce, nonce + 1);
 
         (bytes memory permitSig1, uint256 permitDeadline1) = generatePermit(TRANSFER_AMOUNT / 2);
-        gateway.depositForBurnWithOrbiterPayload(
+        gateway.depositForBurnWithOrbiter(
             TRANSFER_AMOUNT / 2, permitDeadline1, permitSig1, PAYLOAD
         );
 
         // Second deposit
         nonce = messageTransmitter.nextAvailableNonce();
         vm.expectEmit(true, true, true, true);
-        emit OrbiterGatewayCCTP.DepositForBurnWithOrbiterPayload(nonce, nonce + 1);
+        emit OrbiterGatewayCCTP.DepositForBurnWithOrbiter(nonce, nonce + 1);
 
         (bytes memory permitSig2, uint256 permitDeadline2) = generatePermit(TRANSFER_AMOUNT / 2);
-        gateway.depositForBurnWithOrbiterPayload(
+        gateway.depositForBurnWithOrbiter(
             TRANSFER_AMOUNT / 2, permitDeadline2, permitSig2, PAYLOAD
         );
 
