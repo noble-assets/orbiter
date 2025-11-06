@@ -71,9 +71,7 @@ contract TestOrbiterGatewayCCTP is Test {
     {
         uint256 deadline = block.timestamp + 60;
         bytes32 structHash = keccak256(
-            abi.encode(
-                token.PERMIT_TYPEHASH(), user, gateway, amount, token.nonces(user), deadline
-            )
+            abi.encode(token.PERMIT_TYPEHASH(), user, gateway, amount, token.nonces(user), deadline)
         );
         // prefix is: hex"1901"
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(
@@ -145,22 +143,16 @@ contract TestOrbiterGatewayCCTP is Test {
         vm.expectEmit(true, true, true, true);
         emit OrbiterGatewayCCTP.DepositForBurnWithOrbiter(nonce, nonce + 1);
 
-        (uint8 v1, bytes32 r1, bytes32 s1, uint256 deadline1) =
-            generatePermit(TRANSFER_AMOUNT / 2);
-        gateway.depositForBurnWithOrbiter(
-            TRANSFER_AMOUNT / 2, deadline1, v1, r1, s1, PAYLOAD
-        );
+        (uint8 v1, bytes32 r1, bytes32 s1, uint256 deadline1) = generatePermit(TRANSFER_AMOUNT / 2);
+        gateway.depositForBurnWithOrbiter(TRANSFER_AMOUNT / 2, deadline1, v1, r1, s1, PAYLOAD);
 
         // Second deposit
         nonce = messageTransmitter.nextAvailableNonce();
         vm.expectEmit(true, true, true, true);
         emit OrbiterGatewayCCTP.DepositForBurnWithOrbiter(nonce, nonce + 1);
 
-        (uint8 v2, bytes32 r2, bytes32 s2, uint256 deadline2) =
-            generatePermit(TRANSFER_AMOUNT / 2);
-        gateway.depositForBurnWithOrbiter(
-            TRANSFER_AMOUNT / 2, deadline2, v2, r2, s2, PAYLOAD
-        );
+        (uint8 v2, bytes32 r2, bytes32 s2, uint256 deadline2) = generatePermit(TRANSFER_AMOUNT / 2);
+        gateway.depositForBurnWithOrbiter(TRANSFER_AMOUNT / 2, deadline2, v2, r2, s2, PAYLOAD);
 
         vm.stopPrank();
     }
