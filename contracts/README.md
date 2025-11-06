@@ -1,17 +1,9 @@
-## Foundry
+# Contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Smart contracts used to extend cross-chain communication protocols to support the Noble's Orbiter
+module.
 
-Foundry consists of:
-
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-<https://book.getfoundry.sh/>
+For more information regarding the gateways, please refer to the [`docs`](../../docs/gateway.md).
 
 ## Requirements
 
@@ -20,62 +12,42 @@ To use this repository, you need the following software installed:
 - [`bun`](https://bun.sh)
 - [`foundry`](https://getfoundry.sh)
 
-## Dependencies
-
-To download the required dependencies, run:
+## Build
 
 ```sh
 bun install
-```
-
-## Usage
-
-### Build
-
-```shell
 forge build
 ```
 
-### Test
+## Tests
 
 ```shell
 forge test
 ```
 
-### Format
+## Format
 
 ```shell
 forge fmt
 ```
 
-### Gas Snapshots
+## Deploy
 
-```shell
-forge snapshot
+It is possible to deploy the CCTP Gateway contract using the Solidity scripts contained in the
+`./scripts/` folder. To deploy the gateway on a testnet fork running locally with anvil, you should
+first start the Ethereum node:
+
+```sh
+anvil --fork-url https://ethereum-sepolia-rpc.publicnode.com -vvvv
 ```
 
-### Anvil
+Then, deploy the contract with the testnet dependencies:
 
-```shell
-anvil
+```sh
+forge script ./contracts/script/OrbiterGatewayCCTP.s.sol:OrbiterGatewayCCTPScript_testnet \
+--fork-url http://localhost:8545 \
+--broadcast --interactives 1 -vvvv
 ```
 
-### Deploy
-
-```shell
-forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-cast <subcommand>
-```
-
-### Help
-
-```shell
-forge --help
-anvil --help
-cast --help
-```
+You will be asked to insert the private key to sign the transaction, and then the gateway will be
+deployed.
