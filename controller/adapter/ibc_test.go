@@ -30,11 +30,13 @@ import (
 	sdkmath "cosmossdk.io/math"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
 	adapterctrl "github.com/noble-assets/orbiter/controller/adapter"
 	"github.com/noble-assets/orbiter/testutil"
 	"github.com/noble-assets/orbiter/testutil/testdata"
 	"github.com/noble-assets/orbiter/types"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
 	"github.com/noble-assets/orbiter/types/core"
 )
@@ -185,32 +187,127 @@ func TestParsePacket(t *testing.T) {
 	testCases := []struct {
 		name          string
 		setup         func(reg codectypes.InterfaceRegistry)
-		payloadBz     []byte
+		ccPacket      func() adaptertypes.CrossChainPacket
 		expParsedData *types.ParsedData
 		expErr        string
 	}{
 		{
-			name:      "skip - not ics20 packet",
-			payloadBz: []byte(`{"some": "other packet type"}`),
-			expErr:    "not for orbiter",
+			name: "skip - not ics20 packet",
+			ccPacket: func() adaptertypes.CrossChainPacket {
+				p, err := adaptertypes.NewIBCCrossChainPacket(
+					"nontransfer",
+					"channel-1",
+					[]byte(`{"some": "other packet type"}`),
+				)
+				require.NoError(t, err)
+
+				return p
+			},
+			expErr: "not for orbiter",
 		},
 		{
 			name: "skip - receiver is not orbiter module",
-			payloadBz: testutil.CreateValidIBCPacketData(
-				sender,
-				testutil.NewNobleAddress(),
-				testutil.CreateValidOrbiterPayload(),
-			),
+			ccPacket: func() adaptertypes.CrossChainPacket {
+				data := testutil.CreateValidIBCPacketData(
+					sender,
+					testutil.NewNobleAddress(),
+					testutil.CreateValidOrbiterPayload(),
+				)
+
+				p, err := adaptertypes.NewIBCCrossChainPacket(
+					"nontransfer",
+					"channel-1",
+					data,
+				)
+				require.NoError(t, err)
+
+				return p
+			},
 			expErr: "not for orbiter",
 		},
 		{
 			name: "error - when memo is not a valid json",
-			payloadBz: testutil.CreateValidIBCPacketData(
-				sender,
-				core.ModuleAddress.String(),
-				"not json memo",
-			),
+			ccPacket: func() adaptertypes.CrossChainPacket {
+				data := testutil.CreateValidIBCPacketData(
+					sender,
+					core.ModuleAddress.String(),
+					"not json memo",
+				)
+
+				p, err := adaptertypes.NewIBCCrossChainPacket(
+					"nontransfer",
+					"channel-1",
+					data,
+				)
+				require.NoError(t, err)
+
+				return p
+			},
 			expErr: "not a valid json",
+		},
+		{
+			name: "error - denom is not native (multi hop)",
+			setup: func(reg codectypes.InterfaceRegistry) {
+				reg.RegisterImplementations(
+					(*core.ForwardingAttributes)(nil),
+					&testdata.TestForwardingAttr{},
+				)
+				reg.RegisterImplementations(
+					(*core.ActionAttributes)(nil),
+					&testdata.TestActionAttr{},
+				)
+			},
+			ccPacket: func() adaptertypes.CrossChainPacket {
+				data := transfertypes.NewFungibleTokenPacketData(
+					"transfer/channel-2/uosmo",
+					"1000000",
+					sender,
+					core.ModuleAddress.String(),
+					testutil.CreateValidOrbiterPayloadWithActions(),
+				)
+
+				p, err := adaptertypes.NewIBCCrossChainPacket(
+					"transfer",
+					"channel-1",
+					data.GetBytes(),
+				)
+				require.NoError(t, err)
+
+				return p
+			},
+			expErr: "coin is native of source",
+		},
+		{
+			name: "error - denom is not native (native on source)",
+			setup: func(reg codectypes.InterfaceRegistry) {
+				reg.RegisterImplementations(
+					(*core.ForwardingAttributes)(nil),
+					&testdata.TestForwardingAttr{},
+				)
+				reg.RegisterImplementations(
+					(*core.ActionAttributes)(nil),
+					&testdata.TestActionAttr{},
+				)
+			},
+			ccPacket: func() adaptertypes.CrossChainPacket {
+				data := transfertypes.NewFungibleTokenPacketData(
+					"uosmo",
+					"1000000",
+					sender,
+					core.ModuleAddress.String(),
+					testutil.CreateValidOrbiterPayloadWithActions(),
+				)
+
+				p, err := adaptertypes.NewIBCCrossChainPacket(
+					"transfer",
+					"channel-1",
+					data.GetBytes(),
+				)
+				require.NoError(t, err)
+
+				return p
+			},
+			expErr: "coin is native of source",
 		},
 		{
 			name: "success - valid orbiter payload with actions",
@@ -224,11 +321,24 @@ func TestParsePacket(t *testing.T) {
 					&testdata.TestActionAttr{},
 				)
 			},
-			payloadBz: testutil.CreateValidIBCPacketData(
-				sender,
-				core.ModuleAddress.String(),
-				testutil.CreateValidOrbiterPayloadWithActions(),
-			),
+			ccPacket: func() adaptertypes.CrossChainPacket {
+				data := transfertypes.NewFungibleTokenPacketData(
+					"transfer/channel-1/uusdc",
+					"1000000",
+					sender,
+					core.ModuleAddress.String(),
+					testutil.CreateValidOrbiterPayloadWithActions(),
+				)
+
+				p, err := adaptertypes.NewIBCCrossChainPacket(
+					"transfer",
+					"channel-1",
+					data.GetBytes(),
+				)
+				require.NoError(t, err)
+
+				return p
+			},
 			expParsedData: &types.ParsedData{
 				Coin: sdk.Coin{
 					Denom:  "uusdc",
@@ -261,7 +371,7 @@ func TestParsePacket(t *testing.T) {
 			adapter, err := adapterctrl.NewIBCAdapter(encCfg.Codec, log.NewNopLogger())
 			require.NoError(t, err)
 
-			parsedData, err := adapter.ParsePacket(tC.payloadBz)
+			parsedData, err := adapter.ParsePacket(tC.ccPacket())
 
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)

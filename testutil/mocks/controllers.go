@@ -25,6 +25,7 @@ import (
 	"errors"
 
 	"github.com/noble-assets/orbiter/types"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -87,8 +88,12 @@ func (a *NoOpAdapterController) Name() string {
 }
 
 // ParsePacket implements types.AdapterController.
-func (a *NoOpAdapterController) ParsePacket(bz []byte) (*types.ParsedData, error) {
-	if string(bz) == "failing" {
+func (a *NoOpAdapterController) ParsePacket(
+	ccPacket adaptertypes.CrossChainPacket,
+) (*types.ParsedData, error) {
+	packet := ccPacket.Packet()
+
+	if string(packet) == "failing" {
 		return nil, errors.New("error parsing payload")
 	}
 

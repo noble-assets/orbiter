@@ -150,7 +150,7 @@ func TestHandlePacket_Internal(t *testing.T) {
 	validForwarding, err := forwardingtypes.NewInternalForwarding(nobleAddr)
 	require.NoError(t, err)
 
-	validTransfer, err := types.NewTransferAttributes(
+	validTransfer, err := core.NewTransferAttributes(
 		core.PROTOCOL_IBC,
 		"channel-0",
 		"usdn",
@@ -183,7 +183,7 @@ func TestHandlePacket_Internal(t *testing.T) {
 			name: "error - when transfer attributes are default values",
 			packet: func() *types.ForwardingPacket {
 				return &types.ForwardingPacket{
-					TransferAttributes: &types.TransferAttributes{},
+					TransferAttributes: &core.TransferAttributes{},
 					Forwarding:         validForwarding,
 				}
 			},

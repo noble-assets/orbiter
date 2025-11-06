@@ -168,7 +168,7 @@ func TestExtractAttributes_Hyperlane(t *testing.T) {
 }
 
 func TestValidateForwarding_Hyperlane(t *testing.T) {
-	transferAttr, err := types.NewTransferAttributes(
+	transferAttr, err := core.NewTransferAttributes(
 		core.PROTOCOL_IBC,
 		"channel-0",
 		"usdn",
@@ -202,7 +202,7 @@ func TestValidateForwarding_Hyperlane(t *testing.T) {
 		name         string
 		setup        func(*mocks.HyperlaneHandler)
 		hypAttr      *forwardingtypes.HypAttributes
-		transferAttr *types.TransferAttributes
+		transferAttr *core.TransferAttributes
 		expError     string
 	}{
 		{
@@ -303,7 +303,7 @@ func TestHandlePacket_Hyperlane(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	validTransfer, err := types.NewTransferAttributes(
+	validTransfer, err := core.NewTransferAttributes(
 		core.PROTOCOL_IBC,
 		"channel-0",
 		"usdn",
@@ -336,7 +336,7 @@ func TestHandlePacket_Hyperlane(t *testing.T) {
 			name: "error - when transfer attributes are default values",
 			packet: func() *types.ForwardingPacket {
 				return &types.ForwardingPacket{
-					TransferAttributes: &types.TransferAttributes{},
+					TransferAttributes: &core.TransferAttributes{},
 					Forwarding:         validForwarding,
 				}
 			},

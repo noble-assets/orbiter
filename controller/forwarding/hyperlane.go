@@ -159,7 +159,7 @@ func (c *HyperlaneController) ExtractAttributes(
 // valid or not.
 func (c *HyperlaneController) ValidateForwarding(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
+	transferAttr *core.TransferAttributes,
 	hypAttr *forwardingtypes.HypAttributes,
 ) error {
 	if err := transferAttr.Validate(); err != nil {
@@ -192,7 +192,7 @@ func (c *HyperlaneController) ValidateForwarding(
 // executeForwarding initiates an Hyperlane cross-chain transfer.
 func (c *HyperlaneController) executeForwarding(
 	ctx context.Context,
-	transferAttr *types.TransferAttributes,
+	transferAttr *core.TransferAttributes,
 	hypAttr *forwardingtypes.HypAttributes,
 	_ []byte,
 ) error {

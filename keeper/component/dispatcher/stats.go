@@ -28,7 +28,6 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
 
-	"github.com/noble-assets/orbiter/types"
 	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
 	"github.com/noble-assets/orbiter/types/core"
 )
@@ -36,7 +35,7 @@ import (
 // UpdateStats updates all the statistics the module keep track of.
 func (d *Dispatcher) UpdateStats(
 	ctx context.Context,
-	attr *types.TransferAttributes,
+	attr *core.TransferAttributes,
 	forwarding *core.Forwarding,
 ) error {
 	if attr == nil {
@@ -139,7 +138,7 @@ type denomDispatchedAmount struct {
 // BuildDenomDispatchedAmounts is an helper method used to
 // extract the amounts dispatched that have to be stored in state.
 func (d *Dispatcher) BuildDenomDispatchedAmounts(
-	attr *types.TransferAttributes,
+	attr *core.TransferAttributes,
 ) ([]denomDispatchedAmount, error) {
 	if attr == nil {
 		return nil, core.ErrNilPointer.Wrap("received nil transfer attributes")

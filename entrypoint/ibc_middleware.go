@@ -22,17 +22,15 @@ package entrypoint
 
 import (
 	"errors"
-	"fmt"
-	"strings"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 
 	"github.com/noble-assets/orbiter/types"
+	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	"github.com/noble-assets/orbiter/types/core"
 )
 
@@ -87,7 +85,16 @@ func (i IBCMiddleware) OnRecvPacket(
 		return newErrorAcknowledgement(err)
 	}
 
-	orbiterPacket, err := i.payloadAdapter.AdaptPacket(ctx, ccID, packet.GetData())
+	ccPacket, err := adaptertypes.NewIBCCrossChainPacket(
+		packet.GetSourcePort(),
+		packet.GetSourceChannel(),
+		packet.GetData(),
+	)
+	if err != nil {
+		return newErrorAcknowledgement(err)
+	}
+
+	orbiterPacket, err := i.payloadAdapter.AdaptPacket(ctx, ccID, ccPacket)
 	// If the error is the sentinel error, we call the next middleware/app in the ICS20 stack.
 	if err != nil && !errors.Is(err, core.ErrNoOrbiterPacket) {
 		return newErrorAcknowledgement(err)
@@ -95,19 +102,6 @@ func (i IBCMiddleware) OnRecvPacket(
 	if orbiterPacket == nil {
 		return i.IBCModule.OnRecvPacket(ctx, packet, relayer)
 	}
-
-	// In IBC the denom specified in the packet is the sending chain representation. We have to
-	// convert the denom into the Noble representation.
-	denom, err := recoverNativeDenom(
-		orbiterPacket.TransferAttributes.SourceDenom(),
-		packet.GetSourcePort(),
-		packet.GetSourceChannel(),
-	)
-	if err != nil {
-		return newErrorAcknowledgement(errorsmod.Wrap(err, "coin is not native"))
-	}
-
-	orbiterPacket.TransferAttributes.SetDestinationDenom(denom)
 
 	err = i.payloadAdapter.BeforeTransferHook(ctx, orbiterPacket)
 	if err != nil {
@@ -130,34 +124,6 @@ func (i IBCMiddleware) OnRecvPacket(
 	}
 
 	return ack
-}
-
-func recoverNativeDenom(denom, sourcePort, sourceChannel string) (string, error) {
-	if transfertypes.SenderChainIsSource(sourcePort, sourceChannel, denom) {
-		return "", errors.New("coin is native of source chain")
-	}
-
-	voucherPrefix := transfertypes.GetDenomPrefix(sourcePort, sourceChannel)
-
-	// Remove from the denom the prefix created on the source chain when it received
-	// the coin from Noble.
-	if !strings.HasPrefix(denom, voucherPrefix) {
-		return "", fmt.Errorf(
-			"denom %q missing expected IBC prefix %q",
-			denom,
-			voucherPrefix,
-		)
-	}
-	unprefixedDenom := strings.TrimPrefix(denom, voucherPrefix)
-
-	// The denomination used to send the coins is either the native denom or the hash of the path
-	// if the denomination is not native.
-	denomTrace := transfertypes.ParseDenomTrace(unprefixedDenom)
-	if !denomTrace.IsNativeDenom() {
-		return "", errors.New("orbiter supports only native tokens")
-	}
-
-	return unprefixedDenom, nil
 }
 
 func newErrorAcknowledgement(err error) channeltypes.Acknowledgement {
