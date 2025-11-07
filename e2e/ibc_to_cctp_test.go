@@ -122,14 +122,14 @@ func testIbcFailingParsingWithoutForwarding(
 
 	// Create a wrapped payload for the IBC memo without the required forwarding info.
 	feeRecipientAddr := testutil.NewNobleAddress()
+
 	bps, err := actiontypes.NewFeeBasisPoints(100)
 	require.NoError(t, err)
-	action, err := actiontypes.NewFeeAction(
-		&actiontypes.FeeInfo{
-			Recipient: feeRecipientAddr,
-			FeeType:   bps,
-		},
-	)
+
+	feeInfo, err := actiontypes.NewFeeInfo(feeRecipientAddr, bps)
+	require.NoError(t, err)
+
+	action, err := actiontypes.NewFeeAction(feeInfo)
 	require.NoError(t, err)
 
 	p := core.PayloadWrapper{Orbiter: &core.Payload{

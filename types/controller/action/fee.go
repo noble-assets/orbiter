@@ -56,6 +56,15 @@ func NewFeeAttributes(feesInfo ...*FeeInfo) (*FeeAttributes, error) {
 	return &attr, attr.Validate()
 }
 
+func NewFeeInfo(recipient string, feeType isFeeInfo_FeeType) (*FeeInfo, error) {
+	feeInfo := FeeInfo{
+		Recipient: recipient,
+		FeeType:   feeType,
+	}
+
+	return &feeInfo, feeInfo.Validate()
+}
+
 func NewFeeAmount(value string) (*FeeInfo_Amount_, error) {
 	amount := &FeeInfo_Amount{
 		Value: value,
@@ -120,18 +129,12 @@ func (f *FeeInfo) Validate() error {
 		if feeType == nil {
 			return core.ErrNilPointer.Wrap("fee info amount wrapper")
 		}
-		if feeType.Amount == nil {
-			return core.ErrNilPointer.Wrap("fee info amount")
-		}
 		if err := validateAmount(feeType.Amount); err != nil {
 			return err
 		}
 	case *FeeInfo_BasisPoints_:
 		if feeType == nil {
 			return core.ErrNilPointer.Wrap("fee info bps wrapper")
-		}
-		if feeType.BasisPoints == nil {
-			return core.ErrNilPointer.Wrap("fee info bps")
 		}
 		if err := validateBasisPoints(feeType.BasisPoints); err != nil {
 			return err
@@ -146,6 +149,9 @@ func (f *FeeInfo) Validate() error {
 }
 
 func validateAmount(amt *FeeInfo_Amount) error {
+	if amt == nil {
+		return core.ErrNilPointer.Wrap("fee info amount")
+	}
 	val, ok := math.NewIntFromString(amt.GetValue())
 	if !ok {
 		return fmt.Errorf("cannot convert %s into a number", amt.GetValue())
@@ -158,6 +164,10 @@ func validateAmount(amt *FeeInfo_Amount) error {
 }
 
 func validateBasisPoints(bps *FeeInfo_BasisPoints) error {
+	if bps == nil {
+		return core.ErrNilPointer.Wrap("fee info bps")
+	}
+
 	value := bps.GetValue()
 	if value == 0 || value > BPSNormalizer {
 		return fmt.Errorf(
