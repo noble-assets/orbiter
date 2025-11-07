@@ -26,7 +26,7 @@ message FeeInfo {
   // Amount allows to define a fix value fee.
   message Amount {
     // Fee amount.
-    uint32 value = 1;
+    string value = 1;
   }
 
   // recipient is the Noble address which is going to receive the fee.

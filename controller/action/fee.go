@@ -174,6 +174,7 @@ func (c *FeeController) ComputeFeesToDistribute(
 
 		var err error
 		var feeAmount math.Int
+
 		switch feeType := feeInfo.FeeType.(type) {
 		case *actiontypes.FeeInfo_BasisPoints_:
 			feeAmount, err = ComputeFeeAmount(transferAmount, uint64(feeType.BasisPoints.Value))
@@ -181,7 +182,7 @@ func (c *FeeController) ComputeFeesToDistribute(
 				return nil, err
 			}
 		case *actiontypes.FeeInfo_Amount_:
-			feeAmount = math.NewIntFromUint64(uint64(feeType.Amount.Value))
+			feeAmount, _ = math.NewIntFromString(feeType.Amount.Value)
 		}
 
 		if feeAmount.IsPositive() {

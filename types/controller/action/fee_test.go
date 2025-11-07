@@ -67,16 +67,40 @@ func TestValidateFee(t *testing.T) {
 			expErr: "fee basis point must be > 0 and < 10000",
 		},
 		{
+			name: "error - negative amount",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+				FeeType: &actiontypes.FeeInfo_Amount_{
+					Amount: &actiontypes.FeeInfo_Amount{
+						Value: "-1",
+					},
+				},
+			},
+			expErr: "fee amount must be positive",
+		},
+		{
+			name: "error - not a number amount",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+				FeeType: &actiontypes.FeeInfo_Amount_{
+					Amount: &actiontypes.FeeInfo_Amount{
+						Value: "pizza",
+					},
+				},
+			},
+			expErr: "cannot convert",
+		},
+		{
 			name: "error - zero amount",
 			feeInfo: &actiontypes.FeeInfo{
 				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
 				FeeType: &actiontypes.FeeInfo_Amount_{
 					Amount: &actiontypes.FeeInfo_Amount{
-						Value: 0,
+						Value: "0",
 					},
 				},
 			},
-			expErr: "must be > 0",
+			expErr: "fee amount must be positive",
 		},
 		{
 			name: "error - recipient is empty",
@@ -138,7 +162,7 @@ func TestValidateFee(t *testing.T) {
 				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
 				FeeType: &actiontypes.FeeInfo_Amount_{
 					Amount: &actiontypes.FeeInfo_Amount{
-						Value: 1,
+						Value: "1",
 					},
 				},
 			},
@@ -231,7 +255,7 @@ func TestValidateFeeAttributes(t *testing.T) {
 							Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
 							FeeType: &actiontypes.FeeInfo_Amount_{
 								Amount: &actiontypes.FeeInfo_Amount{
-									Value: 1,
+									Value: "1",
 								},
 							},
 						},

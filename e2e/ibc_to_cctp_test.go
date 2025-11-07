@@ -311,7 +311,7 @@ func testIbcPassingWithFeeAction(
 	feeBps, err := actiontypes.NewFeeBasisPoints(100) // 1%
 	require.NoError(t, err)
 
-	feeAmount, err := actiontypes.NewFeeAmount(100)
+	feeAmount, err := actiontypes.NewFeeAmount("100")
 	require.NoError(t, err)
 
 	action, err := actiontypes.NewFeeAction(
@@ -382,8 +382,8 @@ func testIbcPassingWithFeeAction(
 
 	feeAmt, err := s.Chain.BankQueryBalance(ctx, feeRecipientAddr, "uusdc")
 	require.NoError(t, err)
-	expFee := math.NewIntFromUint64(uint64(feeAmount.Amount.Value)). // fee from fixed fee action
-										Add(math.NewInt(10_000)) // fee from basis points fee action
+	expFee := math.NewIntFromUint64(100). // fee from fixed fee action
+						Add(math.NewInt(10_000)) // fee from basis points fee action
 	require.Equal(t, expFee.String(), feeAmt.String())
 }
 

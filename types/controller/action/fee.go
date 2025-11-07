@@ -56,7 +56,7 @@ func NewFeeAttributes(feesInfo ...*FeeInfo) (*FeeAttributes, error) {
 	return &attr, attr.Validate()
 }
 
-func NewFeeAmount(value uint32) (*FeeInfo_Amount_, error) {
+func NewFeeAmount(value string) (*FeeInfo_Amount_, error) {
 	amount := &FeeInfo_Amount{
 		Value: value,
 	}
@@ -146,8 +146,12 @@ func (f *FeeInfo) Validate() error {
 }
 
 func validateAmount(amt *FeeInfo_Amount) error {
-	if amt.GetValue() == 0 {
-		return errors.New("fee amount must be > 0")
+	val, ok := math.NewIntFromString(amt.GetValue())
+	if !ok {
+		return fmt.Errorf("cannot convert %s into a number", amt.GetValue())
+	}
+	if !val.IsPositive() {
+		return errors.New("fee amount must be positive")
 	}
 
 	return nil

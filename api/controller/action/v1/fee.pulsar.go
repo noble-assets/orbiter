@@ -1629,8 +1629,8 @@ func (x *fastReflection_FeeInfo_Amount) Interface() protoreflect.ProtoMessage {
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_FeeInfo_Amount) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if x.Value != uint32(0) {
-		value := protoreflect.ValueOfUint32(x.Value)
+	if x.Value != "" {
+		value := protoreflect.ValueOfString(x.Value)
 		if !f(fd_FeeInfo_Amount_value, value) {
 			return
 		}
@@ -1651,7 +1651,7 @@ func (x *fastReflection_FeeInfo_Amount) Range(f func(protoreflect.FieldDescripto
 func (x *fastReflection_FeeInfo_Amount) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
 	case "noble.orbiter.controller.action.v1.FeeInfo.Amount.value":
-		return x.Value != uint32(0)
+		return x.Value != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.controller.action.v1.FeeInfo.Amount"))
@@ -1669,7 +1669,7 @@ func (x *fastReflection_FeeInfo_Amount) Has(fd protoreflect.FieldDescriptor) boo
 func (x *fastReflection_FeeInfo_Amount) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	case "noble.orbiter.controller.action.v1.FeeInfo.Amount.value":
-		x.Value = uint32(0)
+		x.Value = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.controller.action.v1.FeeInfo.Amount"))
@@ -1688,7 +1688,7 @@ func (x *fastReflection_FeeInfo_Amount) Get(descriptor protoreflect.FieldDescrip
 	switch descriptor.FullName() {
 	case "noble.orbiter.controller.action.v1.FeeInfo.Amount.value":
 		value := x.Value
-		return protoreflect.ValueOfUint32(value)
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.controller.action.v1.FeeInfo.Amount"))
@@ -1710,7 +1710,7 @@ func (x *fastReflection_FeeInfo_Amount) Get(descriptor protoreflect.FieldDescrip
 func (x *fastReflection_FeeInfo_Amount) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
 	case "noble.orbiter.controller.action.v1.FeeInfo.Amount.value":
-		x.Value = uint32(value.Uint())
+		x.Value = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.controller.action.v1.FeeInfo.Amount"))
@@ -1747,7 +1747,7 @@ func (x *fastReflection_FeeInfo_Amount) Mutable(fd protoreflect.FieldDescriptor)
 func (x *fastReflection_FeeInfo_Amount) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	case "noble.orbiter.controller.action.v1.FeeInfo.Amount.value":
-		return protoreflect.ValueOfUint32(uint32(0))
+		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: noble.orbiter.controller.action.v1.FeeInfo.Amount"))
@@ -1817,8 +1817,9 @@ func (x *fastReflection_FeeInfo_Amount) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
-		if x.Value != 0 {
-			n += 1 + runtime.Sov(uint64(x.Value))
+		l = len(x.Value)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
 		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
@@ -1849,10 +1850,12 @@ func (x *fastReflection_FeeInfo_Amount) ProtoMethods() *protoiface.Methods {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if x.Value != 0 {
-			i = runtime.EncodeVarint(dAtA, i, uint64(x.Value))
+		if len(x.Value) > 0 {
+			i -= len(x.Value)
+			copy(dAtA[i:], x.Value)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Value)))
 			i--
-			dAtA[i] = 0x8
+			dAtA[i] = 0xa
 		}
 		if input.Buf != nil {
 			input.Buf = append(input.Buf, dAtA...)
@@ -1904,10 +1907,10 @@ func (x *fastReflection_FeeInfo_Amount) ProtoMethods() *protoiface.Methods {
 			}
 			switch fieldNum {
 			case 1:
-				if wireType != 0 {
+				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
 				}
-				x.Value = 0
+				var stringLen uint64
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
@@ -1917,11 +1920,24 @@ func (x *fastReflection_FeeInfo_Amount) ProtoMethods() *protoiface.Methods {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					x.Value |= uint32(b&0x7F) << shift
+					stringLen |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
 				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Value = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -2137,7 +2153,7 @@ type FeeInfo_Amount struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Fee amount.
-	Value uint32 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 
 func (x *FeeInfo_Amount) Reset() {
@@ -2160,11 +2176,11 @@ func (*FeeInfo_Amount) Descriptor() ([]byte, []int) {
 	return file_noble_orbiter_controller_action_v1_fee_proto_rawDescGZIP(), []int{1, 1}
 }
 
-func (x *FeeInfo_Amount) GetValue() uint32 {
+func (x *FeeInfo_Amount) GetValue() string {
 	if x != nil {
 		return x.Value
 	}
-	return 0
+	return ""
 }
 
 var File_noble_orbiter_controller_action_v1_fee_proto protoreflect.FileDescriptor
@@ -2203,7 +2219,7 @@ var file_noble_orbiter_controller_action_v1_fee_proto_rawDesc = []byte{
 	0x1a, 0x23, 0x0a, 0x0b, 0x42, 0x61, 0x73, 0x69, 0x73, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x12,
 	0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05,
 	0x76, 0x61, 0x6c, 0x75, 0x65, 0x1a, 0x1e, 0x0a, 0x06, 0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x12,
-	0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05,
+	0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
 	0x76, 0x61, 0x6c, 0x75, 0x65, 0x42, 0x0a, 0x0a, 0x08, 0x66, 0x65, 0x65, 0x5f, 0x74, 0x79, 0x70,
 	0x65, 0x42, 0xb0, 0x02, 0x0a, 0x26, 0x63, 0x6f, 0x6d, 0x2e, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2e,
 	0x6f, 0x72, 0x62, 0x69, 0x74, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x6c,
