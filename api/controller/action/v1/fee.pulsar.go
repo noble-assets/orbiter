@@ -2008,8 +2008,7 @@ func (x *FeeAttributes) GetFeesInfo() []*FeeInfo {
 	return nil
 }
 
-// FeeInfo allows to specify a fee, in terms of basis points, and
-// a recipient address.
+// FeeInfo allows to specify a fee to apply to a forwarding and a recipient address.
 type FeeInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2017,6 +2016,8 @@ type FeeInfo struct {
 
 	// recipient is the Noble address which is going to receive the fee.
 	Recipient string `protobuf:"bytes,1,opt,name=recipient,proto3" json:"recipient,omitempty"`
+	// fee_type is the type of fee to apply.
+	//
 	// Types that are assignable to FeeType:
 	//
 	//	*FeeInfo_BasisPoints_
@@ -2083,6 +2084,8 @@ type FeeInfo_BasisPoints_ struct {
 }
 
 type FeeInfo_Amount_ struct {
+	// amount represents the absolute value fee to apply to the tokens sent with
+	// a cross-chain packet.
 	Amount *FeeInfo_Amount `protobuf:"bytes,3,opt,name=amount,proto3,oneof"`
 }
 
@@ -2090,11 +2093,13 @@ func (*FeeInfo_BasisPoints_) isFeeInfo_FeeType() {}
 
 func (*FeeInfo_Amount_) isFeeInfo_FeeType() {}
 
+// BasisPoints allows to define a fee in terms of basis points.
 type FeeInfo_BasisPoints struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Basis points value.
 	Value uint32 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -2125,11 +2130,13 @@ func (x *FeeInfo_BasisPoints) GetValue() uint32 {
 	return 0
 }
 
+// Amount allows to define a fix value fee.
 type FeeInfo_Amount struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Fee amount.
 	Value uint32 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 

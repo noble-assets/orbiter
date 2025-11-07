@@ -70,11 +70,12 @@ func (m *FeeAttributes) GetFeesInfo() []*FeeInfo {
 	return nil
 }
 
-// FeeInfo allows to specify a fee, in terms of basis points, and
-// a recipient address.
+// FeeInfo allows to specify a fee to apply to a forwarding and a recipient address.
 type FeeInfo struct {
 	// recipient is the Noble address which is going to receive the fee.
 	Recipient string `protobuf:"bytes,1,opt,name=recipient,proto3" json:"recipient,omitempty"`
+	// fee_type is the type of fee to apply.
+	//
 	// Types that are valid to be assigned to FeeType:
 	//	*FeeInfo_BasisPoints_
 	//	*FeeInfo_Amount_
@@ -166,7 +167,9 @@ func (*FeeInfo) XXX_OneofWrappers() []interface{} {
 	}
 }
 
+// BasisPoints allows to define a fee in terms of basis points.
 type FeeInfo_BasisPoints struct {
+	// Basis points value.
 	Value uint32 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -210,7 +213,9 @@ func (m *FeeInfo_BasisPoints) GetValue() uint32 {
 	return 0
 }
 
+// Amount allows to define a fix value fee.
 type FeeInfo_Amount struct {
+	// Fee amount.
 	Value uint32 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 

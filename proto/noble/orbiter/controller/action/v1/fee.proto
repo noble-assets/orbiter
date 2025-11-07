@@ -15,26 +15,30 @@ message FeeAttributes {
   repeated FeeInfo fees_info = 1;
 }
 
-// FeeInfo allows to specify a fee, in terms of basis points, and
-// a recipient address.
+// FeeInfo allows to specify a fee to apply to a forwarding and a recipient address.
 message FeeInfo {
-
+  // BasisPoints allows to define a fee in terms of basis points.
   message BasisPoints {
+    // Basis points value.
     uint32 value = 1;
   }
 
+  // Amount allows to define a fix value fee.
   message Amount {
+    // Fee amount.
     uint32 value = 1;
   }
 
   // recipient is the Noble address which is going to receive the fee.
   string recipient = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
-
+  // fee_type is the type of fee to apply.
   oneof fee_type {
     // basis_points represents the fee to apply to the tokens sent with
     // a cross-chain packet. One basis point equals 1/100th of a part.
     BasisPoints basis_points = 2;
+    // amount represents the absolute value fee to apply to the tokens sent with
+    // a cross-chain packet.
     Amount amount = 3;
   }
 }
