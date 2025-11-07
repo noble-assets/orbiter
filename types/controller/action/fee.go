@@ -111,15 +111,33 @@ func (f *FeeInfo) Validate() error {
 		return core.ErrNilPointer.Wrap("fee info")
 	}
 
+	if f.GetFeeType() == nil {
+		return core.ErrNilPointer.Wrap("fee type")
+	}
+
 	switch feeType := f.FeeType.(type) {
 	case *FeeInfo_Amount_:
+		if feeType == nil {
+			return core.ErrNilPointer.Wrap("fee info amount wrapper")
+		}
+		if feeType.Amount == nil {
+			return core.ErrNilPointer.Wrap("fee info amount")
+		}
 		if err := validateAmount(feeType.Amount); err != nil {
 			return err
 		}
 	case *FeeInfo_BasisPoints_:
+		if feeType == nil {
+			return core.ErrNilPointer.Wrap("fee info bps wrapper")
+		}
+		if feeType.BasisPoints == nil {
+			return core.ErrNilPointer.Wrap("fee info bps")
+		}
 		if err := validateBasisPoints(feeType.BasisPoints); err != nil {
 			return err
 		}
+	default:
+		return fmt.Errorf("unknown fee type %T", feeType)
 	}
 
 	_, err := sdk.AccAddressFromBech32(f.Recipient)
@@ -128,7 +146,7 @@ func (f *FeeInfo) Validate() error {
 }
 
 func validateAmount(amt *FeeInfo_Amount) error {
-	if amt.Value == 0 {
+	if amt.GetValue() == 0 {
 		return errors.New("fee amount must be > 0")
 	}
 
@@ -136,11 +154,12 @@ func validateAmount(amt *FeeInfo_Amount) error {
 }
 
 func validateBasisPoints(bps *FeeInfo_BasisPoints) error {
-	if bps.Value == 0 || bps.Value > BPSNormalizer {
+	value := bps.GetValue()
+	if value == 0 || value > BPSNormalizer {
 		return fmt.Errorf(
 			"fee basis point must be > 0 and < %d, received %d",
 			BPSNormalizer,
-			bps.Value,
+			value,
 		)
 	}
 

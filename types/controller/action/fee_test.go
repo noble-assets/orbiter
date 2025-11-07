@@ -67,6 +67,18 @@ func TestValidateFee(t *testing.T) {
 			expErr: "fee basis point must be > 0 and < 10000",
 		},
 		{
+			name: "error - zero amount",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+				FeeType: &actiontypes.FeeInfo_Amount_{
+					Amount: &actiontypes.FeeInfo_Amount{
+						Value: 0,
+					},
+				},
+			},
+			expErr: "must be > 0",
+		},
+		{
 			name: "error - recipient is empty",
 			feeInfo: &actiontypes.FeeInfo{
 				Recipient: "",
@@ -91,11 +103,41 @@ func TestValidateFee(t *testing.T) {
 			expErr: "invalid bech32",
 		},
 		{
-			name: "success",
+			name: "error - basis point content is nil",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "a",
+				FeeType: &actiontypes.FeeInfo_BasisPoints_{
+					BasisPoints: nil,
+				},
+			},
+			expErr: "fee info bps: invalid nil pointer",
+		},
+		{
+			name: "error - basis point is typed nil",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "a",
+				FeeType:   (*actiontypes.FeeInfo_BasisPoints_)(nil),
+			},
+			expErr: "fee info bps wrapper: invalid nil pointer",
+		},
+		{
+			name: "success - basis point",
 			feeInfo: &actiontypes.FeeInfo{
 				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
 				FeeType: &actiontypes.FeeInfo_BasisPoints_{
 					BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+						Value: 1,
+					},
+				},
+			},
+			expErr: "",
+		},
+		{
+			name: "success - amount",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+				FeeType: &actiontypes.FeeInfo_Amount_{
+					Amount: &actiontypes.FeeInfo_Amount{
 						Value: 1,
 					},
 				},
@@ -165,6 +207,35 @@ func TestValidateFeeAttributes(t *testing.T) {
 							},
 						}
 					}
+
+					return fees
+				}(),
+			},
+			expErr: "",
+		},
+		{
+			name: "success - mixed fee types",
+			feeInfo: &actiontypes.FeeAttributes{
+				FeesInfo: func() []*actiontypes.FeeInfo {
+					fees := make([]*actiontypes.FeeInfo, 0)
+					fees = append(fees,
+						&actiontypes.FeeInfo{
+							Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+							FeeType: &actiontypes.FeeInfo_BasisPoints_{
+								BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+									Value: 1,
+								},
+							},
+						},
+						&actiontypes.FeeInfo{
+							Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+							FeeType: &actiontypes.FeeInfo_Amount_{
+								Amount: &actiontypes.FeeInfo_Amount{
+									Value: 1,
+								},
+							},
+						},
+					)
 
 					return fees
 				}(),

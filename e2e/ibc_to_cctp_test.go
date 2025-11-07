@@ -122,10 +122,12 @@ func testIbcFailingParsingWithoutForwarding(
 
 	// Create a wrapped payload for the IBC memo without the required forwarding info.
 	feeRecipientAddr := testutil.NewNobleAddress()
+	bps, err := actiontypes.NewFeeBasisPoints(100)
+	require.NoError(t, err)
 	action, err := actiontypes.NewFeeAction(
 		&actiontypes.FeeInfo{
-			Recipient:   feeRecipientAddr,
-			BasisPoints: 100,
+			Recipient: feeRecipientAddr,
+			FeeType:   bps,
 		},
 	)
 	require.NoError(t, err)
@@ -305,10 +307,21 @@ func testIbcPassingWithFeeAction(
 	require.NoError(t, err)
 
 	feeRecipientAddr := testutil.NewNobleAddress()
+
+	feeBps, err := actiontypes.NewFeeBasisPoints(100) // 1%
+	require.NoError(t, err)
+
+	feeAmount, err := actiontypes.NewFeeAmount(100)
+	require.NoError(t, err)
+
 	action, err := actiontypes.NewFeeAction(
 		&actiontypes.FeeInfo{
-			Recipient:   feeRecipientAddr,
-			BasisPoints: 100, // 1%
+			Recipient: feeRecipientAddr,
+			FeeType:   feeBps,
+		},
+		&actiontypes.FeeInfo{
+			Recipient: feeRecipientAddr,
+			FeeType:   feeAmount,
 		},
 	)
 	require.NoError(t, err)
@@ -369,7 +382,9 @@ func testIbcPassingWithFeeAction(
 
 	feeAmt, err := s.Chain.BankQueryBalance(ctx, feeRecipientAddr, "uusdc")
 	require.NoError(t, err)
-	require.Equal(t, math.NewInt(10_000).String(), feeAmt.String())
+	expFee := math.NewIntFromUint64(uint64(feeAmount.Amount.Value)). // fee from fixed fee action
+										Add(math.NewInt(10_000)) // fee from basis points fee action
+	require.Equal(t, expFee.String(), feeAmt.String())
 }
 
 func testIbcPassingWithoutActions(
@@ -468,7 +483,7 @@ func testIbcPassingWithoutActions(
 			)
 		case "depositor":
 			var v string
-			json.Unmarshal([]byte(attribute.Value), &v)
+			require.NoError(t, json.Unmarshal([]byte(attribute.Value), &v))
 			require.Equal(
 				t,
 				core.ModuleAddress.String(),

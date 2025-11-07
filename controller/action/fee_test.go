@@ -86,8 +86,12 @@ func TestGetAttributes(t *testing.T) {
 					&actiontypes.FeeAttributes{
 						FeesInfo: []*actiontypes.FeeInfo{
 							{
-								Recipient:   recipient.String(),
-								BasisPoints: 100,
+								Recipient: recipient.String(),
+								FeeType: &actiontypes.FeeInfo_BasisPoints_{
+									BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+										Value: 100,
+									},
+								},
 							},
 						},
 					},
@@ -99,8 +103,12 @@ func TestGetAttributes(t *testing.T) {
 			expAttributes: actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   recipient.String(),
-						BasisPoints: 100,
+						Recipient: recipient.String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 100,
+							},
+						},
 					},
 				},
 			},
@@ -150,8 +158,12 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			amount: sdkmath.NewInt(1_000_000),
 			feesInfo: []*actiontypes.FeeInfo{
 				{
-					Recipient:   recipient1.String(),
-					BasisPoints: 100,
+					Recipient: recipient1.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: 100,
+						},
+					},
 				},
 			},
 			expFeeToDistribute: &actiontypes.FeesToDistribute{
@@ -169,12 +181,20 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			amount: sdkmath.NewInt(1_000_000),
 			feesInfo: []*actiontypes.FeeInfo{
 				{
-					Recipient:   recipient1.String(),
-					BasisPoints: 100, // 1%
+					Recipient: recipient1.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: 100, // 1%
+						},
+					},
 				},
 				{
-					Recipient:   recipient2.String(),
-					BasisPoints: 200, // 2%
+					Recipient: recipient2.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: 200, // 2%
+						},
+					},
 				},
 			},
 			expFeeToDistribute: &actiontypes.FeesToDistribute{
@@ -196,8 +216,12 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			amount: sdkmath.ZeroInt(),
 			feesInfo: []*actiontypes.FeeInfo{
 				{
-					Recipient:   recipient1.String(),
-					BasisPoints: 100,
+					Recipient: recipient1.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: 100,
+						},
+					},
 				},
 			},
 			expFeeToDistribute: &actiontypes.FeesToDistribute{
@@ -219,8 +243,12 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			amount: sdkmath.NewInt(1_000_000),
 			feesInfo: []*actiontypes.FeeInfo{
 				{
-					Recipient:   recipient1.String(),
-					BasisPoints: actiontypes.BPSNormalizer, // 100%
+					Recipient: recipient1.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: actiontypes.BPSNormalizer, // 100%
+						},
+					},
 				},
 			},
 			expFeeToDistribute: &actiontypes.FeesToDistribute{
@@ -238,12 +266,20 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			amount: sdkmath.NewInt(1_000_000),
 			feesInfo: []*actiontypes.FeeInfo{
 				{
-					Recipient:   recipient1.String(),
-					BasisPoints: 100, // Normal calculation
+					Recipient: recipient1.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: 100,
+						},
+					},
 				},
 				{
-					Recipient:   recipient2.String(),
-					BasisPoints: 1, // Very small basis points
+					Recipient: recipient2.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: 1,
+						},
+					},
 				},
 			},
 			expFeeToDistribute: &actiontypes.FeesToDistribute{
@@ -265,8 +301,12 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			amount: sdkmath.NewInt(50),
 			feesInfo: []*actiontypes.FeeInfo{
 				{
-					Recipient:   recipient1.String(),
-					BasisPoints: 1, // 0.01% of 50 = 0.005, which rounds to 0
+					Recipient: recipient1.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: 1, // 0.01% of 50 = 0.005, which rounds to 0
+						},
+					},
 				},
 			},
 			expFeeToDistribute: &actiontypes.FeesToDistribute{
@@ -279,8 +319,12 @@ func TestComputeFeesToDistribute(t *testing.T) {
 			amount: bigNumber,
 			feesInfo: []*actiontypes.FeeInfo{
 				{
-					Recipient:   recipient1.String(),
-					BasisPoints: 100,
+					Recipient: recipient1.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: 100,
+						},
+					},
 				},
 			},
 			expFeeToDistribute: &actiontypes.FeesToDistribute{
@@ -336,8 +380,12 @@ func TestValidateAttributes(t *testing.T) {
 			attributes: &actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   recipient.String(),
-						BasisPoints: 100,
+						Recipient: recipient.String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 100,
+							},
+						},
 					},
 				},
 			},
@@ -348,12 +396,20 @@ func TestValidateAttributes(t *testing.T) {
 			attributes: &actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   recipient.String(),
-						BasisPoints: 100,
+						Recipient: recipient.String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 100,
+							},
+						},
 					},
 					{
-						Recipient:   sdk.AccAddress(testutil.AddressBytes()).String(),
-						BasisPoints: 200,
+						Recipient: sdk.AccAddress(testutil.AddressBytes()).String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 200,
+							},
+						},
 					},
 				},
 			},
@@ -364,8 +420,12 @@ func TestValidateAttributes(t *testing.T) {
 			attributes: &actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   recipient.String(),
-						BasisPoints: 100,
+						Recipient: recipient.String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 100,
+							},
+						},
 					},
 					nil,
 				},
@@ -377,8 +437,12 @@ func TestValidateAttributes(t *testing.T) {
 			attributes: &actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   recipient.String(),
-						BasisPoints: 0,
+						Recipient: recipient.String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 0,
+							},
+						},
 					},
 				},
 			},
@@ -389,8 +453,12 @@ func TestValidateAttributes(t *testing.T) {
 			attributes: &actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   recipient.String(),
-						BasisPoints: actiontypes.BPSNormalizer + 1,
+						Recipient: recipient.String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: actiontypes.BPSNormalizer + 1,
+							},
+						},
 					},
 				},
 			},
@@ -401,8 +469,12 @@ func TestValidateAttributes(t *testing.T) {
 			attributes: &actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   "",
-						BasisPoints: 100,
+						Recipient: "",
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 100,
+							},
+						},
 					},
 				},
 			},
@@ -413,8 +485,12 @@ func TestValidateAttributes(t *testing.T) {
 			attributes: &actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   "invalid_address",
-						BasisPoints: 100,
+						Recipient: "invalid_address",
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 100,
+							},
+						},
 					},
 				},
 			},
@@ -425,16 +501,28 @@ func TestValidateAttributes(t *testing.T) {
 			attributes: &actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   recipient.String(),
-						BasisPoints: 100,
+						Recipient: recipient.String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 100,
+							},
+						},
 					},
 					{
-						Recipient:   "",
-						BasisPoints: 200,
+						Recipient: "",
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 200,
+							},
+						},
 					},
 					{
-						Recipient:   recipient.String(),
-						BasisPoints: 300,
+						Recipient: recipient.String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: 300,
+							},
+						},
 					},
 				},
 			},
@@ -445,8 +533,12 @@ func TestValidateAttributes(t *testing.T) {
 			attributes: &actiontypes.FeeAttributes{
 				FeesInfo: []*actiontypes.FeeInfo{
 					{
-						Recipient:   recipient.String(),
-						BasisPoints: actiontypes.BPSNormalizer,
+						Recipient: recipient.String(),
+						FeeType: &actiontypes.FeeInfo_BasisPoints_{
+							BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+								Value: actiontypes.BPSNormalizer,
+							},
+						},
 					},
 				},
 			},
@@ -479,8 +571,12 @@ func TestHandlePacket(t *testing.T) {
 		&actiontypes.FeeAttributes{
 			FeesInfo: []*actiontypes.FeeInfo{
 				{
-					Recipient:   recipient.String(),
-					BasisPoints: 10,
+					Recipient: recipient.String(),
+					FeeType: &actiontypes.FeeInfo_BasisPoints_{
+						BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+							Value: 10,
+						},
+					},
 				},
 			},
 		},
