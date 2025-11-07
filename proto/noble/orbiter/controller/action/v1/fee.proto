@@ -18,10 +18,23 @@ message FeeAttributes {
 // FeeInfo allows to specify a fee, in terms of basis points, and
 // a recipient address.
 message FeeInfo {
+
+  message BasisPoints {
+    uint32 value = 1;
+  }
+
+  message Amount {
+    uint32 value = 1;
+  }
+
   // recipient is the Noble address which is going to receive the fee.
   string recipient = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
-  // basis_points represents the fee to apply to the tokens sent with
-  // a cross-chain packet. One basis point equals 1/100th of a part.
-  uint32 basis_points = 2;
+
+  oneof fee_type {
+    // basis_points represents the fee to apply to the tokens sent with
+    // a cross-chain packet. One basis point equals 1/100th of a part.
+    BasisPoints basis_points = 2;
+    Amount amount = 3;
+  }
 }

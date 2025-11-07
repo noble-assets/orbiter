@@ -21,6 +21,7 @@
 package action
 
 import (
+	"errors"
 	fmt "fmt"
 
 	"cosmossdk.io/math"
@@ -55,6 +56,34 @@ func NewFeeAttributes(feesInfo ...*FeeInfo) (*FeeAttributes, error) {
 	return &attr, attr.Validate()
 }
 
+func NewFeeAmount(value uint32) (*FeeInfo_Amount_, error) {
+	amount := &FeeInfo_Amount{
+		Value: value,
+	}
+
+	if err := validateAmount(amount); err != nil {
+		return nil, err
+	}
+
+	return &FeeInfo_Amount_{
+		Amount: amount,
+	}, nil
+}
+
+func NewFeeBasisPoints(value uint32) (*FeeInfo_BasisPoints_, error) {
+	bps := &FeeInfo_BasisPoints{
+		Value: value,
+	}
+
+	if err := validateBasisPoints(bps); err != nil {
+		return nil, err
+	}
+
+	return &FeeInfo_BasisPoints_{
+		BasisPoints: bps,
+	}, nil
+}
+
 func (f *FeeAttributes) Validate() error {
 	if f == nil {
 		return core.ErrNilPointer.Wrap("fee attributes")
@@ -82,17 +111,40 @@ func (f *FeeInfo) Validate() error {
 		return core.ErrNilPointer.Wrap("fee info")
 	}
 
-	if f.BasisPoints == 0 || f.BasisPoints > BPSNormalizer {
-		return fmt.Errorf(
-			"fee basis point must be > 0 and < %d, received %d",
-			BPSNormalizer,
-			f.BasisPoints,
-		)
+	switch feeType := f.FeeType.(type) {
+	case *FeeInfo_Amount_:
+		if err := validateAmount(feeType.Amount); err != nil {
+			return err
+		}
+	case *FeeInfo_BasisPoints_:
+		if err := validateBasisPoints(feeType.BasisPoints); err != nil {
+			return err
+		}
 	}
 
 	_, err := sdk.AccAddressFromBech32(f.Recipient)
 
 	return err
+}
+
+func validateAmount(amt *FeeInfo_Amount) error {
+	if amt.Value == 0 {
+		return errors.New("fee amount must be > 0")
+	}
+
+	return nil
+}
+
+func validateBasisPoints(bps *FeeInfo_BasisPoints) error {
+	if bps.Value == 0 || bps.Value > BPSNormalizer {
+		return fmt.Errorf(
+			"fee basis point must be > 0 and < %d, received %d",
+			BPSNormalizer,
+			bps.Value,
+		)
+	}
+
+	return nil
 }
 
 type RecipientAmount struct {
