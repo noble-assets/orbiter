@@ -1,6 +1,6 @@
 module github.com/noble-assets/orbiter/e2e
 
-go 1.24.0
+go 1.24
 
 require (
 	cosmossdk.io/errors v1.0.2
