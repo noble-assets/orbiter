@@ -151,6 +151,22 @@ func (d *Dispatcher) HasDispatchedAmount(
 	return da.AmountDispatched.IsPositive()
 }
 
+func (d *Dispatcher) RemoveDispatchedAmount(
+	ctx context.Context,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
+	denom string,
+) error {
+	key := collections.Join4(
+		int32(sourceID.GetProtocolId()),
+		sourceID.GetCounterpartyId(),
+		destID.ID(),
+		denom,
+	)
+
+	return d.dispatchedAmounts.Remove(ctx, key)
+}
+
 func (d *Dispatcher) SetDispatchedAmount(
 	ctx context.Context,
 	sourceID *core.CrossChainID,
@@ -359,6 +375,21 @@ func (d *Dispatcher) HasDispatchedCounts(
 	dc := d.GetDispatchedCounts(ctx, sourceID, destID)
 
 	return dc.Count != 0
+}
+
+func (d *Dispatcher) RemoveDispatchedCounts(
+	ctx context.Context,
+	sourceID *core.CrossChainID,
+	destID *core.CrossChainID,
+) error {
+	key := collections.Join4(
+		int32(sourceID.GetProtocolId()),
+		sourceID.GetCounterpartyId(),
+		int32(destID.GetProtocolId()),
+		destID.GetCounterpartyId(),
+	)
+
+	return d.dispatchedCounts.Remove(ctx, key)
 }
 
 func (d *Dispatcher) SetDispatchedCounts(
