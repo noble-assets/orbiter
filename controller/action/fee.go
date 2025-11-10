@@ -172,10 +172,19 @@ func (c *FeeController) ComputeFeesToDistribute(
 	for _, feeInfo := range feesInfo {
 		addr, _ := sdk.AccAddressFromBech32(feeInfo.Recipient)
 
-		feeAmount, err := ComputeFeeAmount(transferAmount, uint64(feeInfo.BasisPoints))
-		if err != nil {
-			return nil, err
+		var err error
+		var feeAmount math.Int
+
+		switch feeType := feeInfo.FeeType.(type) {
+		case *actiontypes.FeeInfo_BasisPoints_:
+			feeAmount, err = ComputeFeeAmount(transferAmount, uint64(feeType.BasisPoints.Value))
+			if err != nil {
+				return nil, err
+			}
+		case *actiontypes.FeeInfo_Amount_:
+			feeAmount, _ = math.NewIntFromString(feeType.Amount.Value)
 		}
+
 		if feeAmount.IsPositive() {
 			fee := sdk.NewCoin(transferDenom, feeAmount)
 			fees.Values = append(

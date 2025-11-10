@@ -45,40 +45,126 @@ func TestValidateFee(t *testing.T) {
 		{
 			name: "error - zero basis points",
 			feeInfo: &actiontypes.FeeInfo{
-				Recipient:   "",
-				BasisPoints: 0,
+				Recipient: "",
+				FeeType: &actiontypes.FeeInfo_BasisPoints_{
+					BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+						Value: 0,
+					},
+				},
 			},
 			expErr: "fee basis point must be > 0 and < 10000",
 		},
 		{
 			name: "error - over maximum basis points",
 			feeInfo: &actiontypes.FeeInfo{
-				Recipient:   "",
-				BasisPoints: actiontypes.BPSNormalizer + 1,
+				Recipient: "",
+				FeeType: &actiontypes.FeeInfo_BasisPoints_{
+					BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+						Value: actiontypes.BPSNormalizer + 1,
+					},
+				},
 			},
 			expErr: "fee basis point must be > 0 and < 10000",
 		},
 		{
+			name: "error - negative amount",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+				FeeType: &actiontypes.FeeInfo_Amount_{
+					Amount: &actiontypes.FeeInfo_Amount{
+						Value: "-1",
+					},
+				},
+			},
+			expErr: "fee amount must be positive",
+		},
+		{
+			name: "error - not a number amount",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+				FeeType: &actiontypes.FeeInfo_Amount_{
+					Amount: &actiontypes.FeeInfo_Amount{
+						Value: "pizza",
+					},
+				},
+			},
+			expErr: "cannot convert",
+		},
+		{
+			name: "error - zero amount",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+				FeeType: &actiontypes.FeeInfo_Amount_{
+					Amount: &actiontypes.FeeInfo_Amount{
+						Value: "0",
+					},
+				},
+			},
+			expErr: "fee amount must be positive",
+		},
+		{
 			name: "error - recipient is empty",
 			feeInfo: &actiontypes.FeeInfo{
-				Recipient:   "",
-				BasisPoints: 1,
+				Recipient: "",
+				FeeType: &actiontypes.FeeInfo_BasisPoints_{
+					BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+						Value: 1,
+					},
+				},
 			},
 			expErr: "empty address",
 		},
 		{
 			name: "error - recipient is not valid address",
 			feeInfo: &actiontypes.FeeInfo{
-				Recipient:   "a",
-				BasisPoints: 1,
+				Recipient: "a",
+				FeeType: &actiontypes.FeeInfo_BasisPoints_{
+					BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+						Value: 1,
+					},
+				},
 			},
 			expErr: "invalid bech32",
 		},
 		{
-			name: "success",
+			name: "error - basis point content is nil",
 			feeInfo: &actiontypes.FeeInfo{
-				Recipient:   "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
-				BasisPoints: 1,
+				Recipient: "a",
+				FeeType: &actiontypes.FeeInfo_BasisPoints_{
+					BasisPoints: nil,
+				},
+			},
+			expErr: "fee info bps: invalid nil pointer",
+		},
+		{
+			name: "error - basis point is typed nil",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "a",
+				FeeType:   (*actiontypes.FeeInfo_BasisPoints_)(nil),
+			},
+			expErr: "fee info bps wrapper: invalid nil pointer",
+		},
+		{
+			name: "success - basis point",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+				FeeType: &actiontypes.FeeInfo_BasisPoints_{
+					BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+						Value: 1,
+					},
+				},
+			},
+			expErr: "",
+		},
+		{
+			name: "success - amount",
+			feeInfo: &actiontypes.FeeInfo{
+				Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+				FeeType: &actiontypes.FeeInfo_Amount_{
+					Amount: &actiontypes.FeeInfo_Amount{
+						Value: "1",
+					},
+				},
 			},
 			expErr: "",
 		},
@@ -116,8 +202,12 @@ func TestValidateFeeAttributes(t *testing.T) {
 					fees := make([]*actiontypes.FeeInfo, actiontypes.MaxFeeRecipients+1)
 					for i := range fees {
 						fees[i] = &actiontypes.FeeInfo{
-							Recipient:   "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
-							BasisPoints: 1,
+							Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+							FeeType: &actiontypes.FeeInfo_BasisPoints_{
+								BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+									Value: 1,
+								},
+							},
 						}
 					}
 
@@ -133,10 +223,43 @@ func TestValidateFeeAttributes(t *testing.T) {
 					fees := make([]*actiontypes.FeeInfo, actiontypes.MaxFeeRecipients)
 					for i := range fees {
 						fees[i] = &actiontypes.FeeInfo{
-							Recipient:   "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
-							BasisPoints: 1,
+							Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+							FeeType: &actiontypes.FeeInfo_BasisPoints_{
+								BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+									Value: 1,
+								},
+							},
 						}
 					}
+
+					return fees
+				}(),
+			},
+			expErr: "",
+		},
+		{
+			name: "success - mixed fee types",
+			feeInfo: &actiontypes.FeeAttributes{
+				FeesInfo: func() []*actiontypes.FeeInfo {
+					fees := make([]*actiontypes.FeeInfo, 0)
+					fees = append(fees,
+						&actiontypes.FeeInfo{
+							Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+							FeeType: &actiontypes.FeeInfo_BasisPoints_{
+								BasisPoints: &actiontypes.FeeInfo_BasisPoints{
+									Value: 1,
+								},
+							},
+						},
+						&actiontypes.FeeInfo{
+							Recipient: "noble1h8tqx833l3t2s45mwxjz29r85dcevy93wk63za",
+							FeeType: &actiontypes.FeeInfo_Amount_{
+								Amount: &actiontypes.FeeInfo_Amount{
+									Value: "1",
+								},
+							},
+						},
+					)
 
 					return fees
 				}(),
