@@ -82,6 +82,12 @@ lint:
 	-@go-license --config .github/license.yaml --verify $(FILES)
 	@echo "Completed linting!"
 
+lint-fix:
+	@echo "==================================================================="
+	@echo "Applying linter fixes..."
+	-@go tool golangci-lint run -c ./.golangci.yaml --fix
+	@echo "Completed linter fixes!"
+
 vulncheck:
 	@echo "==================================================================="
 	@echo "Running vulnerability check..."

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package noble.orbiter.v1;
+
+import "amino/amino.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/noble-assets/orbiter/types";
+
+// Msg defines the RPC methods for the Orbiter module.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // SubmitPayload allows to insert a new pending payload
+  // into the module storage.
+  rpc SubmitPayload(MsgSubmitPayload) returns (MsgSubmitPayloadResponse);
+}
+
+// MsgSubmitPayload enters a new Orbiter payload into the list of pending
+// forwarding operations.
+message MsgSubmitPayload {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "noble/orbiter/v1/MsgSubmitPayload";
+
+  // The signer of the transaction.
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // The marshalled JSON representation of the payload that is
+  // submitted to the Orbiter.
+  string payload = 2;
+}
+
+// MsgSubmitPayloadResponse returns the sha256 hash of the registered
+// pending payload.
+message MsgSubmitPayloadResponse {
+  // The hex representation of the hash that references the submitted payload in the module storage.
+  string hash = 1;
+}

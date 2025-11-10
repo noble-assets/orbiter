@@ -28,7 +28,7 @@ import (
 	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
 	"github.com/noble-assets/orbiter/keeper/component/executor"
 	"github.com/noble-assets/orbiter/keeper/component/forwarder"
-	"github.com/noble-assets/orbiter/types"
+	orbitertypes "github.com/noble-assets/orbiter/types"
 	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
 	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
 	executortypes "github.com/noble-assets/orbiter/types/component/executor"
@@ -38,6 +38,15 @@ import (
 func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
 		Tx: &autocliv1.ServiceCommandDescriptor{
+			Service: orbiterv1.Msg_ServiceDesc.ServiceName,
+			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
+				{
+					// NOTE: we're manually moving this to the `payload` sub command for better
+					// navigation
+					RpcMethod: "SubmitPayload",
+					Skip:      true,
+				},
+			},
 			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
 				"executor": {
 					Service:           executortypes.Msg_serviceDesc.ServiceName,
@@ -54,6 +63,11 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:             "Cross-chain adapter management commands",
 					RpcCommandOptions: adapter.TxCommandOptions(),
 				},
+				"payload": {
+					Service:           orbitertypes.Msg_serviceDesc.ServiceName,
+					Short:             "Payload management commands",
+					RpcCommandOptions: orbitertypes.TxCommandOptions(),
+				},
 			},
 		},
 		Query: &autocliv1.ServiceCommandDescriptor{
@@ -69,10 +83,16 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcMethod: "ProtocolIDs",
 					Skip:      true,
 				},
+				{
+					// NOTE: we're manually moving this to the `payload` sub command for better
+					// navigation
+					RpcMethod: "PendingPayload",
+					Skip:      true,
+				},
 			},
 			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
 				"identifiers": {
-					Service: types.Query_serviceDesc.ServiceName,
+					Service: orbitertypes.Query_serviceDesc.ServiceName,
 					Short:   "Action and Protocol identifiers",
 					RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 						{
@@ -106,6 +126,11 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Service:           forwardertypes.Query_serviceDesc.ServiceName,
 					Short:             "Cross-chain forwarder query commands",
 					RpcCommandOptions: forwarder.QueryCommandOptions(),
+				},
+				"payload": {
+					Service:           orbitertypes.Query_serviceDesc.ServiceName,
+					Short:             "Payload management commands",
+					RpcCommandOptions: orbitertypes.QueryCommandOptions(),
 				},
 			},
 		},
