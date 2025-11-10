@@ -47,13 +47,13 @@ This section describes how to create a valid IBC payload in Golang:
 
    ```go
    import(
-     "github.com/noble-assets/orbiter"
-     "github.com/noble-assets/orbiter/types/core"
-     "github.com/noble-assets/orbiter/types"
-     "github.com/noble-assets/orbiter/testutil"
+     "github.com/noble-assets/orbiter/v2"
+     "github.com/noble-assets/orbiter/v2/types/core"
+     "github.com/noble-assets/orbiter/v2/types"
+     "github.com/noble-assets/orbiter/v2/testutil"
 
-     actiontypes "github.com/noble-assets/orbiter/types/controller/action"
-     forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
+     actiontypes "github.com/noble-assets/orbiter/v2/types/controller/action"
+     forwardingtypes "github.com/noble-assets/orbiter/v2/types/controller/forwarding"
    )
    ```
 

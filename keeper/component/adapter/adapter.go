@@ -32,10 +32,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/noble-assets/orbiter/types"
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
-	"github.com/noble-assets/orbiter/types/core"
-	"github.com/noble-assets/orbiter/types/router"
+	"github.com/noble-assets/orbiter/v2/types"
+	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
+	"github.com/noble-assets/orbiter/v2/types/core"
+	"github.com/noble-assets/orbiter/v2/types/router"
 )
 
 type AdapterRouter = *router.Router[core.ProtocolID, types.AdapterController]

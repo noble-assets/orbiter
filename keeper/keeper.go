@@ -31,12 +31,12 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	adaptercomp "github.com/noble-assets/orbiter/keeper/component/adapter"
-	dispatchercomp "github.com/noble-assets/orbiter/keeper/component/dispatcher"
-	executorcomp "github.com/noble-assets/orbiter/keeper/component/executor"
-	forwardercomp "github.com/noble-assets/orbiter/keeper/component/forwarder"
-	"github.com/noble-assets/orbiter/types"
-	"github.com/noble-assets/orbiter/types/core"
+	adaptercomp "github.com/noble-assets/orbiter/v2/keeper/component/adapter"
+	dispatchercomp "github.com/noble-assets/orbiter/v2/keeper/component/dispatcher"
+	executorcomp "github.com/noble-assets/orbiter/v2/keeper/component/executor"
+	forwardercomp "github.com/noble-assets/orbiter/v2/keeper/component/forwarder"
+	"github.com/noble-assets/orbiter/v2/types"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var _ types.Authorizer = &Keeper{}

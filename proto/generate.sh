@@ -8,11 +8,11 @@ buf generate --template buf.gen.gogo.yaml
 buf generate --template buf.gen.pulsar.yaml
 cd ..
 
-cp -r github.com/noble-assets/orbiter/* ./
+cp -r github.com/noble-assets/orbiter/v2/* ./
 cp -r api/noble/orbiter/* api/
 # the following command requires GNU sed
-find api/ -type f -name "*.go" -exec sed -i 's|github.com/noble-assets/orbiter/api/noble/orbiter|github.com/noble-assets/orbiter/api|g' {} +
+find api/ -type f -name "*.go" -exec sed -i 's|github.com/noble-assets/orbiter/v2/api/noble/orbiter|github.com/noble-assets/orbiter/v2/api|g' {} +
 
-rm -rf github.com/noble-assets/orbiter
+rm -rf github.com/noble-assets/orbiter/v2
 rm -rf api/noble
 rm -rf noble

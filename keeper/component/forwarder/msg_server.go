@@ -28,10 +28,10 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/noble-assets/orbiter/controller/forwarding"
-	"github.com/noble-assets/orbiter/types"
-	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types"
+	forwardertypes "github.com/noble-assets/orbiter/v2/types/component/forwarder"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var _ forwardertypes.MsgServer = &msgServer{}

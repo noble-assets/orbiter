@@ -26,11 +26,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/noble-assets/orbiter/keeper/component/executor"
-	"github.com/noble-assets/orbiter/testutil"
-	mockorbiter "github.com/noble-assets/orbiter/testutil/mocks/orbiter"
-	executortypes "github.com/noble-assets/orbiter/types/component/executor"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/keeper/component/executor"
+	"github.com/noble-assets/orbiter/v2/testutil"
+	mockorbiter "github.com/noble-assets/orbiter/v2/testutil/mocks/orbiter"
+	executortypes "github.com/noble-assets/orbiter/v2/types/component/executor"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 func TestMsgServerPauseAction(t *testing.T) {

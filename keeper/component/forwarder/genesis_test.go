@@ -25,9 +25,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/noble-assets/orbiter/testutil/mocks"
-	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/testutil/mocks"
+	forwardertypes "github.com/noble-assets/orbiter/v2/types/component/forwarder"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 func TestInitGenesis(t *testing.T) {

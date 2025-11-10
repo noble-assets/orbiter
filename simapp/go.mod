@@ -1,4 +1,4 @@
-module github.com/noble-assets/orbiter/simapp
+module github.com/noble-assets/orbiter/v2/simapp
 
 go 1.24
 
@@ -19,7 +19,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.50.13
 	github.com/cosmos/ibc-go/modules/capability v1.0.1
 	github.com/cosmos/ibc-go/v8 v8.6.1
-	github.com/noble-assets/orbiter v0.0.0-00010101000000-000000000000
+	github.com/noble-assets/orbiter/v2 v2.0.0-00010101000000-000000000000
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.19.0
 )
@@ -226,7 +226,7 @@ require (
 replace (
 	// required because the index map in the sdk does not support iterate raw
 	cosmossdk.io/collections => github.com/noble-assets/cosmos-sdk/collections v0.0.0-20250923134424-edd65694c2f7
-	github.com/noble-assets/orbiter => ../
+	github.com/noble-assets/orbiter/v2 => ../
 	// use cosmos compatible syndtr/goleveldb
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 )

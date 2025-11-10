@@ -26,10 +26,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/codec"
 
-	orbiter "github.com/noble-assets/orbiter"
-	"github.com/noble-assets/orbiter/keeper"
-	"github.com/noble-assets/orbiter/testutil"
-	"github.com/noble-assets/orbiter/testutil/mocks"
+	orbiter "github.com/noble-assets/orbiter/v2"
+	"github.com/noble-assets/orbiter/v2/keeper"
+	"github.com/noble-assets/orbiter/v2/testutil"
+	"github.com/noble-assets/orbiter/v2/testutil/mocks"
 )
 
 func OrbiterKeeper(tb testing.TB) (sdk.Context, *mocks.Mocks, *keeper.Keeper) {

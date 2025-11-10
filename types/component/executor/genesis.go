@@ -20,7 +20,7 @@
 
 package executor
 
-import core "github.com/noble-assets/orbiter/types/core"
+import core "github.com/noble-assets/orbiter/v2/types/core"
 
 // DefaultGenesisState returns the default values for the adapter
 // component initial state.

@@ -25,8 +25,8 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	orbitertypes "github.com/noble-assets/orbiter/types"
-	"github.com/noble-assets/orbiter/types/core"
+	orbitertypes "github.com/noble-assets/orbiter/v2/types"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var _ orbitertypes.QueryServer = &queryServer{}

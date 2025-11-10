@@ -23,8 +23,8 @@ package types
 import (
 	"context"
 
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
-	"github.com/noble-assets/orbiter/types/core"
+	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 type TransferHookHandler interface {

@@ -28,9 +28,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/noble-assets/orbiter/keeper/component/forwarder"
-	"github.com/noble-assets/orbiter/testutil/mocks"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/keeper/component/forwarder"
+	"github.com/noble-assets/orbiter/v2/testutil/mocks"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 func TestGetPaginatedPausedCrossChains(t *testing.T) {

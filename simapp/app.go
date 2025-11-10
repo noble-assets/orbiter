@@ -48,8 +48,8 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/x/params"
 	_ "github.com/cosmos/cosmos-sdk/x/staking"
 
-	_ "github.com/noble-assets/orbiter"
-	orbiterkeeper "github.com/noble-assets/orbiter/keeper"
+	_ "github.com/noble-assets/orbiter/v2"
+	orbiterkeeper "github.com/noble-assets/orbiter/v2/keeper"
 )
 
 var DefaultNodeHome string

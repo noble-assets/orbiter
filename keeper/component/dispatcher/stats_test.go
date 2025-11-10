@@ -29,11 +29,11 @@ import (
 
 	sdkmath "cosmossdk.io/math"
 
-	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
-	"github.com/noble-assets/orbiter/testutil/mocks"
-	"github.com/noble-assets/orbiter/testutil/testdata"
-	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/keeper/component/dispatcher"
+	"github.com/noble-assets/orbiter/v2/testutil/mocks"
+	"github.com/noble-assets/orbiter/v2/testutil/testdata"
+	dispatchertypes "github.com/noble-assets/orbiter/v2/types/component/dispatcher"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 func TestUpdateStats(t *testing.T) {

@@ -26,7 +26,7 @@ import (
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/noble-assets/orbiter/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types/controller/forwarding"
 )
 
 var _ forwarding.InternalHandler = InternalHandler{}

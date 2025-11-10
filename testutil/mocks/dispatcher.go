@@ -29,8 +29,8 @@ import (
 
 	"cosmossdk.io/collections"
 
-	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
-	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/v2/keeper/component/dispatcher"
+	"github.com/noble-assets/orbiter/v2/types"
 )
 
 var (

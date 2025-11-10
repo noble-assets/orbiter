@@ -23,8 +23,8 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
-	"github.com/noble-assets/orbiter/types/core"
+	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 // PayloadParser defines the behavior expected by a type capable of

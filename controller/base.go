@@ -21,8 +21,8 @@
 package controller
 
 import (
-	"github.com/noble-assets/orbiter/types"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/types"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var (

@@ -24,9 +24,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/noble-assets/orbiter/types"
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/types"
+	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var _ types.ForwardingController = &ForwardingController{}

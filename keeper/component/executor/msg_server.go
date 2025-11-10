@@ -23,9 +23,9 @@ package executor
 import (
 	"context"
 
-	"github.com/noble-assets/orbiter/types"
-	executortypes "github.com/noble-assets/orbiter/types/component/executor"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/types"
+	executortypes "github.com/noble-assets/orbiter/v2/types/component/executor"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var _ executortypes.MsgServer = &msgServer{}

@@ -4,7 +4,7 @@ package noble.orbiter.component.adapter.v1;
 
 import "noble/orbiter/core/v1/orbiter.proto";
 
-option go_package = "github.com/noble-assets/orbiter/types/component/adapter";
+option go_package = "github.com/noble-assets/orbiter/v2/types/component/adapter";
 
 message EventPayloadProcessed {
   noble.orbiter.core.v1.Payload payload = 1;

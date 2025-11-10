@@ -23,8 +23,8 @@ package adapter
 import (
 	"context"
 
-	"github.com/noble-assets/orbiter/types"
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
+	"github.com/noble-assets/orbiter/v2/types"
+	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
 )
 
 var _ adaptertypes.MsgServer = &msgServer{}

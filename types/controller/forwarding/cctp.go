@@ -24,7 +24,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 // CCTPNobleDomain is the identifier of the Noble domain

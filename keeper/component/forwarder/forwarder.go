@@ -32,9 +32,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/noble-assets/orbiter/types"
-	"github.com/noble-assets/orbiter/types/core"
-	router "github.com/noble-assets/orbiter/types/router"
+	"github.com/noble-assets/orbiter/v2/types"
+	"github.com/noble-assets/orbiter/v2/types/core"
+	router "github.com/noble-assets/orbiter/v2/types/router"
 )
 
 type ForwardingRouter = router.Router[core.ProtocolID, types.ForwardingController]

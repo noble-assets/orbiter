@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package noble.orbiter.controller.action.v2;
+
+import "noble/orbiter/controller/action/v2/fee.proto";
+
+option go_package = "github.com/noble-assets/orbiter/v2/types/controller/action";
+
+message EventFeeAction {
+  repeated FeeInfo fees_info = 1;
+}

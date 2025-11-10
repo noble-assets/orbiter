@@ -25,7 +25,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/noble-assets/orbiter/testutil"
+	"github.com/noble-assets/orbiter/v2/testutil"
 )
 
 type contextKey string

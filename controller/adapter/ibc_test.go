@@ -32,13 +32,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
-	adapterctrl "github.com/noble-assets/orbiter/controller/adapter"
-	"github.com/noble-assets/orbiter/testutil"
-	"github.com/noble-assets/orbiter/testutil/testdata"
-	"github.com/noble-assets/orbiter/types"
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
-	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
-	"github.com/noble-assets/orbiter/types/core"
+	adapterctrl "github.com/noble-assets/orbiter/v2/controller/adapter"
+	"github.com/noble-assets/orbiter/v2/testutil"
+	"github.com/noble-assets/orbiter/v2/testutil/testdata"
+	"github.com/noble-assets/orbiter/v2/types"
+	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
+	forwardingtypes "github.com/noble-assets/orbiter/v2/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 func TestNewIBCParser(t *testing.T) {

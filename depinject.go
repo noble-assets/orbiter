@@ -35,13 +35,13 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	modulev1 "github.com/noble-assets/orbiter/api/module/v1"
-	actionctrl "github.com/noble-assets/orbiter/controller/action"
-	adapterctrl "github.com/noble-assets/orbiter/controller/adapter"
-	forwardingctrl "github.com/noble-assets/orbiter/controller/forwarding"
-	"github.com/noble-assets/orbiter/keeper"
-	"github.com/noble-assets/orbiter/types"
-	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
+	modulev1 "github.com/noble-assets/orbiter/v2/api/module/v1"
+	actionctrl "github.com/noble-assets/orbiter/v2/controller/action"
+	adapterctrl "github.com/noble-assets/orbiter/v2/controller/adapter"
+	forwardingctrl "github.com/noble-assets/orbiter/v2/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/keeper"
+	"github.com/noble-assets/orbiter/v2/types"
+	forwardingtypes "github.com/noble-assets/orbiter/v2/types/controller/forwarding"
 )
 
 func init() {

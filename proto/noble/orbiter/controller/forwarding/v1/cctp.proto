@@ -4,7 +4,7 @@ package noble.orbiter.controller.forwarding.v1;
 
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/noble-assets/orbiter/types/controller/forwarding";
+option go_package = "github.com/noble-assets/orbiter/v2/types/controller/forwarding";
 
 // CCTPAttributes defines the concrete implementation of the
 // ForwardingAttributes interface to execute a cross-chain routing
