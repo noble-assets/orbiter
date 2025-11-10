@@ -30,12 +30,12 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/noble-assets/orbiter/controller/forwarding"
-	"github.com/noble-assets/orbiter/testutil"
-	"github.com/noble-assets/orbiter/testutil/mocks"
-	"github.com/noble-assets/orbiter/types"
-	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/testutil"
+	"github.com/noble-assets/orbiter/v2/testutil/mocks"
+	"github.com/noble-assets/orbiter/v2/types"
+	forwardingtypes "github.com/noble-assets/orbiter/v2/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 func TestNewInternalController(t *testing.T) {

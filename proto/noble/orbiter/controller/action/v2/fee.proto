@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package noble.orbiter.controller.action.v1;
+package noble.orbiter.controller.action.v2;
 
 import "cosmos_proto/cosmos.proto";
 

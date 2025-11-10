@@ -29,12 +29,12 @@ import (
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
-	"github.com/noble-assets/orbiter/testutil"
-	"github.com/noble-assets/orbiter/testutil/mocks"
-	"github.com/noble-assets/orbiter/testutil/testdata"
-	"github.com/noble-assets/orbiter/types"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/keeper/component/dispatcher"
+	"github.com/noble-assets/orbiter/v2/testutil"
+	"github.com/noble-assets/orbiter/v2/testutil/mocks"
+	"github.com/noble-assets/orbiter/v2/testutil/testdata"
+	"github.com/noble-assets/orbiter/v2/types"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 func TestNew(t *testing.T) {

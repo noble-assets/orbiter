@@ -1,7 +1,7 @@
 package simapp
 
 import (
-	orbiter "github.com/noble-assets/orbiter"
+	orbiter "github.com/noble-assets/orbiter/v2"
 )
 
 func (app *SimApp) RegisterOrbiterControllers() {

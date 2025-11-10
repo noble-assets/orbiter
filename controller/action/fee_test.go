@@ -28,13 +28,13 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	controllers "github.com/noble-assets/orbiter/controller/action"
-	"github.com/noble-assets/orbiter/testutil"
-	"github.com/noble-assets/orbiter/testutil/mocks"
-	"github.com/noble-assets/orbiter/testutil/testdata"
-	"github.com/noble-assets/orbiter/types"
-	actiontypes "github.com/noble-assets/orbiter/types/controller/action"
-	"github.com/noble-assets/orbiter/types/core"
+	controllers "github.com/noble-assets/orbiter/v2/controller/action"
+	"github.com/noble-assets/orbiter/v2/testutil"
+	"github.com/noble-assets/orbiter/v2/testutil/mocks"
+	"github.com/noble-assets/orbiter/v2/testutil/testdata"
+	"github.com/noble-assets/orbiter/v2/types"
+	actiontypes "github.com/noble-assets/orbiter/v2/types/controller/action"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 func TestGetAttributes(t *testing.T) {

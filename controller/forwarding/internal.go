@@ -29,10 +29,10 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/noble-assets/orbiter/controller"
-	"github.com/noble-assets/orbiter/types"
-	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/controller"
+	"github.com/noble-assets/orbiter/v2/types"
+	forwardingtypes "github.com/noble-assets/orbiter/v2/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var _ types.ForwardingController = &InternalController{}

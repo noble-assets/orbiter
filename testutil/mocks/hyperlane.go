@@ -27,7 +27,7 @@ import (
 	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 	warptypes "github.com/bcp-innovations/hyperlane-cosmos/x/warp/types"
 
-	"github.com/noble-assets/orbiter/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types/controller/forwarding"
 )
 
 var _ forwarding.HyperlaneHandler = HyperlaneHandler{}

@@ -25,7 +25,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
-	"github.com/noble-assets/orbiter/types"
+	"github.com/noble-assets/orbiter/v2/types"
 )
 
 // InitGenesis initialize the state of the Orbiter module with

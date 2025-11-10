@@ -23,7 +23,7 @@ package adapter
 import (
 	"context"
 
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
+	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
 )
 
 // GetParams returns the adapter params from state.

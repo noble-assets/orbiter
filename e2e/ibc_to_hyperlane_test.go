@@ -32,11 +32,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
-	"github.com/noble-assets/orbiter"
-	"github.com/noble-assets/orbiter/testutil"
-	orbitertypes "github.com/noble-assets/orbiter/types"
-	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2"
+	"github.com/noble-assets/orbiter/v2/testutil"
+	orbitertypes "github.com/noble-assets/orbiter/v2/types"
+	forwardingtypes "github.com/noble-assets/orbiter/v2/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 // TestIBCToHyperlane tests the "auto-lane" flow, which forwards an incoming IBC packet,

@@ -28,8 +28,8 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	executortypes "github.com/noble-assets/orbiter/types/component/executor"
-	"github.com/noble-assets/orbiter/types/core"
+	executortypes "github.com/noble-assets/orbiter/v2/types/component/executor"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var _ executortypes.QueryServer = &queryServer{}

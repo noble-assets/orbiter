@@ -26,7 +26,7 @@ import (
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 
-	"github.com/noble-assets/orbiter/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types/controller/forwarding"
 )
 
 var _ forwarding.CCTPMsgServer = CCTPMsgServer{}

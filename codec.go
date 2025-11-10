@@ -24,8 +24,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"github.com/noble-assets/orbiter/types"
-	"github.com/noble-assets/orbiter/types/controller"
+	"github.com/noble-assets/orbiter/v2/types"
+	"github.com/noble-assets/orbiter/v2/types/controller"
 )
 
 var amino = codec.NewLegacyAmino()

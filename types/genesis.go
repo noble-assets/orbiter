@@ -23,10 +23,10 @@ package types
 import (
 	errorsmod "cosmossdk.io/errors"
 
-	"github.com/noble-assets/orbiter/types/component/adapter"
-	"github.com/noble-assets/orbiter/types/component/dispatcher"
-	"github.com/noble-assets/orbiter/types/component/executor"
-	"github.com/noble-assets/orbiter/types/component/forwarder"
+	"github.com/noble-assets/orbiter/v2/types/component/adapter"
+	"github.com/noble-assets/orbiter/v2/types/component/dispatcher"
+	"github.com/noble-assets/orbiter/v2/types/component/executor"
+	"github.com/noble-assets/orbiter/v2/types/component/forwarder"
 )
 
 // DefaultGenesisState returns the default values for the Orbiter module

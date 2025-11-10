@@ -23,15 +23,15 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/noble-assets/orbiter/keeper/component/adapter"
-	"github.com/noble-assets/orbiter/keeper/component/dispatcher"
-	"github.com/noble-assets/orbiter/keeper/component/executor"
-	"github.com/noble-assets/orbiter/keeper/component/forwarder"
-	"github.com/noble-assets/orbiter/types"
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
-	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
-	executortypes "github.com/noble-assets/orbiter/types/component/executor"
-	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
+	"github.com/noble-assets/orbiter/v2/keeper/component/adapter"
+	"github.com/noble-assets/orbiter/v2/keeper/component/dispatcher"
+	"github.com/noble-assets/orbiter/v2/keeper/component/executor"
+	"github.com/noble-assets/orbiter/v2/keeper/component/forwarder"
+	"github.com/noble-assets/orbiter/v2/types"
+	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
+	dispatchertypes "github.com/noble-assets/orbiter/v2/types/component/dispatcher"
+	executortypes "github.com/noble-assets/orbiter/v2/types/component/executor"
+	forwardertypes "github.com/noble-assets/orbiter/v2/types/component/forwarder"
 )
 
 // RegisterMsgServers registers the gRPC message servers for all Orbiter components

@@ -33,7 +33,7 @@ import (
 	solomachine "github.com/cosmos/ibc-go/v8/modules/light-clients/06-solomachine"
 	tendermint "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 
-	"github.com/noble-assets/orbiter/simapp"
+	"github.com/noble-assets/orbiter/v2/simapp"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the main function.

@@ -25,7 +25,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/noble-assets/orbiter/controller/adapter"
+	"github.com/noble-assets/orbiter/v2/controller/adapter"
 )
 
 func TestRecoverNativeDenom(t *testing.T) {

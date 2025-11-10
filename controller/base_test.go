@@ -25,8 +25,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/noble-assets/orbiter/controller"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/controller"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 func TestNewBaseController(t *testing.T) {

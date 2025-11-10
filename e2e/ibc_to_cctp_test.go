@@ -36,12 +36,12 @@ import (
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 
-	"github.com/noble-assets/orbiter"
-	"github.com/noble-assets/orbiter/testutil"
-	"github.com/noble-assets/orbiter/types"
-	actiontypes "github.com/noble-assets/orbiter/types/controller/action"
-	forwardingtypes "github.com/noble-assets/orbiter/types/controller/forwarding"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2"
+	"github.com/noble-assets/orbiter/v2/testutil"
+	"github.com/noble-assets/orbiter/v2/types"
+	actiontypes "github.com/noble-assets/orbiter/v2/types/controller/action"
+	forwardingtypes "github.com/noble-assets/orbiter/v2/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 type envIBC struct {

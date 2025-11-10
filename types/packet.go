@@ -21,7 +21,7 @@
 package types
 
 import (
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 // OrbiterPacket defines the abstract cross-chain transfer packet used in the Orbiter.

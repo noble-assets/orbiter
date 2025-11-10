@@ -28,8 +28,8 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
 
-	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
-	"github.com/noble-assets/orbiter/types/core"
+	dispatchertypes "github.com/noble-assets/orbiter/v2/types/component/dispatcher"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 // UpdateStats updates all the statistics the module keep track of.

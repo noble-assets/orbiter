@@ -34,13 +34,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/noble-assets/orbiter/keeper"
-	"github.com/noble-assets/orbiter/types"
-	adaptertypes "github.com/noble-assets/orbiter/types/component/adapter"
-	dispatchertypes "github.com/noble-assets/orbiter/types/component/dispatcher"
-	executortypes "github.com/noble-assets/orbiter/types/component/executor"
-	forwardertypes "github.com/noble-assets/orbiter/types/component/forwarder"
-	"github.com/noble-assets/orbiter/types/core"
+	"github.com/noble-assets/orbiter/v2/keeper"
+	"github.com/noble-assets/orbiter/v2/types"
+	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
+	dispatchertypes "github.com/noble-assets/orbiter/v2/types/component/dispatcher"
+	executortypes "github.com/noble-assets/orbiter/v2/types/component/executor"
+	forwardertypes "github.com/noble-assets/orbiter/v2/types/component/forwarder"
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 const ConsensusVersion = 1
