@@ -35,7 +35,7 @@ require (
 	cloud.google.com/go/storage v1.53.0 // indirect
 	cosmossdk.io/api v0.9.2 // indirect
 	cosmossdk.io/collections v1.2.1 // indirect
-	cosmossdk.io/math v1.5.1 // indirect
+	cosmossdk.io/math v1.5.3 // indirect
 	cosmossdk.io/schema v1.1.0 // indirect
 	cosmossdk.io/x/tx v0.13.8 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
@@ -57,7 +57,6 @@ require (
 	github.com/circlefin/noble-cctp/api v0.0.0-20241031192117-4285c94ec194 // indirect
 	github.com/cncf/xds/go v0.0.0-20250326154945-ae57f3c0d45f // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
-	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/cockroachdb/errors v1.12.0 // indirect
 	github.com/cockroachdb/fifo v0.0.0-20240606204812-0bbfbd93a7ce // indirect
 	github.com/cockroachdb/logtags v0.0.0-20241215232642-bb51bb14a506 // indirect

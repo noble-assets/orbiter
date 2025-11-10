@@ -1,10 +1,10 @@
 module github.com/noble-assets/orbiter/e2e
 
-go 1.24
+go 1.24.0
 
 require (
 	cosmossdk.io/errors v1.0.2
-	cosmossdk.io/math v1.5.1
+	cosmossdk.io/math v1.5.3
 	github.com/bcp-innovations/hyperlane-cosmos v1.0.1
 	github.com/circlefin/noble-cctp v0.0.0-20241031192117-4285c94ec194
 	github.com/circlefin/noble-fiattokenfactory v0.0.0-20250123235012-5f9bd9dd2c5b
@@ -65,7 +65,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/cncf/xds/go v0.0.0-20250501225837-2ac532fd4443 // indirect
-	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/cockroachdb/errors v1.12.0 // indirect
 	github.com/cockroachdb/fifo v0.0.0-20240606204812-0bbfbd93a7ce // indirect
 	github.com/cockroachdb/logtags v0.0.0-20241215232642-bb51bb14a506 // indirect

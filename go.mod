@@ -9,7 +9,7 @@ require (
 	cosmossdk.io/depinject v1.2.1
 	cosmossdk.io/errors v1.0.2
 	cosmossdk.io/log v1.4.1
-	cosmossdk.io/math v1.5.1
+	cosmossdk.io/math v1.5.3
 	cosmossdk.io/store v1.1.1
 	github.com/bcp-innovations/hyperlane-cosmos v1.0.1
 	github.com/circlefin/noble-cctp v0.0.0-20241031192117-4285c94ec194
