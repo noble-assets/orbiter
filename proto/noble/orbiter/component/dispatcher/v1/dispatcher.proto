@@ -7,7 +7,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "noble/orbiter/core/v1/id.proto";
 
-option go_package = "github.com/noble-assets/orbiter/types/component/dispatcher";
+option go_package = "github.com/noble-assets/orbiter/v2/types/component/dispatcher";
 
 // AmountDispatched represents the incoming and outgoing
 // amount dispatched for a couple of cross-chain identifier

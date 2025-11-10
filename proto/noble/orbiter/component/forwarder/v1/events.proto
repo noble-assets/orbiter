@@ -4,7 +4,7 @@ package noble.orbiter.component.forwarder.v1;
 
 import "noble/orbiter/core/v1/id.proto";
 
-option go_package = "github.com/noble-assets/orbiter/types/component/forwarder";
+option go_package = "github.com/noble-assets/orbiter/v2/types/component/forwarder";
 
 message EventProtocolPaused {
   noble.orbiter.core.v1.ProtocolID protocol_id = 1;

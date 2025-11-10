@@ -7,7 +7,7 @@ import "cosmos/base/v1beta1/coin.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/noble-assets/orbiter/types/controller/forwarding";
+option go_package = "github.com/noble-assets/orbiter/v2/types/controller/forwarding";
 
 // HypAttributes defines the concrete implementation of the
 // ForwardingAttributes interface to execute a cross-chain routing

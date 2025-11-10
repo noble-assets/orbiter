@@ -5,7 +5,7 @@ package noble.orbiter.component.adapter.v1;
 import "gogoproto/gogo.proto";
 import "noble/orbiter/component/adapter/v1/adapter.proto";
 
-option go_package = "github.com/noble-assets/orbiter/types/component/adapter";
+option go_package = "github.com/noble-assets/orbiter/v2/types/component/adapter";
 
 // GenesisState defines the adapter component genesis state.
 message GenesisState {

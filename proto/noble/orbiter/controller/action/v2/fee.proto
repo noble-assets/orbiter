@@ -4,7 +4,7 @@ package noble.orbiter.controller.action.v2;
 
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/noble-assets/orbiter/types/controller/action";
+option go_package = "github.com/noble-assets/orbiter/v2/types/controller/action";
 
 // FeeAttributes defines the concrete implementation of the
 // ActionAttributes interface to execute a fee payment.
