@@ -102,7 +102,7 @@ type BytesParser struct {
 // NewBytesParser returns a reference to a new bytes parser.
 func NewBytesParser(cdc codec.Codec) (*BytesParser, error) {
 	if cdc == nil {
-		return nil, core.ErrNilPointer.Wrap("codec cannot be nil for bytes parser")
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil")
 	}
 
 	return &BytesParser{

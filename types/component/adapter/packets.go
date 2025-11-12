@@ -20,13 +20,59 @@
 
 package adapter
 
-import fmt "fmt"
+import (
+	"fmt"
 
-var _ CrossChainPacket = (*IBCCrossChainPacket)(nil)
+	sdkmath "cosmossdk.io/math"
+)
+
+var (
+	_ CrossChainPacket = (*IBCCrossChainPacket)(nil)
+	_ CrossChainPacket = (*CCTPCrossChainPacket)(nil)
+)
 
 type CrossChainPacket interface {
 	// Returns the underlying protocol packet.
 	Packet() []byte
+}
+
+type CCTPCrossChainPacket struct {
+	transferNonce uint64
+	localToken    string
+	amount        sdkmath.Int
+	data          []byte
+}
+
+func NewCCTPCrossChainPacket(
+	transferNonce uint64,
+	localToken string,
+	amount sdkmath.Int,
+	data []byte,
+) (*CCTPCrossChainPacket, error) {
+	// TODO: if nonce zero error
+	return &CCTPCrossChainPacket{
+		data:          data,
+		transferNonce: transferNonce,
+		localToken:    localToken,
+		amount:        amount,
+	}, nil
+}
+
+// Packet returns the raw packet data bytes.
+func (p *CCTPCrossChainPacket) Packet() []byte {
+	return p.data
+}
+
+func (p *CCTPCrossChainPacket) TransferNonce() uint64 {
+	return p.transferNonce
+}
+
+func (p *CCTPCrossChainPacket) LocalToken() string {
+	return p.localToken
+}
+
+func (p *CCTPCrossChainPacket) Amount() sdkmath.Int {
+	return p.amount
 }
 
 // IBCCrossChainPacket represents a cross-chain packet received via IBC with routing metadata.
