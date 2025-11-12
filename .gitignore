@@ -7,6 +7,7 @@ cache
 coverage**.out
 go.work.sum
 heighliner**
+config_sepolia_local.toml
 
 # Foundry
 node_modules

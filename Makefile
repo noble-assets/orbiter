@@ -133,11 +133,37 @@ test-unit-viz:
 local-image:
 	@echo "==================================================================="
 	@echo "Building image..."
-	@heighliner build --chain orbiter-simd --file e2e/chains.yaml --local 1> /dev/null
+	@heighliner build --chain orbiter-simd --file e2e/interchaintests/chains.yaml --local 1> /dev/null
 	@echo "Completed build!"
 
 test-e2e:
 	@echo "==================================================================="
 	@echo "Running e2e tests..."
-	@cd e2e && go test -timeout 15m -race -v ./...
+	@cd e2e/interchaintests && go test -timeout 15m -race -v ./...
 	@echo "Completed e2e tests!"
+
+
+#=============================================================================#
+#                            Smart Contracts                                  #
+#=============================================================================#
+
+compile-contracts:
+	@echo "==================================================================="
+	@echo "Compiling smart contracts..."
+	@cd ./contracts && forge compile
+
+deps-contracts:
+	@echo "==================================================================="
+	@echo "Installing smart contracts dependencies..."
+	@cd ./contracts && forge clean
+	@cd ./contracts/ && rm -rf node_modules/ && bun install
+
+generate-abi:
+	@echo "==================================================================="
+	@echo "Generating Solidity bindings..."
+	@cd ./contracts/ && jq '.abi' ./out/OrbiterGatewayCCTP.sol/OrbiterGatewayCCTP.json > ./abi/OrbiterGatewayCCTP.abi
+
+generate-bindings:
+	@echo "==================================================================="
+	@echo "Generating Solidity bindings..."
+	@abigen --abi ./contracts/abi/OrbiterGatewayCCTP.abi --pkg types --type OrbiterGatewayCCTP --out ./e2e/gateway/types/gateway.go 1> /dev/null

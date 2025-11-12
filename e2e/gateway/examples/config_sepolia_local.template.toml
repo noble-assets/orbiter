@@ -1,0 +1,13 @@
+# Ethereum Configuration.
+[ethereum]
+# RPC endpoint for Ethereum node.
+rpc_endpoint = "http://127.0.0.1:8545"
+# HEX encoded private key (without 0x prefix).
+# The account holds both ETH and USDC.
+private_key = ""
+
+[ethereum.contracts]
+# Circle's USDC contract address.
+usdc = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+# Orbiter gateway contract address.
+gateway = "0x16C632BafA9b3ce39bdCDdB00c3D486741685425"
