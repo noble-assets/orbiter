@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package noble.orbiter.entrypoint.v1;
+
+import "amino/amino.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "noble/orbiter/core/v1/orbiter.proto";
+
+option go_package = "github.com/noble-assets/orbiter/v2/entrypoint";
+
+// Msg defines the RPC methods for the entrypoints.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+  //
+  rpc ReceiveCCTPMessage(MsgReceiveCCTPMessage) returns (MsgReceiveCCTPMessageResponse);
+}
+
+// MsgCCTPEntrypoint ... TODO
+message MsgReceiveCCTPMessage{
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "";
+
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  bytes transfer_message = 2;
+  bytes transfer_attestation = 3;
+
+  bytes payload_message = 4;
+  bytes payload_attestation = 5;
+
+  // noble.orbiter.core.v1.Payload payload = 6;
+}
+
+// MsgReceiveCCTPMessageResponse is the response to the MsgReceiveCCTPMessage.
+message MsgReceiveCCTPMessageResponse {}
