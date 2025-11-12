@@ -13,6 +13,9 @@ clean:
 	@forge clean && \
 	rm -rf node_modules/
 
+lint:
+	@forge fmt
+
 deps:
 	@bun install
 
