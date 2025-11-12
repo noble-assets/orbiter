@@ -1,23 +1,3 @@
-// SPDX-License-Identifier: BUSL-1.1
-//
-// Copyright (C) 2025, NASD Inc. All rights reserved.
-// Use of this software is governed by the Business Source License included
-// in the LICENSE file of this repository and at www.mariadb.com/bsl11.
-//
-// ANY USE OF THE LICENSED WORK IN VIOLATION OF THIS LICENSE WILL AUTOMATICALLY
-// TERMINATE YOUR RIGHTS UNDER THIS LICENSE FOR THE CURRENT AND ALL OTHER
-// VERSIONS OF THE LICENSED WORK.
-//
-// THIS LICENSE DOES NOT GRANT YOU ANY RIGHT IN ANY TRADEMARK OR LOGO OF
-// LICENSOR OR ITS AFFILIATES (PROVIDED THAT YOU MAY USE A TRADEMARK OR LOGO OF
-// LICENSOR AS EXPRESSLY REQUIRED BY THIS LICENSE).
-//
-// TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSED WORK IS PROVIDED ON
-// AN "AS IS" BASIS. LICENSOR HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS,
-// EXPRESS OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
-// TITLE.
-
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
@@ -51,7 +31,7 @@ var (
 
 // OrbiterGatewayCCTPMetaData contains all meta data concerning the OrbiterGatewayCCTP contract.
 var OrbiterGatewayCCTPMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"token_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"tokenMessenger_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"destinationCaller_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"DESTINATION_CALLER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"DESTINATION_DOMAIN\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint32\",\"internalType\":\"uint32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"MESSAGE_TRANSMITTER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIMessageTransmitter\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"MINT_RECIPIENT\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"TOKEN\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIFiatToken\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"TOKEN_MESSENGER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractITokenMessenger\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"depositForBurnWithOrbiter\",\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"blocktimeDeadline\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"permitSignature\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"orbiterPayload\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"destinationCaller\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"event\",\"name\":\"DepositForBurnWithOrbiter\",\"inputs\":[{\"name\":\"transferNonce\",\"type\":\"uint64\",\"indexed\":true,\"internalType\":\"uint64\"},{\"name\":\"payloadNonce\",\"type\":\"uint64\",\"indexed\":true,\"internalType\":\"uint64\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"ApproveFailed\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"TransferFailed\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ZeroDestinationCaller\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ZeroTokenAddress\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ZeroTokenMessengerAddress\",\"inputs\":[]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"token_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"tokenMessenger_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"destinationCaller_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"DESTINATION_CALLER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"DESTINATION_DOMAIN\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint32\",\"internalType\":\"uint32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"MESSAGE_TRANSMITTER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIMessageTransmitter\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"MINT_RECIPIENT\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"TOKEN\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIFiatToken\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"TOKEN_MESSENGER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractITokenMessenger\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"depositForBurnWithOrbiter\",\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"blocktimeDeadline\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"v\",\"type\":\"uint8\",\"internalType\":\"uint8\"},{\"name\":\"r\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"s\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"orbiterPayload\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"destinationCaller\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"event\",\"name\":\"DepositForBurnWithOrbiter\",\"inputs\":[{\"name\":\"transferNonce\",\"type\":\"uint64\",\"indexed\":true,\"internalType\":\"uint64\"},{\"name\":\"payloadNonce\",\"type\":\"uint64\",\"indexed\":true,\"internalType\":\"uint64\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"ApproveFailed\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"TransferFailed\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ZeroDestinationCaller\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ZeroTokenAddress\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ZeroTokenMessengerAddress\",\"inputs\":[]}]",
 }
 
 // OrbiterGatewayCCTPABI is the input ABI used to generate the binding from.
@@ -417,25 +397,25 @@ func (_OrbiterGatewayCCTP *OrbiterGatewayCCTPCallerSession) DestinationCaller() 
 	return _OrbiterGatewayCCTP.Contract.DestinationCaller(&_OrbiterGatewayCCTP.CallOpts)
 }
 
-// DepositForBurnWithOrbiter is a paid mutator transaction binding the contract method 0x222628c2.
+// DepositForBurnWithOrbiter is a paid mutator transaction binding the contract method 0xecdbac94.
 //
-// Solidity: function depositForBurnWithOrbiter(uint256 amount, uint256 blocktimeDeadline, bytes permitSignature, bytes orbiterPayload) returns()
-func (_OrbiterGatewayCCTP *OrbiterGatewayCCTPTransactor) DepositForBurnWithOrbiter(opts *bind.TransactOpts, amount *big.Int, blocktimeDeadline *big.Int, permitSignature []byte, orbiterPayload []byte) (*types.Transaction, error) {
-	return _OrbiterGatewayCCTP.contract.Transact(opts, "depositForBurnWithOrbiter", amount, blocktimeDeadline, permitSignature, orbiterPayload)
+// Solidity: function depositForBurnWithOrbiter(uint256 amount, uint256 blocktimeDeadline, uint8 v, bytes32 r, bytes32 s, bytes orbiterPayload) returns()
+func (_OrbiterGatewayCCTP *OrbiterGatewayCCTPTransactor) DepositForBurnWithOrbiter(opts *bind.TransactOpts, amount *big.Int, blocktimeDeadline *big.Int, v uint8, r [32]byte, s [32]byte, orbiterPayload []byte) (*types.Transaction, error) {
+	return _OrbiterGatewayCCTP.contract.Transact(opts, "depositForBurnWithOrbiter", amount, blocktimeDeadline, v, r, s, orbiterPayload)
 }
 
-// DepositForBurnWithOrbiter is a paid mutator transaction binding the contract method 0x222628c2.
+// DepositForBurnWithOrbiter is a paid mutator transaction binding the contract method 0xecdbac94.
 //
-// Solidity: function depositForBurnWithOrbiter(uint256 amount, uint256 blocktimeDeadline, bytes permitSignature, bytes orbiterPayload) returns()
-func (_OrbiterGatewayCCTP *OrbiterGatewayCCTPSession) DepositForBurnWithOrbiter(amount *big.Int, blocktimeDeadline *big.Int, permitSignature []byte, orbiterPayload []byte) (*types.Transaction, error) {
-	return _OrbiterGatewayCCTP.Contract.DepositForBurnWithOrbiter(&_OrbiterGatewayCCTP.TransactOpts, amount, blocktimeDeadline, permitSignature, orbiterPayload)
+// Solidity: function depositForBurnWithOrbiter(uint256 amount, uint256 blocktimeDeadline, uint8 v, bytes32 r, bytes32 s, bytes orbiterPayload) returns()
+func (_OrbiterGatewayCCTP *OrbiterGatewayCCTPSession) DepositForBurnWithOrbiter(amount *big.Int, blocktimeDeadline *big.Int, v uint8, r [32]byte, s [32]byte, orbiterPayload []byte) (*types.Transaction, error) {
+	return _OrbiterGatewayCCTP.Contract.DepositForBurnWithOrbiter(&_OrbiterGatewayCCTP.TransactOpts, amount, blocktimeDeadline, v, r, s, orbiterPayload)
 }
 
-// DepositForBurnWithOrbiter is a paid mutator transaction binding the contract method 0x222628c2.
+// DepositForBurnWithOrbiter is a paid mutator transaction binding the contract method 0xecdbac94.
 //
-// Solidity: function depositForBurnWithOrbiter(uint256 amount, uint256 blocktimeDeadline, bytes permitSignature, bytes orbiterPayload) returns()
-func (_OrbiterGatewayCCTP *OrbiterGatewayCCTPTransactorSession) DepositForBurnWithOrbiter(amount *big.Int, blocktimeDeadline *big.Int, permitSignature []byte, orbiterPayload []byte) (*types.Transaction, error) {
-	return _OrbiterGatewayCCTP.Contract.DepositForBurnWithOrbiter(&_OrbiterGatewayCCTP.TransactOpts, amount, blocktimeDeadline, permitSignature, orbiterPayload)
+// Solidity: function depositForBurnWithOrbiter(uint256 amount, uint256 blocktimeDeadline, uint8 v, bytes32 r, bytes32 s, bytes orbiterPayload) returns()
+func (_OrbiterGatewayCCTP *OrbiterGatewayCCTPTransactorSession) DepositForBurnWithOrbiter(amount *big.Int, blocktimeDeadline *big.Int, v uint8, r [32]byte, s [32]byte, orbiterPayload []byte) (*types.Transaction, error) {
+	return _OrbiterGatewayCCTP.Contract.DepositForBurnWithOrbiter(&_OrbiterGatewayCCTP.TransactOpts, amount, blocktimeDeadline, v, r, s, orbiterPayload)
 }
 
 // OrbiterGatewayCCTPDepositForBurnWithOrbiterIterator is returned from FilterDepositForBurnWithOrbiter and is used to iterate over the raw logs and unpacked data for DepositForBurnWithOrbiter events raised by the OrbiterGatewayCCTP contract.

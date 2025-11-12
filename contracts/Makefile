@@ -1,6 +1,6 @@
-.PHONY: all deps compile
+.PHONY: all deps compile clean generate-abi
 
-all: deps compile lint
+all: deps compile lint generate-abi
 
 #=============================================================================#
 #                            Smart Contracts                                  #

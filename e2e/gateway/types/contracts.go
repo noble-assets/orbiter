@@ -30,12 +30,12 @@ type Contract[T any] struct {
 	instance *T
 }
 
-type InstanceContructor[T any] = func(common.Address, bind.ContractBackend) (*T, error)
+type InstanceConstructor[T any] = func(common.Address, bind.ContractBackend) (*T, error)
 
 func NewContract[T any](
 	client bind.ContractBackend,
 	addressHex string,
-	con InstanceContructor[T],
+	con InstanceConstructor[T],
 ) (*Contract[T], error) {
 	address := common.HexToAddress(addressHex)
 	instance, err := con(address, client)

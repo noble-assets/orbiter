@@ -27,7 +27,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-// BalanceAt retrieves the balance of an account at the current block.
 func (s *Service) Balance(
 	ctx context.Context,
 	account common.Address,

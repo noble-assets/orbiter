@@ -155,8 +155,8 @@ compile-contracts:
 deps-contracts:
 	@echo "==================================================================="
 	@echo "Installing smart contracts dependencies..."
-	@forge clean && rm -rf node_modules/
-	@bun install
+	@cd ./contracts && forge clean
+	@cd ./contracts/ && rm -rf node_modules/ && bun install
 
 generate-abi:
 	@echo "==================================================================="
