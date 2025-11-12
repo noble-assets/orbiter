@@ -29,6 +29,10 @@ import (
 	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
+// ============================================================================#
+//                                  String                                     #
+// ============================================================================#
+
 // JSONParser is an utility type capable of parsing
 // a JSON representation of the orbiter payload into
 // the data transfer type.
@@ -80,4 +84,40 @@ func (p *JSONParser) Parse(jsonString string) (*core.Payload, error) {
 	}
 
 	return pw.Orbiter, nil
+}
+
+// ============================================================================#
+//                                  Bytes                                      #
+// ============================================================================#
+
+var _ types.PayloadParser = (*BytesParser)(nil)
+
+// BytesParser is the type capable of parsing raw bytes into the payload used in the Orbiter
+// execution.
+type BytesParser struct {
+	// Codec used in the bytes parsing.
+	cdc codec.Codec
+}
+
+// NewBytesParser returns a reference to a new bytes parser.
+func NewBytesParser(cdc codec.Codec) (*BytesParser, error) {
+	if cdc == nil {
+		return nil, core.ErrNilPointer.Wrap("codec cannot be nil for bytes parser")
+	}
+
+	return &BytesParser{
+		cdc: cdc,
+	}, nil
+}
+
+// ParsePayload converts the bytes into the payload type. Returns an error if the
+// unmarshaling is not possible.
+func (p *BytesParser) ParsePayload(bz []byte) (*core.Payload, error) {
+	payload := &core.Payload{}
+	err := p.cdc.Unmarshal(bz, payload)
+	if err != nil {
+		return nil, err
+	}
+
+	return payload, nil
 }
