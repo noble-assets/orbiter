@@ -89,6 +89,7 @@ func (a *NoOpAdapterController) Name() string {
 
 // ParsePacket implements types.AdapterController.
 func (a *NoOpAdapterController) ParsePacket(
+	_ context.Context,
 	ccPacket adaptertypes.CrossChainPacket,
 ) (*types.ParsedData, error) {
 	packet := ccPacket.Packet()

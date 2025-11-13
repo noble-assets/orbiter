@@ -40,7 +40,7 @@ import (
 
 var _ types.AdapterController = &CCTPAdapter{}
 
-// NOTE: is is not query server
+// NOTE: is not query server
 type CCTPKeeper interface {
 	GetTokenPair(
 		context.Context,

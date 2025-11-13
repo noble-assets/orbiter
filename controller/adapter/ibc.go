@@ -21,6 +21,7 @@
 package adapter
 
 import (
+	"context"
 	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
@@ -74,6 +75,7 @@ func NewIBCAdapter(cdc codec.Codec, logger log.Logger) (*IBCAdapter, error) {
 }
 
 func (a *IBCAdapter) ParsePacket(
+	_ context.Context,
 	ccPacket adaptertypes.CrossChainPacket,
 ) (*types.ParsedData, error) {
 	ibcPacket, ok := ccPacket.(*adaptertypes.IBCCrossChainPacket)

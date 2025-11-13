@@ -167,7 +167,16 @@ func InjectAdapterControllers(in ComponentsInputs) {
 		panic(errorsmod.Wrap(err, "error creating IBC adapter"))
 	}
 
-	if err := in.Orbiters.SetAdapterControllers(ibc); err != nil {
+	cctp, err := adapterctrl.NewCCTPAdapter(
+		in.Orbiters.Codec(),
+		in.CCTPKeeper.Logger(),
+		in.CCTPKeeper,
+	)
+	if err != nil {
+		panic(errorsmod.Wrap(err, "error creating CCTP adapter"))
+	}
+
+	if err := in.Orbiters.SetAdapterControllers(ibc, cctp); err != nil {
 		panic(errorsmod.Wrap(err, "error setting adapter controllers"))
 	}
 }

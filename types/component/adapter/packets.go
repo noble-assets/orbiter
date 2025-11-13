@@ -24,10 +24,7 @@ import (
 	"errors"
 	"fmt"
 
-	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var (
@@ -46,7 +43,7 @@ type CrossChainPacket interface {
 type CCTPCrossChainPacket struct {
 	// transferNonce is the nonce of the associated transfer message.
 	transferNonce uint64
-	// coin to be trasferred.
+	// coin to be transferred.
 	coin sdk.Coin
 	// data contains the bytes of the Orbiter paylaod.
 	data []byte

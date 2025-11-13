@@ -152,7 +152,7 @@ func (a *Adapter) AdaptPacket(
 		return nil, sdkerrors.ErrNotFound.Wrapf("adapter not found for protocol ID: %s", protocolID)
 	}
 
-	parsedPacket, err := adapter.ParsePacket(packet)
+	parsedPacket, err := adapter.ParsePacket(ctx, packet)
 	if err != nil {
 		return nil, err
 	}

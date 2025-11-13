@@ -21,6 +21,7 @@
 package adapter_test
 
 import (
+	"context"
 	"encoding/json"
 	"testing"
 
@@ -371,7 +372,7 @@ func TestParsePacket(t *testing.T) {
 			adapter, err := adapterctrl.NewIBCAdapter(encCfg.Codec, log.NewNopLogger())
 			require.NoError(t, err)
 
-			parsedData, err := adapter.ParsePacket(tC.ccPacket())
+			parsedData, err := adapter.ParsePacket(context.Background(), tC.ccPacket())
 
 			if tC.expErr != "" {
 				require.ErrorContains(t, err, tC.expErr)
