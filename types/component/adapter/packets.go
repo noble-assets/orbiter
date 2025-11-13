@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/noble-assets/orbiter/v2/types/core"
 )
@@ -45,10 +46,8 @@ type CrossChainPacket interface {
 type CCTPCrossChainPacket struct {
 	// transferNonce is the nonce of the associated transfer message.
 	transferNonce uint64
-	// localToken is the denom of the token received via CCTP transfer.
-	localToken string
-	// amount is the amount of tokens received.
-	amount sdkmath.Int
+	// coin to be trasferred.
+	coin sdk.Coin
 	// data contains the bytes of the Orbiter paylaod.
 	data []byte
 }
@@ -57,8 +56,7 @@ type CCTPCrossChainPacket struct {
 // the Orbiter payload.
 func NewCCTPCrossChainPacket(
 	transferNonce uint64,
-	localToken string,
-	amount sdkmath.Int,
+	coin sdk.Coin,
 	data []byte,
 ) (*CCTPCrossChainPacket, error) {
 	if len(data) == 0 {
@@ -66,10 +64,9 @@ func NewCCTPCrossChainPacket(
 	}
 
 	return &CCTPCrossChainPacket{
-		data:          data,
 		transferNonce: transferNonce,
-		localToken:    localToken,
-		amount:        amount,
+		coin:          coin,
+		data:          data,
 	}, nil
 }
 
@@ -83,14 +80,9 @@ func (p *CCTPCrossChainPacket) TransferNonce() uint64 {
 	return p.transferNonce
 }
 
-// LocalToken returns the denom of the CCTP local token.
-func (p *CCTPCrossChainPacket) LocalToken() string {
-	return p.localToken
-}
-
-// Amount returns the amount transferred.
-func (p *CCTPCrossChainPacket) Amount() sdkmath.Int {
-	return p.amount
+// Coin returns the coin received via  CCTP.
+func (p *CCTPCrossChainPacket) Coin() sdk.Coin {
+	return p.coin
 }
 
 // IBCCrossChainPacket represents a cross-chain packet received via IBC with routing metadata.

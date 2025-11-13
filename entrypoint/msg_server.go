@@ -10,6 +10,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	"cosmossdk.io/log"
+	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/noble-assets/orbiter/v2/types"
 	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
@@ -81,6 +83,16 @@ func (s *msgServer) ReceiveCCTPMessage(
 		return nil, core.ErrValidation.Wrapf("failed to validate payload message: %s", err.Error())
 	}
 
+	transferCoin, err := s.GetTransferCoin(
+		ctx,
+		transferMsg.SourceDomain,
+		burnMessage.BurnToken,
+		burnMessage.Amount,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transfer coin: %w", err)
+	}
+
 	ccID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_CCTP,
 		CounterpartyId: strconv.FormatUint(uint64(transferMsg.SourceDomain), 10),
@@ -88,8 +100,7 @@ func (s *msgServer) ReceiveCCTPMessage(
 
 	ccPacket, err := adaptertypes.NewCCTPCrossChainPacket(
 		transferMsg.GetNonce(),
-		tokenPair.LocalToken,
-		burnMessage.Amount,
+		transferCoin,
 		msg.PayloadMessage,
 	)
 	if err != nil {
@@ -148,20 +159,23 @@ func ValidateCCTPMessages(transferMsg, payloadMsg *cctptypes.Message) error {
 	return nil
 }
 
-func (s msgServer) GetTransferCoin(ctx context.Context, sourceDomain uint32, burnToken []byte) {
+func (s msgServer) GetTransferCoin(
+	ctx context.Context,
+	sourceDomain uint32,
+	burnToken []byte,
+	amount sdkmath.Int,
+) (sdk.Coin, error) {
 	// Retrieve the token transferred information.
-	tokenPair, found := s.cctpHandler.GetTokenPair(
-		ctx,
-		transferMsg.SourceDomain,
-		burnMessage.BurnToken,
-	)
+	tokenPair, found := s.cctpHandler.GetTokenPair(ctx, sourceDomain, burnToken)
 	if !found {
-		return nil, fmt.Errorf(
+		return sdk.Coin{}, fmt.Errorf(
 			"token pair for burn token %s and source domain %d does not exist",
-			common.Bytes2Hex(burnMessage.BurnToken),
-			transferMsg.SourceDomain,
+			common.Bytes2Hex(burnToken),
+			sourceDomain,
 		)
 	}
+
+	return sdk.NewCoin(tokenPair.LocalToken, amount), nil
 }
 
 // HandleCCTPMessage is an utility method to call into the CCTP module and handle the response.

@@ -30,7 +30,6 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/noble-assets/orbiter/v2/controller"
@@ -131,6 +130,6 @@ func (c *CCTPAdapter) ParsePacket(
 
 	return &types.ParsedData{
 		Payload: *payload,
-		Coin:    sdk.NewCoin(cctpPacket.LocalToken(), cctpPacket.Amount()),
+		Coin:    cctpPacket.Coin(),
 	}, nil
 }
