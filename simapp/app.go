@@ -66,6 +66,7 @@ var (
 // They are exported for convenience in creating helper functions.
 type SimApp struct {
 	*runtime.App
+
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Codec
 	txConfig          client.TxConfig
@@ -208,16 +209,19 @@ func (app *SimApp) SimulationManager() *module.SimulationManager {
 
 func (app *SimApp) GetKey(storeKey string) *storetypes.KVStoreKey {
 	key, _ := app.UnsafeFindStoreKey(storeKey).(*storetypes.KVStoreKey)
+
 	return key
 }
 
 func (app *SimApp) GetMemKey(memKey string) *storetypes.MemoryStoreKey {
 	key, _ := app.UnsafeFindStoreKey(memKey).(*storetypes.MemoryStoreKey)
+
 	return key
 }
 
 func (app *SimApp) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
+
 	return subspace
 }
 
