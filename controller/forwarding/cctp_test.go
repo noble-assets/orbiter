@@ -47,7 +47,7 @@ func TestNewCCTPController(t *testing.T) {
 		{
 			name:      "success - valid controller creation",
 			logger:    log.NewNopLogger(),
-			msgServer: &mocks.CCTPMsgServer{},
+			msgServer: &mocks.CCTPServer{},
 		},
 		{
 			name:     "error - nil logger",
@@ -140,7 +140,7 @@ func TestHandlePacket_CCTP(t *testing.T) {
 	logger := log.NewNopLogger()
 	controller, err := forwarding.NewCCTPController(
 		logger,
-		&mocks.CCTPMsgServer{},
+		&mocks.CCTPServer{},
 	)
 	require.NoError(t, err)
 	for _, tC := range testCases {
@@ -212,7 +212,7 @@ func TestExtractAttributes_CCTP(t *testing.T) {
 		},
 	}
 
-	controller, err := forwarding.NewCCTPController(log.NewNopLogger(), &mocks.CCTPMsgServer{})
+	controller, err := forwarding.NewCCTPController(log.NewNopLogger(), &mocks.CCTPServer{})
 	require.NoError(t, err)
 
 	for _, tC := range testCases {
@@ -239,7 +239,7 @@ func TestNewCCTPHandler(t *testing.T) {
 	}{
 		{
 			name:      "success - valid controller creation",
-			msgServer: &mocks.CCTPMsgServer{},
+			msgServer: &mocks.CCTPServer{},
 		},
 		{
 			name:      "error - nil msg server",

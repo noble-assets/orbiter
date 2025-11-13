@@ -35,4 +35,5 @@ var (
 	ErrAlreadySet        = errorsmod.Register(ModuleName, 10, "value already set")
 	// ErrNoOrbiterPacket is a sentinel error used in the incoming IBC flow.
 	ErrNoOrbiterPacket = errorsmod.Register(ModuleName, 11, "packet is not for orbiter")
+	ErrParsing         = errorsmod.Register(ModuleName, 12, "parsing failed")
 )

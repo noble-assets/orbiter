@@ -21,9 +21,12 @@
 package adapter
 
 import (
+	"errors"
 	"fmt"
 
 	sdkmath "cosmossdk.io/math"
+
+	"github.com/noble-assets/orbiter/v2/types/core"
 )
 
 var (
@@ -31,25 +34,37 @@ var (
 	_ CrossChainPacket = (*CCTPCrossChainPacket)(nil)
 )
 
+// CrossChainPacket defines the behavior of an Orbiter abstraction message for a generic
+// bridge protocol.
 type CrossChainPacket interface {
 	// Returns the underlying protocol packet.
 	Packet() []byte
 }
 
+// CCTPCrossChainPacket is the Orbiter abstraction message for the payload received via CCTP.
 type CCTPCrossChainPacket struct {
+	// transferNonce is the nonce of the associated transfer message.
 	transferNonce uint64
-	localToken    string
-	amount        sdkmath.Int
-	data          []byte
+	// localToken is the denom of the token received via CCTP transfer.
+	localToken string
+	// amount is the amount of tokens received.
+	amount sdkmath.Int
+	// data contains the bytes of the Orbiter paylaod.
+	data []byte
 }
 
+// NewCCTPCrossChainPacket returns a reference to an abstracted CCTP packet containing
+// the Orbiter payload.
 func NewCCTPCrossChainPacket(
 	transferNonce uint64,
 	localToken string,
 	amount sdkmath.Int,
 	data []byte,
 ) (*CCTPCrossChainPacket, error) {
-	// TODO: if nonce zero error
+	if len(data) == 0 {
+		return nil, errors.New("received empty data for Orbiter payload")
+	}
+
 	return &CCTPCrossChainPacket{
 		data:          data,
 		transferNonce: transferNonce,
@@ -63,14 +78,17 @@ func (p *CCTPCrossChainPacket) Packet() []byte {
 	return p.data
 }
 
+// TransferNonce returns the associated transfer message nonce.
 func (p *CCTPCrossChainPacket) TransferNonce() uint64 {
 	return p.transferNonce
 }
 
+// LocalToken returns the denom of the CCTP local token.
 func (p *CCTPCrossChainPacket) LocalToken() string {
 	return p.localToken
 }
 
+// Amount returns the amount transferred.
 func (p *CCTPCrossChainPacket) Amount() sdkmath.Int {
 	return p.amount
 }

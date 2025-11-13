@@ -3,103 +3,87 @@ package entrypoint
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
+	"github.com/ethereum/go-ethereum/common"
 
 	"cosmossdk.io/log"
 
 	"github.com/noble-assets/orbiter/v2/types"
 	adaptertypes "github.com/noble-assets/orbiter/v2/types/component/adapter"
 	"github.com/noble-assets/orbiter/v2/types/core"
+	entrypointtypes "github.com/noble-assets/orbiter/v2/types/entrypoint"
 )
 
-type CCTPMsgServer interface {
-	ReceiveMessage(
-		context.Context,
-		*cctptypes.MsgReceiveMessage,
-	) (*cctptypes.MsgReceiveMessageResponse, error)
-	GetTokenPair(
-		context.Context,
-		uint32,
-		[]byte,
-	) (cctptypes.TokenPair, bool)
-}
+var _ entrypointtypes.MsgServer = &msgServer{}
 
-var _ MsgServer = &msgServer{}
-
-// msgServer is the server used to handle entrypoint messages.
+// msgServer is the server used to handle entrypoint messages for the CCTP protocol.
 type msgServer struct {
 	logger log.Logger
 
 	payloadAdapter types.PayloadAdapter
-	cctpServer     CCTPMsgServer
+	cctpHandler    entrypointtypes.CCTPHandler
 }
 
-func NewMsgServer() msgServer {
-	// TODO
-
-	return msgServer{}
-}
-
-func ValidateCCTPNonces(transferNonce, payloadNonce uint64) error {
-	isValid := transferNonce == payloadNonce+1
-	if !isValid {
-		return errors.New("no bueno")
+// NewMsgServer returns a new CCTP entrypoints message server.
+func NewMsgServer(
+	logger log.Logger,
+	payloadAdapter types.PayloadAdapter,
+	cctpHandler entrypointtypes.CCTPHandler,
+) msgServer {
+	if logger == nil {
+		panic(core.ErrNilPointer.Wrap("logger is not set"))
 	}
 
-	return nil
+	if payloadAdapter == nil {
+		panic(core.ErrNilPointer.Wrap("payload adapter is not set"))
+	}
+
+	if cctpHandler == nil {
+		panic(core.ErrNilPointer.Wrap("CCTP handler is not set"))
+	}
+
+	return msgServer{
+		logger:         logger,
+		payloadAdapter: payloadAdapter,
+		cctpHandler:    cctpHandler,
+	}
 }
 
 // NOTE: the transfer could be the real message.
-// ReceiveCCTPMessage implements MsgServer.
+//
+// ReceiveCCTPMessage is the server method that allows to initiate an Orbiter execution for
+// the CCTP protocol.
 func (s *msgServer) ReceiveCCTPMessage(
 	ctx context.Context,
-	msg *MsgReceiveCCTPMessage,
-) (*MsgReceiveCCTPMessageResponse, error) {
-	transferMsg, err := new(cctptypes.Message).Parse(msg.TransferMessage)
+	msg *entrypointtypes.MsgReceiveCCTPMessage,
+) (*entrypointtypes.MsgReceiveCCTPMessageResponse, error) {
+	transferMsg, payloadMsg, err := ParseCCTPMessages(msg.TransferMessage, msg.PayloadMessage)
 	if err != nil {
-		return nil, err
+		return nil, core.ErrParsing.Wrapf("failed to parse CCTP messages: %s", err.Error())
 	}
+
 	burnMessage, err := new(cctptypes.BurnMessage).Parse(transferMsg.MessageBody)
-
-	payloadMsg, err := new(cctptypes.Message).Parse(msg.PayloadMessage)
 	if err != nil {
-		return nil, err
+		return nil, core.ErrParsing.Wrapf("burn message is not valid: %s", err.Error())
 	}
 
-	// NOTE: should we also check the destination caller is the same?
-	err = ValidateCCTPNonces(transferMsg.GetNonce(), payloadMsg.GetNonce())
+	err = ValidateCCTPMessages(transferMsg, payloadMsg)
 	if err != nil {
-		return nil, err
+		return nil, core.ErrValidation.Wrap(err.Error())
 	}
 
 	// Verify that the payload GMP is valid.
-	resp, err := s.cctpServer.ReceiveMessage(ctx, &cctptypes.MsgReceiveMessage{
-		From:        msg.Signer,
-		Message:     msg.PayloadMessage,
-		Attestation: msg.PayloadAttestation,
-	})
+	err = s.HandleCCTPMessage(ctx, msg.Signer, msg.PayloadMessage, msg.PayloadAttestation)
 	if err != nil {
-		return nil, err
-	}
-	// NOTE: resp success can only be true
-	if !resp.Success {
-		return nil, errors.New("error receiving the msg")
+		return nil, core.ErrValidation.Wrapf("failed to validate payload message: %s", err.Error())
 	}
 
 	ccID := core.CrossChainID{
 		ProtocolId:     core.PROTOCOL_CCTP,
 		CounterpartyId: strconv.FormatUint(uint64(transferMsg.SourceDomain), 10),
-	}
-
-	tokenPair, found := s.cctpServer.GetTokenPair(
-		ctx,
-		transferMsg.SourceDomain,
-		burnMessage.BurnToken,
-	)
-	if !found {
-		return nil, errors.New("does not exist")
 	}
 
 	ccPacket, err := adaptertypes.NewCCTPCrossChainPacket(
@@ -109,40 +93,95 @@ func (s *msgServer) ReceiveCCTPMessage(
 		msg.PayloadMessage,
 	)
 	if err != nil {
-		return nil, errors.New("something wrong bro")
+		return nil, fmt.Errorf("failed to create the CCTP cross-chain packet: %w", err)
 	}
 
 	orbiterPacket, err := s.payloadAdapter.AdaptPacket(ctx, ccID, ccPacket)
 	if err != nil {
-		return nil, errors.New("something wrong bro")
+		return nil, fmt.Errorf("failed to adapt CCTP packet: %w", err)
 	}
 
 	err = s.payloadAdapter.BeforeTransferHook(ctx, orbiterPacket)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute before transfer hook: %w", err)
 	}
 
-	resp, err = s.cctpServer.ReceiveMessage(ctx, &cctptypes.MsgReceiveMessage{
-		From:        msg.Signer,
-		Message:     msg.TransferMessage,
-		Attestation: msg.TransferAttestation,
-	})
+	err = s.HandleCCTPMessage(ctx, msg.Signer, msg.TransferMessage, msg.TransferAttestation)
 	if err != nil {
-		return nil, err
-	}
-	if !resp.Success {
-		return nil, errors.New("error receiving the msg")
+		return nil, core.ErrValidation.Wrapf("failed to execute transfer message: %s", err.Error())
 	}
 
 	err = s.payloadAdapter.AfterTransferHook(ctx, orbiterPacket)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to executing after transfer hook: %w", err)
 	}
 
 	err = s.payloadAdapter.ProcessPayload(ctx, orbiterPacket)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to process orbiter payload: %w", err)
 	}
 
-	return &MsgReceiveCCTPMessageResponse{}, nil
+	return &entrypointtypes.MsgReceiveCCTPMessageResponse{}, nil
+}
+
+func ParseCCTPMessages(
+	transferMsgBz, payloadMsgBz []byte,
+) (*cctptypes.Message, *cctptypes.Message, error) {
+	transferMsg, err := new(cctptypes.Message).Parse(transferMsgBz)
+	if err != nil {
+		return nil, nil, fmt.Errorf("transfer message is not a valid CCTP message: %w", err)
+	}
+
+	payloadMsg, err := new(cctptypes.Message).Parse(payloadMsgBz)
+	if err != nil {
+		return nil, nil, fmt.Errorf("payload message is not a valid CCTP message: %w", err)
+	}
+
+	return transferMsg, payloadMsg, nil
+}
+
+func ValidateCCTPMessages(transferMsg, payloadMsg *cctptypes.Message) error {
+	if transferMsg.GetNonce() != payloadMsg.GetNonce()+1 {
+		return errors.New("messages nonces are not valid")
+	}
+
+	return nil
+}
+
+func (s msgServer) GetTransferCoin(ctx context.Context, sourceDomain uint32, burnToken []byte) {
+	// Retrieve the token transferred information.
+	tokenPair, found := s.cctpHandler.GetTokenPair(
+		ctx,
+		transferMsg.SourceDomain,
+		burnMessage.BurnToken,
+	)
+	if !found {
+		return nil, fmt.Errorf(
+			"token pair for burn token %s and source domain %d does not exist",
+			common.Bytes2Hex(burnMessage.BurnToken),
+			transferMsg.SourceDomain,
+		)
+	}
+}
+
+// HandleCCTPMessage is an utility method to call into the CCTP module and handle the response.
+func (s msgServer) HandleCCTPMessage(
+	ctx context.Context,
+	signer string,
+	message, attestation []byte,
+) error {
+	resp, err := s.cctpHandler.ReceiveMessage(ctx, &cctptypes.MsgReceiveMessage{
+		From:        signer,
+		Message:     message,
+		Attestation: attestation,
+	})
+	if err != nil {
+		return fmt.Errorf("received an error handling CCTP message: %w", err)
+	}
+
+	if resp == nil || !resp.Success {
+		return errors.New("received unexpected response from CCTP")
+	}
+
+	return nil
 }

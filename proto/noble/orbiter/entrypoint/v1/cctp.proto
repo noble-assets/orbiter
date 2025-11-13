@@ -8,7 +8,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "noble/orbiter/core/v1/orbiter.proto";
 
-option go_package = "github.com/noble-assets/orbiter/v2/entrypoint";
+option go_package = "github.com/noble-assets/orbiter/v2/types/entrypoint";
 
 // Msg defines the RPC methods for the entrypoints.
 service Msg {

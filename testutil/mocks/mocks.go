@@ -41,7 +41,7 @@ type Mocks struct {
 	// Cosmos SDK
 	BankKeeper *BankKeeper
 	// Circle
-	CCTPMsgServer *CCTPMsgServer
+	CCTPMsgServer *CCTPServer
 }
 
 func NewMocks() Mocks {
@@ -53,7 +53,7 @@ func NewMocks() Mocks {
 		// Cosmos SDK
 		BankKeeper: &bk,
 		// Circle
-		CCTPMsgServer: &CCTPMsgServer{},
+		CCTPMsgServer: &CCTPServer{},
 	}
 
 	return mocks

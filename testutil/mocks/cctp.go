@@ -27,13 +27,21 @@ import (
 	cctptypes "github.com/circlefin/noble-cctp/x/cctp/types"
 
 	"github.com/noble-assets/orbiter/v2/types/controller/forwarding"
+	"github.com/noble-assets/orbiter/v2/types/entrypoint"
 )
 
-var _ forwarding.CCTPMsgServer = CCTPMsgServer{}
+var (
+	_ forwarding.CCTPMsgServer = CCTPServer{}
+	_ entrypoint.CCTPHandler   = CCTPServer{}
+)
 
-type CCTPMsgServer struct{}
+func NewCCTPServer() *CCTPServer {
+	return &CCTPServer{}
+}
 
-func (c CCTPMsgServer) DepositForBurn(
+type CCTPServer struct{}
+
+func (c CCTPServer) DepositForBurn(
 	ctx context.Context,
 	msg *cctptypes.MsgDepositForBurn,
 ) (*cctptypes.MsgDepositForBurnResponse, error) {
@@ -44,7 +52,7 @@ func (c CCTPMsgServer) DepositForBurn(
 	return &cctptypes.MsgDepositForBurnResponse{}, nil
 }
 
-func (c CCTPMsgServer) DepositForBurnWithCaller(
+func (c CCTPServer) DepositForBurnWithCaller(
 	ctx context.Context,
 	msg *cctptypes.MsgDepositForBurnWithCaller,
 ) (*cctptypes.MsgDepositForBurnWithCallerResponse, error) {
@@ -56,7 +64,7 @@ func (c CCTPMsgServer) DepositForBurnWithCaller(
 }
 
 // ReplaceDepositForBurn implements forwarding.CCTPMsgServer.
-func (c CCTPMsgServer) ReplaceDepositForBurn(
+func (c CCTPServer) ReplaceDepositForBurn(
 	ctx context.Context,
 	msg *cctptypes.MsgReplaceDepositForBurn,
 ) (*cctptypes.MsgReplaceDepositForBurnResponse, error) {
@@ -65,4 +73,33 @@ func (c CCTPMsgServer) ReplaceDepositForBurn(
 	}
 
 	return &cctptypes.MsgReplaceDepositForBurnResponse{}, nil
+}
+
+// GetTokenPair implements entrypoint.CCTPHandler.
+func (c CCTPServer) GetTokenPair(
+	ctx context.Context,
+	_ uint32,
+	_ []byte,
+) (cctptypes.TokenPair, bool) {
+	if CheckIfFailing(ctx) {
+		return cctptypes.TokenPair{}, false
+	}
+
+	// We just need the local token for the purpose of testing the CCTP entrypoint.
+	return cctptypes.TokenPair{
+		RemoteDomain: 0,
+		RemoteToken:  []byte("usdc"),
+		LocalToken:   "usdc",
+	}, true
+}
+
+// ReceiveMessage implements entrypoint.CCTPHandler.
+func (c CCTPServer) ReceiveMessage(
+	ctx context.Context,
+	_ *cctptypes.MsgReceiveMessage,
+) (*cctptypes.MsgReceiveMessageResponse, error) {
+	if CheckIfFailing(ctx) {
+		return nil, errors.New("error calling receive message")
+	}
+	return &cctptypes.MsgReceiveMessageResponse{}, nil
 }
