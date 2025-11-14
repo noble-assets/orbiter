@@ -71,12 +71,22 @@ This section describes how to create a valid IBC payload in Golang:
 3. Define the action and set the attributes:
 
    ```go
-   action, err := actiontypes.NewFeeAction(
-    &actiontypes.FeeInfo{
-     Recipient:   feeRecipientAddr,
-     BasisPoints: basisPoints,
-    },
-   )
+    feeBps, err := actiontypes.NewFeeBasisPoints(100) // 1%
+    require.NoError(t, err)
+
+    feeAmount, err := actiontypes.NewFeeAmount("100")
+    require.NoError(t, err)
+
+    action, err := actiontypes.NewFeeAction(
+      &actiontypes.FeeInfo{
+        Recipient: feeRecipientAddr1,
+        FeeType:   feeBps,
+      },
+      &actiontypes.FeeInfo{
+        Recipient: feeRecipientAddr1,
+        FeeType:   feeAmount,
+      },
+    )
    ```
 
 4. Create a wrapped payload:

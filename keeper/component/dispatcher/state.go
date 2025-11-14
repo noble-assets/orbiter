@@ -120,12 +120,6 @@ func (d *Dispatcher) GetDispatchedAmount(
 
 	amount, err := d.dispatchedAmounts.Get(ctx, key)
 	if err != nil {
-		d.logger.Error("received an error getting dispatched amounts",
-			"error", err,
-			"source_id", sourceID.ID(),
-			"dest_id", destID.ID(),
-			"denom", denom,
-		)
 		amount = dispatchertypes.AmountDispatched{
 			Incoming: math.ZeroInt(),
 			Outgoing: math.ZeroInt(),
@@ -352,11 +346,6 @@ func (d *Dispatcher) GetDispatchedCounts(
 
 	counts, err := d.dispatchedCounts.Get(ctx, key)
 	if err != nil {
-		d.logger.Error("received an error getting dispatches count",
-			"error", err,
-			"source_id", sourceID.ID(),
-			"dest_id", destID.ID(),
-		)
 		counts = 0
 	}
 
