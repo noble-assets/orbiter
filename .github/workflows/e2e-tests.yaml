@@ -5,6 +5,9 @@ on:
       - 'go.mod'
       - 'go.sum'
       - '**/*.go'
+  push:
+    branches:
+      - main
 env:
   TAR_PATH: docker-image.tar
   ARTIFACT_NAME: tar-docker-image
@@ -86,5 +89,10 @@ jobs:
     if: always()
     steps:
       - name: Check E2E Test Matrix Status
-        if: needs.test.result != 'success'
-        run: exit 1
+        run: |
+          echo "Test job result: ${{ needs.test.result }}"
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            echo "E2E tests failed"
+            exit 1
+          fi
+          echo "All E2E tests passed!"
