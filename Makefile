@@ -131,10 +131,9 @@ test-unit-viz:
 	@go tool cover -html=coverage_types.out && go tool cover -func=coverage_types.out
 
 local-image:
-	@echo "==================================================================="
-	@echo "Building image..."
-	@heighliner build --chain orbiter-simd --file e2e/chains.yaml --local 1> /dev/null
-	@echo "Completed build!"
+	@echo "🤖 Building image..."
+	@docker build -t orbiter-simd:local .
+	@echo "✅ Completed build!"
 
 test-e2e:
 	@echo "==================================================================="
