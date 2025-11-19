@@ -25,7 +25,7 @@ jobs:
           tag: local # emulate local environment for consistency in interchaintest cases
           tar-export-path: ${{ env.TAR_PATH }} # export a tarball that can be uploaded as an artifact for the e2e jobs
           platform: linux/amd64 # test runner architecture only
-          git-ref: ${{ github.head_ref }} # source code ref
+          git-ref: ${{ github.head_ref || github.ref_name}} # source code ref
           # Heighliner fork supporting Go v1.24
           heighliner-owner: 'noble-assets'
           heighliner-tag: 'v1.7.3'
