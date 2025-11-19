@@ -143,4 +143,12 @@ contract OrbiterGatewayCCTP {
 
         emit DepositForBurnWithOrbiter(transferNonce, payloadNonce);
     }
+
+    /**
+     * @notice Returns the zero left-padded bytes of the address used for the destination caller.
+     * @return bytes32 Bytes associated with the destination caller address on Noble.
+     */
+    function destinationCaller() public view returns (bytes32) {
+        return DESTINATION_CALLER;
+    }
 }
