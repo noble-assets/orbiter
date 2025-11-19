@@ -3,7 +3,7 @@
 [![Latest Release](https://img.shields.io/github/v/release/noble-assets/orbiter?style=flat&logo=github&logoColor=BAC3FF&label=latest&color=BAC3FF&labelColor=1E2457)](https://github.com/noble-assets/orbiter/releases/latest)
 [![License](https://img.shields.io/badge/License-BUSL-red?label=license&labelColor=1E2457&color=BAC3FF)](https://github.com/noble-assets/orbiter/blob/main/LICENSE)
 [![Unit Tests](https://img.shields.io/github/actions/workflow/status/noble-assets/orbiter/unit-tests.yaml?style=flat&logo=githubactions&logoColor=white&label=unit&labelColor=1E2457)](https://github.com/noble-assets/orbiter/actions/workflows/unit-tests.yaml)
-[![E2E Tests](https://img.shields.io/github/actions/workflow/status/noble-assets/orbiter/e2e-tests.yaml?style=flat&logo=githubactions&logoColor=white&label=e2e&labelColor=1E2457&jobName=e2e-tests)](https://github.com/noble-assets/orbiter/actions/workflows/e2e-tests.yaml)
+[![E2E Tests](https://img.shields.io/github/actions/workflow/status/noble-assets/orbiter/e2e-tests.yaml?branch=main&style=flat&logo=githubactions&logoColor=white&label=e2e&labelColor=1E2457)](https://github.com/noble-assets/orbiter/actions/workflows/e2e-tests.yaml)
 
 ![Banner](./.assets/banner.png)
 
